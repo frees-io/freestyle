@@ -1,165 +1,160 @@
-package io.freestyle
 
-import cats._
-import cats.data._
-import cats.free._
-import cats.implicits._
 
-object definitions {
+// object definitions {
 
-  @free sealed abstract class ServiceA[F[_]] {
+//   @free sealed abstract class ServiceA[F[_]] {
 
-    def op1(op1_p1: Int): Free[F, List[Int]]
+//     def op1(op1_p1: Int): Free[F, List[Int]]
 
-    def op2(op2_p1: Int): Free[F, List[Int]]
+//     def op2(op2_p1: Int): Free[F, List[Int]]
 
-    def op3(op3_p1: Int, op3_p2: Int): Free[F, List[Int]] =
-      for {
-        a <- op1(1)
-        b <- op2(2)
-      } yield a ++ b
-  }
+//     def op3(op3_p1: Int, op3_p2: Int): Free[F, List[Int]] =
+//       for {
+//         a <- op1(1)
+//         b <- op2(2)
+//       } yield a ++ b
+//   }
 
-  @free sealed trait ServiceB[F[_]] {
+//   @free sealed trait ServiceB[F[_]] {
 
-    def op4(op4_p1: Int): Free[F, List[Int]]
+//     def op4(op4_p1: Int): Free[F, List[Int]]
 
-    def op5(op5_p1: Int): Free[F, List[Int]]
+//     def op5(op5_p1: Int): Free[F, List[Int]]
 
-    def op6(op6_p1: Int, op6_p2: Int): Free[F, List[Int]] =
-      for {
-        a <- op4(1)
-        b <- op5(2)
-      } yield a ++ b
-  }
+//     def op6(op6_p1: Int, op6_p2: Int): Free[F, List[Int]] =
+//       for {
+//         a <- op4(1)
+//         b <- op5(2)
+//       } yield a ++ b
+//   }
 
-  @free trait ServiceC[F[_]] {
+//   @free trait ServiceC[F[_]] {
 
-    def op7(op7_p1: Int): Free[F, List[Int]]
+//     def op7(op7_p1: Int): Free[F, List[Int]]
 
-    def op8(op8_p1: Int): Free[F, List[Int]]
+//     def op8(op8_p1: Int): Free[F, List[Int]]
 
-    def op9(op9_p1: Int, op9_p2: Int): Free[F, List[Int]] =
-      for {
-        a <- op7(1)
-        b <- op8(2)
-      } yield a ++ b
-  }
+//     def op9(op9_p1: Int, op9_p2: Int): Free[F, List[Int]] =
+//       for {
+//         a <- op7(1)
+//         b <- op8(2)
+//       } yield a ++ b
+//   }
 
-  @free trait ServiceD[F[_]] {
+//   @free trait ServiceD[F[_]] {
 
-    def op10(op10_p1: Int): Free[F, List[Int]]
+//     def op10(op10_p1: Int): Free[F, List[Int]]
 
-    def op11(op11_p1: Int): Free[F, List[Int]]
+//     def op11(op11_p1: Int): Free[F, List[Int]]
 
-  }
+//   }
 
-  @free trait ServiceE[F[_]] {
+//   @free trait ServiceE[F[_]] {
 
-    def op12(op12_p1: Int): Free[F, List[Int]]
+//     def op12(op12_p1: Int): Free[F, List[Int]]
 
-    def op13(op13_p1: Int): Free[F, List[Int]]
+//     def op13(op13_p1: Int): Free[F, List[Int]]
 
-  }
+//   }
 
-  @module trait Persistence[F[_]] {
+//   @module trait Persistence[F[_]] {
 
-    val serviceA: ServiceA[F]
+//     val serviceA: ServiceA[F]
 
-    val serviceB: ServiceB[F]
+//     val serviceB: ServiceB[F]
 
-    val serviceC: ServiceC[F]
+//     val serviceC: ServiceC[F]
 
-  }
+//   }
 
-  @module trait BizLogic[F[_]] {
+//   @module trait BizLogic[F[_]] {
 
-    val serviceD: ServiceD[F]
+//     val serviceD: ServiceD[F]
 
-    val servicee: ServiceE[F]
+//     val servicee: ServiceE[F]
 
-  }
+//   }
 
-  @module trait App[F[_]] {
+//   @module trait App[F[_]] {
 
-    val persistence: Persistence[F]
+//     val persistence: Persistence[F]
 
-    val bizLogic: BizLogic[F]
+//     val bizLogic: BizLogic[F]
 
-  }
+//   }
 
-}
+// }
 
-object runtimes {
+// object runtimes {
 
-  import definitions._
+//   import definitions._
 
-  implicit object ServiceAInterpreter extends ServiceA.Interpreter[Option] {
+//   implicit object ServiceAInterpreter extends ServiceA.Interpreter[Option] {
 
-    def op1Impl(op1_p1: Int): Option[List[Int]] = Option(op1_p1 :: Nil)
+//     def op1Impl(op1_p1: Int): Option[List[Int]] = Option(op1_p1 :: Nil)
 
-    def op2Impl(op2_p1: Int): Option[List[Int]] = Option(op2_p1 :: Nil)
+//     def op2Impl(op2_p1: Int): Option[List[Int]] = Option(op2_p1 :: Nil)
 
-  }
+//   }
 
-  implicit object ServiceBInterpreter extends ServiceB.Interpreter[Option] {
+//   implicit object ServiceBInterpreter extends ServiceB.Interpreter[Option] {
 
-    def op4Impl(op4_p1: Int): Option[List[Int]] = Option(op4_p1 :: Nil)
+//     def op4Impl(op4_p1: Int): Option[List[Int]] = Option(op4_p1 :: Nil)
 
-    def op5Impl(op5_p1: Int): Option[List[Int]] = Option(op5_p1 :: Nil)
+//     def op5Impl(op5_p1: Int): Option[List[Int]] = Option(op5_p1 :: Nil)
 
-  }
+//   }
 
-  implicit object ServiceCInterpreter extends ServiceC.Interpreter[Option] {
+//   implicit object ServiceCInterpreter extends ServiceC.Interpreter[Option] {
 
-    def op7Impl(op7_p1: Int): Option[List[Int]] = Option(op7_p1 :: Nil)
+//     def op7Impl(op7_p1: Int): Option[List[Int]] = Option(op7_p1 :: Nil)
 
-    def op8Impl(op8_p1: Int): Option[List[Int]] = Option(op8_p1 :: Nil)
+//     def op8Impl(op8_p1: Int): Option[List[Int]] = Option(op8_p1 :: Nil)
 
-  }
+//   }
 
-  implicit object ServiceDInterpreter extends ServiceD.Interpreter[Option] {
+//   implicit object ServiceDInterpreter extends ServiceD.Interpreter[Option] {
 
-    def op10Impl(op7_p1: Int): Option[List[Int]] = Option(op7_p1 :: Nil)
+//     def op10Impl(op7_p1: Int): Option[List[Int]] = Option(op7_p1 :: Nil)
 
-    def op11Impl(op8_p1: Int): Option[List[Int]] = Option(op8_p1 :: Nil)
+//     def op11Impl(op8_p1: Int): Option[List[Int]] = Option(op8_p1 :: Nil)
 
-  }
+//   }
 
-}
+// }
 
-object composition {
+// object composition {
 
-  import definitions._
+//   import definitions._
 
-  def program[F[_]](implicit P: Persistence[F]): Free[F, List[Int]] = {
-    import P.serviceA._, P.serviceB._, P.serviceC._
-    for {
-      a <- op1(1)
-      b <- op2(1)
-      c <- op3(1, 1)
-      d <- op4(1)
-      e <- op5(1)
-      f <- op6(1, 1)
-    } yield a ++ b ++ c ++ d ++ e ++ f
-  }
-}
+//   def program[F[_]](implicit P: Persistence[F]): Free[F, List[Int]] = {
+//     import P.serviceA._, P.serviceB._, P.serviceC._
+//     for {
+//       a <- op1(1)
+//       b <- op2(1)
+//       c <- op3(1, 1)
+//       d <- op4(1)
+//       e <- op5(1)
+//       f <- op6(1, 1)
+//     } yield a ++ b ++ c ++ d ++ e ++ f
+//   }
+// }
 
-object Main {
+// object Main {
 
-  import composition._
-  import definitions._
-  
-  import cats.implicits._
+//   import composition._
+//   import definitions._
 
-  def main(args: Array[String]): Unit = {
+//   import cats.implicits._
 
-    import io.freestyle.syntax._, runtimes._, App._
-    println(program[App.T].exec[Option])
+//   def main(args: Array[String]): Unit = {
 
-  }
+//     import io.freestyle.syntax._, runtimes._, App._
+//     println(program[App.T].exec[Option])
 
-}
+//   }
+
+// }
 
 /*
 

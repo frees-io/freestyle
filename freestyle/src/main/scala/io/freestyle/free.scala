@@ -9,11 +9,26 @@ import cats.data._
 import cats.arrow._
 import cats.implicits._
 
+trait FreeCompanion[C[_[_]]] {
+
+  import cats.free.Inject
+
+  type T[A]
+
+  def apply[F[_]](implicit I: Inject[T, F], c: C[F]): C[F] = c
+
+}
+
 object syntax {
+
   implicit class FreeSyntax[F[_], A](fa: Free[F, A]) {
     def exec[M[_]: Monad: RecursiveTailRecM](implicit interpreter: FunctionK[F, M]): M[A] =
       fa.foldMap(interpreter)
   }
+
+  implicit def interpretCoproduct[F[_], G[_], M[_]](implicit fm: FunctionK[F,M], gm: FunctionK[G, M]): FunctionK[Coproduct[F, G, ?], M] =
+      fm or gm
+
 }
 
 class free extends StaticAnnotation {
@@ -30,7 +45,7 @@ object free {
 
     def gen(): Tree = annottees match {
       case List(Expr(cls: ClassDef)) => genModule(cls)
-      case _ => fail(s"Invalid @free usage, only traits abstract classes without companions are supported")
+      case _ => fail(s"Invalid @free usage, only traits and abstract classes without companions are supported")
     }
 
     def genModule(cls: ClassDef) = {
@@ -60,7 +75,7 @@ object free {
       } yield (
         sc,
         q"""final case class ${smartCtorNamedADT(sc.name.toTypeName)}(...${sc.vparamss})
-            extends $rootName[$retType]"""
+            extends T[$retType]"""
       )
     }
 
@@ -84,7 +99,7 @@ object free {
       val implName = TypeName(parentName.decodedName.toString + "_default_impl")
       val injTpeArgs = adtRootName +: parentTypeArgs
       val impl = q"""
-       class $implName[F[_]](implicit I: cats.free.Inject[..$injTpeArgs])
+       class $implName[F[_]](implicit I: cats.free.Inject[T, F])
           extends $parentName[F] {
             ..$smartCtorsImpls
           }
@@ -92,13 +107,8 @@ object free {
       impl
     }
 
-    def mkCompanionApply(userTrait: ClassDef, smartCtorsImpl: ClassDef, adtRootName: TypeName): DefDef = {
-      q"def apply[F[_]]()(implicit I: cats.free.Inject[$adtRootName, F], instance: ${userTrait.name.toTypeName}[F]): ${userTrait.name.toTypeName}[F] = instance"
-    }
-
     def mkCompanionDefaultInstance(userTrait: ClassDef, smartCtorsImpl: ClassDef, adtRootName: TypeName): DefDef = {
-      val instanceName = freshTermName(userTrait.name.decodedName.toString)
-      q"implicit def $instanceName[F[_]](implicit I: cats.free.Inject[$adtRootName, F]): ${userTrait.name.toTypeName}[F] = new ${smartCtorsImpl.name}[F]()"
+      q"implicit def defaultInstance[F[_]](implicit I: Inject[T, F]): ${userTrait.name}[F] = new ${smartCtorsImpl.name}[F]"
     }
 
     def mkAdtType(adtRootName: TypeName): Tree =
@@ -132,11 +142,11 @@ object free {
        """
     }
 
-    def mkImplicitsTrait(prefix: TermName, contents: List[Tree]): ClassDef = {
-      val traitName = TypeName(prefix.decodedName.toString + "Implicits")
+    def mkImplicitsTrait(userTrait: ClassDef): ClassDef = {
+      val instanceName = freshTermName(userTrait.name.decodedName.toString + "DefaultInstance")
       q"""
-        trait $traitName {
-          ..$contents
+        trait Implicits {
+           implicit def $instanceName[F[_]](implicit I: Inject[T, F]): ${userTrait.name}[F] = defaultInstance
         }
       """
     }
@@ -154,18 +164,21 @@ object free {
       val cpTypes = getTypeParams(clsParams)
       val smartCtorsImpls = mkSmartCtorsImpls(cpTypes, adtRootName, scAdtPairs)
       val smartCtorsClassImpl = mkSmartCtorsClassImpls(name.toTypeName, adtRootName, cpTypes, smartCtorsImpls)
-      val companionApply = mkCompanionApply(userTrait, smartCtorsClassImpl, adtRootName)
       val implicitInstance = mkCompanionDefaultInstance(userTrait, smartCtorsClassImpl, adtRootName)
       val adtType = mkAdtType(adtRootName)
       val abstractInterpreter = mkAbstractInterpreter(adtRootName, scAdtPairs)
-      val implicitsTrait = mkImplicitsTrait(name, (adtRoot +: adtLeaves) ++ (abstractInterpreter :: smartCtorsClassImpl :: adtType :: implicitInstance :: Nil))
+      val implicitsTrait = mkImplicitsTrait(userTrait)
       val result = q"""
         $userTrait
-        object $name extends ${implicitsTrait.name} {
-          $companionApply
-          type Implicits = ${implicitsTrait.name}
+        $adtRoot
+        object $name extends io.freestyle.FreeCompanion[${userTrait.name}] {
+          $adtType
+          ..$adtLeaves
+          $smartCtorsClassImpl
+          $implicitInstance
+          $abstractInterpreter
+          $implicitsTrait
         }
-        $implicitsTrait
       """
       println(result)
       result

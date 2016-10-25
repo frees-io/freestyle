@@ -49,13 +49,13 @@ object module {
     }
 
     def mkCompanionApply(userTrait: ClassDef, classImpl: ClassDef, implicitArgs: List[ValDef]): DefDef = {
-      val implicits = q"val instance: ${userTrait.name.toTypeName}[F]" :: Nil
+      val implicits = implicitArgs ++ (q"val instance: ${userTrait.name.toTypeName}[F]" :: Nil)
       q"def apply[F[_]]()(implicit ..$implicits): ${userTrait.name.toTypeName}[F] = instance"
     }
 
     def mkCompanionDefaultInstance(userTrait: ClassDef, classImpl: ClassDef, implicitArgs: List[ValDef]): DefDef = {
       val instanceName = freshTermName(userTrait.name.decodedName.toString)
-      q"implicit def $instanceName[F[_]](implicit ..$implicitArgs): ${userTrait.name.toTypeName}[F] = new ${classImpl.name}[F]()"
+      q"implicit def defaultInstance[F[_]](implicit ..$implicitArgs): ${userTrait.name.toTypeName}[F] = new ${classImpl.name}[F]()"
     }
 
     def mkModuleCoproduct(implicitArgs: List[ValDef]): List[Tree] = {
@@ -81,40 +81,12 @@ object module {
       }
     }
 
-    def mkModuleInterpreter(implicitArgs: List[ValDef]): List[Tree] = {
-      val rawTypeDefs = implicitArgs.flatMap(_.tpt.children.headOption)
-      val result = rawTypeDefs.scanLeft[(Int, AnyRef), List[(Int, AnyRef)]]((0, q"")) {
-        case ((pos, acc), el) =>
-          val z = TermName(el.toString)
-          val cpName = if (pos + 1 != rawTypeDefs.size) TypeName(s"C$pos") else TypeName("T")
-          val iName = freshTermName("interpreter")
-          val newTree = (acc, z) match {
-            case (q"", r: TermName) => r
-            case (l: TermName, r: TermName) =>
-              val lEv = freshTermName("l")
-              val rEv = freshTermName("r")
-              val implicitsFKs = q"val $lEv: cats.arrow.FunctionK[$l.T, M]" :: q"val $rEv: cats.arrow.FunctionK[$r.T, M]" :: Nil
-              q"implicit def $iName[M[_]](implicit ..$implicitsFKs): cats.arrow.FunctionK[$cpName, M] = $lEv.or($rEv)"
-            case (l: DefDef, r: TermName) =>
-              val rEv = freshTermName("r")
-              val evs = l.vparamss.flatMap(_ :+ q"val $rEv: cats.arrow.FunctionK[$r.T, M]")
-              q"implicit def $iName[M[_]](implicit ..$evs): cats.arrow.FunctionK[$cpName, M] = $rEv.or(${l.name}[M])"
-            case x => fail(s"found unexpected case building Interpreter: $x with types ${x.map(_.getClass)}")
-          }
-          (pos + 1, newTree)
-      }
-      result collect {
-        case (_, x: DefDef) => x
-      }
-    }
-
-    def mkImplicitsTrait(prefix: TermName, implicitArgs: List[ValDef], contents: List[Tree]): ClassDef = {
-      val rawTypeDefs = implicitArgs.flatMap(_.tpt.children.headOption)
-      val parents = rawTypeDefs.map { n => Select(Ident(TermName(n.toString)), TypeName("Implicits")) }
-      val traitName = TypeName(prefix.decodedName.toString + "Implicits")
+     def mkImplicitsTrait(userTrait: ClassDef, implicitArgs: List[ValDef]): ClassDef = {
+       val instanceName = freshTermName(userTrait.name.decodedName.toString + "DefaultInstance")
+       val implicits = implicitArgs :+ q"val I: Inject[T, F]"
       q"""
-        trait $traitName extends ..$parents {
-          ..$contents
+        trait Implicits {
+           implicit def $instanceName[F[_]](implicit ..$implicits): ${userTrait.name}[F] = defaultInstance
         }
       """
     }
@@ -127,18 +99,19 @@ object module {
     ) = {
       val implicitArgs = mkImplicitArgs(clsRestBody)
       val moduleClassImpl = mkModuleClassImpls(name.toTypeName, implicitArgs)
-      val companionApply = mkCompanionApply(userTrait, moduleClassImpl, implicitArgs)
-      val defaultInstance = mkCompanionDefaultInstance(userTrait, moduleClassImpl, implicitArgs)
+      val implicitInstance = mkCompanionDefaultInstance(userTrait, moduleClassImpl, implicitArgs)
       val moduleCoproduct = mkModuleCoproduct(implicitArgs)
-      val moduleInterpreter = mkModuleInterpreter(implicitArgs)
-      val implicitsTrait = mkImplicitsTrait(name, implicitArgs, moduleClassImpl :: defaultInstance :: Nil ++ moduleCoproduct ++ moduleInterpreter)
+      val implicitsTrait = mkImplicitsTrait(userTrait, implicitArgs)
+      val rawTypeDefs = implicitArgs.flatMap(_.tpt.children.headOption)
+      val parents = rawTypeDefs.map { n => Select(Ident(TermName(n.toString)), TypeName("Implicits")) }
       val result = q"""
         $userTrait
-        object $name extends ${implicitsTrait.name} {
-          $companionApply
-          type Implicits = ${implicitsTrait.name}
+        object $name extends FreeCompanion[${userTrait.name}] with ..$parents {
+          ..$moduleCoproduct
+          $moduleClassImpl
+          $implicitInstance
+          $implicitsTrait
         }
-        $implicitsTrait
       """
       println(result)
       result
