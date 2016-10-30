@@ -2,13 +2,11 @@
 addCommandAlias("debug", "; clean ; test:compile")
 
 lazy val commonSettings = Seq(
-  version := "0.1",
   scalaVersion := "2.11.8",
   scalaOrganization := "org.typelevel",
   resolvers += Resolver.sonatypeRepo("releases"),
   organization := "io.freestyle",
   version := "0.1.0-SNAPSHOT",
-  scalaVersion := "2.11.8",
   addCompilerPlugin("org.spire-math" % "kind-projector" % "0.9.0" cross CrossVersion.binary),
   addCompilerPlugin("org.scalamacros" % "paradise" % "2.1.0" cross CrossVersion.full),
   libraryDependencies ++= Seq(
@@ -34,13 +32,14 @@ lazy val commonSettings = Seq(
     "-Ywarn-numeric-widen",
     "-Ywarn-value-discard",
     "-Xfuture"
+    //"-Xlog-implicits"
     //"-Xprint:typer"
     //"-Ymacro-debug-lite"
   )
 )
 
 lazy val root = (project in file(".")).
-  aggregate(freestyle, tests)
+  aggregate(freestyle, tests, docs)
 
 lazy val freestyle = (project in file("freestyle")).
   settings(commonSettings: _*).
@@ -54,9 +53,7 @@ lazy val freestyle = (project in file("freestyle")).
 
 lazy val tests = (project in file("tests")).
   dependsOn(freestyle).
-  settings(commonSettings: _*).
-  settings( // other settings
-  )
+  settings(commonSettings: _*)
 
 lazy val docs = (project in file("docs")).
   dependsOn(freestyle).

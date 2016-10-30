@@ -8,16 +8,7 @@ import cats.free._
 import cats.data._
 import cats.arrow._
 import cats.implicits._
-
-trait FreeCompanion[C[_[_]]] {
-
-  import cats.free.Inject
-
-  type T[A]
-
-  def apply[F[_]](implicit I: Inject[T, F], c: C[F]): C[F] = c
-
-}
+import scala.annotation._
 
 object syntax {
 
@@ -27,10 +18,11 @@ object syntax {
   }
 
   implicit def interpretCoproduct[F[_], G[_], M[_]](implicit fm: FunctionK[F,M], gm: FunctionK[G, M]): FunctionK[Coproduct[F, G, ?], M] =
-      fm or gm
+    fm or gm
 
 }
 
+@compileTimeOnly("enable macro paradise to expand @module macro annotations")
 class free extends StaticAnnotation {
   def macroTransform(annottees: Any*): Any = macro free.impl
 }
@@ -61,7 +53,7 @@ object free {
       TypeName(smartCtorName.encodedName.toString + "OP")
 
     def mkAdtRoot(name: TypeName) = {
-      q"sealed abstract class ${name}[A]() extends Product with Serializable"
+      q"sealed trait ${name}[A] extends Product with Serializable"
     }
 
     def mkAdtLeaves(clsRestBody: List[Tree], rootName: TypeName): List[(DefDef, ClassDef)] = {
@@ -75,7 +67,7 @@ object free {
       } yield (
         sc,
         q"""final case class ${smartCtorNamedADT(sc.name.toTypeName)}(...${sc.vparamss})
-            extends T[$retType]"""
+            extends $rootName[$retType]"""
       )
     }
 
@@ -108,7 +100,7 @@ object free {
     }
 
     def mkCompanionDefaultInstance(userTrait: ClassDef, smartCtorsImpl: ClassDef, adtRootName: TypeName): DefDef = {
-      q"implicit def defaultInstance[F[_]](implicit I: Inject[T, F]): ${userTrait.name}[F] = new ${smartCtorsImpl.name}[F]"
+      q"implicit def defaultInstance[F[_]](implicit I: cats.free.Inject[T, F]): ${userTrait.name}[F] = new ${smartCtorsImpl.name}[F]"
     }
 
     def mkAdtType(adtRootName: TypeName): Tree =
@@ -167,17 +159,18 @@ object free {
       val implicitInstance = mkCompanionDefaultInstance(userTrait, smartCtorsClassImpl, adtRootName)
       val adtType = mkAdtType(adtRootName)
       val abstractInterpreter = mkAbstractInterpreter(adtRootName, scAdtPairs)
-      val implicitsTrait = mkImplicitsTrait(userTrait)
+      //val implicitsTrait = mkImplicitsTrait(userTrait)
+      val injectInstance = q"implicit def injectInstance[F[_]](implicit I: Inject[T, F]): Inject[T, F] = I"
       val result = q"""
         $userTrait
-        $adtRoot
-        object $name extends io.freestyle.FreeCompanion[${userTrait.name}] {
-          $adtType
+        object $name {
+          $adtRoot
           ..$adtLeaves
+          $adtType
           $smartCtorsClassImpl
           $implicitInstance
+          def apply[F[_]](implicit I: Inject[T, F], c: ${userTrait.name}[F]): ${userTrait.name}[F] = c
           $abstractInterpreter
-          $implicitsTrait
         }
       """
       println(result)

@@ -8,7 +8,119 @@ import cats.free._
 import cats.data._
 import cats.arrow._
 import cats.implicits._
+import scala.annotation._
+import scala.reflect.runtime.universe._
+import scala.reflect.runtime.{currentMirror => cm}
 
+trait Modular
+
+object materialize {
+
+  def apply[A](a : A): Any = macro materializeImpl[A]
+
+  def materializeImpl[A](c: whitebox.Context)(a: c.Expr[A])
+    (implicit f: c.WeakTypeTag[A]): c.Expr[c.universe.Tree] = {
+    import c.universe._
+
+    def fail(msg: String) = c.abort(c.enclosingPosition, msg)
+
+    object log {
+      def err(msg: String): Unit = c.error(c.enclosingPosition, msg)
+      def warn(msg: String): Unit = c.warning(c.enclosingPosition, msg)
+      def info(msg: String): Unit = c.info(c.enclosingPosition, msg, force=true)
+      def rawInfo(name: String, obj: Any): Unit = info(name + " = " + showRaw(obj))
+    }
+
+    def isFreeStyleModule(cs : Symbol) : Boolean = {
+      if (cs.isClass) {
+        cs.asClass.baseClasses.collectFirst {
+          case x : ClassSymbol if x.name == TypeName("Modular") => x
+        }.isDefined
+      } else false
+    }
+
+    def extractCoproductSymbol(cs : Symbol): List[TermName] = {
+      cs match {
+        case c : ClassSymbol =>
+          //println("cs is a class symbol: " + cs.name  + " wih decls: " + c.companion.info.decls.map(_.name))
+          if (!isFreeStyleModule(c)) {
+            TermName(c.fullName) :: Nil
+            //println("candidate T: " + cs)
+            //c.info.member(TypeName("T")) :: Nil
+          } else {
+            c.companion.info.decls.toList.flatMap(x => extractCoproductSymbol(x))
+          }
+        case m: MethodSymbol =>
+          //println("found candidate nested method with return type: " + m.returnType.companion)
+          extractCoproductSymbol(m.returnType.companion.typeSymbol.asClass)
+        case _ =>
+          Nil
+      }
+    }
+ 
+    def findAlgebras(s : Type): List[TermName] = {
+      def loop(l : List[Symbol], acc: List[TermName]): List[TermName] = {
+        l match {
+          case Nil => acc
+          case h :: t =>
+            val companionClass = h.asMethod.returnType.companion.typeSymbol.asClass
+            val coproducts = extractCoproductSymbol(companionClass)
+            loop(t, acc ++ coproducts)
+        }
+      }
+      loop(s.decls.toList, Nil)//.map(_.asType.typeSignature.resultType.typeSymbol)
+    }
+
+    def cp(n : TermName) =
+      Select(Ident(n), TypeName("T"))
+
+    def mkModuleCoproduct(algebras: List[TermName]): List[Tree] = {
+      val result = algebras match {
+        case List(el) =>
+          (0, q"type T[A] = cats.data.Coproduct[$el.T, $el.T, A]") :: Nil //TODO this won't work but we need a solution to single service modules
+        case l @ _ :: _ =>
+          l.scanLeft[(Int, AnyRef), List[(Int, AnyRef)]]((0, q"")) {
+            case ((pos, acc), el) =>
+              val cpName = if (pos + 1 != l.size) TypeName(s"C$pos") else TypeName("T")
+              val newTree = (acc, el) match {
+                case (q"", r: TermName) => r
+                case (l: TermName, r: TermName) =>
+                  q"type $cpName[A] = cats.data.Coproduct[${cp(l)}, ${cp(r)}, A]"
+                case (l: TypeDef, r: TermName) =>
+                  q"type $cpName[A] = cats.data.Coproduct[${cp(r)}, ${l.name}, A]"
+                case x =>
+                  fail(s"found unexpected case building Coproduct: $x with types ${x.map(_.getClass)}")
+              }
+              (pos + 1, newTree)
+        }
+
+      }
+      result collect {
+        case (_, x: TypeDef) => x
+      }
+    }
+
+    def run = {
+      val root = weakTypeOf[A].typeSymbol.asClass.companion.info
+      val algebras = findAlgebras(root)
+      val moduleCoproducts = mkModuleCoproduct(algebras)
+      val tree = q"""trait X {
+        ..$moduleCoproducts
+      }
+      new X{}
+      """
+      println(tree)
+      println(showRaw(tree))
+      tree
+    }
+
+
+    c.Expr[Tree](run)
+  }
+
+}
+
+@compileTimeOnly("enable macro paradise to expand @module macro annotations")
 class module extends StaticAnnotation {
   def macroTransform(annottees: Any*): Any = macro module.impl
 }
@@ -17,6 +129,7 @@ object module {
 
   def impl(c: whitebox.Context)(annottees: c.Expr[Any]*): c.universe.Tree = {
     import c.universe._
+    import scala.reflect.internal._
     import internal.reificationSupport._
 
     def fail(msg: String) = c.abort(c.enclosingPosition, msg)
@@ -27,6 +140,7 @@ object module {
     }
 
     def genModule(cls: ClassDef) = {
+      //println(c.typecheck(cls.rhs, c.TYPEmode))
       val userTrait @ ClassDef(clsMods, clsName, clsParams, clsTemplate) = cls
       if (!clsMods.hasFlag(Flag.TRAIT | Flag.ABSTRACT)) fail(s"@free requires trait or abstract class")
       mkCompanion(clsName.toTermName, clsTemplate.filter {
@@ -49,44 +163,52 @@ object module {
     }
 
     def mkCompanionApply(userTrait: ClassDef, classImpl: ClassDef, implicitArgs: List[ValDef]): DefDef = {
-      val implicits = implicitArgs ++ (q"val instance: ${userTrait.name.toTypeName}[F]" :: Nil)
-      q"def apply[F[_]]()(implicit ..$implicits): ${userTrait.name.toTypeName}[F] = instance"
+      val implicits = q"val instance: ${userTrait.name.toTypeName}[F]"
+      q"def apply[F[_]](implicit ..$implicits): ${userTrait.name.toTypeName}[F] = instance"
     }
 
     def mkCompanionDefaultInstance(userTrait: ClassDef, classImpl: ClassDef, implicitArgs: List[ValDef]): DefDef = {
       val instanceName = freshTermName(userTrait.name.decodedName.toString)
-      q"implicit def defaultInstance[F[_]](implicit ..$implicitArgs): ${userTrait.name.toTypeName}[F] = new ${classImpl.name}[F]()"
+      val implicits = implicitArgs //:+ q"val I: Inject[T, F]"
+      q"implicit def defaultInstance[F[_]](implicit ..$implicits): ${userTrait.name.toTypeName}[F] = new ${classImpl.name}[F]()"
     }
 
-    def mkModuleCoproduct(implicitArgs: List[ValDef]): List[Tree] = {
-      val rawTypeDefs = implicitArgs.flatMap(_.tpt.children.headOption)
-      val result = rawTypeDefs match {
-        case List(el) => (0, q"type T[A] = Coproduct[${TermName(el.toString)}.T, cats.Id, A]") :: Nil
-        case _ => rawTypeDefs.scanLeft[(Int, AnyRef), List[(Int, AnyRef)]]((0, q"")) {
-          case ((pos, acc), el) =>
-            val z = TermName(el.toString)
-            val cpName = if (pos + 1 != rawTypeDefs.size) TypeName(s"C$pos") else TypeName("T")
-            val newTree = (acc, z) match {
-              case (q"", r: TermName) => r
-              case (l: TermName, r: TermName) => q"type $cpName[A] = Coproduct[$l.T, $r.T, A]"
-              case (l: TypeDef, r: TermName) => q"type $cpName[A] = Coproduct[$r.T, ${l.name}, A]"
-              case x => fail(s"found unexpected case building Coproduct: $x with types ${x.map(_.getClass)}")
-            }
-            (pos + 1, newTree)
+    def packageName(sym: Symbol) = {
+      def enclosingPackage(sym: Symbol): Symbol = {
+        if (sym == NoSymbol) NoSymbol
+        else if (sym.isPackage) sym
+        else enclosingPackage(sym.owner)
+      }
+      val pkg = enclosingPackage(sym)
+      if (pkg == cm.EmptyPackageClass) ""
+      else pkg.fullName
+    }
+
+    object log {
+      def err(msg: String): Unit = c.error(c.enclosingPosition, msg)
+      def warn(msg: String): Unit = c.warning(c.enclosingPosition, msg)
+      def info(msg: String): Unit = c.info(c.enclosingPosition, msg, force=true)
+      def rawInfo(name: String, obj: Any): Unit = info(name + " = " + showRaw(obj))
+    }
+
+    def extractCoproductTypes(topLevel: List[Tree]): List[TypeName] = {
+      def loop(remaining: List[TermName], acc: List[TypeName]): List[TypeName] =
+        remaining match {
+          case Nil => acc
+          case h :: t =>
+            loop(t, acc)
         }
-
-      }
-      result collect {
-        case (_, x: TypeDef) => x
-      }
+      loop(topLevel.map(i => TermName(i.toString)), Nil)
     }
 
-     def mkImplicitsTrait(userTrait: ClassDef, implicitArgs: List[ValDef]): ClassDef = {
+    def mkImplicitsTrait(userTrait: ClassDef, implicitArgs: List[ValDef]): ClassDef = {
        val instanceName = freshTermName(userTrait.name.decodedName.toString + "DefaultInstance")
        val implicits = implicitArgs :+ q"val I: Inject[T, F]"
+       val rawTypeDefs = implicitArgs.flatMap(_.tpt.children.headOption)
+       val parents = rawTypeDefs.map { n => Select(Ident(TermName(n.toString)), TypeName("Implicits")) }
       q"""
-        trait Implicits {
-           implicit def $instanceName[F[_]](implicit ..$implicits): ${userTrait.name}[F] = defaultInstance
+        trait Implicits extends ..${parents} {
+           implicit def $instanceName[F[_]](implicit ..$implicits): ${userTrait.name}[F] = defaultInstance[F]
         }
       """
     }
@@ -100,17 +222,18 @@ object module {
       val implicitArgs = mkImplicitArgs(clsRestBody)
       val moduleClassImpl = mkModuleClassImpls(name.toTypeName, implicitArgs)
       val implicitInstance = mkCompanionDefaultInstance(userTrait, moduleClassImpl, implicitArgs)
-      val moduleCoproduct = mkModuleCoproduct(implicitArgs)
-      val implicitsTrait = mkImplicitsTrait(userTrait, implicitArgs)
+      //val implicitsTrait = mkImplicitsTrait(userTrait, implicitArgs)
       val rawTypeDefs = implicitArgs.flatMap(_.tpt.children.headOption)
-      val parents = rawTypeDefs.map { n => Select(Ident(TermName(n.toString)), TypeName("Implicits")) }
+      val injectInstance = q"implicit def injectInstance[F[_]](implicit I: Inject[T, F]): Inject[T, F] = I"
+      //val parents = rawTypeDefs.map { n => Select(Ident(TermName(n.toString)), TypeName("Implicits")) }
+      val companionApply = mkCompanionApply(userTrait, moduleClassImpl, implicitArgs)
       val result = q"""
         $userTrait
-        object $name extends FreeCompanion[${userTrait.name}] with ..$parents {
-          ..$moduleCoproduct
-          $moduleClassImpl
+        $moduleClassImpl
+        object $name extends io.freestyle.Modular {
           $implicitInstance
-          $implicitsTrait
+          $companionApply
+          val T = io.freestyle.materialize.apply(this)
         }
       """
       println(result)
@@ -120,3 +243,5 @@ object module {
     gen()
   }
 }
+
+

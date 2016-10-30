@@ -1,160 +1,142 @@
+package io.freestyle
 
+import cats.free.{Free, Inject}
 
-// object definitions {
+object definitions {
 
-//   @free sealed abstract class ServiceA[F[_]] {
+  @free sealed abstract class ServiceA[F[_]] {
 
-//     def op1(op1_p1: Int): Free[F, List[Int]]
+    def a(op1_p1: Int): Free[F, List[Int]]
 
-//     def op2(op2_p1: Int): Free[F, List[Int]]
+  }
 
-//     def op3(op3_p1: Int, op3_p2: Int): Free[F, List[Int]] =
-//       for {
-//         a <- op1(1)
-//         b <- op2(2)
-//       } yield a ++ b
-//   }
+  @free sealed trait ServiceB[F[_]] {
 
-//   @free sealed trait ServiceB[F[_]] {
+    def b(op4_p1: Int): Free[F, List[Int]]
 
-//     def op4(op4_p1: Int): Free[F, List[Int]]
+  }
 
-//     def op5(op5_p1: Int): Free[F, List[Int]]
+  @free sealed trait ServiceC[F[_]] {
 
-//     def op6(op6_p1: Int, op6_p2: Int): Free[F, List[Int]] =
-//       for {
-//         a <- op4(1)
-//         b <- op5(2)
-//       } yield a ++ b
-//   }
+    def c(op4_p1: Int): Free[F, List[Int]]
 
-//   @free trait ServiceC[F[_]] {
+  }
 
-//     def op7(op7_p1: Int): Free[F, List[Int]]
+  @free sealed trait ServiceD[F[_]] {
 
-//     def op8(op8_p1: Int): Free[F, List[Int]]
+    def d(op4_p1: Int): Free[F, List[Int]]
 
-//     def op9(op9_p1: Int, op9_p2: Int): Free[F, List[Int]] =
-//       for {
-//         a <- op7(1)
-//         b <- op8(2)
-//       } yield a ++ b
-//   }
+  }
 
-//   @free trait ServiceD[F[_]] {
+}
 
-//     def op10(op10_p1: Int): Free[F, List[Int]]
+object layers {
 
-//     def op11(op11_p1: Int): Free[F, List[Int]]
+  import definitions._
 
-//   }
+  @module trait Persistence[F[_]] {
 
-//   @free trait ServiceE[F[_]] {
+    val serviceA: ServiceA[F]
 
-//     def op12(op12_p1: Int): Free[F, List[Int]]
+    val serviceB : ServiceB[F]
 
-//     def op13(op13_p1: Int): Free[F, List[Int]]
+  }
 
-//   }
+  @module trait BizLogic[F[_]] {
 
-//   @module trait Persistence[F[_]] {
+    val serviceC: ServiceC[F]
 
-//     val serviceA: ServiceA[F]
+    val serviceD : ServiceD[F]
 
-//     val serviceB: ServiceB[F]
+  }
 
-//     val serviceC: ServiceC[F]
+}
 
-//   }
 
-//   @module trait BizLogic[F[_]] {
+object app {
 
-//     val serviceD: ServiceD[F]
+  import layers._
+  import definitions._
 
-//     val servicee: ServiceE[F]
+  @module trait App[F[_]] {
 
-//   }
+    val persistence: Persistence[F]
 
-//   @module trait App[F[_]] {
+    val bizLogic: BizLogic[F]
 
-//     val persistence: Persistence[F]
+  }
 
-//     val bizLogic: BizLogic[F]
+}
 
-//   }
+object runtimes {
 
-// }
+  import definitions._
 
-// object runtimes {
+  implicit object ServiceAInterpreter extends ServiceA.Interpreter[Option] {
 
-//   import definitions._
+    def aImpl(op1_p1: Int): Option[List[Int]] = Option(op1_p1 :: Nil)
 
-//   implicit object ServiceAInterpreter extends ServiceA.Interpreter[Option] {
+  }
 
-//     def op1Impl(op1_p1: Int): Option[List[Int]] = Option(op1_p1 :: Nil)
+  implicit object ServiceBInterpreter extends ServiceB.Interpreter[Option] {
 
-//     def op2Impl(op2_p1: Int): Option[List[Int]] = Option(op2_p1 :: Nil)
+    def bImpl(op4_p1: Int): Option[List[Int]] = Option(op4_p1 :: Nil)
 
-//   }
+  }
 
-//   implicit object ServiceBInterpreter extends ServiceB.Interpreter[Option] {
+  implicit object ServiceCInterpreter extends ServiceC.Interpreter[Option] {
 
-//     def op4Impl(op4_p1: Int): Option[List[Int]] = Option(op4_p1 :: Nil)
+    def cImpl(op7_p1: Int): Option[List[Int]] = Option(op7_p1 :: Nil)
 
-//     def op5Impl(op5_p1: Int): Option[List[Int]] = Option(op5_p1 :: Nil)
+  }
 
-//   }
+  implicit object ServiceDInterpreter extends ServiceD.Interpreter[Option] {
 
-//   implicit object ServiceCInterpreter extends ServiceC.Interpreter[Option] {
+    def dImpl(op7_p1: Int): Option[List[Int]] = Option(op7_p1 :: Nil)
 
-//     def op7Impl(op7_p1: Int): Option[List[Int]] = Option(op7_p1 :: Nil)
+  }
 
-//     def op8Impl(op8_p1: Int): Option[List[Int]] = Option(op8_p1 :: Nil)
+}
 
-//   }
+object composition {
+
+  import definitions._
+  import layers._
+  import runtimes._
+  import app._
+  import App._
+  import io.freestyle.syntax._
+  import cats.implicits._
+
+  /*
+  def program[F[_]](implicit A: App[F]): Free[F, List[Int]] = {
+    import A.persistence.serviceA._, A.persistence.serviceB._, A.persistence.serviceC._
+    for {
+      a <- op1(1)
+      b <- op2(1)
+      c <- op3(1, 1)
+      d <- op4(1)
+      e <- op5(1)
+      f <- op6(1, 1)
+    } yield a ++ b ++ c ++ d ++ e ++ f
+  }*/
+
+
+  def main(args: Array[String]): Unit = {
+    //val x = Persistence[App.T]
+    /*
+    import cats.implicits._
+    import App._
+    implicit val serviceAInject = Inject[ServiceA.T, App.T]
+    implicit val serviceA = ServiceA.defaultInstance[App.T]
+    implicit val persistence = Persistence.defaultInstance[App.T]
+     */
+    val program = App[App.T.T].persistence.serviceA.a(1)
+    println(program[App.T.T].exec[Option])
+  }
+
+}
 
-//   implicit object ServiceDInterpreter extends ServiceD.Interpreter[Option] {
-
-//     def op10Impl(op7_p1: Int): Option[List[Int]] = Option(op7_p1 :: Nil)
-
-//     def op11Impl(op8_p1: Int): Option[List[Int]] = Option(op8_p1 :: Nil)
-
-//   }
-
-// }
-
-// object composition {
-
-//   import definitions._
-
-//   def program[F[_]](implicit P: Persistence[F]): Free[F, List[Int]] = {
-//     import P.serviceA._, P.serviceB._, P.serviceC._
-//     for {
-//       a <- op1(1)
-//       b <- op2(1)
-//       c <- op3(1, 1)
-//       d <- op4(1)
-//       e <- op5(1)
-//       f <- op6(1, 1)
-//     } yield a ++ b ++ c ++ d ++ e ++ f
-//   }
-// }
-
-// object Main {
-
-//   import composition._
-//   import definitions._
-
-//   import cats.implicits._
-
-//   def main(args: Array[String]): Unit = {
-
-//     import io.freestyle.syntax._, runtimes._, App._
-//     println(program[App.T].exec[Option])
-
-//   }
-
-// }
 
 /*
 
