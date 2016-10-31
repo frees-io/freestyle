@@ -12,7 +12,7 @@ lazy val commonSettings = Seq(
   libraryDependencies ++= Seq(
     "org.typelevel" %% "cats-free" % "0.7.2"
     ),
-  scalacOptions ++= Seq(
+  scalacOptions in ThisBuild ++= Seq(
     "-Ypartial-unification", // enable fix for SI-2712
     "-Yliteral-types",       // enable SIP-23 implementation
     "-Xplugin-require:macroparadise",
@@ -22,6 +22,7 @@ lazy val commonSettings = Seq(
     "-language:existentials",
     "-language:higherKinds",
     "-language:implicitConversions",
+    "-language:reflectiveCalls",
     "-language:experimental.macros",
     "-unchecked",
     "-Xfatal-warnings",
@@ -31,8 +32,8 @@ lazy val commonSettings = Seq(
     "-Ywarn-dead-code",
     "-Ywarn-numeric-widen",
     "-Ywarn-value-discard",
-    "-Xfuture"
-    //"-Xlog-implicits"
+    "-Xfuture",
+    "-Xlog-implicits"
     //"-Xprint:typer"
     //"-Ymacro-debug-lite"
   )

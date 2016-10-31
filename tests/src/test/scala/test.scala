@@ -108,30 +108,19 @@ object composition {
   import io.freestyle.syntax._
   import cats.implicits._
 
-  /*
+
   def program[F[_]](implicit A: App[F]): Free[F, List[Int]] = {
-    import A.persistence.serviceA._, A.persistence.serviceB._, A.persistence.serviceC._
+    import A.persistence.serviceA._, A.persistence.serviceB._, A.bizLogic.serviceC._, A.bizLogic.serviceD._
     for {
-      a <- op1(1)
-      b <- op2(1)
-      c <- op3(1, 1)
-      d <- op4(1)
-      e <- op5(1)
-      f <- op6(1, 1)
-    } yield a ++ b ++ c ++ d ++ e ++ f
-  }*/
+      a <- a(1)
+      b <- b(1)
+      c <- c(1)
+      d <- d(1)
+    } yield a ++ b ++ c ++ d
+  }
 
 
   def main(args: Array[String]): Unit = {
-    //val x = Persistence[App.T]
-    /*
-    import cats.implicits._
-    import App._
-    implicit val serviceAInject = Inject[ServiceA.T, App.T]
-    implicit val serviceA = ServiceA.defaultInstance[App.T]
-    implicit val persistence = Persistence.defaultInstance[App.T]
-     */
-    val program = App[App.T.T].persistence.serviceA.a(1)
     println(program[App.T.T].exec[Option])
   }
 

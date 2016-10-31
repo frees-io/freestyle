@@ -19,7 +19,7 @@ object materialize {
   def apply[A](a : A): Any = macro materializeImpl[A]
 
   def materializeImpl[A](c: whitebox.Context)(a: c.Expr[A])
-    (implicit f: c.WeakTypeTag[A]): c.Expr[c.universe.Tree] = {
+    (implicit f: c.WeakTypeTag[A]): c.Expr[Any] = {
     import c.universe._
 
     def fail(msg: String) = c.abort(c.enclosingPosition, msg)
@@ -74,7 +74,7 @@ object materialize {
     def cp(n : TermName) =
       Select(Ident(n), TypeName("T"))
 
-    def mkModuleCoproduct(algebras: List[TermName]): List[Tree] = {
+    def mkModuleCoproduct(algebras: List[TermName]): List[String] = { //ugly hack because as String it does not typecheck early which we need for types to be in scope
       val result = algebras match {
         case List(el) =>
           (0, q"type T[A] = cats.data.Coproduct[$el.T, $el.T, A]") :: Nil //TODO this won't work but we need a solution to single service modules
@@ -96,7 +96,7 @@ object materialize {
 
       }
       result collect {
-        case (_, x: TypeDef) => x
+        case (_, x: TypeDef) => x.toString
       }
     }
 
@@ -104,18 +104,20 @@ object materialize {
       val root = weakTypeOf[A].typeSymbol.asClass.companion.info
       val algebras = findAlgebras(root)
       val moduleCoproducts = mkModuleCoproduct(algebras)
-      val tree = q"""trait X {
-        ..$moduleCoproducts
+      val parsed = moduleCoproducts.map(c.parse(_))
+      //println("parsed: \n" + parsed)
+      val tree = q"""
+      new {
+         ..$parsed
+         val x: Int = 1
       }
-      new X{}
       """
       println(tree)
-      println(showRaw(tree))
-      tree
+      c.typecheck(tree.duplicate, c.TYPEmode)
     }
 
 
-    c.Expr[Tree](run)
+    c.Expr[Any](run)
   }
 
 }
@@ -163,14 +165,15 @@ object module {
     }
 
     def mkCompanionApply(userTrait: ClassDef, classImpl: ClassDef, implicitArgs: List[ValDef]): DefDef = {
-      val implicits = q"val instance: ${userTrait.name.toTypeName}[F]"
-      q"def apply[F[_]](implicit ..$implicits): ${userTrait.name.toTypeName}[F] = instance"
+      val ev = freshTermName("instance")
+      val implicits = q"val $ev: ${userTrait.name.toTypeName}[F]"
+      q"def apply[F[_]](implicit ..$implicits): ${userTrait.name.toTypeName}[F] = $ev"
     }
 
     def mkCompanionDefaultInstance(userTrait: ClassDef, classImpl: ClassDef, implicitArgs: List[ValDef]): DefDef = {
       val instanceName = freshTermName(userTrait.name.decodedName.toString)
-      val implicits = implicitArgs //:+ q"val I: Inject[T, F]"
-      q"implicit def defaultInstance[F[_]](implicit ..$implicits): ${userTrait.name.toTypeName}[F] = new ${classImpl.name}[F]()"
+      val implicits = implicitArgs //  :+ q"val I: Inject[T, F]"
+      q"implicit def $instanceName[F[_]](implicit ..$implicits): ${userTrait.name.toTypeName}[F] = new ${classImpl.name}[F]()"
     }
 
     def packageName(sym: Symbol) = {
@@ -203,7 +206,7 @@ object module {
 
     def mkImplicitsTrait(userTrait: ClassDef, implicitArgs: List[ValDef]): ClassDef = {
        val instanceName = freshTermName(userTrait.name.decodedName.toString + "DefaultInstance")
-       val implicits = implicitArgs :+ q"val I: Inject[T, F]"
+       val implicits = implicitArgs //:+ q"val I: Inject[T, F]"
        val rawTypeDefs = implicitArgs.flatMap(_.tpt.children.headOption)
        val parents = rawTypeDefs.map { n => Select(Ident(TermName(n.toString)), TypeName("Implicits")) }
       q"""
@@ -213,6 +216,29 @@ object module {
       """
     }
 
+    def mkModuleCoproduct(implicitArgs: List[ValDef]): List[String] = {
+      val rawTypeDefs = implicitArgs.flatMap(_.tpt.children.headOption)
+      val result = rawTypeDefs match {
+        case List(el) => (0, q"type T[A] = Coproduct[${TermName(el.toString)}.T, cats.Id, A]") :: Nil
+        case _ => rawTypeDefs.scanLeft[(Int, AnyRef), List[(Int, AnyRef)]]((0, q"")) {
+          case ((pos, acc), el) =>
+            val z = TermName(el.toString)
+            val cpName = if (pos + 1 != rawTypeDefs.size) TypeName(s"C$pos") else TypeName("T")
+            val newTree = (acc, z) match {
+              case (q"", r: TermName) => r
+              case (l: TermName, r: TermName) => q"type $cpName[A] = cats.data.Coproduct[$l.T, $r.T, A]"
+              case (l: TypeDef, r: TermName) => q"type $cpName[A] = cats.data.Coproduct[$r.T, ${l.name}, A]"
+              case x => fail(s"found unexpected case building Coproduct: $x with types ${x.map(_.getClass)}")
+            }
+            (pos + 1, newTree)
+        }
+
+      }
+      result collect {
+        case (_, x: TypeDef) => x.toString
+      }
+    }
+
     def mkCompanion(
       name: TermName,
       clsRestBody: List[Tree],
@@ -220,6 +246,7 @@ object module {
       userTrait: ClassDef
     ) = {
       val implicitArgs = mkImplicitArgs(clsRestBody)
+      val moduleCoproduct = mkModuleCoproduct(implicitArgs).map(c.parse(_))
       val moduleClassImpl = mkModuleClassImpls(name.toTypeName, implicitArgs)
       val implicitInstance = mkCompanionDefaultInstance(userTrait, moduleClassImpl, implicitArgs)
       //val implicitsTrait = mkImplicitsTrait(userTrait, implicitArgs)
