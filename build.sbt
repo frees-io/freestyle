@@ -32,8 +32,8 @@ lazy val commonSettings = Seq(
     "-Ywarn-dead-code",
     "-Ywarn-numeric-widen",
     "-Ywarn-value-discard",
-    "-Xfuture",
-    "-Xlog-implicits"
+    "-Xfuture"
+    //"-Xlog-implicits",
     //"-Xprint:typer"
     //"-Ymacro-debug-lite"
   )
@@ -54,7 +54,13 @@ lazy val freestyle = (project in file("freestyle")).
 
 lazy val tests = (project in file("tests")).
   dependsOn(freestyle).
-  settings(commonSettings: _*)
+  settings(commonSettings: _*).
+  settings(
+    libraryDependencies ++= Seq(
+      "org.scala-lang" % "scala-reflect" % "2.11.8",
+      "org.scalatest" %% "scalatest" % "2.2.4" % "test"
+    )
+  )
 
 lazy val docs = (project in file("docs")).
   dependsOn(freestyle).

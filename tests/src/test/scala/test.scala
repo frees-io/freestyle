@@ -1,171 +1,217 @@
 package io.freestyle
 
 import cats.free.{Free, Inject}
-
-object definitions {
-
-  @free sealed abstract class ServiceA[F[_]] {
-
-    def a(op1_p1: Int): Free[F, List[Int]]
-
-  }
-
-  @free sealed trait ServiceB[F[_]] {
-
-    def b(op4_p1: Int): Free[F, List[Int]]
-
-  }
-
-  @free sealed trait ServiceC[F[_]] {
-
-    def c(op4_p1: Int): Free[F, List[Int]]
-
-  }
-
-  @free sealed trait ServiceD[F[_]] {
-
-    def d(op4_p1: Int): Free[F, List[Int]]
-
-  }
-
-}
-
-object layers {
-
-  import definitions._
-
-  @module trait Persistence[F[_]] {
-
-    val serviceA: ServiceA[F]
-
-    val serviceB : ServiceB[F]
-
-  }
-
-  @module trait BizLogic[F[_]] {
-
-    val serviceC: ServiceC[F]
-
-    val serviceD : ServiceD[F]
-
-  }
-
-}
-
-
-object app {
-
-  import layers._
-  import definitions._
-
-  @module trait App[F[_]] {
-
-    val persistence: Persistence[F]
-
-    val bizLogic: BizLogic[F]
-
-  }
-
-}
-
-object runtimes {
-
-  import definitions._
-
-  implicit object ServiceAInterpreter extends ServiceA.Interpreter[Option] {
-
-    def aImpl(op1_p1: Int): Option[List[Int]] = Option(op1_p1 :: Nil)
-
-  }
-
-  implicit object ServiceBInterpreter extends ServiceB.Interpreter[Option] {
-
-    def bImpl(op4_p1: Int): Option[List[Int]] = Option(op4_p1 :: Nil)
-
-  }
-
-  implicit object ServiceCInterpreter extends ServiceC.Interpreter[Option] {
-
-    def cImpl(op7_p1: Int): Option[List[Int]] = Option(op7_p1 :: Nil)
-
-  }
-
-  implicit object ServiceDInterpreter extends ServiceD.Interpreter[Option] {
-
-    def dImpl(op7_p1: Int): Option[List[Int]] = Option(op7_p1 :: Nil)
-
-  }
-
-}
-
-object composition {
-
-  import definitions._
-  import layers._
-  import runtimes._
-  import app._
-  import App._
-  import io.freestyle.syntax._
-  import cats.implicits._
-
-
-  def program[F[_]](implicit A: App[F]): Free[F, List[Int]] = {
-    import A.persistence.serviceA._, A.persistence.serviceB._, A.bizLogic.serviceC._, A.bizLogic.serviceD._
-    for {
-      a <- a(1)
-      b <- b(1)
-      c <- c(1)
-      d <- d(1)
-    } yield a ++ b ++ c ++ d
-  }
-
-
-  def main(args: Array[String]): Unit = {
-    println(program[App.T.T].exec[Option])
-  }
-
-}
-
-
-/*
-
-object algebras {
-
-  @free trait S1[F[_]] {
-    def x(n: Int): Free[F, Int]
-  }
-
-  @free trait S2[F[_]] {
-    def x(n: Int): Free[F, Int]
-  }
-
-  @free trait S3[F[_]] {
-    def x(n: Int): Free[F, Int]
-  }
-
-  @free trait S4[F[_]] {
-    def x(n: Int): Free[F, Int]
-  }
-
-}
-
-object modules {
+import org.scalatest.{WordSpec, Matchers}
+import cats.implicits._
+import cats.arrow.FunctionK
+import cats.data.Coproduct
+
+class tests extends WordSpec with Matchers {
 
   import algebras._
 
-  @module trait M1[F[_]] {
-    val s1: S1[F]
-    val s2: S2[F]
+  "the @free annotation" should {
+
+    "create a companion with a `T` type alias" in {
+      type T[A] = SCtors1.T[A]
+    }
+
+    "provide instances through it's companion `apply`" in {
+      SCtors1[SCtors1.T].isInstanceOf[SCtors1[SCtors1.T]] shouldBe true
+    }
+
+    "allow implicit sumoning" in {
+      implicitly[SCtors1[SCtors1.T]].isInstanceOf[SCtors1[SCtors1.T]] shouldBe true
+    }
+
+    "provide automatic implementations for smart constructors" in {
+      val s = SCtors1[SCtors1.T]
+      val program = for {
+        a <- s.x(1)
+        b <- s.y(1)
+      } yield a + b
+      program.isInstanceOf[Free[SCtors1.T, Int]] shouldBe true
+    }
+
+    "respond to implicit evidences with compilable runtimes" in {
+      implicit val optionInterpreter = interpreters.optionInterpreter1
+      val s = SCtors1[SCtors1.T]
+      val program = for {
+        a <- s.x(1)
+        b <- s.y(1)
+      } yield a + b
+      import io.freestyle.syntax._
+      program.exec[Option] shouldBe Option(2)
+    }
+
+    "reuse program interpretation in diferent runtimes" in {
+      implicit val optionInterpreter = interpreters.optionInterpreter1
+      implicit val listInterpreter = interpreters.listInterpreter1
+      val s = SCtors1[SCtors1.T]
+      val program = for {
+        a <- s.x(1)
+        b <- s.y(1)
+      } yield a + b
+      import io.freestyle.syntax._
+      program.exec[Option] shouldBe Option(2)
+      program.exec[List] shouldBe List(2)
+    }
+
   }
 
-  @module trait M2[F[_]] {
-    val s3: S3[F]
-    val s4: S4[F]
+  "the @module annotation" should {
+
+    import modules._
+
+    "[simple] create a companion with a `T` type alias" in {
+      type T[A] = M1.T[A]
+    }
+
+    "[onion] create a companion with a `T` type alias" in {
+      type T[A] = O1.T[A]
+    }
+
+    "[simple] provide instances through it's companion `apply`" in {
+      M1[M1.T].isInstanceOf[M1[M1.T]] shouldBe true
+    }
+
+    "[onion] provide instances through it's companion `apply`" in {
+      O1[O1.T].isInstanceOf[O1[O1.T]] shouldBe true
+    }
+
+    "[simple] implicit sumoning" in {
+      implicitly[M1[M1.T]].isInstanceOf[M1[M1.T]] shouldBe true
+    }
+
+    "[onion] allow implicit sumoning" in {
+      implicitly[O1[O1.T]].isInstanceOf[O1[O1.T]] shouldBe true
+    }
+
+    "[simple] autowire implementations of it's contained smart constructors" in {
+      val m1 = M1[M1.T]
+      m1.sctors1.isInstanceOf[SCtors1[M1.T]] shouldBe true
+      m1.sctors2.isInstanceOf[SCtors2[M1.T]] shouldBe true
+    }
+
+    "[onion] autowire implementations of it's contained smart constructors" in {
+      val o1 = O1[O1.T]
+      o1.m1.sctors1.isInstanceOf[SCtors1[O1.T]] shouldBe true
+      o1.m1.sctors2.isInstanceOf[SCtors2[O1.T]] shouldBe true
+      o1.m2.sctors3.isInstanceOf[SCtors3[O1.T]] shouldBe true
+      o1.m2.sctors4.isInstanceOf[SCtors4[O1.T]] shouldBe true
+    }
+
+    "[simple] allow composition of it's contained algebras" in {
+      val m1 = M1[M1.T]
+      val result = for {
+        a <- m1.sctors1.x(1)
+        b <- m1.sctors1.y(1)
+        c <- m1.sctors2.i(1)
+        d <- m1.sctors2.j(1)
+      } yield a + b + c + d
+      result.isInstanceOf[Free[M1.T, Int]] shouldBe true
+    }
+
+    "[onion] allow composition of it's contained algebras" in {
+      val o1 = O1[O1.T]
+      val result = for {
+        a <- o1.m1.sctors1.x(1)
+        b <- o1.m1.sctors1.y(1)
+        c <- o1.m1.sctors2.i(1)
+        d <- o1.m1.sctors2.j(1)
+        e <- o1.m2.sctors3.o(1)
+        f <- o1.m2.sctors3.p(1)
+        g <- o1.m2.sctors4.k(1)
+        h <- o1.m2.sctors4.l(1)
+      } yield a + b + c + d + e + f + g + h
+      result.isInstanceOf[Free[O1.T, Int]] shouldBe true
+    }
+
+    "[simple] find a FunctionK[Module.T, ?] providing there is existing ones for it's smart constructors" in {
+      import io.freestyle.syntax._
+      implicit val optionInterpreter1 = interpreters.optionInterpreter1
+      implicit val optionInterpreter2 = interpreters.optionInterpreter2
+      implicitly[FunctionK[M1.T, Option]].isInstanceOf[FunctionK[M1.T, Option]] shouldBe true
+    }
+
+    "[onion] find a FunctionK[Module.T, ?] providing there is existing ones for it's smart constructors" in {
+      import io.freestyle.syntax._
+      implicit val optionInterpreter1 = interpreters.optionInterpreter1
+      implicit val optionInterpreter2 = interpreters.optionInterpreter2
+      implicit val optionInterpreter3 = interpreters.optionInterpreter3
+      implicit val optionInterpreter4 = interpreters.optionInterpreter4
+      implicitly[FunctionK[O1.T, Option]].isInstanceOf[FunctionK[O1.T, Option]] shouldBe true
+    }
+
+    "[simple] reuse program interpretation in diferent runtimes" in {
+      import io.freestyle.syntax._
+      implicit val optionInterpreter1 = interpreters.optionInterpreter1
+      implicit val listInterpreter1 = interpreters.listInterpreter1
+      implicit val optionInterpreter2 = interpreters.optionInterpreter2
+      implicit val listInterpreter2 = interpreters.listInterpreter2
+      val m1 = M1[M1.T]
+      val program = for {
+        a <- m1.sctors1.x(1)
+        b <- m1.sctors1.y(1)
+        c <- m1.sctors2.i(1)
+        d <- m1.sctors2.j(1)
+      } yield a + b + c + d
+      program.exec[Option] shouldBe Option(4)
+      program.exec[List] shouldBe List(4)
+    }
+
+    "[onion] reuse program interpretation in diferent runtimes" in {
+      import io.freestyle.syntax._
+      implicit val optionInterpreter1 = interpreters.optionInterpreter1
+      implicit val listInterpreter1 = interpreters.listInterpreter1
+      implicit val optionInterpreter2 = interpreters.optionInterpreter2
+      implicit val listInterpreter2 = interpreters.listInterpreter2
+      implicit val optionInterpreter3 = interpreters.optionInterpreter3
+      implicit val listInterpreter3 = interpreters.listInterpreter3
+      implicit val optionInterpreter4 = interpreters.optionInterpreter4
+      implicit val listInterpreter4 = interpreters.listInterpreter4
+
+      val o1 = O1[O1.T]
+      val program = for {
+        a <- o1.m1.sctors1.x(1)
+        b <- o1.m1.sctors1.y(1)
+        c <- o1.m1.sctors2.i(1)
+        d <- o1.m1.sctors2.j(1)
+        e <- o1.m2.sctors3.o(1)
+        f <- o1.m2.sctors3.p(1)
+        g <- o1.m2.sctors4.k(1)
+        h <- o1.m2.sctors4.l(1)
+      } yield a + b + c + d + e + f + g + h
+
+      program.exec[Option] shouldBe Option(8)
+      program.exec[List] shouldBe List(8)
+    }
+
   }
 
-  @module trait App[F[_]] {
-    val m1: M1[F]
-    val m2: M2[F]
+}
+
+
+object algebras {
+
+  @free trait SCtors1[F[_]] {
+    def x(a: Int): Free[F, Int]
+    def y(a: Int): Free[F, Int]
+  }
+
+  @free trait SCtors2[F[_]] {
+    def i(a: Int): Free[F, Int]
+    def j(a: Int): Free[F, Int]
+  }
+
+  @free trait SCtors3[F[_]] {
+    def o(a: Int): Free[F, Int]
+    def p(a: Int): Free[F, Int]
+  }
+
+  @free trait SCtors4[F[_]] {
+    def k(a: Int): Free[F, Int]
+    def l(a: Int): Free[F, Int]
   }
 
 }
@@ -174,32 +220,64 @@ object interpreters {
 
   import algebras._
 
-  implicit object S1Interpreter extends S1.Interpreter[Option] {
-    def xImpl(n: Int) = Some(n)
+  val optionInterpreter1: FunctionK[SCtors1.T, Option] = new SCtors1.Interpreter[Option] {
+    def xImpl(a: Int): Option[Int] = Some(a)
+    def yImpl(a: Int): Option[Int] = Some(a)
   }
 
-  implicit object S2Interpreter extends S2.Interpreter[Option] {
-    def xImpl(n: Int) = Some(n)
+  val listInterpreter1: FunctionK[SCtors1.T, List] = new SCtors1.Interpreter[List] {
+    def xImpl(a: Int): List[Int] = List(a)
+    def yImpl(a: Int): List[Int] = List(a)
+  }
+
+  val optionInterpreter2: FunctionK[SCtors2.T, Option] = new SCtors2.Interpreter[Option] {
+    def iImpl(a: Int): Option[Int] = Some(a)
+    def jImpl(a: Int): Option[Int] = Some(a)
+  }
+
+  val listInterpreter2: FunctionK[SCtors2.T, List] = new SCtors2.Interpreter[List] {
+    def iImpl(a: Int): List[Int] = List(a)
+    def jImpl(a: Int): List[Int] = List(a)
+  }
+
+  val optionInterpreter3: FunctionK[SCtors3.T, Option] = new SCtors3.Interpreter[Option] {
+    def oImpl(a: Int): Option[Int] = Some(a)
+    def pImpl(a: Int): Option[Int] = Some(a)
+  }
+
+  val listInterpreter3: FunctionK[SCtors3.T, List] = new SCtors3.Interpreter[List] {
+    def oImpl(a: Int): List[Int] = List(a)
+    def pImpl(a: Int): List[Int] = List(a)
+  }
+
+  val optionInterpreter4: FunctionK[SCtors4.T, Option] = new SCtors4.Interpreter[Option] {
+    def kImpl(a: Int): Option[Int] = Some(a)
+    def lImpl(a: Int): Option[Int] = Some(a)
+  }
+
+  val listInterpreter4: FunctionK[SCtors4.T, List] = new SCtors4.Interpreter[List] {
+    def kImpl(a: Int): List[Int] = List(a)
+    def lImpl(a: Int): List[Int] = List(a)
   }
 }
 
-object main {
+object modules {
 
-  import modules._
-  import interpreters._
-  import M1.implicits._
-  import cats.implicits._
-  import io.freestyle.syntax._
+  import algebras._
 
-  def program[F[_]](implicit M: M1[F]): Free[F, Int] = {
-    for {
-      a <- M.s1.x(1)
-      b <- M.s2.x(1)
-    } yield a + b
+  @module trait M1[F[_]] {
+    val sctors1: SCtors1[F]
+    val sctors2: SCtors2[F]
   }
 
-  program[M1.T].exec[Option]
+  @module trait M2[F[_]] {
+    val sctors3: SCtors3[F]
+    val sctors4: SCtors4[F]
+  }
+
+  @module trait O1[F[_]] {
+    val m1: M1[F]
+    val m2: M2[F]
+  }
 
 }
-
- */

@@ -109,7 +109,6 @@ object materialize {
       val tree = q"""
       new {
          ..$parsed
-         val x: Int = 1
       }
       """
       println(tree)
@@ -260,7 +259,8 @@ object module {
         object $name extends io.freestyle.Modular {
           $implicitInstance
           $companionApply
-          val T = io.freestyle.materialize.apply(this)
+          val X = io.freestyle.materialize.apply(this)
+          type T[A] = X.T[A]
         }
       """
       println(result)
