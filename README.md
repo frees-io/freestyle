@@ -12,11 +12,11 @@ layout: home
 
 [`Free`]() monads based architectures have become popular in Scala as a way to organize libraries and applications.
 When using `Free` we model effects and actions as Algebraic Data Types (ADTs).
-Scala emulates [`Sum types`]() via sealed hierarchies on which each node represents one of the monadic steps you can perform when
-constructing your program. Unfortunately this results in a decent amount of boilerplate and lifting in order to properly
-combine and compose ADTs as shown in [`Data types a la carte`]()
+Scala emulates [`Algebrai Data Types`]() through sealed hierarchies on which each class extending the root class represents one of the monadic steps you can perform when
+constructing your program. Unfortunately this results in a decent amount of boilerplate in order to properly
+combine and [compose ADTs]().
 
-Freestyle aims at simplifying building this type of Applications where Free monads based Apps can be composed via [Coproduct]()
+Freestyle simplifies this process by automatically generating all the boilerplate you need in order to compose `Free` monads originating from unrelated ADTs.
 
 The following Freestyle code:
 
@@ -42,7 +42,7 @@ import cats.free._
 
 ```
 
-It's equivalent in semantics to:
+It's closely equivalent to:
 
 ```scala
 
@@ -136,8 +136,8 @@ Freestyle is inspired among others by [`simulacrum`](https://github.com/mpilquis
 - [sbt-microsites](https://47deg.github.io/sbt-microsites/)
 
 - Documentation
-  - Algebras
-  - Modules
+  - * Algebras
+  - * Modules
   - Runtime
 	- Abstracting over return types
 	- Purely functional state
