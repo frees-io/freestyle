@@ -50,7 +50,7 @@ object free {
     }
 
     def smartCtorNamedADT(smartCtorName: TypeName) =
-      TypeName(smartCtorName.encodedName.toString + "OP")
+      TypeName(smartCtorName.encodedName.toString.capitalize + "OP")
 
     def mkAdtRoot(name: TypeName) = {
       q"sealed trait ${name}[A] extends Product with Serializable"

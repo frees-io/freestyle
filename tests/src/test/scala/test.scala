@@ -63,6 +63,17 @@ class tests extends WordSpec with Matchers {
       }
     }
 
+    "Generate ADTs with friendly names and expose them as dependent types" in {
+      @free trait FriendlyFree[F[_]] {
+        def sc1(a: Int, b: Int, c: Int): Free[F, Int]
+        def sc2(a: Int, b: Int, c: Int): Free[F, Int]
+      }
+      implicitly[FriendlyFree.T[_] =:= FriendlyFree.FriendlyFreeOP[_]]
+      implicitly[FriendlyFree.Sc1OP <:< FriendlyFree.T[Int]]
+      implicitly[FriendlyFree.Sc2OP <:< FriendlyFree.T[Int]]
+      ()
+    }
+
   }
 
   "the @module annotation" should {
