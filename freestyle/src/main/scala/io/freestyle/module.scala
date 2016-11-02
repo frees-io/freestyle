@@ -111,7 +111,7 @@ object materialize {
          ..$parsed
       }
       """
-      println(tree)
+      //println(tree)
       c.typecheck(tree.duplicate, c.TYPEmode)
     }
 
@@ -263,7 +263,7 @@ object module {
           type T[A] = X.T[A]
         }
       """
-      println(result)
+      //println(result)
       result
     }
 

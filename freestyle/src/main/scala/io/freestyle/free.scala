@@ -20,15 +20,6 @@ object syntax {
   implicit def interpretCoproduct[F[_], G[_], M[_]](implicit fm: FunctionK[F,M], gm: FunctionK[G, M]): FunctionK[Coproduct[F, G, ?], M] =
     fm or gm
 
-  //implicit def nestedCoproductInject[T[_], F[_], G[_]]: Inject[T, Coproduct[F, G, ?]] = null
-/*
-  implicit def catsFreeRightInjectInstance[F[_], G[_], H[_]](implicit I: Inject[F, G]): Inject[F, Coproduct[H, G, ?]] =
-    new Inject[F, Coproduct[H, G, ?]] {
-      def inj[A](fa: F[A]): Coproduct[H, G, A] = Coproduct.rightc(I.inj(fa))
-
-      def prj[A](ga: Coproduct[H, G, A]): Option[F[A]] = ga.run.fold(_ => None, I.prj)
-    }*/
-
 }
 
 @compileTimeOnly("enable macro paradise to expand @module macro annotations")
@@ -119,7 +110,7 @@ object free {
       val functorSteps = for {
         impl <- impls
         (sc, adtLeaf, forwarder) = impl
-        args <- sc.vparamss.flatten.lastOption.map(_.name).toList.map(arg => q"l.$arg")
+        args = sc.vparamss.flatten.map(_.name).map(arg => q"l.$arg")
         pattern = pq"l : ${adtLeaf.name}"
         matchCase = cq"$pattern => ${forwarder.name}(..$args)"
       } yield matchCase
@@ -182,7 +173,7 @@ object free {
           $abstractInterpreter
         }
       """
-      println(result)
+      //println(result)
       result
     }
 

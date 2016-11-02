@@ -57,6 +57,12 @@ class tests extends WordSpec with Matchers {
       program.exec[List] shouldBe List(2)
     }
 
+    "allow multiple args in smart constructors" in {
+      @free trait MultiArgs[F[_]] {
+        def x(a: Int, b: Int, c: Int): Free[F, Int]
+      }
+    }
+
   }
 
   "the @module annotation" should {
@@ -216,6 +222,27 @@ object algebras {
 
 }
 
+object modules {
+
+  import algebras._
+
+  @module trait M1[F[_]] {
+    val sctors1: SCtors1[F]
+    val sctors2: SCtors2[F]
+  }
+
+  @module trait M2[F[_]] {
+    val sctors3: SCtors3[F]
+    val sctors4: SCtors4[F]
+  }
+
+  @module trait O1[F[_]] {
+    val m1: M1[F]
+    val m2: M2[F]
+  }
+
+}
+
 object interpreters {
 
   import algebras._
@@ -259,25 +286,4 @@ object interpreters {
     def kImpl(a: Int): List[Int] = List(a)
     def lImpl(a: Int): List[Int] = List(a)
   }
-}
-
-object modules {
-
-  import algebras._
-
-  @module trait M1[F[_]] {
-    val sctors1: SCtors1[F]
-    val sctors2: SCtors2[F]
-  }
-
-  @module trait M2[F[_]] {
-    val sctors3: SCtors3[F]
-    val sctors4: SCtors4[F]
-  }
-
-  @module trait O1[F[_]] {
-    val m1: M1[F]
-    val m2: M2[F]
-  }
-
 }
