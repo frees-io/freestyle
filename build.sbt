@@ -2,6 +2,8 @@ import catext.Dependencies._
 
 addCommandAlias("debug", "; clean ; test:compile")
 
+onLoad in Global := (Command.process("project freestyle", _: State)) compose (onLoad in Global).value
+
 val dev  = Seq(Dev("47 Degrees (twitter: @47deg)", "47 Degrees"))
 val gh   = GitHubSettings("com.fortysevendeg", "freestyle", "47 Degrees", apache)
 val vAll = Versions(versions, libraries, scalacPlugins)
@@ -42,6 +44,7 @@ lazy val commonSettings = Seq(
     //"-Ymacro-debug-lite"
   )  
 ) ++
+  sharedCommonSettings ++
   sharedReleaseProcess ++
   credentialSettings ++
   sharedPublishSettings(gh, dev) ++
@@ -53,29 +56,33 @@ pgpPassphrase := Some(sys.env.getOrElse("PGP_PASSPHRASE", "").toCharArray)
 pgpPublicRing := file(s"${sys.env.getOrElse("PGP_FOLDER", ".")}/pubring.gpg")
 pgpSecretRing := file(s"${sys.env.getOrElse("PGP_FOLDER", ".")}/secring.gpg")
 
-lazy val root = (project in file(".")).
-  aggregate(freestyle, tests, docs).
-  settings(noPublishSettings: _*)
-
-lazy val freestyle = (project in file("freestyle")).
+lazy val freestyle = (crossProject in file("freestyle")).
   settings(commonSettings: _*).
   settings(name := "freestyle").
   settings(
-    libraryDependencies += "org.scala-lang" % "scala-reflect" % "2.11.8"
+    libraryDependencies ++= Seq(
+      "org.scala-lang" % "scala-reflect" % "2.11.8",
+      "org.scalatest" %%% "scalatest" % "3.0.0" % "test"
+    )
   ).
-  settings(addTestLibs(vAll, "scalatest"))
+  jsSettings(sharedJsSettings: _*)
+
+lazy val freestyleJVM = freestyle.jvm
+lazy val freestyleJS  = freestyle.js
 
 lazy val tests = (project in file("tests")).
-  dependsOn(freestyle).
+  dependsOn(freestyleJVM).
   settings(commonSettings: _*).
   settings(noPublishSettings: _*).
   settings(
-    libraryDependencies += "org.scala-lang" % "scala-reflect" % "2.11.8"
-  ).
-  settings(addTestLibs(vAll, "scalatest"))
+    libraryDependencies ++= Seq(
+      "org.scala-lang" % "scala-reflect" % "2.11.8",
+      "org.scalatest" %%% "scalatest" % "3.0.0" % "test"
+    )
+  )
 
 lazy val docs = (project in file("docs")).
-  dependsOn(freestyle).
+  dependsOn(freestyleJVM).
   settings(commonSettings: _*).
   settings(noPublishSettings: _*).
   settings(
