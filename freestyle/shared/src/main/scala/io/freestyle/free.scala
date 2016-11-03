@@ -56,7 +56,7 @@ object free {
       q"sealed trait ${name}[A] extends Product with Serializable"
     }
 
-    def mkAdtLeaves(clsRestBody: List[Tree], rootName: TypeName): List[(DefDef, ClassDef)] = {
+    def mkAdtLeaves(clsRestBody: List[Tree], rootName: TypeName): List[(DefDef, ImplDef)] = {
       for {
         method <- clsRestBody filter {
           case q"$mods def $name[..$tparams](...$paramss): Free[..$args]" => true
@@ -64,14 +64,19 @@ object free {
         }
         sc @ DefDef(_, _, _, _, tpe: AppliedTypeTree, _) = method
         retType <- tpe.args.lastOption.toList
-      } yield (
-        sc,
-        q"""final case class ${smartCtorNamedADT(sc.name.toTypeName)}(...${sc.vparamss})
+        leaf = sc.vparamss.flatten match {
+          case Nil =>
+            q"""final case class ${smartCtorNamedADT(sc.name.toTypeName)}()
+            extends $rootName[$retType]
+            """
+          case _ =>
+            q"""final case class ${smartCtorNamedADT(sc.name.toTypeName)}(...${sc.vparamss})
             extends $rootName[$retType]"""
-      )
+        }
+      } yield (sc, leaf)
     }
 
-    def mkSmartCtorsImpls(typeArgs: List[TypeName], adtRootName: TypeName, scAdtPairs: List[(DefDef, ClassDef)]): List[DefDef] = {
+    def mkSmartCtorsImpls(typeArgs: List[TypeName], adtRootName: TypeName, scAdtPairs: List[(DefDef, ImplDef)]): List[DefDef] = {
       for {
         scAdtPair <- scAdtPairs
         (sc, adtLeaf) = scAdtPair
@@ -82,7 +87,13 @@ object free {
           case _ => false
         }
         args = sc.vparamss.flatten.map(_.name)
-        companionApply = q"${adtLeaf.name.toTermName}(..$args)"
+        companionApply = adtLeaf match {
+          case _ : ClassDef => q"${adtLeaf.name.toTermName}(..$args)" 
+          case _ =>
+            val caseObjectType = q"new ${adtLeaf.name.toTypeName}" //todo still unsure how to quote caseObject.type to pass it args in quasiquotes.
+            println(showRaw(caseObjectType))
+            caseObjectType
+        }
         impl = q"Free.inject[..$injTpeArgs]($companionApply)"
       } yield q"def ${sc.name}[..${sc.tparams}](...${sc.vparamss}): ${sc.tpt} = $impl"
     }
@@ -106,19 +117,22 @@ object free {
     def mkAdtType(adtRootName: TypeName): Tree =
       q"type T[A] = $adtRootName[A]"
 
-    def mkDefaultFunctionK(adtRootName: TypeName, impls: List[(DefDef, ClassDef, DefDef)]): Match = {
+    def mkDefaultFunctionK(adtRootName: TypeName, impls: List[(DefDef, ImplDef, DefDef)]): Match = {
       val functorSteps = for {
         impl <- impls
         (sc, adtLeaf, forwarder) = impl
         args = sc.vparamss.flatten.map(_.name).map(arg => q"l.$arg")
-        pattern = pq"l : ${adtLeaf.name}"
-        matchCase = cq"$pattern => ${forwarder.name}(..$args)"
+        pattern = pq"l : ${adtLeaf.name.toTypeName}"
+        matchCase = args match {
+          case Nil => cq"$pattern => ${forwarder.name}"
+          case _ => cq"$pattern => ${forwarder.name}(..$args)"
+        }
       } yield matchCase
       q"fa match {case ..$functorSteps}"
     }
 
-    def mkAbstractInterpreter(adtRootName: TypeName, scAdtPairs: List[(DefDef, ClassDef)]): ClassDef = {
-      val impls: List[(DefDef, ClassDef, DefDef)] = for {
+    def mkAbstractInterpreter(adtRootName: TypeName, scAdtPairs: List[(DefDef, ImplDef)]): ClassDef = {
+      val impls: List[(DefDef, ImplDef, DefDef)] = for {
         scAdtPair <- scAdtPairs
         (sc, adtLeaf) = scAdtPair
         implName = TermName(sc.name.toTermName.encodedName.toString + "Impl")
@@ -173,7 +187,7 @@ object free {
           $abstractInterpreter
         }
       """
-      //println(result)
+      println(result)
       result
     }
 

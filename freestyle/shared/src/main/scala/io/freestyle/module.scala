@@ -263,7 +263,7 @@ object module {
           type T[A] = X.T[A]
         }
       """
-      //println(result)
+      println(result)
       result
     }
 

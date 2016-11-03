@@ -63,6 +63,12 @@ class tests extends WordSpec with Matchers {
       }
     }
 
+    "allow smart constructors with no args" in {
+      @free trait NoArgs[F[_]] {
+        def x: Free[F, Int]
+      }
+    }
+
     "Generate ADTs with friendly names and expose them as dependent types" in {
       @free trait FriendlyFree[F[_]] {
         def sc1(a: Int, b: Int, c: Int): Free[F, Int]

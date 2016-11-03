@@ -12,7 +12,7 @@ layout: home
 
 [`Free`]() monads based architectures have become popular in Scala as a way to organize libraries and applications.
 When using `Free` we model effects and actions as Algebraic Data Types (ADTs).
-Scala emulates [`Algebrai Data Types`]() through sealed hierarchies on which each class extending the root class represents one of the monadic steps you can perform when
+Scala emulates [`Algebraic Data Types`]() through sealed hierarchies on which each class extending the root class represents one of the monadic steps you can perform when
 constructing your program. Unfortunately this results in a decent amount of boilerplate in order to properly
 combine and [compose ADTs]().
 
@@ -127,7 +127,7 @@ libraryDependencies += "io.freestyle" %%% "freestyle" % "0.1.0"
 # Credits
 
 Freestyle it's a project sponsored and promoted by [47 Degrees](http://47deg.com), a functional programming consultancy
-specializing in Scala technologies. 
+specializing in Scala technologies.
 
 Freestyle is inspired among others by [`simulacrum`](https://github.com/mpilquist/simulacrum) and it's possible thanks to great libraries such as:
 
