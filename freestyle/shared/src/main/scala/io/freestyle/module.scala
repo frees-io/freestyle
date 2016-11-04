@@ -250,7 +250,6 @@ object module {
       val implicitInstance = mkCompanionDefaultInstance(userTrait, moduleClassImpl, implicitArgs)
       //val implicitsTrait = mkImplicitsTrait(userTrait, implicitArgs)
       val rawTypeDefs = implicitArgs.flatMap(_.tpt.children.headOption)
-      val injectInstance = q"implicit def injectInstance[F[_]](implicit I: Inject[T, F]): Inject[T, F] = I"
       //val parents = rawTypeDefs.map { n => Select(Ident(TermName(n.toString)), TypeName("Implicits")) }
       val companionApply = mkCompanionApply(userTrait, moduleClassImpl, implicitArgs)
       val result = q"""

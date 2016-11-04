@@ -152,7 +152,7 @@ object free {
       val instanceName = freshTermName(userTrait.name.decodedName.toString + "DefaultInstance")
       q"""
         trait Implicits {
-           implicit def $instanceName[F[_]](implicit I: Inject[T, F]): ${userTrait.name}[F] = defaultInstance
+           implicit def $instanceName[F[_]](implicit I: cats.free.Inject[T, F]): ${userTrait.name}[F] = defaultInstance
         }
       """
     }
@@ -174,7 +174,7 @@ object free {
       val adtType = mkAdtType(adtRootName)
       val abstractInterpreter = mkAbstractInterpreter(adtRootName, scAdtPairs)
       //val implicitsTrait = mkImplicitsTrait(userTrait)
-      val injectInstance = q"implicit def injectInstance[F[_]](implicit I: Inject[T, F]): Inject[T, F] = I"
+      val injectInstance = q"implicit def injectInstance[F[_]](implicit I: cats.free.Inject[T, F]): cats.free.Inject[T, F] = I"
       val result = q"""
         $userTrait
         object $name {
@@ -183,7 +183,7 @@ object free {
           $adtType
           $smartCtorsClassImpl
           $implicitInstance
-          def apply[F[_]](implicit I: Inject[T, F], c: ${userTrait.name}[F]): ${userTrait.name}[F] = c
+          def apply[F[_]](implicit I: cats.free.Inject[T, F], c: ${userTrait.name}[F]): ${userTrait.name}[F] = c
           $abstractInterpreter
         }
       """
