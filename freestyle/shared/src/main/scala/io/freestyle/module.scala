@@ -68,7 +68,7 @@ object materialize {
             loop(t, acc ++ coproducts)
         }
       }
-      loop(s.decls.toList, Nil)//.map(_.asType.typeSignature.resultType.typeSymbol)
+      loop(s.decls.toList.filter(_.isAbstract), Nil)//.map(_.asType.typeSignature.resultType.typeSymbol)
     }
 
     def cp(n : TermName) =
@@ -151,7 +151,7 @@ object module {
     }
 
     def mkImplicitArgs(clsRestBody: List[Tree]): List[ValDef] = {
-      clsRestBody collect { case m: ValDef => m }
+      clsRestBody collect { case m @ ValDef(mods, _, _, _) if mods.hasFlag(Flag.DEFERRED)  => m }
     }
 
     def mkModuleClassImpls(parentName: TypeName, implicitArgs: List[ValDef]): ClassDef = {

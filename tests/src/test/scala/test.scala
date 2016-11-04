@@ -210,10 +210,15 @@ class tests extends WordSpec with Matchers {
       program.exec[List] shouldBe List(8)
     }
 
+    "Pass through concrete members to implementations" in {
+      val o2 = O2[O2.T]
+      o2.x shouldBe 1
+      o2.y shouldBe 2
+    }
+
   }
 
 }
-
 
 object algebras {
 
@@ -256,6 +261,12 @@ object modules {
   @module trait O1[F[_]] {
     val m1: M1[F]
     val m2: M2[F]
+  }
+
+  @module trait O2[F[_]] {
+    val o1: O1[F]
+    val x = 1
+    def y = 2
   }
 
 }
