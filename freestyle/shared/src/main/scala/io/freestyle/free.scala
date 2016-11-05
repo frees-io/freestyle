@@ -183,7 +183,7 @@ object free {
           $adtType
           $smartCtorsClassImpl
           $implicitInstance
-          def apply[F[_]](implicit I: cats.free.Inject[T, F], c: ${userTrait.name}[F]): ${userTrait.name}[F] = c
+          def apply[F[_]](implicit c: ${userTrait.name}[F]): ${userTrait.name}[F] = c
           $abstractInterpreter
         }
       """

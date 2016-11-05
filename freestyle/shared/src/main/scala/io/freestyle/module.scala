@@ -252,14 +252,17 @@ object module {
       val rawTypeDefs = implicitArgs.flatMap(_.tpt.children.headOption)
       //val parents = rawTypeDefs.map { n => Select(Ident(TermName(n.toString)), TypeName("Implicits")) }
       val companionApply = mkCompanionApply(userTrait, moduleClassImpl, implicitArgs)
+      val typeMaterializers = moduleCoproduct match {
+        case Nil => q"type T[A] = Nothing" :: Nil
+        case _ => q"val X = io.freestyle.materialize.apply(this)" :: q"type T[A] = X.T[A]" :: Nil
+      }
       val result = q"""
         $userTrait
         $moduleClassImpl
         object $name extends io.freestyle.Modular {
           $implicitInstance
           $companionApply
-          val X = io.freestyle.materialize.apply(this)
-          type T[A] = X.T[A]
+          ..$typeMaterializers
         }
       """
       println(result)

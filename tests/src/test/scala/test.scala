@@ -216,6 +216,12 @@ class tests extends WordSpec with Matchers {
       o2.y shouldBe 2
     }
 
+    "Allow modules with just concrete members unrelated to freestyle's concerns" in {
+      val o3 = O3[O3.T]
+      o3.x shouldBe 1
+      o3.y shouldBe 2
+    }
+
   }
 
 }
@@ -266,6 +272,11 @@ object modules {
   @module trait O2[F[_]] {
     val o1: O1[F]
     val x = 1
+    def y = 2
+  }
+
+  @module trait O3[F[_]] {
+    def x = 1
     def y = 2
   }
 
