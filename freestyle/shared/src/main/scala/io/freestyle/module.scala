@@ -141,8 +141,7 @@ object module {
     }
 
     def genModule(cls: ClassDef) = {
-      //println(c.typecheck(cls.rhs, c.TYPEmode))
-      val userTrait @ ClassDef(clsMods, clsName, clsParams, clsTemplate) = cls
+      val userTrait @ ClassDef(clsMods, clsName, clsParams, clsTemplate) = cls.duplicate
       if (!clsMods.hasFlag(Flag.TRAIT | Flag.ABSTRACT)) fail(s"@free requires trait or abstract class")
       mkCompanion(clsName.toTermName, clsTemplate.filter {
         case _: ValDef => true
