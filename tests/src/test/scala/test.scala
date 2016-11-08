@@ -80,6 +80,19 @@ class tests extends WordSpec with Matchers {
       ()
     }
 
+    "Allow smart constructors with type arguments" in {
+      @free trait KVStore[F[_]] {
+        def put[A](key: String, value: A): Free[F, Unit]
+        def get[A](key: String): Free[F, Option[A]]
+        def delete(key: String): Free[F, Unit]
+      }
+      val interpreter = new KVStore.Interpreter[List] {
+        def putImpl[A](key: String, value: A): List[Unit] = Nil
+        def getImpl[A](key: String): List[Option[A]] = Nil
+        def deleteImpl(key: String): List[Unit] = Nil
+      }
+    }
+
   }
 
   "the @module annotation" should {

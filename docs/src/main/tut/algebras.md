@@ -1,3 +1,8 @@
+---
+layout: docs
+title: Algebras
+---
+
 # Algebras
 
 Algebraic Data Types are at the core of `Free` based applications.
@@ -12,6 +17,7 @@ A trait or abstract class annotated with `@free` is all you need to create your 
 
 ```tut:silent
 import io.freestyle._
+import cats.free.Free
 
 case class User(id: Long, name: String)
 

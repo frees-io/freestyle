@@ -1,3 +1,8 @@
+---
+layout: docs
+title: Modules
+---
+
 # Modules
 
 Freestyle `@module` serves the purpose of logically combinining related Algebras that are frequently used together.
@@ -7,44 +12,51 @@ help organizing algebras in groups that can be arbitrarily nested.
 To illustrate how Modules work let's define a few algebras first.
 We will start with some basic low level style ops related to persistence.
 In our Persistence related algebras we have some ops that can go against a DB and others to a Cache service or system.
+In the presentation side an application may display or perform some input validation.
 
 ```tut:silent
-@free trait Database[F[_]] {
-  def get(id: Long): Free[F, Int]
-}
-@free trait Cache[F[_]] {
-  def get(id: Long): Free[F, Option[Int]]
-}
-```
+import io.freestyle._
+import cats.free.Free
 
-Our application may at any point display information to its users.
-
-```tut:silent
-@free trait Presenter[F[_]] {
-  def show(id: Long): Free[F, Int]
-}
-@free trait IdValidation[F[_]] {
-  def validate(id: Long): Free[F, Long]
+object algebras {
+  @free trait Database[F[_]] {
+	def get(id: Int): Free[F, Int]
+  }
+  @free trait Cache[F[_]] {
+    def get(id: Int): Free[F, Option[Int]]
+  }
+  @free trait Presenter[F[_]] {
+	def show(id: Int): Free[F, Int]
+  }
+  @free trait IdValidation[F[_]] {
+	def validate(id: Option[Int]): Free[F, Int]
+  }
 }
 ```
 
 At this point we can group these different application concerns in modules like so
 
 ```tut:silent
-@module trait Persistence[F[_]] {
-  val database: Database[F]
-  val cache: Database[F]
-}
+object modules {
 
-@module trait Display[F[_]] {
-  val presenter: Presenter[F]
-  val validator: IdValidation[F]
+  import algebras._
+
+  @module trait Persistence[F[_]] {
+	val database: Database[F]
+	val cache: Cache[F]
+  }
+  @module trait Display[F[_]] {
+	val presenter: Presenter[F]
+	val validator: IdValidation[F]
+  }
 }
 ```
 
 This enables to build programs that are properly typed and parameterized in a modular and composable way.
 
 ```tut:silent
+import modules._
+
 def program[F[_]](
 	implicit
 	  display: Display[F],
@@ -62,9 +74,14 @@ def program[F[_]](
 Modules can be further nested so they become part of the tree that conforms an application or library.
 
 ```tut:silent
-@module Application[F[_]] {
-  val persistence: Persistence[F]
-  val display: Display[F]
+object application {
+  
+  import modules._
+  
+  @module trait App[F[_]] {
+    val persistence: Persistence[F]
+    val display: Display[F]
+  }
 }
 ```
 
@@ -91,6 +108,7 @@ using the implicits scoping rules to place different implementations where appro
 This also solves all Dependendy Injection problems autmatically for all modules in applications that model their layers a modules with the `@module` annotation.
 
 ```tut:silent
+import application._
 val app = App[App.T]
 ```
 
@@ -107,6 +125,7 @@ for all it's contained algebras. This allows contained algebras to be composed.
 If you were to create this by hand in the case of the example above it will look like this:
 
 ```
+import algebras._
 type C01[A] = Coproduct[Database.T, Presenter.T, A]
 type C02[A] = Coproduct[Presenter.T, C01, A]
 type ManualAppCoproduct[A] = Coproduct[IdValidation.T, C02, A]
@@ -121,6 +140,6 @@ implicitly[App.T[_] =:= ManualAppCoproduct[_]]
 ```
 
 We've covered so far how Freestyle can help in building and composing module programs based on `Free`, but `Free` programs are 
-useless without a runtime interpreter that can fold the `Free` structure.
+useless without a runtime interpreter that can evaluate the `Free` structure.
 
-Next we will show you how `Freestyle` helps you simplify the way you define [runtime interpreters]() for `Free` applications.
+Next we will show you how `Freestyle` helps you simplify the way you define [runtime interpreters](algebras.html) for `Free` applications.
