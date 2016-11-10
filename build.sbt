@@ -1,6 +1,6 @@
 import catext.Dependencies._
 
-addCommandAlias("debug", "; clean ; test:compile")
+addCommandAlias("debug", "; clean ; test")
 
 onLoad in Global := (Command.process("project freestyle", _: State)) compose (onLoad in Global).value
 
