@@ -1,6 +1,6 @@
 package io.freestyle
 
-import cats.free.{Free, Inject}
+import cats.free._
 import org.scalatest.{WordSpec, Matchers}
 import cats.implicits._
 import cats.arrow.FunctionK
@@ -69,7 +69,7 @@ class tests extends WordSpec with Matchers {
       }
     }
 
-    "Generate ADTs with friendly names and expose them as dependent types" in {
+    "generate ADTs with friendly names and expose them as dependent types" in {
       @free trait FriendlyFree[F[_]] {
         def sc1(a: Int, b: Int, c: Int): Free[F, Int]
         def sc2(a: Int, b: Int, c: Int): Free[F, Int]
@@ -80,7 +80,7 @@ class tests extends WordSpec with Matchers {
       ()
     }
 
-    "Allow smart constructors with type arguments" in {
+    "allow smart constructors with type arguments" in {
       @free trait KVStore[F[_]] {
         def put[A](key: String, value: A): Free[F, Unit]
         def get[A](key: String): Free[F, Option[A]]
@@ -91,6 +91,46 @@ class tests extends WordSpec with Matchers {
         def getImpl[A](key: String): List[Option[A]] = Nil
         def deleteImpl(key: String): List[Unit] = Nil
       }
+    }
+
+    "allow evaluation of abstract members that return FreeApplicatives" in {
+      @free trait ApplicativesServ[F[_]] {
+        def x(key: String): FreeApplicative[F, String]
+        def y(key: String): FreeApplicative[F, String]
+        def z(key: String): FreeApplicative[F, String]
+      }
+      implicit val interpreter = new ApplicativesServ.Interpreter[Option] {
+        override def xImpl(key: String): Option[String] = Some(key)
+        override def yImpl(key: String): Option[String] = Some(key)
+        override def zImpl(key: String): Option[String] = Some(key)
+      }
+      val v = ApplicativesServ[ApplicativesServ.T]
+      import v._
+      import io.freestyle.syntax._
+      val program = (x("a") |@| y("b") |@| z("c")).map {_ + _ + _}
+      program.exec[Option] shouldBe Some("abc")
+    }
+
+    "allow evaluation of combined Free & FreeApplicatives" in {
+      @free trait MixedFree[F[_]] {
+        def x(key: String): FreeApplicative[F, String]
+        def y(key: String): FreeApplicative[F, String]
+        def z(key: String): Free[F, String]
+      }
+      implicit val interpreter = new MixedFree.Interpreter[Option] {
+        override def xImpl(key: String): Option[String] = Some(key)
+        override def yImpl(key: String): Option[String] = Some(key)
+        override def zImpl(key: String): Option[String] = Some(key)
+      }
+      val v = MixedFree[MixedFree.T]
+      import v._
+      import io.freestyle.syntax._
+      val apProgram = (x("a") |@| y("b")).map {_ + _}
+      val program = for {
+        n <- z("1")
+        m <- apProgram.monad
+      } yield n + m
+      program.exec[Option] shouldBe Some("1ab")
     }
 
   }
@@ -233,6 +273,50 @@ class tests extends WordSpec with Matchers {
       val o3 = O3[O3.T]
       o3.x shouldBe 1
       o3.y shouldBe 2
+    }
+
+  }
+
+  "Applicative Parallel Support" should {
+
+    import modules._
+
+    "allow non deterministic programs for unsafe Non-deterministic targets" in {
+      import scala.concurrent._
+      import scala.concurrent.duration._
+      import scala.concurrent.ExecutionContext.Implicits.global
+
+      @free trait MixedFree[F[_]] {
+        def x: FreeApplicative[F, Int]
+        def y: FreeApplicative[F, Int]
+        def z: Free[F, Int]
+      }
+
+      val buf = scala.collection.mutable.ArrayBuffer.empty[Int]
+
+      def blocker(value: Int, waitTime: Long): Int = {
+        Thread.sleep(waitTime)
+        buf += value
+        value
+      }
+
+      implicit val interpreter = new MixedFree.Interpreter[Future] {
+        override def xImpl: Future[Int] = Future(blocker(1, 1000L))
+        override def yImpl: Future[Int] = Future(blocker(2, 0L))
+        override def zImpl: Future[Int] = Future(blocker(3, 2000L))
+      }
+
+      val v = MixedFree[MixedFree.T]
+      import v._
+      import io.freestyle.syntax._
+      val program = for {
+        a <- z //3
+        bc <- (x |@| y).tupled.monad //(1,2)
+        (b, c) = bc
+        d <- z //3
+      } yield a :: b :: c :: d :: Nil // List(3,1,2,3)
+      Await.result(program.exec[Future], Duration.Inf) shouldBe List(3,1,2,3)
+      buf.toArray shouldBe Array(3,2,1,3)
     }
 
   }

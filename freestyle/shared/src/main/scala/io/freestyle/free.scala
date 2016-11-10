@@ -17,6 +17,11 @@ object syntax {
       fa.foldMap(interpreter)
   }
 
+  implicit class FreeApplicativeSyntax[F[_], A](fa: FreeApplicative[F, A]) {
+    def exec[G[_]: Applicative](implicit interpreter: FunctionK[F, G]): G[A] =
+      fa.foldMap(interpreter)
+  }
+
   implicit def interpretCoproduct[F[_], G[_], M[_]](implicit fm: FunctionK[F,M], gm: FunctionK[G, M]): FunctionK[Coproduct[F, G, ?], M] =
     fm or gm
 
@@ -25,6 +30,22 @@ object syntax {
 @compileTimeOnly("enable macro paradise to expand @module macro annotations")
 class free extends StaticAnnotation {
   def macroTransform(annottees: Any*): Any = macro free.impl
+}
+
+/** This may eventually make it to cats once we have a solid impl */
+object FreeApplicativeExt {
+
+  def inject[F[_], G[_]]: FreeApInjectPartiallyApplied[F, G] =
+    new FreeApInjectPartiallyApplied
+
+  /**
+   * Pre-application of an injection to a `F[A]` value.
+   */
+  final class FreeApInjectPartiallyApplied[F[_], G[_]] {
+    def apply[A](fa: F[A])(implicit I: Inject[F, G]): FreeApplicative[G, A] =
+      FreeApplicative.lift(I.inj(fa))
+  }
+
 }
 
 object free {
@@ -60,6 +81,7 @@ object free {
       for {
         method <- clsRestBody filter {
           case q"$mods def $name[..$tparams](...$paramss): Free[..$args]" => true
+          case q"$mods def $name[..$tparams](...$paramss): FreeApplicative[..$args]" => true
           case _ => false
         }
         sc @ DefDef(_, _, _, _, tpe: AppliedTypeTree, _) = method
@@ -94,7 +116,13 @@ object free {
             println(showRaw(caseObjectType))
             caseObjectType
         }
-        impl = q"Free.inject[..$injTpeArgs]($companionApply)"
+        AppliedTypeTree(tpt, _) = sc.tpt
+        impl = tpt match {
+          case Ident(TypeName(tp)) if tp.endsWith("Free") =>
+            q"cats.free.Free.inject[..$injTpeArgs]($companionApply)"
+          case Ident(TypeName(tp)) if tp.endsWith("FreeApplicative") =>
+            q"io.freestyle.FreeApplicativeExt.inject[..$injTpeArgs]($companionApply)"
+        }
       } yield q"def ${sc.name}[..${sc.tparams}](...${sc.vparamss}): ${sc.tpt} = $impl"
     }
 

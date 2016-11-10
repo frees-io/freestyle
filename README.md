@@ -138,14 +138,17 @@ Freestyle is inspired among others by [`simulacrum`](https://github.com/mpilquis
 - Documentation
   - * Algebras
   - * Modules
-  - Runtime
+  - * Runtime
 	- Abstracting over return types
 	- Purely functional state
-	- Paralell and Non-Determinism
+	- Paralellism and Non-Determinism
+	- Caching and Batching (Fetch)
+	- Distributed computation
   - Application and Library composition
   - Syntax
   - Testing
   - Debugging
   - 3rd Party Integrations
   - Alternatives
+  - Contributors guide
   - Reporting issues
