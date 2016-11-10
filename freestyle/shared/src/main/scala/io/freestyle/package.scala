@@ -108,7 +108,7 @@ package object freestyle {
   implicit def interpretCoproduct[F[_], G[_], M[_]](implicit fm: FunctionK[F,M], gm: FunctionK[G, M]): FunctionK[Coproduct[F, G, ?], M] =
     fm or gm
 
-    implicit def interpretAp[F[_], M[_]: Monad: RecursiveTailRecM]
+  implicit def interpretAp[F[_], M[_]: Monad: RecursiveTailRecM]
       (implicit freeInterpreter: FunctionK[F, M]): FunctionK[FreeApplicative[F, ?], M] =
            new cats.arrow.FunctionK[FreeApplicative[F, ?], M] {
              override def apply[A](fa: FreeApplicative[F, A]): M[A] = fa match {

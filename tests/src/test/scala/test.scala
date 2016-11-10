@@ -111,7 +111,7 @@ class tests extends WordSpec with Matchers {
       program.exec[Option] shouldBe Some("abc")
     }
 
-    "allow sequential evaluation of combined Free & FreeS.Pars" in {
+    "allow sequential evaluation of combined FreeS & FreeS.Par" in {
       @free trait MixedFreeS[F[_]] {
         def x(key: String): FreeS.Par[F, String]
         def y(key: String): FreeS.Par[F, String]
@@ -281,16 +281,19 @@ class tests extends WordSpec with Matchers {
 
     import modules._
 
-    "allow non deterministic programs for unsafe Non-deterministic targets" in {
-      import scala.concurrent._
-      import scala.concurrent.duration._
-      import scala.concurrent.ExecutionContext.Implicits.global
-
+    object definitions {
       @free trait MixedFreeS[F[_]] {
         def x: FreeS.Par[F, Int]
         def y: FreeS.Par[F, Int]
         def z: FreeS[F, Int]
       }
+    }
+
+    "allow non deterministic programs for unsafe Non-deterministic targets" in {
+      import definitions._
+      import scala.concurrent._
+      import scala.concurrent.duration._
+      import scala.concurrent.ExecutionContext.Implicits.global
 
       val buf = scala.collection.mutable.ArrayBuffer.empty[Int]
 
@@ -319,6 +322,38 @@ class tests extends WordSpec with Matchers {
       Await.result(program.exec[Future], Duration.Inf) shouldBe List(3,1,2,3)
       buf.toArray shouldBe Array(3,2,1,3)
     }
+
+    "allow deterministic programs with FreeS.Par nodes run deterministically" in {
+      import definitions._
+
+      val buf = scala.collection.mutable.ArrayBuffer.empty[Int]
+
+      def blocker(value: Int, waitTime: Long): Int = {
+        Thread.sleep(waitTime)
+        buf += value
+        value
+      }
+
+      implicit val interpreter = new MixedFreeS.Interpreter[Option] {
+        override def xImpl: Option[Int] = Option(blocker(1, 1000L))
+        override def yImpl: Option[Int] = Option(blocker(2, 0L))
+        override def zImpl: Option[Int] = Option(blocker(3, 2000L))
+      }
+
+      val v = MixedFreeS[MixedFreeS.T]
+      import v._
+      import io.freestyle.implicits._
+      val program = for {
+        a <- z //3
+        bc <- (x |@| y).tupled.seq //(1,2)
+        (b, c) = bc
+        d <- z //3
+      } yield a :: b :: c :: d :: Nil // List(3,1,2,3)
+      program.exec[Option] shouldBe Option(List(3,1,2,3))
+      buf.toArray shouldBe Array(3,1,2,3)
+    }
+
+    
 
   }
 
