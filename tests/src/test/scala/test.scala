@@ -279,29 +279,42 @@ class tests extends WordSpec with Matchers {
 
   "Applicative Parallel Support" should {
 
-    import modules._
+    import algebras._
 
-    object definitions {
-      @free trait MixedFreeS[F[_]] {
-        def x: FreeS.Par[F, Int]
-        def y: FreeS.Par[F, Int]
-        def z: FreeS[F, Int]
-      }
+    class NonDeterminismTestShared {
+      import io.freestyle.implicits.parallel._
+      import io.freestyle.implicits._
+
+        val buf = scala.collection.mutable.ArrayBuffer.empty[Int]
+
+        def blocker(value: Int, waitTime: Long): Int = {
+          Thread.sleep(waitTime)
+          buf += value
+          value
+        }
+
+        val v = MixedFreeS[MixedFreeS.T]
+        import v._
+
+        val program = for {
+          a <- z //3
+          bc <- (x |@| y).tupled.seq //(1,2)
+          (b, c) = bc
+          d <- z //3
+        } yield a :: b :: c :: d :: Nil // List(3,1,2,3)
+
     }
 
-    "allow non deterministic programs for unsafe Non-deterministic targets" in {
-      import definitions._
+    "allow non deterministic execution when interpreting to scala.concurrent.Future" in {
+      import io.freestyle.implicits.parallel._
+      import io.freestyle.implicits._
+
       import scala.concurrent._
       import scala.concurrent.duration._
       import scala.concurrent.ExecutionContext.Implicits.global
 
-      val buf = scala.collection.mutable.ArrayBuffer.empty[Int]
-
-      def blocker(value: Int, waitTime: Long): Int = {
-        Thread.sleep(waitTime)
-        buf += value
-        value
-      }
+      val test = new NonDeterminismTestShared
+      import test._
 
       implicit val interpreter = new MixedFreeS.Interpreter[Future] {
         override def xImpl: Future[Int] = Future(blocker(1, 1000L))
@@ -309,30 +322,41 @@ class tests extends WordSpec with Matchers {
         override def zImpl: Future[Int] = Future(blocker(3, 2000L))
       }
 
-      val v = MixedFreeS[MixedFreeS.T]
-      import v._
-      import io.freestyle.implicits._
-      import io.freestyle.implicits.parallel._
-      val program = for {
-        a <- z //3
-        bc <- (x |@| y).tupled.seq //(1,2)
-        (b, c) = bc
-        d <- z //3
-      } yield a :: b :: c :: d :: Nil // List(3,1,2,3)
       Await.result(program.exec[Future], Duration.Inf) shouldBe List(3,1,2,3)
       buf.toArray shouldBe Array(3,2,1,3)
     }
 
-    "allow deterministic programs with FreeS.Par nodes run deterministically" in {
-      import definitions._
+    "allow non deterministic execution when interpreting to monix.eval.Task" in {
+      import io.freestyle.implicits.parallel._
+      import io.freestyle.implicits._
 
-      val buf = scala.collection.mutable.ArrayBuffer.empty[Int]
+      import scala.concurrent._
+      import scala.concurrent.duration._
+      import monix.cats._
+      import monix.eval.Task
+      import monix.eval.Task.nondeterminism
+      import monix.execution.Scheduler.Implicits.global
 
-      def blocker(value: Int, waitTime: Long): Int = {
-        Thread.sleep(waitTime)
-        buf += value
-        value
+      val test = new NonDeterminismTestShared
+      import test._
+
+      implicit val interpreter = new MixedFreeS.Interpreter[Task] {
+        override def xImpl: Task[Int] = Task(blocker(1, 1000L))
+        override def yImpl: Task[Int] = Task(blocker(2, 0L))
+        override def zImpl: Task[Int] = Task(blocker(3, 2000L))
       }
+
+      Await.result(program.exec[Task].runAsync, Duration.Inf) shouldBe List(3,1,2,3)
+      buf.toArray shouldBe Array(3,2,1,3)
+    }
+
+
+    "allow deterministic programs with FreeS.Par nodes run deterministically" in {
+      import io.freestyle.implicits.parallel._
+      import io.freestyle.implicits._
+      
+      val test = new NonDeterminismTestShared
+      import test._
 
       implicit val interpreter = new MixedFreeS.Interpreter[Option] {
         override def xImpl: Option[Int] = Option(blocker(1, 1000L))
@@ -340,20 +364,49 @@ class tests extends WordSpec with Matchers {
         override def zImpl: Option[Int] = Option(blocker(3, 2000L))
       }
 
-      val v = MixedFreeS[MixedFreeS.T]
-      import v._
-      import io.freestyle.implicits._
-      val program = for {
-        a <- z //3
-        bc <- (x |@| y).tupled.seq //(1,2)
-        (b, c) = bc
-        d <- z //3
-      } yield a :: b :: c :: d :: Nil // List(3,1,2,3)
       program.exec[Option] shouldBe Option(List(3,1,2,3))
       buf.toArray shouldBe Array(3,1,2,3)
     }
 
-    
+    /**
+      * Similar example as the one found at
+      * http://typelevel.org/cats/datatypes/freeapplicative.html
+      */
+    "allow validation style algebras derived from FreeS.Par" in {
+      import cats.data.Kleisli
+      import cats.implicits._
+      import scala.concurrent._
+      import scala.concurrent.duration._
+      import scala.concurrent.ExecutionContext.Implicits.global
+
+      import io.freestyle.implicits.parallel._
+      import io.freestyle.implicits._
+
+      type ParValidator[A] = Kleisli[Future, String, A]
+
+      @free trait Validation[F[_]] {
+        def minSize(n: Int): FreeS.Par[F, Boolean]
+        def hasNumber: FreeS.Par[F, Boolean]
+      }
+
+      implicit val interpreter = new Validation.Interpreter[ParValidator] {
+        override def minSizeImpl(n: Int): ParValidator[Boolean] =
+          Kleisli(s => Future(s.size >= n))
+        override def hasNumberImpl: ParValidator[Boolean] =
+          Kleisli(s => Future(s.exists(c => "0123456789".contains(c))))
+      }
+
+      val validation = Validation[Validation.T]
+      import validation._
+
+      val parValidation = (minSize(3) |@| hasNumber).map(_ :: _ :: Nil)
+      val validator = parValidation.exec[ParValidator]
+
+      Await.result(validator.run("a"), Duration.Inf) shouldBe List(false, false)
+      Await.result(validator.run("abc"), Duration.Inf) shouldBe List(true, false)
+      Await.result(validator.run("abc1"), Duration.Inf) shouldBe List(true, true)
+      Await.result(validator.run("1a"), Duration.Inf) shouldBe List(false, true)
+    }
 
   }
 
@@ -379,6 +432,12 @@ object algebras {
   @free trait SCtors4[F[_]] {
     def k(a: Int): FreeS[F, Int]
     def l(a: Int): FreeS[F, Int]
+  }
+
+  @free trait MixedFreeS[F[_]] {
+    def x: FreeS.Par[F, Int]
+    def y: FreeS.Par[F, Int]
+    def z: FreeS[F, Int]
   }
 
 }

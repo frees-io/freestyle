@@ -9,8 +9,9 @@ val gh   = GitHubSettings("com.fortysevendeg", "freestyle", "47 Degrees", apache
 val vAll = Versions(versions, libraries, scalacPlugins)
 
 lazy val commonSettings = Seq(
-  scalaVersion := "2.11.8",
-  scalaOrganization := "org.typelevel",
+  scalaVersion in ThisBuild := "2.11.8", 
+  //scalaOrganization := "org.typelevel", disabled until supported by Ensime
+  addCompilerPlugin("com.milessabin" % "si2712fix-plugin" % "1.2.0" cross CrossVersion.full),
   resolvers += Resolver.sonatypeRepo("releases"),
   organization := gh.org,
   organizationName := gh.publishOrg,
@@ -19,8 +20,8 @@ lazy val commonSettings = Seq(
   startYear := Some(2016),
   description := "Freestyle is a library to help building libraries and applications based on Free monads.",
   scalacOptions in ThisBuild ++= Seq(
-    "-Ypartial-unification", // enable fix for SI-2712
-    "-Yliteral-types",       // enable SIP-23 implementation
+    //"-Ypartial-unification", // enable fix for SI-2712
+    //"-Yliteral-types",       // enable SIP-23 implementation
     "-Xplugin-require:macroparadise",
     "-deprecation",
     "-encoding", "UTF-8",
@@ -42,7 +43,7 @@ lazy val commonSettings = Seq(
     //"-Xlog-implicits",
     //"-Xprint:typer"
     //"-Ymacro-debug-lite"
-  )  
+  )
 ) ++
   sharedCommonSettings ++
   sharedReleaseProcess ++
@@ -61,8 +62,7 @@ lazy val freestyle = (crossProject in file("freestyle")).
   settings(name := "freestyle").
   settings(
     libraryDependencies ++= Seq(
-      "org.scala-lang" % "scala-reflect" % "2.11.8",
-      "org.scalatest" %%% "scalatest" % "3.0.0" % "test"
+      "org.scala-lang" % "scala-reflect" % "2.11.8"
     )
   ).
   jsSettings(sharedJsSettings: _*)
@@ -70,8 +70,23 @@ lazy val freestyle = (crossProject in file("freestyle")).
 lazy val freestyleJVM = freestyle.jvm
 lazy val freestyleJS  = freestyle.js
 
+lazy val freestyleMonix = (crossProject in file("freestyle-monix")).
+  settings(commonSettings: _*).
+  settings(name := "freestyle-monix").
+  settings(
+    libraryDependencies ++= Seq(
+      "io.monix" %%% "monix-eval" % versions("monix"),
+      "io.monix" %%% "monix-cats" % versions("monix")
+    )
+  ).
+  jsSettings(sharedJsSettings: _*)
+
+lazy val freestyleMonixJVM = freestyleMonix.jvm
+lazy val freestyleMonixJS  = freestyleMonix.js
+
 lazy val tests = (project in file("tests")).
   dependsOn(freestyleJVM).
+  dependsOn(freestyleMonixJVM).
   settings(commonSettings: _*).
   settings(noPublishSettings: _*).
   settings(

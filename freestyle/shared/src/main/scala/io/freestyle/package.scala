@@ -53,8 +53,8 @@ package object freestyle {
       new FreeApInjectPartiallyApplied
 
     /**
-      * Pre-application of an injection to a `F[A]` value.
-      */
+     * Pre-application of an injection to a `F[A]` value.
+     */
     final class FreeApInjectPartiallyApplied[F[_], G[_]] {
       def apply[A](fa: F[A])(implicit I: Inject[F, G]): FreeApplicative[G, A] =
         FreeApplicative.lift(I.inj(fa))
@@ -62,88 +62,89 @@ package object freestyle {
 
   }
 
-
   object implicits {
 
     import cats._
     import cats.arrow.FunctionK
     import cats.data.Coproduct
 
-  // Syntax functions on `SeqPar`
-  implicit class SeqParOps[F[_], A](private val seqpar: SeqPar[F, A]) extends AnyVal {
+    // Syntax functions on `SeqPar`
+    implicit class SeqParOps[F[_], A](private val seqpar: SeqPar[F, A]) extends AnyVal {
 
-    /**
-     * Applies the most general optimization from a parallel program fragment
-     * in `f` to a sequential.
-     */
-    def optimize[G[_]](opt: ParOptimizer[F, G]): SeqPar[G, A] =
-      seqpar.foldMap(opt)
+      /**
+       * Applies the most general optimization from a parallel program fragment
+       * in `f` to a sequential.
+       */
+      def optimize[G[_]](opt: ParOptimizer[F, G]): SeqPar[G, A] =
+        seqpar.foldMap(opt)
 
-    /** Applies a parallel-to-parallel optimization */
-    def parOptimize[G[_]](opt: ParInterpreter[F, FreeApplicative[G, ?]]): SeqPar[G, A] =
-      seqpar.compile(opt)
+      /** Applies a parallel-to-parallel optimization */
+      def parOptimize[G[_]](opt: ParInterpreter[F, FreeApplicative[G, ?]]): SeqPar[G, A] =
+        seqpar.compile(opt)
 
-    /**
-     * Runs a seq/par program by converting each parallel fragment in `f` into an `H`
-     * `H` should probably be an `IO`/`Task` like `Monad` also providing parallel execution.
-     */
-    def run[H[_]: Monad: RecursiveTailRecM](f: ParInterpreter[F, H]): H[A] =
-      seqpar.foldMap(f)
-  }
-
-  /** Syntax functions for FreeApplicative
-    */
-  implicit class ParLift[F[_], A](private val dp: FreeApplicative[F, A]) extends AnyVal {
-
-    /** Back to sequential computation in the context of SeqPar
-      */
-    def seq: SeqPar[F, A] = SeqPar.liftPar(dp)
-  }
-
-  implicit class SeqParExecSyntax[F[_], A](fa: SeqPar[F, A]) {
-    def exec[G[_]: Monad: RecursiveTailRecM](implicit interpreter: FunctionK[FreeApplicative[F, ?], G]): G[A] =
-      fa.foldMap(interpreter)
-  }
-
-  implicit def interpretCoproduct[F[_], G[_], M[_]](implicit fm: FunctionK[F,M], gm: FunctionK[G, M]): FunctionK[Coproduct[F, G, ?], M] =
-    fm or gm
-
-  implicit def interpretAp[F[_], M[_]: Monad: RecursiveTailRecM]
-      (implicit freeInterpreter: FunctionK[F, M]): FunctionK[FreeApplicative[F, ?], M] =
-           new cats.arrow.FunctionK[FreeApplicative[F, ?], M] {
-             override def apply[A](fa: FreeApplicative[F, A]): M[A] = fa match {
-               case x @ _ => x.foldMap(freeInterpreter)
-             }
-           }
-
-  object parallel {
-
-    import scala.concurrent.Future
-    import scala.concurrent.ExecutionContext
-    import scala.util.control.NonFatal
-
-    implicit def freestyleParallelFutureMonad(implicit ec: ExecutionContext): Monad[Future] =
-      new Monad[Future] {
-
-        def pure[A](x: A): Future[A] = Future.successful(x)
-
-        def flatMap[A, B](fa: Future[A])(f: A => Future[B]): Future[B] = fa.flatMap(f)
-
-        final def tailRecM[B, C](b: B)(f: B => Future[Either[B, C]]): Future[C] =
-          f(b).flatMap {
-            case Left(b1) => tailRecM(b1)(f)
-            case Right(c) => Future.successful(c)
-          }
-
-        override def map[A, B](fa: Future[A])(f: A => B): Future[B] = fa.map(f)
-
-        override def ap[A, B](ff: Future[A => B])(fa: Future[A]): Future[B] =
-          fa.zip(ff).map { case (a, f) => f(a) }
-
-      }
-  }
+      /**
+       * Runs a seq/par program by converting each parallel fragment in `f` into an `H`
+       * `H` should probably be an `IO`/`Task` like `Monad` also providing parallel execution.
+       */
+      def run[H[_]: Monad: RecursiveTailRecM](f: ParInterpreter[F, H]): H[A] =
+        seqpar.foldMap(f)
     }
 
+    /**
+     * Syntax functions for FreeApplicative
+     */
+    implicit class ParLift[F[_], A](private val dp: FreeApplicative[F, A]) extends AnyVal {
 
+      /**
+       * Back to sequential computation in the context of SeqPar
+       */
+      def seq: SeqPar[F, A] = SeqPar.liftPar(dp)
+
+      def exec[G[_]: Applicative](implicit interpreter: FunctionK[F, G]): G[A] =
+        dp.foldMap(interpreter)
+    }
+
+    implicit class SeqParExecSyntax[F[_], A](fa: SeqPar[F, A]) {
+      def exec[G[_]: Monad: RecursiveTailRecM](implicit interpreter: FunctionK[FreeApplicative[F, ?], G]): G[A] =
+        fa.foldMap(interpreter)
+    }
+
+    implicit def interpretCoproduct[F[_], G[_], M[_]](implicit fm: FunctionK[F, M], gm: FunctionK[G, M]): FunctionK[Coproduct[F, G, ?], M] =
+      fm or gm
+
+    implicit def interpretAp[F[_], M[_]: Monad: RecursiveTailRecM](implicit freeInterpreter: FunctionK[F, M]): FunctionK[FreeApplicative[F, ?], M] =
+      new cats.arrow.FunctionK[FreeApplicative[F, ?], M] {
+        override def apply[A](fa: FreeApplicative[F, A]): M[A] = fa match {
+          case x @ _ => x.foldMap(freeInterpreter)
+        }
+      }
+
+    object parallel {
+
+      import scala.concurrent.Future
+      import scala.concurrent.ExecutionContext
+      import scala.util.control.NonFatal
+
+      implicit def freestyleParallelFutureMonad(implicit ec: ExecutionContext): Monad[Future] =
+        new Monad[Future] {
+
+          def pure[A](x: A): Future[A] = Future.successful(x)
+
+          def flatMap[A, B](fa: Future[A])(f: A => Future[B]): Future[B] = fa.flatMap(f)
+
+          final def tailRecM[B, C](b: B)(f: B => Future[Either[B, C]]): Future[C] =
+            f(b).flatMap {
+              case Left(b1) => tailRecM(b1)(f)
+              case Right(c) => Future.successful(c)
+            }
+
+          override def map[A, B](fa: Future[A])(f: A => B): Future[B] = fa.map(f)
+
+          override def ap[A, B](ff: Future[A => B])(fa: Future[A]): Future[B] =
+            fa.zip(ff).map { case (a, f) => f(a) }
+
+        }
+    }
+  }
 
 }
