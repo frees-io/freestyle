@@ -6,7 +6,7 @@ title: Interpreters
 # Interpreters
 
 As part of its design Freestyle is compatible with Free and traditional patterns around it. Apps build with Freestyle give developers the freedom
-to choose Automatic or manual algebras, modules and interpreters and interleave them as you see fit in applications based on the desired encoding.
+to choose Automatic or manual algebras, modules and interpreters and intremix them as you see fit in applications based on the desired encoding.
 
 ## Implementation
 
@@ -15,17 +15,16 @@ algebras annotated with `@free`.
 This allow you to build the proper runtime definitions for your algebras by simply extending the `Interpreter[M[_]]`
 member in your algebras companion.
 
-Consider the following Algebra from the [Typelevel Cats Free monads examples]()
+Consider the following Algebra adapted to Freestyle from the [Typelevel Cats Free monads examples]()
 
 ```tut:silent
 import io.freestyle._
-import cats.free.Free
 
 @free trait KVStore[F[_]] {
    def put[A](key: String, value: A): Free[F, Unit]
-   
+
    def get[A](key: String): Free[F, Option[A]]
-   
+
    def delete(key: String): Free[F, Unit]
 }
 ```
@@ -39,22 +38,23 @@ import cats.data.State
 type KVStoreState[A] = State[Map[String, Any], A]
 
 implicit def kvStoreInterpreter: KVStore.Interpreter[KVStoreState] {
-   
+
    def putImpl[A](key: String, value: A): KVStoreState[Unit] =
      State.modify(_.updated(key, value))
-   
-   def getImpl[A](key: String): KVStoreState[A] = 
+
+   def getImpl[A](key: String): KVStoreState[A] =
      State.inspect(_.get(key).map(_.asInstanceOf[A]))
-   
-   def deleteImpl(key: String): KVStoreState[Unit] = 
+
+   def deleteImpl(key: String): KVStoreState[Unit] =
      State.modify(_ - key)
 }
 ```
 
 As you may have noticed in Freestyle instead of implementing a Natural transformation from your Algebra to a target `M[_]` we
-instead implement methods that closely resemble each one of the smart constructors easing the transition for traditional interface/impl to decouple algebras that can be interpreted by natural transformations.
+instead implement methods that closely resemble each one of the smart constructors in our @free algebras.
+This is not an imposition but rather a comvinience as the resulting instances are still Natural Transformations.
 
-`KVStore.Interpreter[M[_]]` it's actually already a Natural transformation of type `KVStore.T ~> KVStoreState` in which on its
+In the example above `KVStore.Interpreter[M[_]]` it's actually already a Natural transformation of type `KVStore.T ~> KVStoreState` in which on its
 `apply` function automatically delegates each step to the abstract method that you are implementing as part of the Interpreter.
 
 Alternatively if you would rather implement a natural transformation by hand you can still do that by choosing not to implement
@@ -64,11 +64,11 @@ Alternatively if you would rather implement a natural transformation by hand you
 implicit def manualKvStoreInterpreter: KVStore.T ~> KVStoreState = new (KVStore.T ~> KVStoreState) {
 def apply[A](fa: KVStoreA[A]): KVStoreState[A] =
     fa match {
-      case KVStore.PutOP(key, value) => 
+      case KVStore.PutOP(key, value) =>
 	    State.modify(_.updated(key, value))
       case KVStore.GetOP(key) =>
         State.inspect(_.get(key).map(_.asInstanceOf[A]))
-      case KVStore.DeleteOP(key) => 
+      case KVStore.DeleteOP(key) =>
 	    State.modify(_ - key)
     }
 }
@@ -110,7 +110,7 @@ When `@module` is materialized it will automatically create the Coproduct that m
 below.
 
 ```
-def program[F[_]](implicit B: Backend[F]): KVStore[Option[Int]] = {
+def program[F[_]](implicit B: Backend[F]): FreeS[Option[Int]] = {
   import B.store._, B.log._
   for {
     _ <- put("wild-cats", 2)
@@ -125,23 +125,18 @@ def program[F[_]](implicit B: Backend[F]): KVStore[Option[Int]] = {
 }
 ```
 
-Once we have combined our algebras we can simply evaluate them by providing implicit evidence of the interpreters of each one of them.
+Once we have combined our algebras we can simply evaluate them by providing implicit evidence of the Coproduct interpreters.
+`import io.freestyle.implicits._` brings into scope among others the necessary implicit definitions to derive a unified interpreter given
+implicit evidences of each one of the individual algebra's interpreters.
 
 ```
 import io.freestyle.implicits._
 program[Backend.T].exec[KVStore]
 ```
 
-Alternatively you can require implicit evidence of the natural transformation and manually feed it into `Free#foldMap`
-
-```
-import io.freestyle.implicits._
-val allInterpreters[Backend.T ~> KVStore] = implicitly
-program[Backend.T].foldMap[KVStore](allInterpreters)
-```
-
-Or build your interpreters by hand if you wish not to use Freestyle implicit machinery.
-This may quickly grow unwildly as the number of algebras increase in an application.
+Alternatively you can build your interpreters by hand if you wish not to use Freestyle implicit machinery.
+This may quickly grow unwildly as the number of algebras increase in an application but it's also possible in the spirit of providing two way compatibility
+in all areas between manually built ADTs and Natural Transformations and the ones automatically derived by Freestyle.
 
 ```
 val manualInterpreters[Backend.T ~> KVStore] = kvStoreInterpreter or logInterpreter

@@ -2,6 +2,8 @@
 layout: home
 ---
 
+EXPERIMENTAL WIP.
+
 [![Build Status](https://travis-ci.org/47deg/freestyle.svg?branch=master)](https://travis-ci.org/47deg/freestyle) [![Join the chat at https://gitter.im/47deg/freestyle](https://badges.gitter.im/47deg/freestyle.svg)](https://gitter.im/47deg/freestyle?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 # Freestyle
@@ -87,11 +89,9 @@ object DataOps {
 
 ```
 
-Freestyle generates all the necessary boilerplate machinery including ADTs, Inject instances and companions with
-proper implicits.
+Freestyle generates all the necessary boilerplate machinery including ADTs, Inject instances and companions with proper implicits.
 Eliminating this boilerplate allows developers to concentrate in the business logic by simply
-describing abstract functions where one can define the needed arguments and expected return type without providing
-implementations.
+describing abstract functions where one can define the needed arguments and expected return type without providing implementations.
 
 This is all you need to start building a Free program free of runtime interpretation.
 
@@ -134,18 +134,3 @@ Freestyle is inspired among others by [`simulacrum`](https://github.com/mpilquis
 - [cats](http://typelevel.org/cats)
 - [kind-projector](https://github.com/non/kind-projector)
 - [sbt-microsites](https://47deg.github.io/sbt-microsites/)
-
-- Documentation
-  - * Algebras
-  - * Modules
-  - Runtime
-	- Abstracting over return types
-	- Purely functional state
-	- Paralell and Non-Determinism
-  - Application and Library composition
-  - Syntax
-  - Testing
-  - Debugging
-  - 3rd Party Integrations
-  - Alternatives
-  - Reporting issues
