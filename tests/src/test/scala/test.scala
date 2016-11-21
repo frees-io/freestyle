@@ -282,7 +282,7 @@ class tests extends WordSpec with Matchers {
     import algebras._
 
     class NonDeterminismTestShared {
-      import io.freestyle.implicits.parallel._
+      import io.freestyle.nondeterminism._
       import io.freestyle.implicits._
 
         val buf = scala.collection.mutable.ArrayBuffer.empty[Int]
@@ -306,7 +306,7 @@ class tests extends WordSpec with Matchers {
     }
 
     "allow non deterministic execution when interpreting to scala.concurrent.Future" in {
-      import io.freestyle.implicits.parallel._
+      import io.freestyle.nondeterminism._
       import io.freestyle.implicits._
 
       import scala.concurrent._
@@ -327,7 +327,7 @@ class tests extends WordSpec with Matchers {
     }
 
     "allow non deterministic execution when interpreting to monix.eval.Task" in {
-      import io.freestyle.implicits.parallel._
+      import io.freestyle.nondeterminism._
       import io.freestyle.implicits._
 
       import scala.concurrent._
@@ -352,7 +352,7 @@ class tests extends WordSpec with Matchers {
 
 
     "allow deterministic programs with FreeS.Par nodes run deterministically" in {
-      import io.freestyle.implicits.parallel._
+      import io.freestyle.nondeterminism._
       import io.freestyle.implicits._
       
       val test = new NonDeterminismTestShared
@@ -379,7 +379,7 @@ class tests extends WordSpec with Matchers {
       import scala.concurrent.duration._
       import scala.concurrent.ExecutionContext.Implicits.global
 
-      import io.freestyle.implicits.parallel._
+      import io.freestyle.nondeterminism._
       import io.freestyle.implicits._
 
       type ParValidator[A] = Kleisli[Future, String, A]
@@ -406,6 +406,14 @@ class tests extends WordSpec with Matchers {
       Await.result(validator.run("abc"), Duration.Inf) shouldBe List(true, false)
       Await.result(validator.run("abc1"), Duration.Inf) shouldBe List(true, true)
       Await.result(validator.run("1a"), Duration.Inf) shouldBe List(false, true)
+    }
+
+  }
+
+  "Doobie persistence" should {
+
+    "Allow doobie queries in the context of Freestyle algebras" in {
+
     }
 
   }

@@ -10,9 +10,9 @@ val vAll = Versions(versions, libraries, scalacPlugins)
 
 lazy val commonSettings = Seq(
   scalaVersion in ThisBuild := "2.11.8", 
-  //scalaOrganization := "org.typelevel", disabled until supported by Ensime
-  addCompilerPlugin("com.milessabin" % "si2712fix-plugin" % "1.2.0" cross CrossVersion.full),
-  resolvers += Resolver.sonatypeRepo("releases"),
+  scalaOrganization in ThisBuild := "org.typelevel",//, disabled until supported by Ensime
+  //addCompilerPlugin("com.milessabin" % "si2712fix-plugin" % "1.2.0" cross CrossVersion.full),
+  resolvers ++= Seq(Resolver.sonatypeRepo("snapshots"), Resolver.sonatypeRepo("releases")),
   organization := gh.org,
   organizationName := gh.publishOrg,
   homepage := Option(url("http://www.47deg.com")),
@@ -20,8 +20,8 @@ lazy val commonSettings = Seq(
   startYear := Some(2016),
   description := "Freestyle is a library to help building libraries and applications based on Free monads.",
   scalacOptions in ThisBuild ++= Seq(
-    //"-Ypartial-unification", // enable fix for SI-2712
-    //"-Yliteral-types",       // enable SIP-23 implementation
+    "-Ypartial-unification", // enable fix for SI-2712
+    "-Yliteral-types",       // enable SIP-23 implementation
     "-Xplugin-require:macroparadise",
     "-deprecation",
     "-encoding", "UTF-8",
@@ -32,15 +32,15 @@ lazy val commonSettings = Seq(
     "-language:reflectiveCalls",
     "-language:experimental.macros",
     "-unchecked",
-    "-Xfatal-warnings",
-    "-Xlint",
+    //"-Xfatal-warnings",
+    //"-Xlint",
     "-Yinline-warnings",
     "-Yno-adapted-args",
     "-Ywarn-dead-code",
     "-Ywarn-numeric-widen",
     "-Ywarn-value-discard",
     "-Xfuture"
-    //"-Xlog-implicits",
+    //"-Xlog-implicits"
     //"-Xprint:typer"
     //"-Ymacro-debug-lite"
   )
@@ -50,7 +50,6 @@ lazy val commonSettings = Seq(
   credentialSettings ++
   sharedPublishSettings(gh, dev) ++
   miscSettings ++
-  addLibs(vAll, "cats-free") ++
   addCompilerPlugins(vAll, "paradise", "kind-projector")
 
 pgpPassphrase := Some(sys.env.getOrElse("PGP_PASSPHRASE", "").toCharArray)
@@ -62,6 +61,7 @@ lazy val freestyle = (crossProject in file("freestyle")).
   settings(name := "freestyle").
   settings(
     libraryDependencies ++= Seq(
+      "org.typelevel" %%% "cats-free" % "0.8.1",
       "org.scala-lang" % "scala-reflect" % "2.11.8"
     )
   ).
@@ -75,14 +75,24 @@ lazy val freestyleMonix = (crossProject in file("freestyle-monix")).
   settings(name := "freestyle-monix").
   settings(
     libraryDependencies ++= Seq(
-      "io.monix" %%% "monix-eval" % versions("monix"),
-      "io.monix" %%% "monix-cats" % versions("monix")
+      "io.monix" %%% "monix-eval" % "2.1.0",
+      "io.monix" %%% "monix-cats" % "2.1.0"
     )
   ).
   jsSettings(sharedJsSettings: _*)
 
 lazy val freestyleMonixJVM = freestyleMonix.jvm
 lazy val freestyleMonixJS  = freestyleMonix.js
+
+lazy val freestyleDoobie = (project in file("freestyle-doobie")).
+  dependsOn(freestyleJVM).
+  settings(commonSettings: _*).
+  settings(name := "freestyle-doobie").
+  settings(
+    libraryDependencies ++= Seq(
+      "org.tpolecat" %% "doobie-core-cats" % "0.3.1-SNAPSHOT" 
+    )
+  )
 
 lazy val tests = (project in file("tests")).
   dependsOn(freestyleJVM).
