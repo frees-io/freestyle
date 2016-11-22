@@ -8,7 +8,7 @@ EXPERIMENTAL WIP.
 
 # Freestyle
 
-**Freestyle** is a library that enables builing large-scale modular Scala applications and libraries on top of Free monads/applicatives.
+**Freestyle** is a library that enables building large-scale modular Scala applications and libraries on top of Free monads/applicatives.
 
 You may want to consider using Freestyle if among your concerns are:
 
@@ -24,11 +24,11 @@ Freestyle optionally includes
 
 ## Quick Start
 
-Take a look at the [quick start guide](quickstart.html) to understand the main features of Freestyle
+Take a look at the [quick start guide](docs/quickstart.html) to understand the main features of Freestyle
 
 ## Documentation
 
-Freestyle includes extensive [documentation](index.html) for each one of its features and third party integrations
+Freestyle includes extensive [documentation](docs/algebras.html) for each one of its features and third party integrations
 
 ## Rationale
 
@@ -42,7 +42,7 @@ Freestyle simplifies this process by automatically generating all the boilerplat
 Freestyle also provides the necessary implicit machinery to agreggate algebras into modules and submodules to achieve Onion style architectures built atop Free.
 where you can group your concerns into logical components.
 
-Freestyle goal is to empower users unleashing the full power of Functional Programming based arhcitectures in Scala while remaining beginner friendly.
+Freestyle goal is to empower users unleashing the full power of Functional Programming based architectures in Scala while remaining beginner friendly.
 
 ## Example
 
@@ -75,9 +75,6 @@ import cats.data._
 import cats.free._
 import cats.implicits._
 
-/** An application as a Coproduct of it's ADTs */
-type Application[A] = Coproduct[Interact, DataOp, A]
-
 /** User Interaction Algebra */
 sealed abstract class Interact[A] extends Product with Serializable
 case class Ask(prompt: String) extends Interact[String]
@@ -106,6 +103,9 @@ class DataOps[F[_]](implicit I: Inject[DataOp, F]) {
 object DataOps {
   implicit def dataOps[F[_]](implicit I: Inject[DataOp, F]): DataOps[F] = new DataOps[F]
 }
+
+/** An application as a Coproduct of it's ADTs */
+type Application[A] = Coproduct[Interact, DataOp, A]
 ```
 
 Freestyle generates all the necessary boilerplate machinery including ADTs, Inject instances and companions with proper implicits.

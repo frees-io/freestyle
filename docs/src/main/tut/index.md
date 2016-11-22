@@ -8,55 +8,72 @@ EXPERIMENTAL WIP.
 
 # Freestyle
 
-**Freestyle** is a boilerplate reduction library to make working with `Free` monads based architectures a breeze.
+**Freestyle** is a library that enables building large-scale modular Scala applications and libraries on top of Free monads/applicatives.
 
-# Rationale
+You may want to consider using Freestyle if among your concerns are:
+
+- Decoupling program declaration from runtime interpretation
+- Automatic composition of dispair monadic/applicative style actions originating from independent ADTs.
+- Automatic onion style architectures through composable modules without the complexity of manually aligning Coproducts and interpreters.
+- Boilerplate-free application and libraries.
+
+Freestyle optionally includes
+
+- Ready to use integrations to achieve parallelism through [`scala.concurrent.Future`](), [`Akka`]() Actors and [`Monix`]() Task.
+- Ready to use integrations that cover most of the commons applications concerns such as [logging](), [configuration](), [dependency injection](), [persistence](), etc.
+
+## Quick Start
+
+Take a look at the [quick start guide](docs/quickstart.html) to understand the main features of Freestyle
+
+## Documentation
+
+Freestyle includes extensive [documentation](docs/algebras.html) for each one of its features and third party integrations
+
+## Rationale
 
 [`Free`]() monads based architectures have become popular in Scala as a way to organize libraries and applications.
 When using `Free` we model effects and actions as Algebraic Data Types (ADTs).
-Scala emulates [`Algebraic Data Types`]() through sealed hierarchies on which each class extending the root class represents one of the monadic steps you can perform when
-constructing your program. Unfortunately this results in a decent amount of boilerplate in order to properly
-combine and [compose ADTs]().
+Scala emulates [`Algebraic Data Types`]() through sealed hierarchies on which each class extending the root class represents one of the monadic steps or applicative computations you can perform when
+constructing your program. Unfortunately this results in a decent amount of boilerplate in order to properly combine and [compose ADTs]().
 
-Freestyle simplifies this process by automatically generating all the boilerplate you need in order to compose `Free` monads originating from unrelated ADTs.
+Freestyle simplifies this process by automatically generating all the boilerplate you need in order to compose `Free` monads/applicatives operations originating from unrelated ADTs.
+
+Freestyle also provides the necessary implicit machinery to agreggate algebras into modules and submodules to achieve Onion style architectures built atop Free.
+where you can group your concerns into logical components.
+
+Freestyle goal is to empower users unleashing the full power of Functional Programming based architectures in Scala while remaining beginner friendly.
+
+## Example
 
 The following Freestyle code:
 
-```scala
-
+```tut:silent
 import io.freestyle._
-import cats.free._
 
 @free trait Interacts[F[_]] {
-  def tell(msg: String): Free[F, Unit]
-  def ask(prompt: String): Free[F, String]
+  def tell(msg: String): FreeS[F, Unit]
+  def ask(prompt: String): FreeS[F, String]
 }
 
 @free trait DataOps[F[_]] {
-  def addCat(a: String): Free[F, String]
-  def getAllCats: Free[F, List[String]]
+  def addCat(a: String): FreeS[F, String]
+  def getAllCats: FreeS[F, List[String]]
 }
 
 @module trait Application[F[_]] {
   val interacts: Interacts[F]
   val dataOps: DataOps[F]
 }
-
 ```
 
-It's closely equivalent to:
+It's closely equivalent to it's non Freestyle version:
 
-```scala
-
+```tut:silent
 import cats._
 import cats.data._
 import cats.free._
 import cats.implicits._
-
-import scala.util.Try
-
-/** An application as a Coproduct of it's ADTs */
-type Application[A] = Coproduct[Interact, DataOp, A]
 
 /** User Interaction Algebra */
 sealed abstract class Interact[A] extends Product with Serializable
@@ -87,6 +104,8 @@ object DataOps {
   implicit def dataOps[F[_]](implicit I: Inject[DataOp, F]): DataOps[F] = new DataOps[F]
 }
 
+/** An application as a Coproduct of it's ADTs */
+type Application[A] = Coproduct[Interact, DataOp, A]
 ```
 
 Freestyle generates all the necessary boilerplate machinery including ADTs, Inject instances and companions with proper implicits.
@@ -95,16 +114,15 @@ describing abstract functions where one can define the needed arguments and expe
 
 This is all you need to start building a Free program free of runtime interpretation.
 
-Freestyle provides a lot more utilities and it's compatible with Hybrid approaches where you define your own
-ADTs in a more traditional way and combine them with parts built with Freestyle.
+Freestyle is compatible with Hybrid approaches where you define your own ADTs in a more traditional way and combine them with parts built with Freestyle.
 More details about how Freestyle generates boilerplate and other utilities that make functional programming
 with Free monads in Scala easier can be found in its [documentation]()
 
-# Getting started
+# Dependencies
 
 Freestyle is compatible with both Scala JVM and Scala.js.
 
-This project supports Scala 2.10 and 2.11. The project is based on macro paradise.
+This project supports Scala 2.10, 2.11 and 2.12. The project is based on macro paradise.
 
 To use the project, add the following to your build.sbt:
 
@@ -134,3 +152,6 @@ Freestyle is inspired among others by [`simulacrum`](https://github.com/mpilquis
 - [cats](http://typelevel.org/cats)
 - [kind-projector](https://github.com/non/kind-projector)
 - [sbt-microsites](https://47deg.github.io/sbt-microsites/)
+- [monix]()
+- [akka]()
+- [doobie]()

@@ -41,20 +41,20 @@ trait UserRepository[F[_]] {
 }
 
 object UserRepository {
-  trait UserRepositoryOP[A] extends Product with Serializable
-  final case class Get(id: Long) extends UserRepositoryOP[User]
-  final case class Save(user: User) extends UserRepositoryOP[User]
-  final case class GetAll(filter: String) extends UserRepositoryOP[List[User]]
+  trait UserRepositoryOp[A] extends Product with Serializable
+  final case class Get(id: Long) extends UserRepositoryOp[User]
+  final case class Save(user: User) extends UserRepositoryOp[User]
+  final case class GetAll(filter: String) extends UserRepositoryOp[List[User]]
 
-  type T[A] = UserRepositoryOP[A]
+  type T[A] = UserRepositoryOp[A]
 
-  class UserRepositoryImpl[F[_]](implicit I: Inject[UserRepositoryOp, F]) {
-	def get(id: Long): Free[F, User] = Free.inject[UserRepositoryOp, F](Get(id))
+  class UserRepositoryImpl[F[_]](implicit I: Inject[UserRepositoryOp, F]) extends UserRepository[F] {
+	  def get(id: Long): Free[F, User] = Free.inject[UserRepositoryOp, F](Get(id))
     def save(user: User): Free[F, User] = Free.inject[UserRepositoryOp, F](Save(user))
     def getAll(filter: String): Free[F, List[User]] = Free.inject[UserRepositoryOp, F](GetAll(filter))
   }
 
-  implicit def instance[F[_]](implicit I: Inject[UserRepositoryOP, F]): UserRepository[F] =
+  implicit def instance[F[_]](implicit I: Inject[UserRepositoryOp, F]): UserRepository[F] =
     new UserRepositoryImpl[F]
 
   def apply[F[_]](implicit ev: UserRepository[F]): UserRepository[F] = ev
@@ -76,7 +76,7 @@ in [Data types a la Carte]() by Wouter Swierstra.
 As you may have noticed when defining algebras with `@free` there is no need to provide implicit evidences for the necessary
 `Inject` typeclasses that otherwise you need to manually provide to further evaluate your free monads when they are interleaved with other `Free` programs.
 
-Beside providing the apropriate `Inject` evidences Freestyle creates an implicit method that will enable implicit summoning of the smart
+Beside providing the appropriate `Inject` evidences Freestyle creates an implicit method that will enable implicit summoning of the smart
 constructors class implementation and a `apply` methods that allows you to summon instances of your smart constructors class at any point
 in the application in a convenient way. This effectively enables implicits based Dependency Injection where you may choose to override implementations
 using the implicits scoping rules to place different implementations where appropriate.
@@ -96,6 +96,8 @@ ADT node. referring to the Root ADT node it's also possible but discouraged as n
 You may use this to manually build `Coproduct` types which will serve in the parameterization of your application and code as in the example below
 
 ```tut:silent
+import cats.data.Coproduct
+
 @free trait Service1[F[_]]{
 	def x(n: Int): FreeS[F, Int]
 }
@@ -113,6 +115,6 @@ This is obviously far from ideal as building `Coproduct` types by hand often tim
 when the types don't align properly arising from placing them in the wrong order.
 
 Fear not. Freestyle provides a [modular system]() to achieve Onion style architectures and remove all the complexity from building `Coproduct` types by hand and
-compose arbitrarly nested Modules containing Algebras.
+compose arbitrarily nested Modules containing Algebras.
 
-[Continue to Modules]()
+[Continue to Modules](modules.html)
