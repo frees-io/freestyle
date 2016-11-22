@@ -22,6 +22,14 @@ Freestyle optionally includes
 - Ready to use integrations to achieve parallelism through [`scala.concurrent.Future`](), [`Akka`]() Actors and [`Monix`]() Task.
 - Ready to use integrations that cover most of the commons applications concerns such as [logging](), [configuration](), [dependency injection](), [persistence](), etc.
 
+## Quick Start
+
+Take a look at the [quick start guide](quickstart.html) to understand the main features of Freestyle
+
+## Documentation
+
+Freestyle includes extensive [documentation](index.html) for each one of its features and third party integrations
+
 ## Rationale
 
 [`Free`]() monads based architectures have become popular in Scala as a way to organize libraries and applications.
@@ -30,11 +38,11 @@ Scala emulates [`Algebraic Data Types`]() through sealed hierarchies on which ea
 constructing your program. Unfortunately this results in a decent amount of boilerplate in order to properly combine and [compose ADTs]().
 
 Freestyle simplifies this process by automatically generating all the boilerplate you need in order to compose `Free` monads/applicatives operations originating from unrelated ADTs.
+
 Freestyle also provides the necessary implicit machinery to agreggate algebras into modules and submodules to achieve Onion style architectures built atop Free.
 where you can group your concerns into logical components.
 
 Freestyle goal is to empower users unleashing the full power of Functional Programming based arhcitectures in Scala while remaining beginner friendly.
-To discover all Freestyle has to offer please visit its detailed documentation.
 
 ## Example
 
@@ -110,7 +118,7 @@ Freestyle is compatible with Hybrid approaches where you define your own ADTs in
 More details about how Freestyle generates boilerplate and other utilities that make functional programming
 with Free monads in Scala easier can be found in its [documentation]()
 
-# Getting started
+# Dependencies
 
 Freestyle is compatible with both Scala JVM and Scala.js.
 
