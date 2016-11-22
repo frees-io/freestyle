@@ -43,13 +43,13 @@ Independent operations that can be executed potentially in parallel may be place
 Interpreters for operations that are executed in parallel should target a type for which there is a monad instance that supports parallelism.
 Freestyle ships with ready to use instances for `scala.concurrent.Future` and contains extension modules for [`monix.eval.Task`]() and [`akka actors`]()
 
-To enable the instances and support parallelism you need to
+To enable these instances and support parallelism you need to explicitly import:
 
 ```tut:silent
 import io.freestyle.nondeterminism._
 ```
 
-The code below ilustrate an interpreter that will allow parallel executions thanks to the unsafe start of a by name value applied to `scala.concurrent.Future#apply`
+The code below ilustrate an interpreter that will allow parallel executions thanks to the unsafe nature of `scala.concurrent.Future#apply` which runs immediately.
 
 ```tut:silent
 import cats.data.Kleisli
