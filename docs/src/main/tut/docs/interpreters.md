@@ -21,11 +21,11 @@ Consider the following Algebra adapted to Freestyle from the [Typelevel Cats Fre
 import io.freestyle._
 
 @free trait KVStore[F[_]] {
-   def put[A](key: String, value: A): Free[F, Unit]
+   def put[A](key: String, value: A): FreeS[F, Unit]
 
-   def get[A](key: String): Free[F, Option[A]]
+   def get[A](key: String): FreeS[F, Option[A]]
 
-   def delete(key: String): Free[F, Unit]
+   def delete(key: String): FreeS[F, Unit]
 }
 ```
 
@@ -37,12 +37,12 @@ import cats.data.State
 
 type KVStoreState[A] = State[Map[String, Any], A]
 
-implicit def kvStoreInterpreter: KVStore.Interpreter[KVStoreState] {
+implicit val kvStoreInterpreter: KVStore.Interpreter[KVStoreState] = new KVStore.Interpreter[KVStoreState] {
 
    def putImpl[A](key: String, value: A): KVStoreState[Unit] =
      State.modify(_.updated(key, value))
 
-   def getImpl[A](key: String): KVStoreState[A] =
+   def getImpl[A](key: String): KVStoreState[Option[A]] =
      State.inspect(_.get(key).map(_.asInstanceOf[A]))
 
    def deleteImpl(key: String): KVStoreState[Unit] =
@@ -61,8 +61,10 @@ Alternatively if you would rather implement a natural transformation by hand you
 `KVStore.Interpreter[M[_]]` and providing one like so:
 
 ```tut:silent
+import cats.~>
+
 implicit def manualKvStoreInterpreter: KVStore.T ~> KVStoreState = new (KVStore.T ~> KVStoreState) {
-def apply[A](fa: KVStoreA[A]): KVStoreState[A] =
+def apply[A](fa: KVStore.T[A]): KVStoreState[A] =
     fa match {
       case KVStore.PutOP(key, value) =>
 	    State.modify(_.updated(key, value))
@@ -81,15 +83,17 @@ by the evidence of it's algebras's interpreters.
 To ilustrate interpreter composition let's define a new algebra `Log` which we will compose with our `KVStore` operations
 
 ```tut:silent
-@free Log[F[_]] {
-  def info(msg: String): Free[F, Unit]
-  def warn(msg: String): Free[F, Unit]
+@free trait Log[F[_]] {
+  def info(msg: String): FreeS[F, Unit]
+  def warn(msg: String): FreeS[F, Unit]
 }
 ```
 
 Once our algebra is defined we can easily write an interpreter for it
 
 ```tut:silent
+import cats.implicits._
+
 implicit def logInterpreter: Log.Interpreter[KVStoreState] = new Log.Interpreter[KVStoreState] {
   def infoImpl(msg: String): KVStoreState[Unit] = println("INFO: $msg").pure[KVStoreState]
   def warnImpl(msg: String): KVStoreState[Unit] = println("WARN: $msg").pure[KVStoreState]
@@ -143,4 +147,4 @@ val manualInterpreters[Backend.T ~> KVStore] = kvStoreInterpreter or logInterpre
 program[Backend.T].foldMap[KVStore](manualInterpreters)
 ```
 
-Now that we've learnt to define our own interpreters let's jump into [application and library composition with Freestyle]() 
+Now that we've learnt to define our own interpreters let's jump into [application and library composition with Freestyle](parallelism.html) 

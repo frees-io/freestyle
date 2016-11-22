@@ -32,6 +32,8 @@ We use `FreeS.Par` an alias for `FreeAplicative` to denote functions that repres
 Independent operations that can be executed potentially in parallel may be placed inside `@free` algebras as abstract definitions like in the example below.
 
 ```tut:silent
+import io.freestyle._
+
 @free trait Validation[F[_]] {
 	def minSize(n: Int): FreeS.Par[F, Boolean]
 	def hasNumber: FreeS.Par[F, Boolean]
@@ -49,7 +51,7 @@ To enable these instances and support parallelism you need to explicitly import:
 import io.freestyle.nondeterminism._
 ```
 
-The code below ilustrate an interpreter that will allow parallel executions thanks to the unsafe nature of `scala.concurrent.Future#apply` which runs immediately.
+The code below illustrate an interpreter that will allow parallel executions thanks to the unsafe nature of `scala.concurrent.Future#apply` which runs immediately.
 
 ```tut:silent
 import cats.data.Kleisli
@@ -92,18 +94,21 @@ Sequential and parallel actions can be easily intermixed in `@free` algebras.
 }
 ```
 
-Using the [cats cartesian builder operator |@|]() we can easily describe steps that run in parallel
+Using the [cats cartesian builder operator \|@\|]() we can easily describe steps that run in parallel
 
 ```tut:silent
 import io.freestyle.implicits._
 import cats.implicits._
 
-val program = for {
-	a <- z //3
-	bc <- (x |@| y).tupled.seq //(1,2) potentially x and y run in parallel
-	(b, c) = bc
-	d <- z //3
-} yield a :: b :: c :: d :: Nil // List(3,1,2,3)
+def program[F[_]](implicit M: MixedFreeS[F]) = {
+	import M._
+	for {
+		a <- z //3
+		bc <- (x |@| y).tupled.seq //(1,2) potentially x and y run in parallel
+		(b, c) = bc
+		d <- z //3
+	} yield a :: b :: c :: d :: Nil // List(3,1,2,3)
+}
 ```
 
 Once our operations run in parallel we can join the results back into the monadic flow with `.seq`.

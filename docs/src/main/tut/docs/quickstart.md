@@ -1,6 +1,11 @@
+---
+layout: docs
+title: Quick Start Guide
+---
+
 # Quick Start
 
-**Freestyle** is a library that enables builing large-scale modular Scala applications and libraries on top of Free monads/applicatives.
+**Freestyle** is a library that enables building large-scale modular Scala applications and libraries on top of Free monads/applicatives.
 
 ## Getting Started
 
@@ -35,6 +40,7 @@ In the example below we will define two algebras with intermixed sequential and 
 
 ```tut:silent
 import io.freestyle._
+import io.freestyle.implicits._
 
 @free trait Validation[F[_]] {
   def minSize(s: String, n: Int): FreeS.Par[F, Boolean]
@@ -82,11 +88,11 @@ def program[F[_]](implicit A: Application[F]) = {
 
   for {
     userInput <- interaction.ask("Give me something with at least 3 chars and a number on it")
-	valid <- (validation.minSize(userInput, 3) |@| validation.hasNumber(userInput)).map(_ && _).seq
-	_ <- if (valid)
-	       interaction.tell("awesomesauce!") 
-	     else
-	       interaction.tell(s"$userInput is not valid")
+    valid <- (validation.minSize(userInput, 3) |@| validation.hasNumber(userInput)).map(_ && _).seq
+    _ <- if (valid)
+            interaction.tell("awesomesauce!") 
+         else
+            interaction.tell(s"$userInput is not valid")
   } yield ()
 }
 ```
@@ -96,9 +102,12 @@ def program[F[_]](implicit A: Application[F]) = {
 In order to run programs we need interpreters. We define interpreters providing implementations for the operations defined in our algebras.
 
 ```tut:silent
+import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
+
 implicit val validationInterpreter = new Validation.Interpreter[Future] {
   override def minSizeImpl(s: String, n: Int): Future[Boolean] = Future(s.size >= n)
-  override def hasNumberImpl: ParValidator[Boolean] = Future(s.exists(c => "0123456789".contains(c)))
+  override def hasNumberImpl(s: String): Future[Boolean] = Future(s.exists(c => "0123456789".contains(c)))
 }
 
 implicit val interactionInterpreter = new Interaction.Interpreter[Future] {
@@ -113,6 +122,10 @@ and unify all interpreters involved in a program definition.
 At this point we can run our pure programs at the edge of the world.
 
 ```tut:silent
+import cats.implicits._
+import scala.concurrent.duration.Duration
+import scala.concurrent.Await
+
 val futureValue = program[Application.T].exec[Future]
 Await.result(futureValue, Duration.Inf) //blocking only for demo purposes. Don't do this at home.
 ```
@@ -131,4 +144,4 @@ Freestyle optionally includes
 - Ready to use integrations to achieve parallelism through [`scala.concurrent.Future`](), [`Akka`]() Actors and [`Monix`]() Task.
 - Ready to use integrations that cover most of the commons applications concerns such as [logging](), [configuration](), [dependency injection](), [persistence](), etc.
 
-Learn more about how Freestyle works behind the scenes in the extended [documentation]()
+Learn more about how Freestyle works behind the scenes in the extended [documentation](algebras.html)

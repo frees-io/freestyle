@@ -1,0 +1,15 @@
+options:
+  - title: Quick Start Guide
+    url: docs/quickstart.html
+
+  - title: Algebras
+    url: docs/algebras.html
+
+  - title: Modules
+    url: docs/modules.html
+
+  - title: Interpreters
+    url: docs/interpreters.html
+
+  - title: Parallelism
+    url: docs/parallelism.html

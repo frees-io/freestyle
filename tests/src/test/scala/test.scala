@@ -34,7 +34,7 @@ class tests extends WordSpec with Matchers {
     }
 
     "respond to implicit evidences with compilable runtimes" in {
-      implicit val optionInterpreter = interpreters.optionInterpreter1
+      implicit val optionInterpreter = interps.optionInterpreter1
       val s = SCtors1[SCtors1.T]
       val program = for {
         a <- s.x(1)
@@ -45,8 +45,8 @@ class tests extends WordSpec with Matchers {
     }
 
     "reuse program interpretation in diferent runtimes" in {
-      implicit val optionInterpreter = interpreters.optionInterpreter1
-      implicit val listInterpreter = interpreters.listInterpreter1
+      implicit val optionInterpreter = interps.optionInterpreter1
+      implicit val listInterpreter = interps.listInterpreter1
       val s = SCtors1[SCtors1.T]
       val program = for {
         a <- s.x(1)
@@ -205,26 +205,26 @@ class tests extends WordSpec with Matchers {
 
     "[simple] find a FunctionK[Module.T, ?] providing there is existing ones for it's smart constructors" in {
       import io.freestyle.implicits._
-      implicit val optionInterpreter1 = interpreters.optionInterpreter1
-      implicit val optionInterpreter2 = interpreters.optionInterpreter2
+      implicit val optionInterpreter1 = interps.optionInterpreter1
+      implicit val optionInterpreter2 = interps.optionInterpreter2
       implicitly[FunctionK[M1.T, Option]].isInstanceOf[FunctionK[M1.T, Option]] shouldBe true
     }
 
     "[onion] find a FunctionK[Module.T, ?] providing there is existing ones for it's smart constructors" in {
       import io.freestyle.implicits._
-      implicit val optionInterpreter1 = interpreters.optionInterpreter1
-      implicit val optionInterpreter2 = interpreters.optionInterpreter2
-      implicit val optionInterpreter3 = interpreters.optionInterpreter3
-      implicit val optionInterpreter4 = interpreters.optionInterpreter4
+      implicit val optionInterpreter1 = interps.optionInterpreter1
+      implicit val optionInterpreter2 = interps.optionInterpreter2
+      implicit val optionInterpreter3 = interps.optionInterpreter3
+      implicit val optionInterpreter4 = interps.optionInterpreter4
       implicitly[FunctionK[O1.T, Option]].isInstanceOf[FunctionK[O1.T, Option]] shouldBe true
     }
 
     "[simple] reuse program interpretation in diferent runtimes" in {
       import io.freestyle.implicits._
-      implicit val optionInterpreter1 = interpreters.optionInterpreter1
-      implicit val listInterpreter1 = interpreters.listInterpreter1
-      implicit val optionInterpreter2 = interpreters.optionInterpreter2
-      implicit val listInterpreter2 = interpreters.listInterpreter2
+      implicit val optionInterpreter1 = interps.optionInterpreter1
+      implicit val listInterpreter1 = interps.listInterpreter1
+      implicit val optionInterpreter2 = interps.optionInterpreter2
+      implicit val listInterpreter2 = interps.listInterpreter2
       val m1 = M1[M1.T]
       val program = for {
         a <- m1.sctors1.x(1)
@@ -238,14 +238,14 @@ class tests extends WordSpec with Matchers {
 
     "[onion] reuse program interpretation in diferent runtimes" in {
       import io.freestyle.implicits._
-      implicit val optionInterpreter1 = interpreters.optionInterpreter1
-      implicit val listInterpreter1 = interpreters.listInterpreter1
-      implicit val optionInterpreter2 = interpreters.optionInterpreter2
-      implicit val listInterpreter2 = interpreters.listInterpreter2
-      implicit val optionInterpreter3 = interpreters.optionInterpreter3
-      implicit val listInterpreter3 = interpreters.listInterpreter3
-      implicit val optionInterpreter4 = interpreters.optionInterpreter4
-      implicit val listInterpreter4 = interpreters.listInterpreter4
+      implicit val optionInterpreter1 = interps.optionInterpreter1
+      implicit val listInterpreter1 = interps.listInterpreter1
+      implicit val optionInterpreter2 = interps.optionInterpreter2
+      implicit val listInterpreter2 = interps.listInterpreter2
+      implicit val optionInterpreter3 = interps.optionInterpreter3
+      implicit val listInterpreter3 = interps.listInterpreter3
+      implicit val optionInterpreter4 = interps.optionInterpreter4
+      implicit val listInterpreter4 = interps.listInterpreter4
 
       val o1 = O1[O1.T]
       val program = for {
@@ -482,7 +482,7 @@ object modules {
 
 }
 
-object interpreters {
+object interps {
 
   import algebras._
 
