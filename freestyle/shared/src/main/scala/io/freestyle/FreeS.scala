@@ -35,20 +35,20 @@ trait FreeSDefinitions {
 
     /** Lift a sequential `Free[F, A]` into `FreeS[F, A]` */
     def liftSeq[F[_], A](free: Free[F, A]): FreeS[F, A] =
-      free.compile(λ[(F ~> FreeApplicative[F, ?])](fa => FreeApplicative.lift(fa)))
+      free.compile(λ[(F ~> FreeS.Par[F, ?])](fa => FreeApplicative.lift(fa)))
 
     /** Lift a parallel `FreeApplicative[F, A]` into `FreeS[F, A]` */
-    def liftPar[F[_], A](freeap: FreeApplicative[F, A]): FreeS[F, A] =
+    def liftPar[F[_], A](freeap: FreeS.Par[F, A]): FreeS[F, A] =
       Free.liftF(freeap)
 
-    def inject[F[_], G[_]]: FreeApInjectPartiallyApplied[F, G] =
-      new FreeApInjectPartiallyApplied
+    def inject[F[_], G[_]]: FreeSParInjectPartiallyApplied[F, G] =
+      new FreeSParInjectPartiallyApplied
 
     /**
      * Pre-application of an injection to a `F[A]` value.
      */
-    final class FreeApInjectPartiallyApplied[F[_], G[_]] {
-      def apply[A](fa: F[A])(implicit I: Inject[F, G]): FreeApplicative[G, A] =
+    final class FreeSParInjectPartiallyApplied[F[_], G[_]] {
+      def apply[A](fa: F[A])(implicit I: Inject[F, G]): FreeS.Par[G, A] =
         FreeApplicative.lift(I.inj(fa))
     }
 
