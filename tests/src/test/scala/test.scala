@@ -107,7 +107,7 @@ class tests extends WordSpec with Matchers {
       val v = ApplicativesServ[ApplicativesServ.T]
       import v._
       import io.freestyle.implicits._
-      val program = (x("a") |@| y("b") |@| z("c")).map {_ + _ + _}.seq
+      val program = (x("a") |@| y("b") |@| z("c")).map { _ + _ + _ }.freeS
       program.exec[Option] shouldBe Some("abc")
     }
 
@@ -125,10 +125,10 @@ class tests extends WordSpec with Matchers {
       val v = MixedFreeS[MixedFreeS.T]
       import v._
       import io.freestyle.implicits._
-      val apProgram = (x("a") |@| y("b")).map {_ + _}
+      val apProgram = (x("a") |@| y("b")).map { _ + _ }
       val program = for {
         n <- z("1")
-        m <- apProgram.seq
+        m <- apProgram.freeS
       } yield n + m
       program.exec[Option] shouldBe Some("1ab")
     }
@@ -277,6 +277,24 @@ class tests extends WordSpec with Matchers {
 
   }
 
+    "Lifting syntax" should {
+
+      "allow any value to be lifted into a FreeS monadic context" in {
+        import io.freestyle.implicits._
+        import cats.Eval
+        import cats.implicits._
+
+        def program[F[_]] = for {
+          a <- Eval.now(1).freeS
+          b <- 2.pure[Eval].freeS
+          c <- 3.pure[Eval].freeS
+        } yield a + b + c
+        implicit val interpreter = FunctionK.id[Eval]
+        program[Eval].exec[Eval].value shouldBe 6
+      }
+
+    }
+
   "Applicative Parallel Support" should {
 
     import algebras._
@@ -285,23 +303,23 @@ class tests extends WordSpec with Matchers {
       import io.freestyle.nondeterminism._
       import io.freestyle.implicits._
 
-        val buf = scala.collection.mutable.ArrayBuffer.empty[Int]
+      val buf = scala.collection.mutable.ArrayBuffer.empty[Int]
 
-        def blocker(value: Int, waitTime: Long): Int = {
-          Thread.sleep(waitTime)
-          buf += value
-          value
-        }
+      def blocker(value: Int, waitTime: Long): Int = {
+        Thread.sleep(waitTime)
+        buf += value
+        value
+      }
 
-        val v = MixedFreeS[MixedFreeS.T]
-        import v._
+      val v = MixedFreeS[MixedFreeS.T]
+      import v._
 
-        val program = for {
-          a <- z //3
-          bc <- (x |@| y).tupled.seq //(1,2)
-          (b, c) = bc
-          d <- z //3
-        } yield a :: b :: c :: d :: Nil // List(3,1,2,3)
+      val program = for {
+        a <- z //3
+        bc <- (x |@| y).tupled.freeS //(1,2)
+        (b, c) = bc
+        d <- z //3
+      } yield a :: b :: c :: d :: Nil // List(3,1,2,3)
 
     }
 
@@ -322,8 +340,8 @@ class tests extends WordSpec with Matchers {
         override def zImpl: Future[Int] = Future(blocker(3, 2000L))
       }
 
-      Await.result(program.exec[Future], Duration.Inf) shouldBe List(3,1,2,3)
-      buf.toArray shouldBe Array(3,2,1,3)
+      Await.result(program.exec[Future], Duration.Inf) shouldBe List(3, 1, 2, 3)
+      buf.toArray shouldBe Array(3, 2, 1, 3)
     }
 
     "allow non deterministic execution when interpreting to monix.eval.Task" in {
@@ -346,15 +364,14 @@ class tests extends WordSpec with Matchers {
         override def zImpl: Task[Int] = Task(blocker(3, 2000L))
       }
 
-      Await.result(program.exec[Task].runAsync, Duration.Inf) shouldBe List(3,1,2,3)
-      buf.toArray shouldBe Array(3,2,1,3)
+      Await.result(program.exec[Task].runAsync, Duration.Inf) shouldBe List(3, 1, 2, 3)
+      buf.toArray shouldBe Array(3, 2, 1, 3)
     }
-
 
     "allow deterministic programs with FreeS.Par nodes run deterministically" in {
       import io.freestyle.nondeterminism._
       import io.freestyle.implicits._
-      
+
       val test = new NonDeterminismTestShared
       import test._
 
@@ -364,14 +381,14 @@ class tests extends WordSpec with Matchers {
         override def zImpl: Option[Int] = Option(blocker(3, 2000L))
       }
 
-      program.exec[Option] shouldBe Option(List(3,1,2,3))
-      buf.toArray shouldBe Array(3,1,2,3)
+      program.exec[Option] shouldBe Option(List(3, 1, 2, 3))
+      buf.toArray shouldBe Array(3, 1, 2, 3)
     }
 
     /**
-      * Similar example as the one found at
-      * http://typelevel.org/cats/datatypes/freeapplicative.html
-      */
+     * Similar example as the one found at
+     * http://typelevel.org/cats/datatypes/freeapplicative.html
+     */
     "allow validation style algebras derived from FreeS.Par" in {
       import cats.data.Kleisli
       import cats.implicits._
@@ -410,14 +427,6 @@ class tests extends WordSpec with Matchers {
 
   }
 
-  "Doobie persistence" should {
-
-    "Allow doobie queries in the context of Freestyle algebras" in {
-
-    }
-
-  }
-
 }
 
 object algebras {
@@ -446,6 +455,14 @@ object algebras {
     def x: FreeS.Par[F, Int]
     def y: FreeS.Par[F, Int]
     def z: FreeS[F, Int]
+  }
+
+  @free trait S1[F[_]] {
+    def x(n: Int): FreeS[F, Int]
+  }
+
+  @free trait S2[F[_]] {
+    def y(n: Int): FreeS[F, Int]
   }
 
 }
@@ -478,6 +495,11 @@ object modules {
   @module trait O3[F[_]] {
     def x = 1
     def y = 2
+  }
+
+  @module trait StateProp[F[_]] {
+    val s1: S1[F]
+    val s2: S2[F]
   }
 
 }

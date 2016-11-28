@@ -94,6 +94,22 @@ lazy val freestyleDoobie = (project in file("freestyle-doobie")).
     )
   )
 
+lazy val freestyleFetch = (crossProject in file("freestyle-fetch")).
+  dependsOn(freestyle).
+  settings(commonSettings: _*).
+  settings(name := "freestyle-fetch").
+  settings(
+    libraryDependencies ++= Seq(
+      "com.fortysevendeg" %%% "fetch" % "0.4.0",
+      "org.scalatest" %%% "scalatest" % "3.0.0" % "test",
+      "com.fortysevendeg" %%% "fetch-monix" % "0.4.0"
+     )
+  ).
+  jsSettings(sharedJsSettings: _*)
+
+lazy val freestyleFetchJVM = freestyleFetch.jvm
+lazy val freestyleFetchJS  = freestyleFetch.js
+
 lazy val tests = (project in file("tests")).
   dependsOn(freestyleJVM).
   dependsOn(freestyleMonixJVM).
