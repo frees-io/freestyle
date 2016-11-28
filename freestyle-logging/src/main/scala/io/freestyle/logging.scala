@@ -25,10 +25,10 @@ object logging {
   }
 
   object implicits {
-    implicit def freeStyleLoggingInterpreter[M[_] : Monad]: LoggingM.Interpreter[M] =
+    implicit def freeStyleLoggingInterpreter[M[_] : Monad, C: Manifest]: LoggingM.Interpreter[M] =
       new LoggingM.Interpreter[M] {
 
-        val log = Logger[this.type]
+        val log = Logger[C]
 
         def debugImpl(msg: String): M[Unit] = Monad[M].pure(log.debug(msg))
 

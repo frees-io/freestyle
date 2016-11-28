@@ -11,8 +11,7 @@ import scala.concurrent._
 
 class LoggingTests extends AsyncWordSpec with Matchers {
 
-  implicit override def executionContext =
-    scala.concurrent.ExecutionContext.Implicits.global
+  implicit override def executionContext = ExecutionContext.Implicits.global
 
   import algebras._
 
