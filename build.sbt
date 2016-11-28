@@ -9,7 +9,7 @@ val gh   = GitHubSettings("com.fortysevendeg", "freestyle", "47 Degrees", apache
 val vAll = Versions(versions, libraries, scalacPlugins)
 
 lazy val commonSettings = Seq(
-  scalaVersion in ThisBuild := "2.11.8", 
+  scalaVersion in ThisBuild := "2.11.8",
   scalaOrganization in ThisBuild := "org.typelevel",//, disabled until supported by Ensime
   //addCompilerPlugin("com.milessabin" % "si2712fix-plugin" % "1.2.0" cross CrossVersion.full),
   resolvers ++= Seq(Resolver.sonatypeRepo("snapshots"), Resolver.sonatypeRepo("releases")),
@@ -141,6 +141,17 @@ lazy val freestyleFetch = (crossProject in file("freestyle-fetch")).
 
 lazy val freestyleFetchJVM = freestyleFetch.jvm
 lazy val freestyleFetchJS  = freestyleFetch.js
+
+lazy val freestyleLogging = (project in file("freestyle-logging")).
+  dependsOn(freestyleJVM).
+  settings(commonSettings: _*).
+  settings(name := "freestyle-logging").
+  settings(
+    libraryDependencies ++= Seq(
+      "io.verizon.journal" %% "core" % "2.3.16",
+      "org.scalatest" %% "scalatest" % "3.0.0" % "test"
+    )
+  )
 
 lazy val tests = (project in file("tests")).
   dependsOn(freestyleJVM).
