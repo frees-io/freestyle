@@ -94,6 +94,21 @@ lazy val freestyleDoobie = (project in file("freestyle-doobie")).
     )
   )
 
+lazy val freestyleConfig = (crossProject in file("freestyle-config")).
+  dependsOn(freestyle).
+  settings(commonSettings: _*).
+  settings(name := "freestyle-config").
+  settings(
+    libraryDependencies ++= Seq(
+      "eu.unicredit" %%% "shocon" % "0.1.4",
+      "org.scalatest" %%% "scalatest" % "3.0.0" % "test"
+    )
+  )
+
+lazy val freestyleConfigJVM = freestyleConfig.jvm
+lazy val freestyleConfigJS  = freestyleConfig.js
+
+
 lazy val freestyleFetch = (crossProject in file("freestyle-fetch")).
   dependsOn(freestyle).
   settings(commonSettings: _*).
