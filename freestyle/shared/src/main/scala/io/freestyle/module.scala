@@ -1,14 +1,11 @@
 package io.freestyle
 
-import scala.annotation.StaticAnnotation
+import cats.instances.tuple._
+import cats.syntax.functor._
+
+import scala.annotation.{compileTimeOnly, StaticAnnotation}
 import scala.language.experimental.macros
 import scala.reflect.macros.whitebox
-import cats._
-import cats.free._
-import cats.data._
-import cats.arrow._
-import cats.implicits._
-import scala.annotation._
 import scala.reflect.runtime.universe._
 import scala.reflect.runtime.{currentMirror => cm}
 

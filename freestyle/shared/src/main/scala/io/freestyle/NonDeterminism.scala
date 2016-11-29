@@ -1,7 +1,6 @@
 package io.freestyle
 
-import cats._
-import cats.implicits._
+import cats.Monad
 
 object nondeterminism extends NonDeterminismInstances
 

@@ -2,7 +2,6 @@ package io.freestyle
 
 import org.scalatest._
 
-import io.freestyle._
 import io.freestyle.config._
 import io.freestyle.implicits._
 import io.freestyle.config.implicits._
@@ -14,8 +13,7 @@ class ConfigTests extends AsyncWordSpec with Matchers {
 
   import algebras._
 
-  implicit override def executionContext =
-    scala.concurrent.ExecutionContext.Implicits.global
+  implicit override def executionContext = ExecutionContext.Implicits.global
 
    "Shocon config integration" should {
 
@@ -48,4 +46,3 @@ object algebras {
   val app = App[App.T]
 
 }
-

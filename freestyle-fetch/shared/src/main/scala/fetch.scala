@@ -1,13 +1,6 @@
 package io.freestyle
 
-import cats.data.NonEmptyList
-import cats.~>
-import cats.instances.list._
-import cats.data.State
 import _root_.fetch._
-
-import io.freestyle._
-import cats.free.FreeApplicative
 
 object fetch {
 
@@ -41,4 +34,3 @@ object fetch {
   }
 
 }
-
