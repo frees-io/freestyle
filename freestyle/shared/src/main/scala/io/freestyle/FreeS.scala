@@ -1,9 +1,7 @@
 package io.freestyle
 
+import cats.~>
 import cats.free.{FreeApplicative, Free, Inject}
-import cats._
-import cats.arrow.FunctionK
-import cats.data.Coproduct
 
 trait FreeSDefinitions {
 

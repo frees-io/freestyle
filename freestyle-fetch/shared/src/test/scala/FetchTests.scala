@@ -5,7 +5,6 @@ import _root_.fetch._
 import _root_.fetch.implicits._
 import cats.{Eval, Applicative}
 
-import io.freestyle._
 import io.freestyle.fetch._
 import io.freestyle.implicits._
 import io.freestyle.fetch.implicits._
@@ -17,8 +16,7 @@ class FetchTests extends AsyncWordSpec with Matchers {
   import algebras._
   import fetches._
 
-  implicit override def executionContext =
-    scala.concurrent.ExecutionContext.Implicits.global
+  implicit override def executionContext = ExecutionContext.Implicits.global
 
    "Fetch Freestyle integration" should {
 

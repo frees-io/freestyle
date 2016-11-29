@@ -1,6 +1,5 @@
 package io.freestyle
 
-import io.freestyle._
 import scala.concurrent.duration._
 
 object config {

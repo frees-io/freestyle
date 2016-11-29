@@ -1,7 +1,6 @@
 package io
 
 import cats.{Applicative, Monad, ~>}
-import cats.free.{Free, FreeApplicative}
 
 package object freestyle extends FreeSDefinitions {
 
@@ -61,6 +60,4 @@ package object freestyle extends FreeSDefinitions {
     def liftFSPar[F[_]](implicit L: FreeSLift[F, G]): FreeS.Par[F, A] = L.liftFSPar(ga)
   }
 
-
 }
-
