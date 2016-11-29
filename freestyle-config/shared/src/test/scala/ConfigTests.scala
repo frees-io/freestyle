@@ -21,15 +21,26 @@ class ConfigTests extends AsyncWordSpec with Matchers {
 
      "allow configuration to be interleaved inside a program monadic flow" in {
        val program = for {
-         a <- app.nonConfig.x
+         _ <- app.nonConfig.x
          config <- app.configM.empty
-       } yield (a, config)
-       program.exec[Future] map { _ shouldBe Tuple2(1, ???) }
+       } yield config
+       program.exec[Future] map { _.isInstanceOf[Config] shouldBe true }
+     }
+
+     "allow configuration to parse strings" in {
+       val program = app.configM.parseString("{n = 1}")
+       program.exec[Future] map { _.int("n") shouldBe Some(1) }
+     }
+
+     "allow configuration to load classpath files" in {
+       val program = app.configM.load
+       program.exec[Future] map { _.int("s") shouldBe Some(3) }
      }
 
   }
 
 }
+
 
 object algebras {
   @free trait NonConfig[F[_]] {

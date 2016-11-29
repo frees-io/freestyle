@@ -94,10 +94,25 @@ lazy val freestyleDoobie = (project in file("freestyle-doobie")).
     )
   )
 
+lazy val fixResources = taskKey[Unit](
+    "Fix application.conf presence on first clean build.")
+
 lazy val freestyleConfig = (crossProject in file("freestyle-config")).
   dependsOn(freestyle).
   settings(commonSettings: _*).
-  settings(name := "freestyle-config").
+  settings(
+    name := "freestyle-config",
+    fixResources := {
+      val testConf = (resourceDirectory in Test).value / "application.conf"
+      if (testConf.exists) {
+        IO.copyFile(
+          testConf,
+          (classDirectory in Compile).value / "application.conf"
+        )
+      }
+    },
+    compile in Test := ((compile in Test) dependsOn fixResources).value
+  ).
   settings(
     libraryDependencies ++= Seq(
       "eu.unicredit" %%% "shocon" % "0.1.4",
