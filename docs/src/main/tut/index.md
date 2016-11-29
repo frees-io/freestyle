@@ -70,10 +70,8 @@ import io.freestyle._
 It's closely equivalent to it's non Freestyle version:
 
 ```tut:silent
-import cats._
-import cats.data._
-import cats.free._
-import cats.implicits._
+import cats.data.Coproduct
+import cats.free.{Free, Inject}
 
 /** User Interaction Algebra */
 sealed abstract class Interact[A] extends Product with Serializable
@@ -152,6 +150,6 @@ Freestyle is inspired among others by [`simulacrum`](https://github.com/mpilquis
 - [cats](http://typelevel.org/cats)
 - [kind-projector](https://github.com/non/kind-projector)
 - [sbt-microsites](https://47deg.github.io/sbt-microsites/)
-- [monix]()
-- [akka]()
-- [doobie]()
+- [monix](https://monix.io/)
+- [akka](http://akka.io/)
+- [doobie](https://github.com/tpolecat/doobie)

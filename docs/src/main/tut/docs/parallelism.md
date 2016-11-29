@@ -104,16 +104,16 @@ def program[F[_]](implicit M: MixedFreeS[F]) = {
 	import M._
 	for {
 		a <- z //3
-		bc <- (x |@| y).tupled.seq //(1,2) potentially x and y run in parallel
+		bc <- (x |@| y).tupled.freeS //(1,2) potentially x and y run in parallel
 		(b, c) = bc
 		d <- z //3
 	} yield a :: b :: c :: d :: Nil // List(3,1,2,3)
 }
 ```
 
-Once our operations run in parallel we can join the results back into the monadic flow with `.seq`.
+Once our operations run in parallel we can join the results back into the monadic flow with `.freeS`.
 
-`FreeS.Par#seq` is a combinator enriched into the `FreeApplicative` syntax that joins the result of both operations back
+`FreeS.Par#freeS` is a combinator enriched into the `FreeApplicative` syntax that joins the result of both operations back
 into a free monad step whose result can be used in further monadic computation.
 
 Now that we've covered how to build modular programs that support both sequenced and parallel style computations

@@ -1,14 +1,8 @@
 package io.freestyle
 
-import scala.annotation.StaticAnnotation
+import scala.annotation.{compileTimeOnly, StaticAnnotation}
 import scala.language.experimental.macros
 import scala.reflect.macros.whitebox
-import cats._
-import cats.free._
-import cats.data._
-import cats.arrow._
-import cats.implicits._
-import scala.annotation._
 
 @compileTimeOnly("enable macro paradise to expand @free macro annotations")
 class free extends StaticAnnotation {

@@ -1,8 +1,7 @@
 package io.freestyle
 
-import cats._
-import cats.implicits._
-import simulacrum._
+import cats.Id
+import simulacrum.typeclass
 import scala.util.Try
 
 @typeclass trait Capture[F[_]] {
@@ -13,8 +12,7 @@ object Capture extends CaptureInstances
 
 trait CaptureInstances {
 
-  import scala.concurrent.Future
-  import scala.concurrent.ExecutionContext
+  import scala.concurrent.{ExecutionContext, Future}
   import scala.util.control.NonFatal
 
   implicit def freeStyleFutureCaptureInstance(implicit ec: ExecutionContext): Capture[Future] =
@@ -24,7 +22,7 @@ trait CaptureInstances {
 
   implicit def freeStyleIdCaptureInstance: Capture[Id] =
     new Capture[Id] {
-      override def capture[A](a: => A): Id[A] = a.pure[Id]
+      override def capture[A](a: => A): Id[A] = a
     }
 
   implicit def freeStyleTryCaptureInstance: Capture[Try] =
