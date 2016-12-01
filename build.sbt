@@ -142,8 +142,8 @@ lazy val freestyleFetch = (crossProject in file("freestyle-fetch")).
 lazy val freestyleFetchJVM = freestyleFetch.jvm
 lazy val freestyleFetchJS  = freestyleFetch.js
 
-lazy val freestyleLogging = (project in file("freestyle-logging")).
-  dependsOn(freestyleJVM).
+lazy val freestyleLogging = (crossProject in file("freestyle-logging")).
+  dependsOn(freestyle).
   settings(commonSettings: _*).
   settings(name := "freestyle-logging").
   settings(
@@ -151,7 +151,11 @@ lazy val freestyleLogging = (project in file("freestyle-logging")).
       "io.verizon.journal" %% "core" % "2.3.16",
       "org.scalatest" %% "scalatest" % "3.0.0" % "test"
     )
-  )
+  ).
+  jsSettings(sharedJsSettings: _*)
+
+lazy val freestyleLoggingJVM = freestyleLogging.jvm
+lazy val freestyleLoggingJS  = freestyleLogging.js
 
 lazy val tests = (project in file("tests")).
   dependsOn(freestyleJVM).

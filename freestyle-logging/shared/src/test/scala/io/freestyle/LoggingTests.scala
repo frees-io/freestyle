@@ -15,7 +15,7 @@ class LoggingTests extends AsyncWordSpec with Matchers {
 
   import algebras._
 
-  "Fetch Freestyle integration" should {
+  "Logging Freestyle integration" should {
 
     "allow a log message to be interleaved inside a program monadic flow" in {
       val program = for {
