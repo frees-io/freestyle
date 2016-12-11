@@ -147,10 +147,13 @@ lazy val freestyleLogging = (crossProject in file("freestyle-logging")).
   settings(commonSettings: _*).
   settings(name := "freestyle-logging").
   settings(
-    libraryDependencies ++= Seq(
-      "io.verizon.journal" %% "core" % "2.3.16",
-      "org.scalatest" %% "scalatest" % "3.0.0" % "test"
-    )
+    libraryDependencies += "org.scalatest" %%% "scalatest" % "3.0.0" % "test"
+  ).
+  jvmSettings(
+    libraryDependencies += "io.verizon.journal" %% "core" % "2.3.16"
+  ).
+  jsSettings(
+    libraryDependencies += "biz.enef" %%% "slogging" % "0.5.2"
   ).
   jsSettings(sharedJsSettings: _*)
 
