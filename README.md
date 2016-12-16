@@ -1,3 +1,5 @@
+[![codecov.io](https://codecov.io/github/47deg/freestyle/coverage.svg?token=E9sGVv2ii7&branch=master)](https://codecov.io/github/47deg/freestyle?branch=master)
+
 ---
 layout: home
 ---
