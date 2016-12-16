@@ -1,6 +1,6 @@
 package io.freestyle
 
-import cats.{Foldable, ~>}
+import cats.{~>, Foldable}
 import _root_.doobie.imports._
 import fs2.util.{Catchable, Suspendable}
 
@@ -11,7 +11,8 @@ object doobie {
   }
 
   object implicits {
-    implicit def freeStyleDoobieInterpreter[M[_]: Catchable: Suspendable](implicit xa: Transactor[M]): DoobieM.Interpreter[M] =
+    implicit def freeStyleDoobieInterpreter[M[_]: Catchable: Suspendable](
+        implicit xa: Transactor[M]): DoobieM.Interpreter[M] =
       new DoobieM.Interpreter[M] {
         def transactImpl[A](fa: ConnectionIO[A]): M[A] = fa.transact(xa)
       }

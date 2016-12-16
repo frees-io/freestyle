@@ -43,8 +43,10 @@ lazy val commonSettings = Seq(
     //"-Xlog-implicits"
     //"-Xprint:typer"
     //"-Ymacro-debug-lite"
-  )
+  ),
+  scalafmtConfig in ThisBuild := Some(file(".scalafmt.conf"))
 ) ++
+  reformatOnCompileSettings ++
   sharedCommonSettings ++
   sharedReleaseProcess ++
   credentialSettings ++
