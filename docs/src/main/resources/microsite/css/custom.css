@@ -111,7 +111,7 @@
 
 }
 
-/* BODY */
+/* HOME */
 
 body {
     font-family: 'pragmatapro';
@@ -120,22 +120,52 @@ body {
     color: #fff;
 }
 
-/* TYPOGRAPHY */
+pre {
+  border: none;
+}
 
 h1, h2, h3, h4, h5, h6 {
   color: #fff;
   text-transform: uppercase;
 }
 
-/* LAYOUT */
-
 .use {
   background: #253244;
 }
 
-#content code {
+#content code,
+#page-content-wrapper section pre {
   background: #142236;
+  border: none;
+  color: #f6f6f6;
 }
+
 .horizontalNav {
   display: none;
+}
+
+/* DOC */
+
+body.docs {
+  background: #253244;
+}
+
+#page-content-wrapper section {
+  background: #202D40;
+}
+
+#page-content-wrapper .nav {
+  background: #142236;
+}
+
+#page-content-wrapper .nav a {
+  color: #fff;
+}
+
+#page-content-wrapper .nav a:hover {
+  color: #f8f8f8;
+}
+
+.label-default {
+  background: #253244;
 }
