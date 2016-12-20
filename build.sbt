@@ -84,6 +84,20 @@ lazy val freestyleMonix = (crossProject in file("freestyle-monix")).
 lazy val freestyleMonixJVM = freestyleMonix.jvm
 lazy val freestyleMonixJS  = freestyleMonix.js
 
+lazy val freestyleEffects = (crossProject in file("freestyle-effects")).
+  dependsOn(freestyle).
+  settings(commonSettings: _*).
+  settings(name := "freestyle-effects").
+  settings(
+    libraryDependencies ++= Seq(
+      "org.scalatest" %% "scalatest" % "3.0.0"      % "test"
+    )
+  ).
+  jsSettings(sharedJsSettings: _*)
+
+lazy val freestyleEffectsJVM = freestyleEffects.jvm
+lazy val freestyleEffectsJS  = freestyleEffects.js
+
 lazy val freestyleDoobie = (project in file("freestyle-doobie")).
   dependsOn(freestyleJVM).
   settings(commonSettings: _*).

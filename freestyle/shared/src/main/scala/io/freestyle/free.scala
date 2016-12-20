@@ -50,11 +50,11 @@ object free {
         args = sc.vparamss.flatten//.filter(v => !v.mods.hasFlag(Flag.IMPLICIT))
         leaf = args match {
           case Nil =>
-            q"""final case class ${smartCtorNamedADT(sc.name.toTypeName)}()
+            q"""case class ${smartCtorNamedADT(sc.name.toTypeName)}[..${sc.tparams}]()
             extends $rootName[$retType]
             """
           case _ =>
-            q"""final case class ${smartCtorNamedADT(sc.name.toTypeName)}[..${sc.tparams}](..$args)
+            q"""case class ${smartCtorNamedADT(sc.name.toTypeName)}[..${sc.tparams}](..$args)
             extends $rootName[$retType]"""
         }
       } yield (sc, leaf)
@@ -74,7 +74,7 @@ object free {
         companionApply = adtLeaf match {
           case c : ClassDef => q"${adtLeaf.name.toTermName}[..${c.tparams.map(_.name)}](..$args)" 
           case _ =>
-            val caseObjectType = q"new ${adtLeaf.name.toTypeName}" //todo still unsure how to quote caseObject.type to pass it args in quasiquotes.
+            val caseObjectType = q"new ${adtLeaf.name.toTypeName}" 
             println(showRaw(caseObjectType))
             caseObjectType
         }
@@ -133,7 +133,11 @@ object free {
         implName = TermName(sc.name.toTermName.encodedName.toString + "Impl")
         DefDef(_, _, _, _, tpe: AppliedTypeTree, _) = sc
         retType <- tpe.args.lastOption.toList
-      } yield (sc, adtLeaf, q"def $implName[..${sc.tparams}](..${sc.vparamss.flatten}): M[$retType]")
+        params = sc.vparamss.flatten
+      } yield (sc, adtLeaf, params match {
+          case Nil => q"def $implName[..${sc.tparams}]: M[$retType]"
+          case _ => q"def $implName[..${sc.tparams}](..$params): M[$retType]"
+        })
       val abstractImpls = impls map (_._3)
       val matchCases = mkDefaultFunctionK(adtRootName, impls)
       q"""abstract class Interpreter[M[_]] extends cats.arrow.FunctionK[T, M] {
