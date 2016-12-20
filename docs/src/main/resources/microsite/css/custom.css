@@ -1,0 +1,118 @@
+@font-face {
+    font-family: 'pragmatapro';
+    src: url('https://s3.amazonaws.com/fonts-47/PragmataPro0.824W/PragmataPro-Regular0.824W/pragmatapror_0824-webfont.eot');
+    src: url('https://s3.amazonaws.com/fonts-47/PragmataPro0.824W/PragmataPro-Regular0.824W/pragmatapror_0824-webfont.eot?#iefix') format('embedded-opentype'),
+         url('https://s3.amazonaws.com/fonts-47/PragmataPro0.824W/PragmataPro-Regular0.824W/pragmatapror_0824-webfont.woff2') format('woff2'),
+         url('https://s3.amazonaws.com/fonts-47/PragmataPro0.824W/PragmataPro-Regular0.824W/pragmatapror_0824-webfont.woff') format('woff'),
+         url('https://s3.amazonaws.com/fonts-47/PragmataPro0.824W/PragmataPro-Regular0.824W/pragmatapror_0824-webfont.ttf') format('truetype'),
+         url('https://s3.amazonaws.com/fonts-47/PragmataPro0.824W/PragmataPro-Regular0.824W/pragmatapror_0824-webfont.svg#pragmataproregular') format('svg');
+    font-weight: normal;
+    font-style: normal;
+
+}
+
+
+@font-face {
+    font-family: 'pragmatapro_mono';
+    src: url('https://s3.amazonaws.com/fonts-47/PragmataPro0.824W/PragmataPro-Regular0.824W/pragmatapro_mono_r_0824-webfont.eot');
+    src: url('https://s3.amazonaws.com/fonts-47/PragmataPro0.824W/PragmataPro-Regular0.824W/pragmatapro_mono_r_0824-webfont.eot?#iefix') format('embedded-opentype'),
+         url('https://s3.amazonaws.com/fonts-47/PragmataPro0.824W/PragmataPro-Regular0.824W/pragmatapro_mono_r_0824-webfont.woff2') format('woff2'),
+         url('https://s3.amazonaws.com/fonts-47/PragmataPro0.824W/PragmataPro-Regular0.824W/pragmatapro_mono_r_0824-webfont.woff') format('woff'),
+         url('https://s3.amazonaws.com/fonts-47/PragmataPro0.824W/PragmataPro-Regular0.824W/pragmatapro_mono_r_0824-webfont.ttf') format('truetype'),
+         url('https://s3.amazonaws.com/fonts-47/PragmataPro0.824W/PragmataPro-Regular0.824W/pragmatapro_mono_r_0824-webfont.svg#pragmatapro_monoregular') format('svg');
+    font-weight: normal;
+    font-style: normal;
+
+}
+
+
+
+@font-face {
+    font-family: 'pragmatapro';
+    src: url('https://s3.amazonaws.com/fonts-47/PragmataPro0.824W/PragmataPro-Italic0.824W/pragmataproi_0824-webfont.eot');
+    src: url('https://s3.amazonaws.com/fonts-47/PragmataPro0.824W/PragmataPro-Italic0.824W/pragmataproi_0824-webfont.eot?#iefix') format('embedded-opentype'),
+         url('https://s3.amazonaws.com/fonts-47/PragmataPro0.824W/PragmataPro-Italic0.824W/pragmataproi_0824-webfont.woff2') format('woff2'),
+         url('https://s3.amazonaws.com/fonts-47/PragmataPro0.824W/PragmataPro-Italic0.824W/pragmataproi_0824-webfont.woff') format('woff'),
+         url('https://s3.amazonaws.com/fonts-47/PragmataPro0.824W/PragmataPro-Italic0.824W/pragmataproi_0824-webfont.ttf') format('truetype'),
+         url('https://s3.amazonaws.com/fonts-47/PragmataPro0.824W/PragmataPro-Italic0.824W/pragmataproi_0824-webfont.svg#pragmataproitalic') format('svg');
+    font-weight: normal;
+    font-style: italic;
+
+}
+
+
+@font-face {
+    font-family: 'pragmatapro_mono';
+    src: url('https://s3.amazonaws.com/fonts-47/PragmataPro0.824W/PragmataPro-Italic0.824W/pragmatapro_mono_i_0824-webfont.eot');
+    src: url('https://s3.amazonaws.com/fonts-47/PragmataPro0.824W/PragmataPro-Italic0.824W/pragmatapro_mono_i_0824-webfont.eot?#iefix') format('embedded-opentype'),
+         url('https://s3.amazonaws.com/fonts-47/PragmataPro0.824W/PragmataPro-Italic0.824W/pragmatapro_mono_i_0824-webfont.woff2') format('woff2'),
+         url('https://s3.amazonaws.com/fonts-47/PragmataPro0.824W/PragmataPro-Italic0.824W/pragmatapro_mono_i_0824-webfont.woff') format('woff'),
+         url('https://s3.amazonaws.com/fonts-47/PragmataPro0.824W/PragmataPro-Italic0.824W/pragmatapro_mono_i_0824-webfont.ttf') format('truetype'),
+         url('https://s3.amazonaws.com/fonts-47/PragmataPro0.824W/PragmataPro-Italic0.824W/pragmatapro_mono_i_0824-webfont.svg#pragmatapro_monoitalic') format('svg');
+    font-weight: normal;
+    font-style: italic;
+
+}
+
+@font-face {
+    font-family: 'pragmatapro';
+    src: url('https://s3.amazonaws.com/fonts-47/PragmataPro0.824W/PragmataPro-BoldItalic0.824W/pragmataproz_0824-webfont.eot');
+    src: url('https://s3.amazonaws.com/fonts-47/PragmataPro0.824W/PragmataPro-BoldItalic0.824W/pragmataproz_0824-webfont.eot?#iefix') format('embedded-opentype'),
+         url('https://s3.amazonaws.com/fonts-47/PragmataPro0.824W/PragmataPro-BoldItalic0.824W/pragmataproz_0824-webfont.woff2') format('woff2'),
+         url('https://s3.amazonaws.com/fonts-47/PragmataPro0.824W/PragmataPro-BoldItalic0.824W/pragmataproz_0824-webfont.woff') format('woff'),
+         url('https://s3.amazonaws.com/fonts-47/PragmataPro0.824W/PragmataPro-BoldItalic0.824W/pragmataproz_0824-webfont.ttf') format('truetype'),
+         url('https://s3.amazonaws.com/fonts-47/PragmataPro0.824W/PragmataPro-BoldItalic0.824W/pragmataproz_0824-webfont.svg#pragmataprobold_italic') format('svg');
+    font-weight: bold;
+    font-style: italic;
+
+}
+
+
+
+@font-face {
+    font-family: 'pragmatapro_mono';
+    src: url('https://s3.amazonaws.com/fonts-47/PragmataPro0.824W/PragmataPro-BoldItalic0.824W/pragmatapro_mono_z_0824-webfont.eot');
+    src: url('https://s3.amazonaws.com/fonts-47/PragmataPro0.824W/PragmataPro-BoldItalic0.824W/pragmatapro_mono_z_0824-webfont.eot?#iefix') format('embedded-opentype'),
+         url('https://s3.amazonaws.com/fonts-47/PragmataPro0.824W/PragmataPro-BoldItalic0.824W/pragmatapro_mono_z_0824-webfont.woff2') format('woff2'),
+         url('https://s3.amazonaws.com/fonts-47/PragmataPro0.824W/PragmataPro-BoldItalic0.824W/pragmatapro_mono_z_0824-webfont.woff') format('woff'),
+         url('https://s3.amazonaws.com/fonts-47/PragmataPro0.824W/PragmataPro-BoldItalic0.824W/pragmatapro_mono_z_0824-webfont.ttf') format('truetype'),
+         url('https://s3.amazonaws.com/fonts-47/PragmataPro0.824W/PragmataPro-BoldItalic0.824W/pragmatapro_mono_z_0824-webfont.svg#pragmatapro_monobold_italic') format('svg');
+    font-weight: bold;
+    font-style: italic;
+
+}
+
+
+
+@font-face {
+    font-family: 'pragmatapro';
+    src: url('https://s3.amazonaws.com/fonts-47/PragmataPro0.824W/PragmataPro-Bold0.824W/pragmataprob_0824-webfont.eot');
+    src: url('https://s3.amazonaws.com/fonts-47/PragmataPro0.824W/PragmataPro-Bold0.824W/pragmataprob_0824-webfont.eot?#iefix') format('embedded-opentype'),
+         url('https://s3.amazonaws.com/fonts-47/PragmataPro0.824W/PragmataPro-Bold0.824W/pragmataprob_0824-webfont.woff2') format('woff2'),
+         url('https://s3.amazonaws.com/fonts-47/PragmataPro0.824W/PragmataPro-Bold0.824W/pragmataprob_0824-webfont.woff') format('woff'),
+         url('https://s3.amazonaws.com/fonts-47/PragmataPro0.824W/PragmataPro-Bold0.824W/pragmataprob_0824-webfont.ttf') format('truetype'),
+         url('https://s3.amazonaws.com/fonts-47/PragmataPro0.824W/PragmataPro-Bold0.824W/pragmataprob_0824-webfont.svg#pragmataprobold') format('svg');
+    font-weight: bold;
+    font-style: normal;
+
+}
+
+
+@font-face {
+    font-family: 'pragmatapro_mono';
+    src: url('https://s3.amazonaws.com/fonts-47/PragmataPro0.824W/PragmataPro-Bold0.824W/pragmatapro_mono_b_0824-webfont.eot');
+    src: url('https://s3.amazonaws.com/fonts-47/PragmataPro0.824W/PragmataPro-Bold0.824W/pragmatapro_mono_b_0824-webfont.eot?#iefix') format('embedded-opentype'),
+         url('https://s3.amazonaws.com/fonts-47/PragmataPro0.824W/PragmataPro-Bold0.824W/pragmatapro_mono_b_0824-webfont.woff2') format('woff2'),
+         url('https://s3.amazonaws.com/fonts-47/PragmataPro0.824W/PragmataPro-Bold0.824W/pragmatapro_mono_b_0824-webfont.woff') format('woff'),
+         url('https://s3.amazonaws.com/fonts-47/PragmataPro0.824W/PragmataPro-Bold0.824W/pragmatapro_mono_b_0824-webfont.ttf') format('truetype'),
+         url('https://s3.amazonaws.com/fonts-47/PragmataPro0.824W/PragmataPro-Bold0.824W/pragmatapro_mono_b_0824-webfont.svg#pragmatapro_monobold') format('svg');
+    font-weight: bold;
+    font-style: normal;
+
+}
+
+* {
+    font-family: 'pragmatapro';
+    font-weight: normal;
+    font-style: normal;
+}

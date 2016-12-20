@@ -54,12 +54,13 @@ lazy val commonSettings = Seq(
   addCompilerPlugins(vAll, "paradise", "kind-projector")
 
 lazy val micrositeSettings = Seq(
-  micrositeName := "freestyle",
-  micrositeDescription := "Library that enables building large-scale modular Scala applications and libraries on top of Free monads/applicatives",
+  micrositeName := "Freestyle",
+  micrositeDescription := "Build large-scale modular Scala applications and libraries on top of Free monads/applicatives",
   micrositeBaseUrl := "freestyle",
   micrositeDocumentationUrl := "/freestyle/docs/",
   micrositeGithubOwner := "47deg",
   micrositeGithubRepo := "freestyle",
+  micrositeHighlightTheme := "dracula",
   includeFilter in makeSite := "*.html" | "*.css" | "*.png" | "*.jpg" | "*.gif" | "*.js" | "*.swf" | "*.md",
   micrositePalette := Map(
     "brand-primary"     -> "#01C2C2",
@@ -69,7 +70,7 @@ lazy val micrositeSettings = Seq(
     "gray"              -> "#646D7B",
     "gray-light"        -> "#E6E7EC",
     "gray-lighter"      -> "#F4F5F9",
-    "white-color"       -> "#FFFFFF"))
+    "white-color"       -> "#E6E7EC"))
 
 pgpPassphrase := Some(sys.env.getOrElse("PGP_PASSPHRASE", "").toCharArray)
 pgpPublicRing := file(s"${sys.env.getOrElse("PGP_FOLDER", ".")}/pubring.gpg")
