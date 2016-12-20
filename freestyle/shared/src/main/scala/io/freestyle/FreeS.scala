@@ -1,7 +1,7 @@
 package io.freestyle
 
 import cats.~>
-import cats.free.{FreeApplicative, Free, Inject}
+import cats.free.{Free, FreeApplicative, Inject}
 
 trait FreeSDefinitions {
 

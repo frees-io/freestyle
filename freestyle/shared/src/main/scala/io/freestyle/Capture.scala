@@ -4,7 +4,8 @@ import cats.Id
 import simulacrum.typeclass
 import scala.util.Try
 
-@typeclass trait Capture[F[_]] {
+@typeclass
+trait Capture[F[_]] {
   def capture[A](a: => A): F[A]
 }
 
@@ -29,5 +30,5 @@ trait CaptureInstances {
     new Capture[Try] {
       override def capture[A](a: => A): Try[A] = Try(a)
     }
-  
+
 }
