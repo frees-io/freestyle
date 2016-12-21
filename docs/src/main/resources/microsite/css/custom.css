@@ -114,21 +114,25 @@
 /* HOME */
 
 body {
-
     font-weight: normal;
     font-style: normal;
-    color: #fff;
+    color: #142236;
 }
 
 pre,
 code {
   border: none;
+  background: #E6E7EC;
+  color: #142236;
   font-family: 'pragmatapro';
 }
 
+h1 {
+    text-transform: uppercase;
+}
+
 h1, h2, h3, h4, h5, h6 {
-  color: #fff;
-  text-transform: uppercase;
+  color: #202D40;
   font-family: 'pragmatapro';
 }
 
@@ -138,9 +142,18 @@ h1, h2, h3, h4, h5, h6 {
 
 #content code,
 #page-content-wrapper section pre {
-  background: #142236;
+  background: #202D40;
   border: none;
   color: #f6f6f6;
+  font-size: 1.2em;
+}
+
+/* Code inline fragments in docs */
+#content code {
+  background: #CCCCCC;
+  color: #142236;
+  font-family: 'pragmatapro';
+  font-size: 1em;
 }
 
 .horizontalNav {
@@ -154,15 +167,20 @@ h1, h2, h3, h4, h5, h6 {
 /* DOC */
 
 body.docs {
-  background: #253244;
+  background: #E6E7EC;
 }
 
 #page-content-wrapper section {
-  background: #202D40;
+  background: #E6E7EC;
+}
+
+.sidebar-nav {
+    font-family: 'pragmatapro';
 }
 
 #page-content-wrapper .nav {
   background: #142236;
+  font-family: 'pragmatapro';
 }
 
 #page-content-wrapper .nav a {
@@ -176,3 +194,15 @@ body.docs {
 .label-default {
   background: #253244;
 }
+
+/*
+
+    "brand-primary"     -> "#01C2C2",
+    "brand-secondary"   -> "#142236",
+    "brand-tertiary"    -> "#202D40",
+    "gray-dark"         -> "#383D44",
+    "gray"              -> "#646D7B",
+    "gray-light"        -> "#E6E7EC",
+    "gray-lighter"      -> "#F4F5F9",
+    "white-color"       -> "#E6E7EC"))
+*/
