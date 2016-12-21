@@ -116,7 +116,6 @@
 body {
     font-weight: normal;
     font-style: normal;
-    color: #142236;
 }
 
 pre,
@@ -132,28 +131,25 @@ h1 {
 }
 
 h1, h2, h3, h4, h5, h6 {
-  color: #202D40;
+
   font-family: 'pragmatapro';
 }
 
-.use {
-  background: #253244;
-}
 
 #content code,
 #page-content-wrapper section pre {
   background: #202D40;
   border: none;
   color: #f6f6f6;
-  font-size: 1.2em;
+  font-size: 17px;
 }
 
 /* Code inline fragments in docs */
 #content code {
   background: #CCCCCC;
-  color: #142236;
+  color: #202D40;
   font-family: 'pragmatapro';
-  font-size: 1em;
+  font-size: 16px;
 }
 
 .horizontalNav {
@@ -166,13 +162,7 @@ h1, h2, h3, h4, h5, h6 {
 
 /* DOC */
 
-body.docs {
-  background: #E6E7EC;
-}
 
-#page-content-wrapper section {
-  background: #E6E7EC;
-}
 
 .sidebar-nav {
     font-family: 'pragmatapro';
