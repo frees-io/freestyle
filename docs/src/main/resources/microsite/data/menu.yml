@@ -1,6 +1,6 @@
 options:
   - title: Quick Start Guide
-    url: docs/quickstart.html
+    url: docs/index.html
 
   - title: Algebras
     url: docs/algebras.html

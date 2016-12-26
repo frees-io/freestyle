@@ -1,4 +1,5 @@
 import catext.Dependencies._
+import microsites.MicrositeKeys.{micrositeBaseUrl, micrositeDescription, micrositeDocumentationUrl, micrositeGithubOwner, micrositeGithubRepo, micrositeName, micrositePalette}
 
 addCommandAlias("debug", "; clean ; test")
 
@@ -53,6 +54,25 @@ lazy val commonSettings = Seq(
   sharedPublishSettings(gh, dev) ++
   miscSettings ++
   addCompilerPlugins(vAll, "paradise", "kind-projector")
+
+lazy val micrositeSettings = Seq(
+  micrositeName := "Freestyle",
+  micrositeDescription := "Build large-scale modular Scala applications and libraries on top of Free monads/applicatives",
+  micrositeBaseUrl := "freestyle",
+  micrositeDocumentationUrl := "/freestyle/docs/",
+  micrositeGithubOwner := "47deg",
+  micrositeGithubRepo := "freestyle",
+  micrositeHighlightTheme := "dracula",
+  includeFilter in makeSite := "*.html" | "*.css" | "*.png" | "*.jpg" | "*.gif" | "*.js" | "*.swf" | "*.md",
+  micrositePalette := Map(
+    "brand-primary"     -> "#01C2C2",
+    "brand-secondary"   -> "#142236",
+    "brand-tertiary"    -> "#202D40",
+    "gray-dark"         -> "#383D44",
+    "gray"              -> "#646D7B",
+    "gray-light"        -> "#E6E7EC",
+    "gray-lighter"      -> "#F4F5F9",
+    "white-color"       -> "#E6E7EC"))
 
 pgpPassphrase := Some(sys.env.getOrElse("PGP_PASSPHRASE", "").toCharArray)
 pgpPublicRing := file(s"${sys.env.getOrElse("PGP_FOLDER", ".")}/pubring.gpg")
@@ -177,8 +197,10 @@ lazy val tests = (project in file("tests")).
 lazy val docs = (project in file("docs")).
   dependsOn(freestyleJVM).
   settings(commonSettings: _*).
+  settings(micrositeSettings: _*).
   settings(noPublishSettings: _*).
   settings(
-    micrositeExtraMdFiles := Map(file("README.md") -> "index.md")
+    name := "docs",
+    description := "freestyle docs"
   ).
   enablePlugins(MicrositesPlugin)
