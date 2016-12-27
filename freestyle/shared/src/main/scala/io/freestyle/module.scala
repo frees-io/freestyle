@@ -39,16 +39,12 @@ object materialize {
     def extractCoproductSymbol(cs: Symbol): List[TermName] = {
       cs match {
         case c: ClassSymbol =>
-          //println("cs is a class symbol: " + cs.name  + " wih decls: " + c.companion.info.decls.map(_.name))
           if (!isFreeStyleModule(c)) {
             TermName(c.fullName) :: Nil
-            //println("candidate T: " + cs)
-            //c.info.member(TypeName("T")) :: Nil
           } else {
             c.companion.info.decls.toList.flatMap(x => extractCoproductSymbol(x))
           }
         case m: MethodSymbol =>
-          //println("found candidate nested method with return type: " + m.returnType.companion)
           extractCoproductSymbol(m.returnType.companion.typeSymbol.asClass)
         case _ =>
           Nil
@@ -103,13 +99,11 @@ object materialize {
       val algebras         = findAlgebras(root)
       val moduleCoproducts = mkModuleCoproduct(algebras)
       val parsed           = moduleCoproducts.map(c.parse(_))
-      //println("parsed: \n" + parsed)
       val tree = q"""
       new {
          ..$parsed
       }
       """
-      //println(tree)
       c.typecheck(tree.duplicate, c.TYPEmode)
     }
 
@@ -277,7 +271,6 @@ object module {
           ..$typeMaterializers
         }
       """
-      println(result)
       result
     }
 

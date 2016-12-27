@@ -80,10 +80,7 @@ object free {
         }
         companionApply = adtLeaf match {
           case c: ClassDef => q"${adtLeaf.name.toTermName}[..${c.tparams.map(_.name)}](..$args)"
-          case _ =>
-            val caseObjectType = q"new ${adtLeaf.name.toTypeName}"
-            println(showRaw(caseObjectType))
-            caseObjectType
+          case _ => q"new ${adtLeaf.name.toTypeName}"
         }
         AppliedTypeTree(tpt, _) = sc.tpt
         impl = tpt match {
@@ -196,7 +193,6 @@ object free {
           $abstractInterpreter
         }
       """
-      println(result)
       result
     }
 
