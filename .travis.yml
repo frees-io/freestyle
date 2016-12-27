@@ -11,7 +11,7 @@ script:
 
 after_success:
 - if [ "$TRAVIS_BRANCH" = "master" -a "$TRAVIS_PULL_REQUEST" = "false" ]; then sbt
-  compile publishSigned; fi
+  compile makeMicrosite publishMicrosite publishSigned; fi
 - if [ "$TRAVIS_PULL_REQUEST" = "true" ]; then echo "Not in master branch, skipping
   deploy and release"; fi
 - bash <(curl -s https://codecov.io/bash)
