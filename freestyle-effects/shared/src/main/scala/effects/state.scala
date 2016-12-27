@@ -16,10 +16,11 @@ object state {
 
     object implicits {
 
-      implicit def freestyleStateMInterpreter[M[_]](implicit MS: MonadState[M, S]): StateM.Interpreter[M] = new StateM.Interpreter[M] {
-        def getImpl: M[S] = MS.get
-        def setImpl(s: S): M[Unit] = MS.set(s)
-        def modifyImpl(f: S => S): M[Unit] = MS.modify(f)
+      implicit def freestyleStateMInterpreter[M[_]](
+          implicit MS: MonadState[M, S]): StateM.Interpreter[M] = new StateM.Interpreter[M] {
+        def getImpl: M[S]                   = MS.get
+        def setImpl(s: S): M[Unit]          = MS.set(s)
+        def modifyImpl(f: S => S): M[Unit]  = MS.modify(f)
         def inspectImpl[A](f: S => A): M[A] = MS.inspect(f)
       }
 

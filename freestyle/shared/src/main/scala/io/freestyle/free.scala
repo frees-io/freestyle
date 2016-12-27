@@ -81,7 +81,7 @@ object free {
         companionApply = adtLeaf match {
           case c: ClassDef => q"${adtLeaf.name.toTermName}[..${c.tparams.map(_.name)}](..$args)"
           case _ =>
-            val caseObjectType = q"new ${adtLeaf.name.toTypeName}" 
+            val caseObjectType = q"new ${adtLeaf.name.toTypeName}"
             println(showRaw(caseObjectType))
             caseObjectType
         }
@@ -150,9 +150,10 @@ object free {
         DefDef(_, _, _, _, tpe: AppliedTypeTree, _) = sc
         retType <- tpe.args.lastOption.toList
         params = sc.vparamss.flatten
-      } yield (sc, adtLeaf, params match {
+      } yield
+        (sc, adtLeaf, params match {
           case Nil => q"def $implName[..${sc.tparams}]: M[$retType]"
-          case _ => q"def $implName[..${sc.tparams}](..$params): M[$retType]"
+          case _   => q"def $implName[..${sc.tparams}](..$params): M[$retType]"
         })
       val abstractImpls = impls map (_._3)
       val matchCases    = mkDefaultFunctionK(adtRootName, impls)

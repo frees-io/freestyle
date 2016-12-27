@@ -19,21 +19,21 @@ class DoobieTests extends AsyncWordSpec with Matchers {
   import algebras._
 
   implicit val xa: Transactor[Task] =
-    H2Transactor[Task]("jdbc:h2:mem:test;DB_CLOSE_DELAY=-1", "sa", "")
-      .unsafeRunSync.toOption.getOrElse(throw new Exception("Could not create test transactor"))
+    H2Transactor[Task]("jdbc:h2:mem:test;DB_CLOSE_DELAY=-1", "sa", "").unsafeRunSync.toOption
+      .getOrElse(throw new Exception("Could not create test transactor"))
 
   val query: ConnectionIO[Int] = sql"SELECT 1 + 1".query[Int].unique
 
-   "Doobie Freestyle integration" should {
+  "Doobie Freestyle integration" should {
 
-     "allow a doobie ConnectionIO program to be interleaved inside a program monadic flow" in {
-       val program = for {
-         a <- app.nonDoobie.x
-         b <- app.doobieM.transact(query).freeS
-         c <- Applicative[FreeS[App.T, ?]].pure(1)
-       } yield a + b + c
-       program.exec[Task] map { _ shouldBe 4 } unsafeRunAsyncFuture
-     }
+    "allow a doobie ConnectionIO program to be interleaved inside a program monadic flow" in {
+      val program = for {
+        a <- app.nonDoobie.x
+        b <- app.doobieM.transact(query).freeS
+        c <- Applicative[FreeS[App.T, ?]].pure(1)
+      } yield a + b + c
+      program.exec[Task] map { _ shouldBe 4 } unsafeRunAsyncFuture
+    }
 
     "allow doobie syntax to lift to FreeS" in {
       val program: FreeS[App.T, Int] = for {
@@ -57,7 +57,8 @@ class DoobieTests extends AsyncWordSpec with Matchers {
 }
 
 object algebras {
-  @free trait NonDoobie[F[_]] {
+  @free
+  trait NonDoobie[F[_]] {
     def x: FreeS[F, Int]
   }
 
@@ -66,7 +67,8 @@ object algebras {
       def xImpl: Task[Int] = Task.now(1)
     }
 
-  @module trait App[F[_]] {
+  @module
+  trait App[F[_]] {
     val nonDoobie: NonDoobie[F]
     val doobieM: DoobieM[F]
   }

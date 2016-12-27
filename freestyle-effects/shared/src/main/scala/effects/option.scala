@@ -13,10 +13,11 @@ object option {
 
   object implicits {
 
-    implicit def freeStyleOptionMInterpreter[M[_]](implicit MF: MonadFilter[M]): OptionM.Interpreter[M] = new OptionM.Interpreter[M] {
+    implicit def freeStyleOptionMInterpreter[M[_]](
+        implicit MF: MonadFilter[M]): OptionM.Interpreter[M] = new OptionM.Interpreter[M] {
       def optionImpl[A](fa: Option[A]): M[A] = fa.map(MF.pure[A]).getOrElse(MF.empty[A])
-      def someImpl[A](a: A): M[A] = MF.pure[A](a)
-      def noneImpl[A]: M[A] = MF.empty[A]
+      def someImpl[A](a: A): M[A]            = MF.pure[A](a)
+      def noneImpl[A]: M[A]                  = MF.empty[A]
     }
 
     class OptionFreeSLift[F[_]: OptionM] extends FreeSLift[F, Option] {
@@ -26,5 +27,5 @@ object option {
     implicit def freeSLiftOption[F[_]: OptionM]: FreeSLift[F, Option] = new OptionFreeSLift[F]
 
   }
- 
+
 }
