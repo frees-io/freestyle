@@ -10,14 +10,20 @@ EXPERIMENTAL WIP.
 
 **Freestyle** is a library that enables building large-scale modular Scala applications and libraries on top of Free monads/applicatives.
 
-You may want to consider using Freestyle if among your concerns are:
+Freestyle build upon the simple concept that computations may depend on the result of other computations therefore need to be executed in order
+or independent from each other which makes them parallelizable.
 
-- Decoupling program declaration from runtime interpretation
+Freestyle lets you define and combine such computations as Free monads and Free applicatives with a simple to declare syntax yielding programs which
+can have different runtime implementations completely decoupling program definition from implementations.
+
+Freestyle facilitates out of the box:
+
+- Decoupling of program declaration from runtime interpretation
 - Automatic composition of dispair monadic/applicative style actions originating from independent ADTs.
-- Automatic onion style architectures through composable modules without the complexity of manually aligning Coproducts and interpreters.
+- Automatic onion style architectures through composable modules without the complexity of manually aligning Coproducts and interpreters or declaring implicit summoners.
 - Boilerplate-free application and libraries.
 
-Freestyle optionally includes
+Freestyle includes ready to use modules and algebras for most common application concerns.
 
 - Ready to use integrations to achieve parallelism through [`scala.concurrent.Future`](), [`Akka`]() Actors and [`Monix`]() Task.
 - Ready to use integrations that cover most of the commons applications concerns such as [logging](), [configuration](), [dependency injection](), [persistence](), etc.
@@ -39,7 +45,7 @@ constructing your program. Unfortunately this results in a decent amount of boil
 
 Freestyle simplifies this process by automatically generating all the boilerplate you need in order to compose `Free` monads/applicatives operations originating from unrelated ADTs.
 
-Freestyle also provides the necessary implicit machinery to agreggate algebras into modules and submodules to achieve Onion style architectures built atop Free.
+Freestyle also provides the necessary implicit machinery to agreggate algebras into modules and submodules to achieve Onion style architectures built atop Free
 where you can group your concerns into logical components.
 
 Freestyle goal is to empower users unleashing the full power of Functional Programming based architectures in Scala while remaining beginner friendly.
@@ -107,15 +113,16 @@ object DataOps {
 type Application[A] = Coproduct[Interact, DataOp, A]
 ```
 
-Freestyle generates all the necessary boilerplate machinery including ADTs, Inject instances and companions with proper implicits.
+Freestyle generates all the necessary boilerplate machinery including ADTs, implicit summoners and instances.
 Eliminating this boilerplate allows developers to concentrate in the business logic by simply
-describing abstract functions where one can define the needed arguments and expected return type without providing implementations.
+describing abstract functions where one can define the needed arguments and expected return type without providing implementations
+which are deffered to interpreters.
 
 This is all you need to start building a Free program free of runtime interpretation.
 
 Freestyle is compatible with Hybrid approaches where you define your own ADTs in a more traditional way and combine them with parts built with Freestyle.
 More details about how Freestyle generates boilerplate and other utilities that make functional programming
-with Free monads in Scala easier can be found in its [documentation]()
+with Free monads and applicatives in Scala easier can be found in its [documentation]()
 
 # Dependencies
 

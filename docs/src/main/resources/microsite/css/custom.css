@@ -145,12 +145,14 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 /* Code inline fragments in docs */
+/*
 #content code {
   background: #CCCCCC;
   color: #202D40;
   font-family: 'pragmatapro';
   font-size: 16px;
 }
+*/
 
 .horizontalNav {
   display: none;

@@ -18,16 +18,16 @@ In the presentation side an application may display or perform some input valida
 import io.freestyle._
 
 @free trait Database[F[_]] {
-	def get(id: Int): FreeS[F, Int]
+  def get(id: Int): FreeS[F, Int]
 }
 @free trait Cache[F[_]] {
   def get(id: Int): FreeS[F, Option[Int]]
 }
 @free trait Presenter[F[_]] {
-	def show(id: Int): FreeS[F, Int]
+  def show(id: Int): FreeS[F, Int]
 }
 @free trait IdValidation[F[_]] {
-	def validate(id: Option[Int]): FreeS[F, Int]
+  def validate(id: Option[Int]): FreeS[F, Int]
 }
 ```
 
@@ -35,12 +35,12 @@ At this point we can group these different application concerns in modules like 
 
 ```tut:silent
 @module trait Persistence[F[_]] {
-	val database: Database[F]
-	val cache: Cache[F]
+  val database: Database[F]
+  val cache: Cache[F]
 }
 @module trait Display[F[_]] {
-	val presenter: Presenter[F]
-	val validator: IdValidation[F]
+  val presenter: Presenter[F]
+  val validator: IdValidation[F]
 }
 ```
 
@@ -82,24 +82,11 @@ annotations.
 
 ## Dependency Injection
 
-Freestyle automatically generated the most common implicit machinery def's found in most Scala application to expose instances through companion evidences.
-You don't need to provide implicit evidences for it's dependencies in Freestyle because those were already expressed inside their respective companions.
-Scala uses implicit instances in companion objects if it finds those after [traversing scopes at the call site]().
+Freestyle automatically generates implicit default instances and summoners in the '@free' and '@module' annotated companions so that instances can be summoned implicitly at any point in an application.
+Scala uses implicit instances in companion objects as par tof its implicit resolution rules. to learn more about Scala implicits take a look at this great
+post by Li Haoyi's [Implicit Design Patterns in Scala](http://www.lihaoyi.com/post/ImplicitDesignPatternsinScala.html).
 
-This gives the caller an opportunity to override at any point the instances generated automatically by Freestyle with explicit ones.
-
-Freestyle also creates an implicit method which requires implicitly all the module dependencies and a convenient `apply` method which allows obtaining
-Module instances in an easy way. As in `@free` this effectively enables implicits based Dependency Injection where you may choose to override implementations
-using the implicits scoping rules to place different implementations where appropriate.
-This also solves all Dependency Injection problems automatically for all modules in applications that model their layers a modules with the `@module` annotation.
-
-```scala
-val app = App[App.T]
-```
-
-```tut:silent
-def doWithApp[F[_]](implicit app: App[F]) = ???
-```
+The user can exploit scala implicit resolution order to override the default instances provided by Freestyle.
 
 ## Convenient type aliases
 

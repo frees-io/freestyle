@@ -57,7 +57,7 @@ lazy val commonSettings = Seq(
 
 lazy val micrositeSettings = Seq(
   micrositeName := "Freestyle",
-  micrositeDescription := "Build large-scale modular Scala applications and libraries on top of Free monads/applicatives",
+  micrositeDescription := "large-scale modular Scala applications & libraries on top of Free Monads/Applicatives",
   micrositeBaseUrl := "freestyle",
   micrositeDocumentationUrl := "/freestyle/docs/",
   micrositeGithubOwner := "47deg",

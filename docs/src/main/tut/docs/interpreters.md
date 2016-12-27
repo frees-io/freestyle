@@ -5,7 +5,9 @@ title: Interpreters
 
 # Interpreters
 
-As part of its design Freestyle is compatible with Free and traditional patterns around it. Apps build with Freestyle give developers the freedom
+Freestyle empowers program whose runtime can be easily overriden via implicit evidences.
+
+As part of its design Freestyle is compatible with `Free` and traditional patterns around it. Apps build with Freestyle give developers the freedom
 to choose Automatic or manual algebras, modules and interpreters and intremix them as you see fit in applications based on the desired encoding.
 
 ## Implementation
@@ -21,23 +23,21 @@ Consider the following Algebra adapted to Freestyle from the [Typelevel Cats Fre
 import io.freestyle._
 
 @free trait KVStore[F[_]] {
-   def put[A](key: String, value: A): FreeS[F, Unit]
-
-   def get[A](key: String): FreeS[F, Option[A]]
-
-   def delete(key: String): FreeS[F, Unit]
+  def put[A](key: String, value: A): FreeS[F, Unit]
+  def get[A](key: String): FreeS[F, Option[A]]
+  def delete(key: String): FreeS[F, Unit]
 }
 ```
 
-In order to define a runtime interpreter for it we simply extend `KVStore.Interpreter[M[_]]` and implement its
-abstract members.
+In order to define a runtime interpreter for it we simply extend `KVStore.Interpreter[M[_]]` and implement its abstract members.
 
 ```tut:silent
 import cats.data.State
 
 type KVStoreState[A] = State[Map[String, Any], A]
 
-implicit val kvStoreInterpreter: KVStore.Interpreter[KVStoreState] = new KVStore.Interpreter[KVStoreState] {
+implicit val kvStoreInterpreter: KVStore.Interpreter[KVStoreState] =
+  new KVStore.Interpreter[KVStoreState] {
 
    def putImpl[A](key: String, value: A): KVStoreState[Unit] =
      State.modify(_.updated(key, value))
@@ -50,8 +50,7 @@ implicit val kvStoreInterpreter: KVStore.Interpreter[KVStoreState] = new KVStore
 }
 ```
 
-As you may have noticed in Freestyle instead of implementing a Natural transformation from your Algebra to a target `M[_]` we
-instead implement methods that closely resemble each one of the smart constructors in our @free algebras.
+As you may have noticed in Freestyle instead of implementing a Natural transformation `F ~> M` weimplement methods that closely resemble each one of the smart constructors in our @free algebras.
 This is not an imposition but rather a comvinience as the resulting instances are still Natural Transformations.
 
 In the example above `KVStore.Interpreter[M[_]]` it's actually already a Natural transformation of type `KVStore.T ~> KVStoreState` in which on its
@@ -64,7 +63,7 @@ Alternatively if you would rather implement a natural transformation by hand you
 import cats.~>
 
 implicit def manualKvStoreInterpreter: KVStore.T ~> KVStoreState = new (KVStore.T ~> KVStoreState) {
-def apply[A](fa: KVStore.T[A]): KVStoreState[A] =
+  def apply[A](fa: KVStore.T[A]): KVStoreState[A] =
     fa match {
       case KVStore.PutOP(key, value) =>
 	    State.modify(_.updated(key, value))
@@ -131,7 +130,7 @@ def program[F[_]](implicit B: Backend[F]): FreeS[Option[Int]] = {
 
 Once we have combined our algebras we can simply evaluate them by providing implicit evidence of the Coproduct interpreters.
 `import io.freestyle.implicits._` brings into scope among others the necessary implicit definitions to derive a unified interpreter given
-implicit evidences of each one of the individual algebra's interpreters.
+implicit evidences of each one of the individual algebra's interpreters removing the burden of aligning interpreters from the user.
 
 ```
 import io.freestyle.implicits._
@@ -147,4 +146,4 @@ val manualInterpreters[Backend.T ~> KVStore] = kvStoreInterpreter or logInterpre
 program[Backend.T].foldMap[KVStore](manualInterpreters)
 ```
 
-Now that we've learnt to define our own interpreters let's jump into [application and library composition with Freestyle](parallelism.html) 
+Now that we've learnt to define our own interpreters let's learn how to build applications that support [parallelism](parallelism.html) 

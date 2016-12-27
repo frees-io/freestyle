@@ -7,27 +7,21 @@ title: Parallelism
 
 Freestyle supports building programs that support both sequential and parallel computations.
 
-```
-TODO Code example
-```
-
 # Rationale
 
-One of the biggest issue with architectures based on Free monads is that by default `cats.free.Free` does not support parallelism since your actions as described as a series of
-sequential monadic steps. Each computation step is built with `Free#flatMap` and evaluated via `Free#foldMap`. 
-This is not an issue when your operations produce and output value and that value is used as input in the next step in the monadic sequence but it's rather hard
-to express computations that may be performed in parallel.
+One of the biggest issue with architectures based on Free monads is that by default `cats.free.Free` does not support parallelism since your actions as described as a series of sequential monadic steps. Each computation step is built with `Free#flatMap` and evaluated via `Free#foldMap`.
+This is not an issue when your operations produce and output value and that value is used as input in the next step in the monadic sequence but it's rather hard to express computations that may be performed in parallel.
 
 # Hinting Parallelization
 
-As you may have noticed by now Freestyle uses a type alias as return type of your operations called `FreeS`. 
+As you may have noticed by now Freestyle uses a type alias as return type of your operations called `FreeS`.
 FreeS is an alias for a Free monad that represents a sequential fragment of potentially multiple parallel steps.
 
 ```
 type FreeS[F[_], A] = Free[FreeApplicative[F, ?], A]
 ```
 
-We use `FreeS.Par` an alias for `FreeAplicative` to denote functions that represents a potential parallel step.
+We use `FreeS.Par` as an alias for `FreeAplicative` to denote functions that represents a potential parallel step.
 
 Independent operations that can be executed potentially in parallel may be placed inside `@free` algebras as abstract definitions like in the example below.
 
@@ -35,8 +29,8 @@ Independent operations that can be executed potentially in parallel may be place
 import io.freestyle._
 
 @free trait Validation[F[_]] {
-	def minSize(n: Int): FreeS.Par[F, Boolean]
-	def hasNumber: FreeS.Par[F, Boolean]
+  def minSize(n: Int): FreeS.Par[F, Boolean]
+  def hasNumber: FreeS.Par[F, Boolean]
 }
 ```
 
@@ -65,11 +59,11 @@ import io.freestyle.implicits._
 type ParValidator[A] = Kleisli[Future, String, A]
 
 implicit val interpreter = new Validation.Interpreter[ParValidator] {
-	override def minSizeImpl(n: Int): ParValidator[Boolean] =
-		Kleisli(s => Future(s.size >= n))
+  override def minSizeImpl(n: Int): ParValidator[Boolean] =
+    Kleisli(s => Future(s.size >= n))
 
-	override def hasNumberImpl: ParValidator[Boolean] =
-		Kleisli(s => Future(s.exists(c => "0123456789".contains(c))))
+  override def hasNumberImpl: ParValidator[Boolean] =
+    Kleisli(s => Future(s.exists(c => "0123456789".contains(c))))
 }
 
 val validation = Validation[Validation.T]
@@ -88,9 +82,9 @@ Sequential and parallel actions can be easily intermixed in `@free` algebras.
 
 ```tut:silent
 @free trait MixedFreeS[F[_]] {
-	def x: FreeS.Par[F, Int]
-	def y: FreeS.Par[F, Int]
-	def z: FreeS[F, Int]
+  def x: FreeS.Par[F, Int]
+  def y: FreeS.Par[F, Int]
+  def z: FreeS[F, Int]
 }
 ```
 
@@ -101,20 +95,20 @@ import io.freestyle.implicits._
 import cats.implicits._
 
 def program[F[_]](implicit M: MixedFreeS[F]) = {
-	import M._
-	for {
-		a <- z //3
-		bc <- (x |@| y).tupled.freeS //(1,2) potentially x and y run in parallel
-		(b, c) = bc
-		d <- z //3
-	} yield a :: b :: c :: d :: Nil // List(3,1,2,3)
+  import M._
+  for {
+    a <- z //3
+    bc <- (x |@| y).tupled.freeS //(1,2) potentially x and y run in parallel
+	(b, c) = bc
+	d <- z //3
+  } yield a :: b :: c :: d :: Nil // List(3,1,2,3)
 }
 ```
 
-Once our operations run in parallel we can join the results back into the monadic flow with `.freeS`.
+Once our operations run in parallel we can join the results back into the monadic flow lifting it with `.freeS`.
+In practice you may not need to use `.freeS` since Freestyle supports an implicit conversion to lift those automatically so if the return type is properly infered you may omit `.freeS` altogether.
 
-`FreeS.Par#freeS` is a combinator enriched into the `FreeApplicative` syntax that joins the result of both operations back
+`FreeS.Par#freeS` is a function enriched into the `FreeApplicative` syntax that joins the result of both operations back
 into a free monad step whose result can be used in further monadic computation.
 
-Now that we've covered how to build modular programs that support both sequenced and parallel style computations
-we should explore some of the [extra freestyle modules]() with ready to use algebras.
+Now that we've covered how to build modular programs that support both sequencial and parallel style computations let's explore some of the [extra freestyle algebras](extras.html)
