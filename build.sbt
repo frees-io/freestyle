@@ -1,4 +1,5 @@
 import catext.Dependencies._
+import microsites.MicrositeKeys.{micrositeBaseUrl, micrositeDescription, micrositeDocumentationUrl, micrositeGithubOwner, micrositeGithubRepo, micrositeName, micrositePalette}
 
 addCommandAlias("debug", "; clean ; test")
 
@@ -9,7 +10,7 @@ val gh   = GitHubSettings("com.fortysevendeg", "freestyle", "47 Degrees", apache
 val vAll = Versions(versions, libraries, scalacPlugins)
 
 lazy val commonSettings = Seq(
-  scalaVersion in ThisBuild := "2.11.8", 
+  scalaVersion in ThisBuild := "2.11.8",
   scalaOrganization in ThisBuild := "org.typelevel",//, disabled until supported by Ensime
   //addCompilerPlugin("com.milessabin" % "si2712fix-plugin" % "1.2.0" cross CrossVersion.full),
   resolvers ++= Seq(Resolver.sonatypeRepo("snapshots"), Resolver.sonatypeRepo("releases")),
@@ -43,14 +44,35 @@ lazy val commonSettings = Seq(
     //"-Xlog-implicits"
     //"-Xprint:typer"
     //"-Ymacro-debug-lite"
-  )
+  ),
+  scalafmtConfig in ThisBuild := Some(file(".scalafmt.conf"))
 ) ++
+  reformatOnCompileSettings ++
   sharedCommonSettings ++
   sharedReleaseProcess ++
   credentialSettings ++
   sharedPublishSettings(gh, dev) ++
   miscSettings ++
   addCompilerPlugins(vAll, "paradise", "kind-projector")
+
+lazy val micrositeSettings = Seq(
+  micrositeName := "Freestyle",
+  micrositeDescription := "Build large-scale modular Scala applications and libraries on top of Free monads/applicatives",
+  micrositeBaseUrl := "freestyle",
+  micrositeDocumentationUrl := "/freestyle/docs/",
+  micrositeGithubOwner := "47deg",
+  micrositeGithubRepo := "freestyle",
+  micrositeHighlightTheme := "dracula",
+  includeFilter in makeSite := "*.html" | "*.css" | "*.png" | "*.jpg" | "*.gif" | "*.js" | "*.swf" | "*.md",
+  micrositePalette := Map(
+    "brand-primary"     -> "#01C2C2",
+    "brand-secondary"   -> "#142236",
+    "brand-tertiary"    -> "#202D40",
+    "gray-dark"         -> "#383D44",
+    "gray"              -> "#646D7B",
+    "gray-light"        -> "#E6E7EC",
+    "gray-lighter"      -> "#F4F5F9",
+    "white-color"       -> "#E6E7EC"))
 
 pgpPassphrase := Some(sys.env.getOrElse("PGP_PASSPHRASE", "").toCharArray)
 pgpPublicRing := file(s"${sys.env.getOrElse("PGP_FOLDER", ".")}/pubring.gpg")
@@ -156,6 +178,24 @@ lazy val freestyleFetch = (crossProject in file("freestyle-fetch")).
 lazy val freestyleFetchJVM = freestyleFetch.jvm
 lazy val freestyleFetchJS  = freestyleFetch.js
 
+lazy val freestyleLogging = (crossProject in file("freestyle-logging")).
+  dependsOn(freestyle).
+  settings(commonSettings: _*).
+  settings(name := "freestyle-logging").
+  settings(
+    libraryDependencies += "org.scalatest" %%% "scalatest" % "3.0.0" % "test"
+  ).
+  jvmSettings(
+    libraryDependencies += "io.verizon.journal" %% "core" % "2.3.16"
+  ).
+  jsSettings(
+    libraryDependencies += "biz.enef" %%% "slogging" % "0.5.2"
+  ).
+  jsSettings(sharedJsSettings: _*)
+
+lazy val freestyleLoggingJVM = freestyleLogging.jvm
+lazy val freestyleLoggingJS  = freestyleLogging.js
+
 lazy val tests = (project in file("tests")).
   dependsOn(freestyleJVM).
   dependsOn(freestyleMonixJVM).
@@ -171,8 +211,10 @@ lazy val tests = (project in file("tests")).
 lazy val docs = (project in file("docs")).
   dependsOn(freestyleJVM).
   settings(commonSettings: _*).
+  settings(micrositeSettings: _*).
   settings(noPublishSettings: _*).
   settings(
-    micrositeExtraMdFiles := Map(file("README.md") -> "index.md")
+    name := "docs",
+    description := "freestyle docs"
   ).
   enablePlugins(MicrositesPlugin)

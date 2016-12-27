@@ -15,15 +15,18 @@ object fetch {
 
   object implicits {
 
-    implicit def freeStyleFetchInterpreter[M[_]: FetchMonadError]: FetchM.Interpreter[M] = new FetchM.Interpreter[M] {
-      import _root_.fetch.syntax._
-      def runAImpl[A](fa: Fetch[A]): M[A] = fa.runA[M]
-      def runFImpl[A](fa: Fetch[A]): M[(FetchEnv,A)] = fa.runF[M]
-      def runEImpl[A](fa: Fetch[A]): M[FetchEnv] = fa.runE[M]
-      def runAWithCacheImpl[A](fa: Fetch[A], cache: DataSourceCache): M[A] = fa.runA[M](cache)
-      def runFWithCacheImpl[A](fa: Fetch[A], cache: DataSourceCache): M[(FetchEnv,A)] = fa.runF[M](cache)
-      def runEWithCacheImpl[A](fa: Fetch[A], cache: DataSourceCache): M[FetchEnv] = fa.runE[M](cache)
-    }
+    implicit def freeStyleFetchInterpreter[M[_]: FetchMonadError]: FetchM.Interpreter[M] =
+      new FetchM.Interpreter[M] {
+        import _root_.fetch.syntax._
+        def runAImpl[A](fa: Fetch[A]): M[A]                                  = fa.runA[M]
+        def runFImpl[A](fa: Fetch[A]): M[(FetchEnv, A)]                      = fa.runF[M]
+        def runEImpl[A](fa: Fetch[A]): M[FetchEnv]                           = fa.runE[M]
+        def runAWithCacheImpl[A](fa: Fetch[A], cache: DataSourceCache): M[A] = fa.runA[M](cache)
+        def runFWithCacheImpl[A](fa: Fetch[A], cache: DataSourceCache): M[(FetchEnv, A)] =
+          fa.runF[M](cache)
+        def runEWithCacheImpl[A](fa: Fetch[A], cache: DataSourceCache): M[FetchEnv] =
+          fa.runE[M](cache)
+      }
 
     class FetchFreeSLift[F[_]: FetchM] extends FreeSLift[F, Fetch] {
       def liftFSPar[A](fetch: Fetch[A]): FreeS.Par[F, A] = FetchM[F].runA(fetch)
