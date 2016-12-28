@@ -2,7 +2,8 @@ package io.freestyle
 
 object logging {
 
-  @free trait LoggingM[F[_]] {
+  @free
+  trait LoggingM[F[_]] {
 
     def debug(msg: String): FreeS[F, Unit]
 

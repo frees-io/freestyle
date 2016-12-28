@@ -3,7 +3,7 @@ package io.freestyle
 import org.scalatest._
 import _root_.fetch._
 import _root_.fetch.implicits._
-import cats.{Eval, Applicative}
+import cats.{Applicative, Eval}
 
 import io.freestyle.fetch._
 import io.freestyle.implicits._
@@ -18,16 +18,16 @@ class FetchTests extends AsyncWordSpec with Matchers {
 
   implicit override def executionContext = ExecutionContext.Implicits.global
 
-   "Fetch Freestyle integration" should {
+  "Fetch Freestyle integration" should {
 
-     "allow a fetch to be interleaved inside a program monadic flow" in {
-       val program = for {
-         a <- app.nonFetch.x
-         b <- app.fetchM.runA(fetchString(a)).freeS
-         c <- Applicative[FreeS[App.T, ?]].pure(1)
-       } yield a + b + c
-       program.exec[Future] map { _ shouldBe "111" }
-     }
+    "allow a fetch to be interleaved inside a program monadic flow" in {
+      val program = for {
+        a <- app.nonFetch.x
+        b <- app.fetchM.runA(fetchString(a)).freeS
+        c <- Applicative[FreeS[App.T, ?]].pure(1)
+      } yield a + b + c
+      program.exec[Future] map { _ shouldBe "111" }
+    }
 
     "allow fetch syntax to lift to FreeS" in {
       val program: FreeS[App.T, String] = for {
@@ -38,7 +38,7 @@ class FetchTests extends AsyncWordSpec with Matchers {
       program.exec[Future] map { _ shouldBe "111" }
     }
 
-    "allow fetch syntax to lift to FreeS.Par" in { 
+    "allow fetch syntax to lift to FreeS.Par" in {
       val program: FreeS[App.T, String] = for {
         a <- app.nonFetch.x
         b <- fetchString(a).liftFSPar[App.T].freeS
@@ -46,21 +46,24 @@ class FetchTests extends AsyncWordSpec with Matchers {
       } yield a + b + c
       program.exec[Future] map { _ shouldBe "111" }
     }
- 
+
   }
 
 }
 
 object algebras {
-  @free trait NonFetch[F[_]] {
+  @free
+  trait NonFetch[F[_]] {
     def x: FreeS[F, Int]
   }
 
-  implicit def nonFetchInterpreter: NonFetch.Interpreter[Future] = new NonFetch.Interpreter[Future] {
-    def xImpl: Future[Int] = Future.successful(1)
-  }
+  implicit def nonFetchInterpreter: NonFetch.Interpreter[Future] =
+    new NonFetch.Interpreter[Future] {
+      def xImpl: Future[Int] = Future.successful(1)
+    }
 
-  @module trait App[F[_]] {
+  @module
+  trait App[F[_]] {
     val nonFetch: NonFetch[F]
     val fetchM: FetchM[F]
   }
@@ -73,18 +76,17 @@ object datasources {
   import cats.data.NonEmptyList
   import cats.instances.list._
 
-  implicit object ToStringSource extends DataSource[Int, String]{
-    override def fetchOne(id: Int): Query[Option[String]] = {
+  implicit object ToStringSource extends DataSource[Int, String] {
+    override def fetchOne(id: Int): Query[Option[String]] =
       Query.sync(Option(id.toString))
-    }
-    override def fetchMany(ids: NonEmptyList[Int]): Query[Map[Int, String]] = {
+    override def fetchMany(ids: NonEmptyList[Int]): Query[Map[Int, String]] =
       Query.sync(ids.toList.map(i => (i, i.toString)).toMap)
-    }
   }
 
 }
 
 object fetches {
   import datasources._
-  def fetchString(n: Int): Fetch[String] = Fetch(n) // or, more explicitly: Fetch(n)(ToStringSource)
+  def fetchString(n: Int): Fetch[String] =
+    Fetch(n) // or, more explicitly: Fetch(n)(ToStringSource)
 }

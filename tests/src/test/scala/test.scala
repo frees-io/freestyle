@@ -1,7 +1,7 @@
 package io.freestyle
 
 import cats.free._
-import org.scalatest.{WordSpec, Matchers}
+import org.scalatest.{Matchers, WordSpec}
 import cats.implicits._
 import cats.arrow.FunctionK
 import cats.data.Coproduct
@@ -35,7 +35,7 @@ class tests extends WordSpec with Matchers {
 
     "respond to implicit evidences with compilable runtimes" in {
       implicit val optionInterpreter = interps.optionInterpreter1
-      val s = SCtors1[SCtors1.T]
+      val s                          = SCtors1[SCtors1.T]
       val program = for {
         a <- s.x(1)
         b <- s.y(1)
@@ -46,8 +46,8 @@ class tests extends WordSpec with Matchers {
 
     "reuse program interpretation in diferent runtimes" in {
       implicit val optionInterpreter = interps.optionInterpreter1
-      implicit val listInterpreter = interps.listInterpreter1
-      val s = SCtors1[SCtors1.T]
+      implicit val listInterpreter   = interps.listInterpreter1
+      val s                          = SCtors1[SCtors1.T]
       val program = for {
         a <- s.x(1)
         b <- s.y(1)
@@ -58,19 +58,22 @@ class tests extends WordSpec with Matchers {
     }
 
     "allow multiple args in smart constructors" in {
-      @free trait MultiArgs[F[_]] {
+      @free
+      trait MultiArgs[F[_]] {
         def x(a: Int, b: Int, c: Int): FreeS[F, Int]
       }
     }
 
     "allow smart constructors with no args" in {
-      @free trait NoArgs[F[_]] {
+      @free
+      trait NoArgs[F[_]] {
         def x: FreeS[F, Int]
       }
     }
 
     "generate ADTs with friendly names and expose them as dependent types" in {
-      @free trait FriendlyFreeS[F[_]] {
+      @free
+      trait FriendlyFreeS[F[_]] {
         def sc1(a: Int, b: Int, c: Int): FreeS[F, Int]
         def sc2(a: Int, b: Int, c: Int): FreeS[F, Int]
       }
@@ -81,20 +84,22 @@ class tests extends WordSpec with Matchers {
     }
 
     "allow smart constructors with type arguments" in {
-      @free trait KVStore[F[_]] {
+      @free
+      trait KVStore[F[_]] {
         def put[A](key: String, value: A): FreeS[F, Unit]
         def get[A](key: String): FreeS[F, Option[A]]
         def delete(key: String): FreeS[F, Unit]
       }
       val interpreter = new KVStore.Interpreter[List] {
         def putImpl[A](key: String, value: A): List[Unit] = Nil
-        def getImpl[A](key: String): List[Option[A]] = Nil
-        def deleteImpl(key: String): List[Unit] = Nil
+        def getImpl[A](key: String): List[Option[A]]      = Nil
+        def deleteImpl(key: String): List[Unit]           = Nil
       }
     }
 
     "allow evaluation of abstract members that return FreeS.Pars" in {
-      @free trait ApplicativesServ[F[_]] {
+      @free
+      trait ApplicativesServ[F[_]] {
         def x(key: String): FreeS.Par[F, String]
         def y(key: String): FreeS.Par[F, String]
         def z(key: String): FreeS.Par[F, String]
@@ -112,7 +117,8 @@ class tests extends WordSpec with Matchers {
     }
 
     "allow sequential evaluation of combined FreeS & FreeS.Par" in {
-      @free trait MixedFreeS[F[_]] {
+      @free
+      trait MixedFreeS[F[_]] {
         def x(key: String): FreeS.Par[F, String]
         def y(key: String): FreeS.Par[F, String]
         def z(key: String): FreeS[F, String]
@@ -222,10 +228,10 @@ class tests extends WordSpec with Matchers {
     "[simple] reuse program interpretation in diferent runtimes" in {
       import io.freestyle.implicits._
       implicit val optionInterpreter1 = interps.optionInterpreter1
-      implicit val listInterpreter1 = interps.listInterpreter1
+      implicit val listInterpreter1   = interps.listInterpreter1
       implicit val optionInterpreter2 = interps.optionInterpreter2
-      implicit val listInterpreter2 = interps.listInterpreter2
-      val m1 = M1[M1.T]
+      implicit val listInterpreter2   = interps.listInterpreter2
+      val m1                          = M1[M1.T]
       val program = for {
         a <- m1.sctors1.x(1)
         b <- m1.sctors1.y(1)
@@ -239,13 +245,13 @@ class tests extends WordSpec with Matchers {
     "[onion] reuse program interpretation in diferent runtimes" in {
       import io.freestyle.implicits._
       implicit val optionInterpreter1 = interps.optionInterpreter1
-      implicit val listInterpreter1 = interps.listInterpreter1
+      implicit val listInterpreter1   = interps.listInterpreter1
       implicit val optionInterpreter2 = interps.optionInterpreter2
-      implicit val listInterpreter2 = interps.listInterpreter2
+      implicit val listInterpreter2   = interps.listInterpreter2
       implicit val optionInterpreter3 = interps.optionInterpreter3
-      implicit val listInterpreter3 = interps.listInterpreter3
+      implicit val listInterpreter3   = interps.listInterpreter3
       implicit val optionInterpreter4 = interps.optionInterpreter4
-      implicit val listInterpreter4 = interps.listInterpreter4
+      implicit val listInterpreter4   = interps.listInterpreter4
 
       val o1 = O1[O1.T]
       val program = for {
@@ -277,23 +283,24 @@ class tests extends WordSpec with Matchers {
 
   }
 
-    "Lifting syntax" should {
+  "Lifting syntax" should {
 
-      "allow any value to be lifted into a FreeS monadic context" in {
-        import io.freestyle.implicits._
-        import cats.Eval
-        import cats.implicits._
+    "allow any value to be lifted into a FreeS monadic context" in {
+      import io.freestyle.implicits._
+      import cats.Eval
+      import cats.implicits._
 
-        def program[F[_]] = for {
+      def program[F[_]] =
+        for {
           a <- Eval.now(1).freeS
           b <- 2.pure[Eval].freeS
           c <- 3.pure[Eval].freeS
         } yield a + b + c
-        implicit val interpreter = FunctionK.id[Eval]
-        program[Eval].exec[Eval].value shouldBe 6
-      }
-
+      implicit val interpreter = FunctionK.id[Eval]
+      program[Eval].exec[Eval].value shouldBe 6
     }
+
+  }
 
   "Applicative Parallel Support" should {
 
@@ -315,7 +322,7 @@ class tests extends WordSpec with Matchers {
       import v._
 
       val program = for {
-        a <- z //3
+        a  <- z //3
         bc <- (x |@| y).tupled.freeS //(1,2)
         (b, c) = bc
         d <- z //3
@@ -401,7 +408,8 @@ class tests extends WordSpec with Matchers {
 
       type ParValidator[A] = Kleisli[Future, String, A]
 
-      @free trait Validation[F[_]] {
+      @free
+      trait Validation[F[_]] {
         def minSize(n: Int): FreeS.Par[F, Boolean]
         def hasNumber: FreeS.Par[F, Boolean]
       }
@@ -417,7 +425,7 @@ class tests extends WordSpec with Matchers {
       import validation._
 
       val parValidation = (minSize(3) |@| hasNumber).map(_ :: _ :: Nil)
-      val validator = parValidation.exec[ParValidator]
+      val validator     = parValidation.exec[ParValidator]
 
       Await.result(validator.run("a"), Duration.Inf) shouldBe List(false, false)
       Await.result(validator.run("abc"), Duration.Inf) shouldBe List(true, false)
@@ -431,37 +439,44 @@ class tests extends WordSpec with Matchers {
 
 object algebras {
 
-  @free trait SCtors1[F[_]] {
+  @free
+  trait SCtors1[F[_]] {
     def x(a: Int): FreeS[F, Int]
     def y(a: Int): FreeS[F, Int]
   }
 
-  @free trait SCtors2[F[_]] {
+  @free
+  trait SCtors2[F[_]] {
     def i(a: Int): FreeS[F, Int]
     def j(a: Int): FreeS[F, Int]
   }
 
-  @free trait SCtors3[F[_]] {
+  @free
+  trait SCtors3[F[_]] {
     def o(a: Int): FreeS[F, Int]
     def p(a: Int): FreeS[F, Int]
   }
 
-  @free trait SCtors4[F[_]] {
+  @free
+  trait SCtors4[F[_]] {
     def k(a: Int): FreeS[F, Int]
     def l(a: Int): FreeS[F, Int]
   }
 
-  @free trait MixedFreeS[F[_]] {
+  @free
+  trait MixedFreeS[F[_]] {
     def x: FreeS.Par[F, Int]
     def y: FreeS.Par[F, Int]
     def z: FreeS[F, Int]
   }
 
-  @free trait S1[F[_]] {
+  @free
+  trait S1[F[_]] {
     def x(n: Int): FreeS[F, Int]
   }
 
-  @free trait S2[F[_]] {
+  @free
+  trait S2[F[_]] {
     def y(n: Int): FreeS[F, Int]
   }
 
@@ -471,33 +486,39 @@ object modules {
 
   import algebras._
 
-  @module trait M1[F[_]] {
+  @module
+  trait M1[F[_]] {
     val sctors1: SCtors1[F]
     val sctors2: SCtors2[F]
   }
 
-  @module trait M2[F[_]] {
+  @module
+  trait M2[F[_]] {
     val sctors3: SCtors3[F]
     val sctors4: SCtors4[F]
   }
 
-  @module trait O1[F[_]] {
+  @module
+  trait O1[F[_]] {
     val m1: M1[F]
     val m2: M2[F]
   }
 
-  @module trait O2[F[_]] {
+  @module
+  trait O2[F[_]] {
     val o1: O1[F]
     val x = 1
     def y = 2
   }
 
-  @module trait O3[F[_]] {
+  @module
+  trait O3[F[_]] {
     def x = 1
     def y = 2
   }
 
-  @module trait StateProp[F[_]] {
+  @module
+  trait StateProp[F[_]] {
     val s1: S1[F]
     val s2: S2[F]
   }
