@@ -24,11 +24,11 @@ Freestyle optionally includes
 
 ## Quick Start
 
-Take a look at the [quick start guide](docs/quickstart.html) to understand the main features of Freestyle
+Take a look at the [quick start guide](docs/src/main/tut/docs/index.md) to understand the main features of Freestyle
 
 ## Documentation
 
-Freestyle includes extensive [documentation](docs/algebras.html) for each one of its features and third party integrations
+Freestyle includes extensive [documentation](docs/src/main/tut/docs/algebras.md) for each one of its features and third party integrations
 
 ## Rationale
 
