@@ -99,7 +99,7 @@ object materialize {
       val algebras         = findAlgebras(root)
       val moduleCoproducts = mkModuleCoproduct(algebras)
       val parsed           = moduleCoproducts.map(c.parse(_))
-      val tree = q"""
+      val tree             = q"""
       new {
          ..$parsed
       }
@@ -271,6 +271,7 @@ object module {
           ..$typeMaterializers
         }
       """
+      println(result)
       result
     }
 
