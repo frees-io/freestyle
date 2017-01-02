@@ -11,8 +11,7 @@ object loggingJS {
         implicit ME: MonadError[M, Throwable]): LoggingM.Interpreter[M] =
       new LoggingM.Interpreter[M] with LazyLogging {
 
-        LoggerConfig.factory = ConsoleLoggerFactory()
-        LoggerConfig.level = LogLevel.DEBUG
+        LoggerConfig.factory = PrintLoggerFactory()
 
         def debugImpl(msg: String): M[Unit] = ME.catchNonFatal(logger.debug(msg))
 
