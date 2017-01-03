@@ -19,7 +19,7 @@ object traverse {
       def fromTraversable[A](ta: G[A]): FreeS[F, A]
     }
 
-    /** Interpretable as long as traverse instance for G[_] and a monad combine for G[_] exists
+    /** Interpretable as long as Foldable instance for G[_] and a MonadCombine for M[_] exists
      * in scope
      */
     object implicits {
