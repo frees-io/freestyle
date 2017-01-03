@@ -37,7 +37,7 @@ object traverse {
       def liftFSPar[A](fa: G[A]): FreeS.Par[F, A] = TraverseM[F].fromTraversable(fa)
     }
 
-    implicit def freeSLiftStateInspect[F[_]: TraverseM]: FreeSLift[F, G] =
+    implicit def freeSLiftTraverse[F[_]: TraverseM]: FreeSLift[F, G] =
       new TraverseFreeSLift[F]
 
   }
