@@ -180,6 +180,16 @@ class EffectsTests extends AsyncWordSpec with Matchers {
       program[st.StateM.T].exec[State[Int, ?]].run(1).value shouldBe Tuple2(1, 2)
     }
 
+    "syntax" in {
+      import cats.implicits._
+      def program[F[_]: st.StateM] =
+        for {
+          a <- st.StateM[F].get
+          b <- ((x: Int) => x + a).liftFS
+        } yield b
+      program[st.StateM.T].exec[State[Int, ?]].run(1).value shouldBe Tuple2(1, 2)
+    }
+
   }
 
   "Writer integration" should {
@@ -242,6 +252,19 @@ class EffectsTests extends AsyncWordSpec with Matchers {
         for {
           _ <- TraverseM[F].empty[Int]
           a <- TraverseM[F].fromTraversable(1 :: 2 :: 3 :: Nil)
+          b <- Applicative[FreeS[F, ?]].pure(a + 1)
+          c <- Applicative[FreeS[F, ?]].pure(b + 1)
+        } yield c
+      program[TraverseM.T].exec[List] shouldBe Nil
+    }
+
+    "syntax" in {
+      import cats.implicits._
+
+      def program[F[_]: TraverseM] =
+        for {
+          _ <- TraverseM[F].empty[Int]
+          a <- (1 :: 2 :: 3 :: Nil).liftFS
           b <- Applicative[FreeS[F, ?]].pure(a + 1)
           c <- Applicative[FreeS[F, ?]].pure(b + 1)
         } yield c
