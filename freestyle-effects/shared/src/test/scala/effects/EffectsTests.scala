@@ -263,12 +263,11 @@ class EffectsTests extends AsyncWordSpec with Matchers {
 
       def program[F[_]: TraverseM] =
         for {
-          _ <- TraverseM[F].empty[Int]
           a <- (1 :: 2 :: 3 :: Nil).liftFS
           b <- Applicative[FreeS[F, ?]].pure(a + 1)
           c <- Applicative[FreeS[F, ?]].pure(b + 1)
         } yield c
-      program[TraverseM.T].exec[List] shouldBe Nil
+      program[TraverseM.T].exec[List] shouldBe List(3, 4, 5)
     }
 
   }
