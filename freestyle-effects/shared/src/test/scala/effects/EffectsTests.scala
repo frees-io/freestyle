@@ -216,4 +216,38 @@ class EffectsTests extends AsyncWordSpec with Matchers {
     }
   }
 
+  "Travserse integration" should {
+
+    import io.freestyle.effects._
+
+    val list = traverse.list
+    import list._, list.implicits._
+
+    "fromList" in {
+      import cats.implicits._
+
+      def program[F[_]: TraverseM] =
+        for {
+          a <- TraverseM[F].fromTraversable(1 :: 2 :: 3 :: Nil)
+          b <- Applicative[FreeS[F, ?]].pure(a + 1)
+          c <- TraverseM[F].singleton(1 + b)
+        } yield c
+      program[TraverseM.T].exec[List] shouldBe List(3, 4, 5)
+    }
+
+    "empty" in {
+      import cats.implicits._
+
+      def program[F[_]: TraverseM] =
+        for {
+          _ <- TraverseM[F].empty[Int]
+          a <- TraverseM[F].fromTraversable(1 :: 2 :: 3 :: Nil)
+          b <- Applicative[FreeS[F, ?]].pure(a + 1)
+          c <- Applicative[FreeS[F, ?]].pure(b + 1)
+        } yield c
+      program[TraverseM.T].exec[List] shouldBe Nil
+    }
+
+  }
+
 }
