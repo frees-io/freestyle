@@ -216,14 +216,14 @@ class EffectsTests extends AsyncWordSpec with Matchers {
     }
   }
 
-  "Travserse integration" should {
+  "Traverse integration" should {
 
     import io.freestyle.effects._
 
     val list = traverse.list
     import list._, list.implicits._
 
-    "fromList" in {
+    "fromTraversable" in {
       import cats.implicits._
 
       def program[F[_]: TraverseM] =
