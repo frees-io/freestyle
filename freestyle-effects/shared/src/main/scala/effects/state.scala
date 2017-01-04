@@ -24,6 +24,13 @@ object state {
         def inspectImpl[A](f: S => A): M[A] = MS.inspect(f)
       }
 
+      class StateInspectFreeSLift[F[_]: StateM] extends FreeSLift[F, Function1[S, ?]] {
+        def liftFSPar[A](fa: S => A): FreeS.Par[F, A] = StateM[F].inspect(fa)
+      }
+
+      implicit def freeSLiftStateInspect[F[_]: StateM]: FreeSLift[F, Function1[S, ?]] =
+        new StateInspectFreeSLift[F]
+
     }
 
   }

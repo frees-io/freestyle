@@ -12,6 +12,8 @@ import scala.concurrent.duration._
 
 class EffectsTests extends AsyncWordSpec with Matchers {
 
+  import collision._
+
   implicit override def executionContext = ExecutionContext.Implicits.global
 
   "Option Freestyle integration" should {
@@ -101,9 +103,6 @@ class EffectsTests extends AsyncWordSpec with Matchers {
     import io.freestyle.effects._
     import cats.data.Reader
 
-    case class Config(n: Int = 0)
-
-    val rd = reader[Config]
     import rd.implicits._
 
     "allow retrieving an environment for a user defined type" in {
@@ -125,7 +124,7 @@ class EffectsTests extends AsyncWordSpec with Matchers {
           c <- rd.ReaderM[F].reader(_.n)
           _ <- Applicative[FreeS[F, ?]].pure(1)
         } yield c
-      program[rd.ReaderM.T].exec[Reader[Config, ?]].run(Config()) shouldBe 0
+      program[rd.ReaderM.T].exec[Reader[Config, ?]].run(Config()) shouldBe 5
     }
 
   }
@@ -135,8 +134,8 @@ class EffectsTests extends AsyncWordSpec with Matchers {
     import io.freestyle.effects._
     import cats.data.State
 
-    val st = state[Int]
     import st.implicits._
+    import rd.implicits._
 
     "get" in {
       import cats.implicits._
@@ -180,6 +179,17 @@ class EffectsTests extends AsyncWordSpec with Matchers {
       program[st.StateM.T].exec[State[Int, ?]].run(1).value shouldBe Tuple2(1, 2)
     }
 
+    "syntax" in {
+      import cats.implicits._
+      import st.implicits._
+      def program[F[_]: st.StateM] =
+        for {
+          a <- st.StateM[F].get
+          b <- ((x: Int) => x + a).liftFS
+        } yield b
+      program[st.StateM.T].exec[State[Int, ?]].run(1).value shouldBe Tuple2(1, 2)
+    }
+
   }
 
   "Writer integration" should {
@@ -187,7 +197,6 @@ class EffectsTests extends AsyncWordSpec with Matchers {
     import io.freestyle.effects._
     import cats.data.Writer
 
-    val wr = writer[List[Int]]
     import wr.implicits._
 
     type Logger[A] = Writer[List[Int], A]
@@ -248,6 +257,74 @@ class EffectsTests extends AsyncWordSpec with Matchers {
       program[TraverseM.T].exec[List] shouldBe Nil
     }
 
+    "syntax" in {
+      import cats.implicits._
+
+      def program[F[_]: TraverseM] =
+        for {
+          a <- (1 :: 2 :: 3 :: Nil).liftFS
+          b <- Applicative[FreeS[F, ?]].pure(a + 1)
+          c <- Applicative[FreeS[F, ?]].pure(b + 1)
+        } yield c
+      program[TraverseM.T].exec[List] shouldBe List(3, 4, 5)
+    }
+
+  }
+
+}
+
+object collision {
+
+  val wr = writer[List[Int]]
+
+  val st = state[Int]
+
+  case class Config(n: Int = 5)
+
+  val rd = reader[Config]
+
+  @module
+  trait AppX[F[_]] {
+    val stateM: st.StateM[F]
+    val readerM: rd.ReaderM[F]
+  }
+
+  @free
+  trait B[F[_]] {
+    def x: FreeS[F, Int]
+  }
+
+  @free
+  trait C[F[_]] {
+    def x: FreeS[F, Int]
+  }
+
+  @free
+  trait D[F[_]] {
+    def x: FreeS[F, Int]
+  }
+
+  @free
+  trait E[F[_]] {
+    def x: FreeS[F, Int]
+  }
+
+  @module
+  trait X[F[_]] {
+    val a: B[F]
+    val b: C[F]
+  }
+
+  @module
+  trait Y[F[_]] {
+    val c: C[F]
+    val d: D[F]
+  }
+
+  @module
+  trait Z[F[_]] {
+    val x: X[F]
+    val y: Y[F]
   }
 
 }
