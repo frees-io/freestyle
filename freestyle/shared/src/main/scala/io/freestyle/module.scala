@@ -36,16 +36,24 @@ object materialize {
       } else false
     }
 
-    def extractCoproductSymbol(cs: Symbol): List[TermName] = {
-      cs match {
+    def extractCoproductSymbol(s: Symbol, t: Type): List[TermName] = {
+      s match {
         case c: ClassSymbol =>
           if (!isFreeStyleModule(c)) {
-            TermName(c.fullName) :: Nil
+            TermName(t.toString) :: Nil
           } else {
-            c.companion.info.decls.toList.flatMap(x => extractCoproductSymbol(x))
+            c.companion.info.decls.toList.collect {
+              case m: MethodSymbol => m
+            }.flatMap { x =>
+              val companionClass    = x.asMethod.returnType.companion.typeSymbol.asClass
+              val dependentTypeCtor = x.asMethod.returnType.typeConstructor
+              extractCoproductSymbol(companionClass, dependentTypeCtor)
+            }
           }
         case m: MethodSymbol =>
-          extractCoproductSymbol(m.returnType.companion.typeSymbol.asClass)
+          val companionClass    = m.returnType.companion.typeSymbol.asClass
+          val dependentTypeCtor = m.returnType.typeConstructor
+          extractCoproductSymbol(companionClass, dependentTypeCtor)
         case _ =>
           Nil
       }
@@ -56,12 +64,13 @@ object materialize {
         l match {
           case Nil => acc
           case h :: t =>
-            val companionClass = h.asMethod.returnType.companion.typeSymbol.asClass
-            val coproducts     = extractCoproductSymbol(companionClass)
+            val companionClass    = h.asMethod.returnType.companion.typeSymbol.asClass
+            val dependentTypeCtor = h.asMethod.returnType.typeConstructor
+            val coproducts        = extractCoproductSymbol(companionClass, dependentTypeCtor)
             loop(t, acc ++ coproducts)
         }
       }
-      loop(s.decls.toList.filter(_.isAbstract), Nil) //.map(_.asType.typeSignature.resultType.typeSymbol)
+      loop(s.decls.toList.filter(_.isAbstract), Nil)
     }
 
     def cp(n: TermName) =
@@ -70,7 +79,7 @@ object materialize {
     def mkModuleCoproduct(algebras: List[TermName]): List[String] = { //ugly hack because as String it does not typecheck early which we need for types to be in scope
       val result = algebras match {
         case List(el) =>
-          (0, q"type T[A] = cats.data.Coproduct[$el.T, $el.T, A]") :: Nil //TODO this won't work but we need a solution to single service modules
+          (0, q"type T[A] = cats.data.Coproduct[$el.T, Nothing, A]") :: Nil //TODO this won't work but we need a solution to single service modules
         case l @ _ :: _ =>
           l.scanLeft[(Int, AnyRef), List[(Int, AnyRef)]]((0, q"")) {
             case ((pos, acc), el) =>
@@ -254,10 +263,8 @@ object module {
       val moduleCoproduct  = mkModuleCoproduct(implicitArgs).map(c.parse(_))
       val moduleClassImpl  = mkModuleClassImpls(name.toTypeName, implicitArgs)
       val implicitInstance = mkCompanionDefaultInstance(userTrait, moduleClassImpl, implicitArgs)
-      //val implicitsTrait = mkImplicitsTrait(userTrait, implicitArgs)
-      val rawTypeDefs = implicitArgs.flatMap(_.tpt.children.headOption)
-      //val parents = rawTypeDefs.map { n => Select(Ident(TermName(n.toString)), TypeName("Implicits")) }
-      val companionApply = mkCompanionApply(userTrait, moduleClassImpl, implicitArgs)
+      val rawTypeDefs      = implicitArgs.flatMap(_.tpt.children.headOption)
+      val companionApply   = mkCompanionApply(userTrait, moduleClassImpl, implicitArgs)
       val typeMaterializers = moduleCoproduct match {
         case Nil => q"type T[A] = Nothing" :: Nil
         case _   => q"val X = io.freestyle.materialize.apply(this)" :: q"type T[A] = X.T[A]" :: Nil
@@ -271,7 +278,6 @@ object module {
           ..$typeMaterializers
         }
       """
-      println(result)
       result
     }
 

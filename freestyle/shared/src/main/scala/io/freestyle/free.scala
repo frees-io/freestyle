@@ -218,7 +218,6 @@ object size extends Poly1 {
           $abstractInterpreter
         }
       """
-      println(result)
       result
     }
 
