@@ -135,7 +135,6 @@ class EffectsTests extends AsyncWordSpec with Matchers {
     import cats.data.State
 
     import st.implicits._
-    import rd.implicits._
 
     "get" in {
       import cats.implicits._
@@ -181,7 +180,6 @@ class EffectsTests extends AsyncWordSpec with Matchers {
 
     "syntax" in {
       import cats.implicits._
-      import st.implicits._
       def program[F[_]: st.StateM] =
         for {
           a <- st.StateM[F].get
