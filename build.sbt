@@ -11,9 +11,13 @@ val vAll = Versions(versions, libraries, scalacPlugins)
 
 lazy val commonSettings = Seq(
   scalaVersion in ThisBuild := "2.11.8",
-  scalaOrganization in ThisBuild := "org.typelevel",//, disabled until supported by Ensime
-  //addCompilerPlugin("com.milessabin" % "si2712fix-plugin" % "1.2.0" cross CrossVersion.full),
-  resolvers ++= Seq(Resolver.sonatypeRepo("snapshots"), Resolver.sonatypeRepo("releases")),
+  scalaOrganization in ThisBuild := "org.typelevel",
+  addCompilerPlugin("tryp" %% "splain" % "0.1.11"),
+    resolvers ++= Seq(
+      Resolver.sonatypeRepo("snapshots"),
+      Resolver.sonatypeRepo("releases"),
+      Resolver.bintrayRepo("tek", "maven")
+    ),
   organization := gh.org,
   organizationName := gh.publishOrg,
   homepage := Option(url("http://www.47deg.com")),
@@ -40,7 +44,8 @@ lazy val commonSettings = Seq(
     "-Ywarn-dead-code",
     "-Ywarn-numeric-widen",
     "-Ywarn-value-discard",
-    "-Xfuture"
+    "-Xfuture",
+    "-P:splain:all:true"
     //"-Xlog-implicits"
     //"-Xprint:typer"
     //"-Ymacro-debug-lite"
