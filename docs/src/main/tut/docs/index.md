@@ -22,13 +22,13 @@ addCompilerPlugin("org.scalamacros" % "paradise" % "2.1.0" cross CrossVersion.fu
 For Scala.jvm
 
 ```scala
-libraryDependencies += "io.freestyle" %% "freestyle" % "0.1.0"
+libraryDependencies += "com.47deg" %% "freestyle" % "0.1.0"
 ```
 
 For Scala.js
 
 ```scala
-libraryDependencies += "io.freestyle" %%% "freestyle" % "0.1.0"
+libraryDependencies += "com.47deg" %%% "freestyle" % "0.1.0"
 ```
 
 ## Algebras
