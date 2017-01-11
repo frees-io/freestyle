@@ -124,8 +124,8 @@ lazy val freestyleDoobie = (project in file("freestyle-doobie")).
   settings(name := "freestyle-doobie").
   settings(
     libraryDependencies ++= Seq(
-      "org.tpolecat"  %% "doobie-core-cats" % "0.3.1-SNAPSHOT",
-      "org.tpolecat"  %% "doobie-h2-cats"   % "0.3.1-SNAPSHOT" % "test",
+      "org.tpolecat"  %% "doobie-core-cats" % "0.3.1-M3",
+      "org.tpolecat"  %% "doobie-h2-cats"   % "0.3.1-M3" % "test",
       "org.scalatest" %% "scalatest"        % "3.0.0"          % "test"
     )
   )
