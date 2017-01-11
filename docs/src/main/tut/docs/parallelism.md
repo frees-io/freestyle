@@ -48,7 +48,7 @@ Freestyle ships with ready to use instances for `scala.concurrent.Future` and co
 To enable these instances and support parallelism you need to explicitly import:
 
 ```tut:silent
-import io.nondeterminism._
+import freestyle.nondeterminism._
 ```
 
 The code below illustrate an interpreter that will allow parallel executions thanks to the unsafe nature of `scala.concurrent.Future#apply` which runs immediately.
@@ -60,7 +60,7 @@ import scala.concurrent._
 import scala.concurrent.duration._
 import scala.concurrent.ExecutionContext.Implicits.global
 
-import io.implicits._
+import freestyle.implicits._
 
 type ParValidator[A] = Kleisli[Future, String, A]
 
@@ -97,7 +97,7 @@ Sequential and parallel actions can be easily intermixed in `@free` algebras.
 Using the [cats cartesian builder operator \|@\|]() we can easily describe steps that run in parallel
 
 ```tut:silent
-import io.implicits._
+import freestyle.implicits._
 import cats.implicits._
 
 def program[F[_]](implicit M: MixedFreeS[F]) = {

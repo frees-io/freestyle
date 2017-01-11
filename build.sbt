@@ -13,12 +13,6 @@ lazy val commonSettings = Seq(
   scalaVersion in ThisBuild := "2.12.0",
   crossScalaVersions in ThisBuild := Seq("2.11.8", "2.12.0"),
   scalaOrganization in ThisBuild := "org.typelevel",
-  addCompilerPlugin("tryp" %% "splain" % "0.1.11"),
-    resolvers ++= Seq(
-      Resolver.sonatypeRepo("snapshots"),
-      Resolver.sonatypeRepo("releases"),
-      Resolver.bintrayRepo("tek", "maven")
-    ),
   organization := gh.org,
   organizationName := gh.publishOrg,
   homepage := Option(url("http://www.47deg.com")),
@@ -44,8 +38,7 @@ lazy val commonSettings = Seq(
     "-Ywarn-dead-code",
     "-Ywarn-numeric-widen",
     "-Ywarn-value-discard",
-    "-Xfuture",
-    "-P:splain:all:true"
+    "-Xfuture"
     //"-Xlog-implicits"
     //"-Xprint:typer"
     //"-Ymacro-debug-lite"
