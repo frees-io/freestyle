@@ -213,7 +213,6 @@ lazy val docs = (project in file("docs")).
   settings(noPublishSettings: _*).
   settings(
     name := "docs",
-    description := "freestyle docs",
-    addCompilerPlugin("org.scalamacros" % "paradise" % "2.1.0" cross CrossVersion.full)
+    description := "freestyle docs"
   ).
   enablePlugins(MicrositesPlugin)

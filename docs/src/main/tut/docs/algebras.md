@@ -49,7 +49,7 @@ object UserRepository {
   type T[A] = UserRepositoryOp[A]
 
   class UserRepositoryImpl[F[_]](implicit I: Inject[UserRepositoryOp, F]) extends UserRepository[F] {
-	  def get(id: Long): Free[F, User] = Free.inject[UserRepositoryOp, F](Get(id))
+      def get(id: Long): Free[F, User] = Free.inject[UserRepositoryOp, F](Get(id))
     def save(user: User): Free[F, User] = Free.inject[UserRepositoryOp, F](Save(user))
     def getAll(filter: String): Free[F, List[User]] = Free.inject[UserRepositoryOp, F](GetAll(filter))
   }
@@ -99,14 +99,17 @@ You may use this to manually build `Coproduct` types which will serve in the par
 import cats.data.Coproduct
 
 @free trait Service1[F[_]]{
-	def x(n: Int): FreeS[F, Int]
+  def x(n: Int): FreeS[F, Int]
 }
+
 @free trait Service2[F[_]]{
-	def y(n: Int): FreeS[F, Int]
+  def y(n: Int): FreeS[F, Int]
 }
+
 @free trait Service3[F[_]]{
-	def z(n: Int): FreeS[F, Int]
+  def z(n: Int): FreeS[F, Int]
 }
+
 type C1[A] = Coproduct[Service1.T, Service2.T, A]
 type Module[A] = Coproduct[Service3.T, C1, A]
 ```

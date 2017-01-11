@@ -23,7 +23,7 @@ to express computations that may be performed in parallel.
 As you may have noticed by now Freestyle uses a type alias as return type of your operations called `FreeS`. 
 FreeS is an alias for a Free monad that represents a sequential fragment of potentially multiple parallel steps.
 
-```
+```scala
 type FreeS[F[_], A] = Free[FreeApplicative[F, ?], A]
 ```
 
