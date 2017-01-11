@@ -9,6 +9,7 @@ before_install:
   -in secring.gpg.enc -out secring.gpg -d; fi
 script:
 - sbt ++$TRAVIS_SCALA_VERSION clean coverage test coverageReport
+- sbt ++$TRAVIS_SCALA_VERSION "docs/tut"
 
 after_success:
 - if [ "$TRAVIS_BRANCH" = "master" -a "$TRAVIS_PULL_REQUEST" = "false" ]; then sbt
