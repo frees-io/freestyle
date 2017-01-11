@@ -1,4 +1,4 @@
-package io.freestyle
+package freestyle
 
 import cats.{~>, Foldable}
 import _root_.doobie.imports._

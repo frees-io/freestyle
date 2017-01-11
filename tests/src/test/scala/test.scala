@@ -1,4 +1,4 @@
-package io.freestyle
+package freestyle
 
 import cats.free._
 import org.scalatest.{Matchers, WordSpec}
@@ -40,7 +40,7 @@ class tests extends WordSpec with Matchers {
         a <- s.x(1)
         b <- s.y(1)
       } yield a + b
-      import io.freestyle.implicits._
+      import freestyle.implicits._
       program.exec[Option] shouldBe Option(2)
     }
 
@@ -52,7 +52,7 @@ class tests extends WordSpec with Matchers {
         a <- s.x(1)
         b <- s.y(1)
       } yield a + b
-      import io.freestyle.implicits._
+      import freestyle.implicits._
       program.exec[Option] shouldBe Option(2)
       program.exec[List] shouldBe List(2)
     }
@@ -111,7 +111,7 @@ class tests extends WordSpec with Matchers {
       }
       val v = ApplicativesServ[ApplicativesServ.T]
       import v._
-      import io.freestyle.implicits._
+      import freestyle.implicits._
       val program = (x("a") |@| y("b") |@| z("c")).map { _ + _ + _ }.freeS
       program.exec[Option] shouldBe Some("abc")
     }
@@ -130,7 +130,7 @@ class tests extends WordSpec with Matchers {
       }
       val v = MixedFreeS[MixedFreeS.T]
       import v._
-      import io.freestyle.implicits._
+      import freestyle.implicits._
       val apProgram = (x("a") |@| y("b")).map { _ + _ }
       val program = for {
         n <- z("1")
@@ -210,14 +210,14 @@ class tests extends WordSpec with Matchers {
     }
 
     "[simple] find a FunctionK[Module.T, ?] providing there is existing ones for it's smart constructors" in {
-      import io.freestyle.implicits._
+      import freestyle.implicits._
       implicit val optionInterpreter1 = interps.optionInterpreter1
       implicit val optionInterpreter2 = interps.optionInterpreter2
       implicitly[FunctionK[M1.T, Option]].isInstanceOf[FunctionK[M1.T, Option]] shouldBe true
     }
 
     "[onion] find a FunctionK[Module.T, ?] providing there is existing ones for it's smart constructors" in {
-      import io.freestyle.implicits._
+      import freestyle.implicits._
       implicit val optionInterpreter1 = interps.optionInterpreter1
       implicit val optionInterpreter2 = interps.optionInterpreter2
       implicit val optionInterpreter3 = interps.optionInterpreter3
@@ -226,7 +226,7 @@ class tests extends WordSpec with Matchers {
     }
 
     "[simple] reuse program interpretation in diferent runtimes" in {
-      import io.freestyle.implicits._
+      import freestyle.implicits._
       implicit val optionInterpreter1 = interps.optionInterpreter1
       implicit val listInterpreter1   = interps.listInterpreter1
       implicit val optionInterpreter2 = interps.optionInterpreter2
@@ -243,7 +243,7 @@ class tests extends WordSpec with Matchers {
     }
 
     "[onion] reuse program interpretation in diferent runtimes" in {
-      import io.freestyle.implicits._
+      import freestyle.implicits._
       implicit val optionInterpreter1 = interps.optionInterpreter1
       implicit val listInterpreter1   = interps.listInterpreter1
       implicit val optionInterpreter2 = interps.optionInterpreter2
@@ -286,7 +286,7 @@ class tests extends WordSpec with Matchers {
   "Lifting syntax" should {
 
     "allow any value to be lifted into a FreeS monadic context" in {
-      import io.freestyle.implicits._
+      import freestyle.implicits._
       import cats.Eval
       import cats.implicits._
 
@@ -307,8 +307,8 @@ class tests extends WordSpec with Matchers {
     import algebras._
 
     class NonDeterminismTestShared {
-      import io.freestyle.nondeterminism._
-      import io.freestyle.implicits._
+      import freestyle.nondeterminism._
+      import freestyle.implicits._
 
       val buf = scala.collection.mutable.ArrayBuffer.empty[Int]
 
@@ -331,8 +331,8 @@ class tests extends WordSpec with Matchers {
     }
 
     "allow non deterministic execution when interpreting to scala.concurrent.Future" in {
-      import io.freestyle.nondeterminism._
-      import io.freestyle.implicits._
+      import freestyle.nondeterminism._
+      import freestyle.implicits._
 
       import scala.concurrent._
       import scala.concurrent.duration._
@@ -352,8 +352,8 @@ class tests extends WordSpec with Matchers {
     }
 
     "allow non deterministic execution when interpreting to monix.eval.Task" in {
-      import io.freestyle.nondeterminism._
-      import io.freestyle.implicits._
+      import freestyle.nondeterminism._
+      import freestyle.implicits._
 
       import scala.concurrent._
       import scala.concurrent.duration._
@@ -376,8 +376,8 @@ class tests extends WordSpec with Matchers {
     }
 
     "allow deterministic programs with FreeS.Par nodes run deterministically" in {
-      import io.freestyle.nondeterminism._
-      import io.freestyle.implicits._
+      import freestyle.nondeterminism._
+      import freestyle.implicits._
 
       val test = new NonDeterminismTestShared
       import test._
@@ -403,8 +403,8 @@ class tests extends WordSpec with Matchers {
       import scala.concurrent.duration._
       import scala.concurrent.ExecutionContext.Implicits.global
 
-      import io.freestyle.nondeterminism._
-      import io.freestyle.implicits._
+      import freestyle.nondeterminism._
+      import freestyle.implicits._
 
       type ParValidator[A] = Kleisli[Future, String, A]
 

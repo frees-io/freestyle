@@ -1,4 +1,4 @@
-package io.freestyle
+package freestyle
 
 import scala.annotation.{compileTimeOnly, StaticAnnotation}
 import scala.language.experimental.macros
@@ -91,10 +91,10 @@ object free {
         impl = tpt match {
           case Ident(TypeName(tp)) if tp.endsWith("FreeS") =>
             q"""
-              io.freestyle.FreeS.liftPar(io.freestyle.FreeS.inject[..$injTpeArgs]($companionApply))
+              freestyle.FreeS.liftPar(freestyle.FreeS.inject[..$injTpeArgs]($companionApply))
              """
           case Select(Ident(TermName(term)), TypeName(tp)) if tp.endsWith("Par") =>
-            q"io.freestyle.FreeS.inject[..$injTpeArgs]($companionApply)"
+            q"freestyle.FreeS.inject[..$injTpeArgs]($companionApply)"
           case _ =>
             fail(s"unknown abstract type found in @free container: $tpt : raw: ${showRaw(tpt)}")
         }
@@ -130,18 +130,6 @@ object free {
 
     def mkAdtType(adtRootName: TypeName): Tree =
       q"type T[A] = $adtRootName[A]"
-
-    /*
-
-object size extends Poly1 {
-  implicit def caseInt = at[Int](x => 1)
-  implicit def caseString = at[String](_.length)
-  implicit def caseTuple[T, U]
-    (implicit st : Case.Aux[T, Int], su : Case.Aux[U, Int]) =
-      at[(T, U)](t => size(t._1)+size(t._2))
-}
-
-     */
 
     def mkDefaultFunctionK(adtRootName: TypeName, impls: List[(DefDef, ImplDef, DefDef)]): Match = {
       val functorSteps = for {

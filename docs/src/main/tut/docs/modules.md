@@ -15,7 +15,7 @@ In our Persistence related algebras we have some ops that can go against a DB an
 In the presentation side an application may display or perform some input validation.
 
 ```tut:silent
-import io.freestyle._
+import freestyle._
 
 @free trait Database[F[_]] {
 	def get(id: Int): FreeS[F, Int]

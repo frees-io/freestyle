@@ -18,7 +18,7 @@ member in your algebras companion.
 Consider the following Algebra adapted to Freestyle from the [Typelevel Cats Free monads examples]()
 
 ```tut:silent
-import io.freestyle._
+import freestyle._
 
 @free trait KVStore[F[_]] {
    def put[A](key: String, value: A): FreeS[F, Unit]
@@ -130,11 +130,11 @@ def program[F[_]](implicit B: Backend[F]): FreeS[Option[Int]] = {
 ```
 
 Once we have combined our algebras we can simply evaluate them by providing implicit evidence of the Coproduct interpreters.
-`import io.freestyle.implicits._` brings into scope among others the necessary implicit definitions to derive a unified interpreter given
+`import io.implicits._` brings into scope among others the necessary implicit definitions to derive a unified interpreter given
 implicit evidences of each one of the individual algebra's interpreters.
 
 ```
-import io.freestyle.implicits._
+import io.implicits._
 program[Backend.T].exec[KVStore]
 ```
 

@@ -1,4 +1,4 @@
-package io.freestyle
+package freestyle
 
 import cats.instances.tuple._
 import cats.syntax.functor._
@@ -267,12 +267,12 @@ object module {
       val companionApply   = mkCompanionApply(userTrait, moduleClassImpl, implicitArgs)
       val typeMaterializers = moduleCoproduct match {
         case Nil => q"type T[A] = Nothing" :: Nil
-        case _   => q"val X = io.freestyle.materialize.apply(this)" :: q"type T[A] = X.T[A]" :: Nil
+        case _   => q"val X = materialize.apply(this)" :: q"type T[A] = X.T[A]" :: Nil
       }
       val result = q"""
         $userTrait
         $moduleClassImpl
-        object $name extends io.freestyle.Modular {
+        object $name extends Modular {
           $implicitInstance
           $companionApply
           ..$typeMaterializers

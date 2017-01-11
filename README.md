@@ -49,7 +49,7 @@ Freestyle goal is to empower users unleashing the full power of Functional Progr
 The following Freestyle code:
 
 ```tut:silent
-import io.freestyle._
+import freestyle._
 
 @free trait Interacts[F[_]] {
   def tell(msg: String): FreeS[F, Unit]
@@ -132,13 +132,13 @@ addCompilerPlugin("org.scalamacros" % "paradise" % "2.1.0" cross CrossVersion.fu
 For Scala.jvm
 
 ```scala
-libraryDependencies += "io.freestyle" %% "freestyle" % "0.1.0"
+libraryDependencies += "freestyle" %% "freestyle" % "0.1.0"
 ```
 
 For Scala.js
 
 ```scala
-libraryDependencies += "io.freestyle" %%% "freestyle" % "0.1.0"
+libraryDependencies += "freestyle" %%% "freestyle" % "0.1.0"
 ```
 
 # Credits

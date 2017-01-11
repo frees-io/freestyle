@@ -1,10 +1,10 @@
-package io.freestyle
+package freestyle
 
 import org.scalatest._
 
-import io.freestyle.config._
-import io.freestyle.implicits._
-import io.freestyle.config.implicits._
+import freestyle.config._
+import freestyle.implicits._
+import freestyle.config.implicits._
 import scala.concurrent._
 import scala.concurrent.duration._
 import cats.implicits._

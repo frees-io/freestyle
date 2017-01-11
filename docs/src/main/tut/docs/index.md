@@ -39,8 +39,8 @@ style computations.
 In the example below we will define two algebras with intermixed sequential and parallel computations.
 
 ```tut:silent
-import io.freestyle._
-import io.freestyle.implicits._
+import freestyle._
+import freestyle.implicits._
 
 @free trait Validation[F[_]] {
   def minSize(s: String, n: Int): FreeS.Par[F, Boolean]

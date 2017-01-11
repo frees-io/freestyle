@@ -1,6 +1,6 @@
-package io.freestyle
+package freestyle
 
-import io.freestyle.logging.LoggingM
+import freestyle.logging.LoggingM
 
 import scala.concurrent.Future
 

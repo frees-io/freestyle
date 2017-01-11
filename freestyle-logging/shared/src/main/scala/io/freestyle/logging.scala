@@ -1,4 +1,4 @@
-package io.freestyle
+package freestyle
 
 object logging {
 

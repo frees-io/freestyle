@@ -1,6 +1,6 @@
-package io.freestyle.effects
+package freestyle.effects
 
-import io.freestyle._
+import freestyle._
 import cats.MonadState
 
 object state {
