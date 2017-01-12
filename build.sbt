@@ -10,14 +10,9 @@ val gh   = GitHubSettings("com.fortysevendeg", "freestyle", "47 Degrees", apache
 val vAll = Versions(versions, libraries, scalacPlugins)
 
 lazy val commonSettings = Seq(
-  scalaVersion in ThisBuild := "2.11.8",
+  scalaVersion in ThisBuild := "2.12.0",
+  crossScalaVersions in ThisBuild := Seq("2.11.8", "2.12.0"),
   scalaOrganization in ThisBuild := "org.typelevel",
-  addCompilerPlugin("tryp" %% "splain" % "0.1.11"),
-    resolvers ++= Seq(
-      Resolver.sonatypeRepo("snapshots"),
-      Resolver.sonatypeRepo("releases"),
-      Resolver.bintrayRepo("tek", "maven")
-    ),
   organization := gh.org,
   organizationName := gh.publishOrg,
   homepage := Option(url("http://www.47deg.com")),
@@ -39,13 +34,11 @@ lazy val commonSettings = Seq(
     "-unchecked",
     //"-Xfatal-warnings",
     //"-Xlint",
-    "-Yinline-warnings",
     "-Yno-adapted-args",
     "-Ywarn-dead-code",
     "-Ywarn-numeric-widen",
     "-Ywarn-value-discard",
-    "-Xfuture",
-    "-P:splain:all:true"
+    "-Xfuture"
     //"-Xlog-implicits"
     //"-Xprint:typer"
     //"-Ymacro-debug-lite"
@@ -89,7 +82,7 @@ lazy val freestyle = (crossProject in file("freestyle")).
   settings(
     libraryDependencies ++= Seq(
       "org.typelevel" %%% "cats-free" % "0.8.1",
-      "org.scala-lang" % "scala-reflect" % "2.11.8"
+      "org.scala-lang" % "scala-reflect" % scalaVersion.value
     )
   ).
   jsSettings(sharedJsSettings: _*)
@@ -131,8 +124,8 @@ lazy val freestyleDoobie = (project in file("freestyle-doobie")).
   settings(name := "freestyle-doobie").
   settings(
     libraryDependencies ++= Seq(
-      "org.tpolecat"  %% "doobie-core-cats" % "0.3.1-SNAPSHOT",
-      "org.tpolecat"  %% "doobie-h2-cats"   % "0.3.1-SNAPSHOT" % "test",
+      "org.tpolecat"  %% "doobie-core-cats" % "0.3.1-M3",
+      "org.tpolecat"  %% "doobie-h2-cats"   % "0.3.1-M3" % "test",
       "org.scalatest" %% "scalatest"        % "3.0.0"          % "test"
     )
   )
@@ -158,7 +151,7 @@ lazy val freestyleConfig = (crossProject in file("freestyle-config")).
   ).
   settings(
     libraryDependencies ++= Seq(
-      "eu.unicredit" %%% "shocon" % "0.1.4",
+      "eu.unicredit" %%% "shocon" % "0.1.7",
       "org.scalatest" %%% "scalatest" % "3.0.0" % "test"
     )
   )
@@ -191,7 +184,7 @@ lazy val freestyleLogging = (crossProject in file("freestyle-logging")).
     libraryDependencies += "org.scalatest" %%% "scalatest" % "3.0.0" % "test"
   ).
   jvmSettings(
-    libraryDependencies += "io.verizon.journal" %% "core" % "2.3.16"
+    libraryDependencies += "io.verizon.journal" %% "core" % "3.0.18"
   ).
   jsSettings(
     libraryDependencies += "biz.enef" %%% "slogging" % "0.5.2"
@@ -208,7 +201,7 @@ lazy val tests = (project in file("tests")).
   settings(noPublishSettings: _*).
   settings(
     libraryDependencies ++= Seq(
-      "org.scala-lang" % "scala-reflect" % "2.11.8",
+      "org.scala-lang" % "scala-reflect" % scalaVersion.value,
       "org.scalatest" %%% "scalatest" % "3.0.0" % "test"
     )
   )

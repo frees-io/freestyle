@@ -1,7 +1,7 @@
-package io.freestyle
+package freestyle
 
 import cats.MonadError
-import io.freestyle.logging._
+import freestyle.logging._
 import slogging._
 
 object loggingJS {

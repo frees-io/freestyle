@@ -1,13 +1,13 @@
-package io.freestyle
+package freestyle
 
 import org.scalatest._
 import _root_.fetch._
 import _root_.fetch.implicits._
 import cats.{Applicative, Eval}
 
-import io.freestyle.fetch._
-import io.freestyle.implicits._
-import io.freestyle.fetch.implicits._
+import freestyle.fetch._
+import freestyle.implicits._
+import freestyle.fetch.implicits._
 import scala.concurrent._
 import scala.concurrent.duration._
 

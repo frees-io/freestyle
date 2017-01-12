@@ -1,4 +1,4 @@
-package io.freestyle
+package freestyle
 
 import cats.Monad
 
@@ -6,9 +6,7 @@ object nondeterminism extends NonDeterminismInstances
 
 trait NonDeterminismInstances {
 
-  import scala.concurrent.Future
-  import scala.concurrent.ExecutionContext
-  import scala.util.control.NonFatal
+  import scala.concurrent.{ExecutionContext, Future}
 
   implicit def freestyleParallelFutureMonad(implicit ec: ExecutionContext): Monad[Future] =
     new Monad[Future] {

@@ -1,6 +1,6 @@
-package io.freestyle.effects
+package freestyle.effects
 
-import io.freestyle._
+import freestyle._
 import cats.{~>, Foldable, MonadCombine}
 import cats.data.ValidatedNel
 import cats.free.Free

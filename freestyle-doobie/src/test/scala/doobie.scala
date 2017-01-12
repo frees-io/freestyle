@@ -1,4 +1,4 @@
-package io.freestyle
+package freestyle
 
 import cats.Applicative
 import cats.syntax.either._
@@ -8,9 +8,9 @@ import org.scalatest._
 import _root_.doobie.imports._
 import _root_.doobie.h2.h2transactor._
 
-import io.freestyle.implicits._
-import io.freestyle.doobie._
-import io.freestyle.doobie.implicits._
+import freestyle.implicits._
+import freestyle.doobie._
+import freestyle.doobie.implicits._
 
 import scala.language.postfixOps
 

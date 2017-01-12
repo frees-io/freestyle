@@ -18,14 +18,18 @@ member in your algebras companion.
 Consider the following Algebra adapted to Freestyle from the [Typelevel Cats Free monads examples]()
 
 ```tut:silent
-import io.freestyle._
+import freestyle._
+import cats.implicits._
 
 @free trait KVStore[F[_]] {
-   def put[A](key: String, value: A): FreeS[F, Unit]
-
-   def get[A](key: String): FreeS[F, Option[A]]
-
-   def delete(key: String): FreeS[F, Unit]
+  def put[A](key: String, value: A): FreeS[F, Unit]
+  def get[A](key: String): FreeS[F, Option[A]]
+  def delete(key: String): FreeS[F, Unit]
+  def update[A](key: String, f: A => A): FreeS[F, Unit] = 
+    get[A](key) flatMap {
+      case Some(a) => put[A](key, f(a))
+      case None => ().pure[FreeS[F, ?]]
+    }
 }
 ```
 
@@ -38,15 +42,12 @@ import cats.data.State
 type KVStoreState[A] = State[Map[String, Any], A]
 
 implicit val kvStoreInterpreter: KVStore.Interpreter[KVStoreState] = new KVStore.Interpreter[KVStoreState] {
-
-   def putImpl[A](key: String, value: A): KVStoreState[Unit] =
-     State.modify(_.updated(key, value))
-
-   def getImpl[A](key: String): KVStoreState[Option[A]] =
-     State.inspect(_.get(key).map(_.asInstanceOf[A]))
-
-   def deleteImpl(key: String): KVStoreState[Unit] =
-     State.modify(_ - key)
+  def putImpl[A](key: String, value: A): KVStoreState[Unit] =
+    State.modify(_.updated(key, value))
+  def getImpl[A](key: String): KVStoreState[Option[A]] =
+    State.inspect(_.get(key).map(_.asInstanceOf[A]))
+  def deleteImpl(key: String): KVStoreState[Unit] =
+    State.modify(_ - key)
 }
 ```
 
@@ -63,16 +64,17 @@ Alternatively if you would rather implement a natural transformation by hand you
 ```tut:silent
 import cats.~>
 
-implicit def manualKvStoreInterpreter: KVStore.T ~> KVStoreState = new (KVStore.T ~> KVStoreState) {
-def apply[A](fa: KVStore.T[A]): KVStoreState[A] =
-    fa match {
-      case KVStore.PutOP(key, value) =>
-	    State.modify(_.updated(key, value))
-      case KVStore.GetOP(key) =>
-        State.inspect(_.get(key).map(_.asInstanceOf[A]))
-      case KVStore.DeleteOP(key) =>
-	    State.modify(_ - key)
-    }
+implicit def manualKvStoreInterpreter: KVStore.T ~> KVStoreState = 
+  new (KVStore.T ~> KVStoreState) {
+    def apply[A](fa: KVStore.T[A]): KVStoreState[A] =
+      fa match {
+        case KVStore.PutOP(key, value) =>
+          State.modify(_.updated(key, value))
+        case KVStore.GetOP(key) =>
+          State.inspect(_.get(key).map(_.asInstanceOf[A]))
+        case KVStore.DeleteOP(key) =>
+          State.modify(_ - key)
+      }
 }
 ```
 
@@ -94,57 +96,53 @@ Once our algebra is defined we can easily write an interpreter for it
 ```tut:silent
 import cats.implicits._
 
-implicit def logInterpreter: Log.Interpreter[KVStoreState] = new Log.Interpreter[KVStoreState] {
-  def infoImpl(msg: String): KVStoreState[Unit] = println("INFO: $msg").pure[KVStoreState]
-  def warnImpl(msg: String): KVStoreState[Unit] = println("WARN: $msg").pure[KVStoreState]
-}
+implicit def logInterpreter: Log.Interpreter[KVStoreState] = 
+  new Log.Interpreter[KVStoreState] {
+    def infoImpl(msg: String): KVStoreState[Unit] = println("INFO: $msg").pure[KVStoreState]
+    def warnImpl(msg: String): KVStoreState[Unit] = println("WARN: $msg").pure[KVStoreState]
+  }
 ```
 
 Before we create a program where we combine all operations let's consider both `KVStore` and `Log` as part
 of a module in our application
 
-```
-@module Backend[F[_]] {
+```tut:silent
+@module trait Backend[F[_]] {
   val store: KVStore[F]
-  val log: KVStore[F]
+  val log: Log[F]
 }
 ```
 
 When `@module` is materialized it will automatically create the Coproduct that matches interpreters necessary to run the `Free` structure
 below.
 
-```
-def program[F[_]](implicit B: Backend[F]): FreeS[Option[Int]] = {
+```tut:silent
+def program[F[_]](implicit B: Backend[F]): FreeS[F, Option[Int]] = {
   import B.store._, B.log._
   for {
     _ <- put("wild-cats", 2)
-	_ <- info("Added wild-cats")
+    _ <- info("Added wild-cats")
     _ <- update[Int]("wild-cats", (_ + 12))
- 	_ <- info("Updated wild-cats")
+    _ <- info("Updated wild-cats")
     _ <- put("tame-cats", 5)
     n <- get[Int]("wild-cats")
     _ <- delete("tame-cats")
-	_ <- warn("Deleted tame-cats")
+    _ <- warn("Deleted tame-cats")
   } yield n
 }
 ```
 
 Once we have combined our algebras we can simply evaluate them by providing implicit evidence of the Coproduct interpreters.
-`import io.freestyle.implicits._` brings into scope among others the necessary implicit definitions to derive a unified interpreter given
+`import freestyle.implicits._` brings into scope among others the necessary implicit definitions to derive a unified interpreter given
 implicit evidences of each one of the individual algebra's interpreters.
 
-```
-import io.freestyle.implicits._
-program[Backend.T].exec[KVStore]
+```tut:silent
+import freestyle.implicits._
+program[Backend.T].exec[KVStoreState]
 ```
 
 Alternatively you can build your interpreters by hand if you wish not to use Freestyle implicit machinery.
 This may quickly grow unwildly as the number of algebras increase in an application but it's also possible in the spirit of providing two way compatibility
 in all areas between manually built ADTs and Natural Transformations and the ones automatically derived by Freestyle.
 
-```
-val manualInterpreters[Backend.T ~> KVStore] = kvStoreInterpreter or logInterpreter
-program[Backend.T].foldMap[KVStore](manualInterpreters)
-```
-
-Now that we've learnt to define our own interpreters let's jump into [application and library composition with Freestyle](parallelism.html) 
+Now that we've learnt to define our own interpreters let's jump into [Parallelism](parallelism.html) 

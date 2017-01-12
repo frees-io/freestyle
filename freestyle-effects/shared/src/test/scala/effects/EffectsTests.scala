@@ -1,11 +1,11 @@
-package io.freestyle.effects
+package freestyle.effects
 
 import cats.{Applicative, Eval, MonadFilter}
 
 import org.scalatest._
 
-import io.freestyle._
-import io.freestyle.implicits._
+import freestyle._
+import freestyle.implicits._
 
 import scala.concurrent._
 import scala.concurrent.duration._
@@ -18,8 +18,8 @@ class EffectsTests extends AsyncWordSpec with Matchers {
 
   "Option Freestyle integration" should {
 
-    import io.freestyle.effects.option._
-    import io.freestyle.effects.option.implicits._
+    import freestyle.effects.option._
+    import freestyle.effects.option.implicits._
 
     "allow an Option to be interleaved inside a program monadic flow" in {
       import cats.implicits._
@@ -49,8 +49,8 @@ class EffectsTests extends AsyncWordSpec with Matchers {
 
     val ex = new RuntimeException("BOOM")
 
-    import io.freestyle.effects.error._
-    import io.freestyle.effects.error.implicits._
+    import freestyle.effects.error._
+    import freestyle.effects.error.implicits._
 
     "allow an Error to be interleaved inside a program monadic flow" in {
       import cats.implicits._
@@ -100,7 +100,7 @@ class EffectsTests extends AsyncWordSpec with Matchers {
 
   "Reader integration" should {
 
-    import io.freestyle.effects._
+    import freestyle.effects._
     import cats.data.Reader
 
     import rd.implicits._
@@ -131,7 +131,7 @@ class EffectsTests extends AsyncWordSpec with Matchers {
 
   "State integration" should {
 
-    import io.freestyle.effects._
+    import freestyle.effects._
     import cats.data.State
 
     import st.implicits._
@@ -192,7 +192,7 @@ class EffectsTests extends AsyncWordSpec with Matchers {
 
   "Writer integration" should {
 
-    import io.freestyle.effects._
+    import freestyle.effects._
     import cats.data.Writer
 
     import wr.implicits._
@@ -225,7 +225,7 @@ class EffectsTests extends AsyncWordSpec with Matchers {
 
   "Traverse integration" should {
 
-    import io.freestyle.effects._
+    import freestyle.effects._
 
     val list = traverse.list
     import list._, list.implicits._

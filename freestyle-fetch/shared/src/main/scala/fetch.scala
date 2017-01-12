@@ -1,4 +1,4 @@
-package io.freestyle
+package freestyle
 
 import _root_.fetch._
 

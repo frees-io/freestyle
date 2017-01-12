@@ -1,9 +1,9 @@
-package io.freestyle
+package freestyle
 
 import cats.Applicative
 import cats.instances.future._
-import io.freestyle.implicits._
-import io.freestyle.loggingJVM.implicits._
+import freestyle.implicits._
+import freestyle.loggingJVM.implicits._
 import org.scalatest._
 
 import scala.concurrent._
