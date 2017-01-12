@@ -1,5 +1,5 @@
 options:
-  - title: Quick Start Guide
+  - title: Quick Start
     url: docs/index.html
 
   - title: Algebras
@@ -13,3 +13,6 @@ options:
 
   - title: Parallelism
     url: docs/parallelism.html
+
+  - title: Effects
+    url: docs/effects.html

@@ -35,7 +35,7 @@ so it can be considered in future releases.
 The error effect allows short circuiting of programs and handling invocations which can potentially result in runtime exceptions.
 It includes three basic operations `either`, `error` and `catchNonFatal`.
 
-The constrains placed by this effect is that there needs to be an implicit evidence of `MonadError[M[_], Throwable] 
+The constrains placed by this effect is that there needs to be an implicit evidence of `MonadError[M[_], Throwable]` 
 for `Target` or any other runtime `M[_]` used in interpretation. In the example below this constrain is satisfied by
 `import cats.implicits._` which provides a `MonadError` instance for `Either[Throwable, ?]`. 
 Multiple types such as `Future`, `monix.eval.Task` and even more complex transformers stacks are capable of satisfying these constrains.
@@ -45,7 +45,7 @@ Multiple types such as `Future`, `monix.eval.Task` and even more complex transfo
 `either` allows us to lift values of `Either[Throwable, ?]` into the context of `FreeS` raising an error short circuiting 
 the program if the value is a `Left(throwable)` or continuing with the computation in the case of a `Right(a)` 
 
-```tut:silent:book
+```tut:book
 import freestyle._
 import freestyle.implicits._
 import freestyle.effects.error._
@@ -66,7 +66,7 @@ def shortCircuit[F[_]: ErrorM] =
 shortCircuit[ErrorM.T].exec[Target]
 ```
 
-```tut:silent:book
+```tut:book
 
 def continueWithRightValue[F[_]: ErrorM] =
   for {
@@ -83,7 +83,7 @@ continueWithRightValue[ErrorM.T].exec[Target]
 If you want so simply raise an error without throwing an exception you may use the `error` operation which short circuits
 the program. 
 
-```tut:silent:book
+```tut:book
 def shortCircuitWithError[F[_]: ErrorM] =
   for {
     a <- 1.pure[FreeS[F, ?]]
@@ -103,7 +103,7 @@ in `scala.util.control.NonFatal`.
 
 `catchNonFatal` expects a `cats.Eval` value which holds a lazy computation.
 
-```tut:silent:book
+```tut:book
 import cats.Eval
 
 def catchingExceptions[F[_]: ErrorM] =
@@ -131,7 +131,7 @@ your target runtime `M[_]`.
 `option` allows a value of type `Option[_]` to be lifted into the context of `FreeS`. If a `None` it's found the program
 will short circuit. 
 
-```tut:silent:book
+```tut:book
 import freestyle.effects.option._
 import freestyle.effects.option.implicits._
 
@@ -148,7 +148,7 @@ programNone[OptionM.T].exec[Option]
 If a `Some(_)` is found the value is extracted and lifted into the context and the programs resumes
 normally.
 
-```tut:silent:book
+```tut:book
 def programSome[F[_]: OptionM] =
   for {
     a <- 1.pure[FreeS[F, ?]]
@@ -164,7 +164,7 @@ programSome[OptionM.T].exec[Option]
 `none` immediately short circuits the program without providing further information as to what the reason is. Handle with
 care. 
 
-```tut:silent:book
+```tut:book
 def programNone2[F[_]: OptionM] =
   for {
     a <- 1.pure[FreeS[F, ?]]
@@ -182,7 +182,7 @@ at runtime interpretation.
 
 The `reader` effect supports parametrization to any seed value type while remaining type safe throughout the program declaration. 
 
-The constrains placed by this effect is that there needs to be an implicit evidence of `MonadReader[M[_], R] 
+The constrains placed by this effect is that there needs to be an implicit evidence of `MonadReader[M[_], R]` 
 for any runtime `M[_]` used in its interpretation. `R` represents the seed value type. 
 
 The reader effect comes with two operations `ask` and `reader`.
@@ -191,7 +191,7 @@ The reader effect comes with two operations `ask` and `reader`.
 
 `ask` simply returns the entire environment in its current state.
 
-```tut:silent:book
+```tut:book
 import freestyle.effects.reader
 import cats.data.Reader
 
@@ -213,9 +213,11 @@ def programAsk[F[_]: rd.ReaderM] =
 programAsk[rd.ReaderM.T].exec[ConfigEnv].run(Config(n = 10))
 ```
 
+### reader
+
 `reader` allows extracting values of the environment and lifting them into the context of `FreeS`
 
-```tut:silent:book
+```tut:book
 def programReader[F[_]: rd.ReaderM] =
   for {
     a <- 1.pure[FreeS[F, ?]]
@@ -227,6 +229,55 @@ programReader[rd.ReaderM.T].exec[ConfigEnv].run(Config(n = 1))
 ```
 
 ## Writer
+
+The writer effect allows to accumulate values which can be obtained once the program is interpreted. 
+
+The `writer` effect supports parametrization to any type that supports monoidal accumulation while remaining type safe throughout the program declaration. 
+
+The constrains placed by this effect is that there needs to be an implicit evidence of `MonadWriter[M[_], W]` 
+for any runtime `M[_]` used in its interpretation. 
+
+The writer effect comes with two operations `writer` and `tell`.
+
+### writer
+
+`writer` sets a tuple with the current accumulator value and returning value
+
+```tut:book
+import freestyle.effects.writer
+import cats.data.Writer
+
+val wr = writer[List[Int]]
+
+import wr.implicits._
+
+type Logger[A] = Writer[List[Int], A]
+
+def programWriter[F[_]: wr.WriterM] =
+  for {
+    _ <- 1.pure[FreeS[F, ?]]
+    b <- wr.WriterM[F].writer((Nil, 1))
+    _ <- 1.pure[FreeS[F, ?]]
+  } yield b
+  
+programWriter[wr.WriterM.T].exec[Logger].run
+```
+
+### tell
+
+`tell` appends a value for monoidal accumulation
+
+```tut:book
+def programTell[F[_]: wr.WriterM] =
+  for {
+    _ <- 1.pure[FreeS[F, ?]]
+    b <- wr.WriterM[F].writer((List(1), 1))
+    c <- wr.WriterM[F].tell(List(1))
+    _ <- 1.pure[FreeS[F, ?]]
+  } yield b
+      
+programTell[wr.WriterM.T].exec[Logger].run
+```
 
 ## State
 

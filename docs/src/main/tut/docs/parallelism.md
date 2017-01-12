@@ -31,7 +31,7 @@ We use `FreeS.Par` an alias for `FreeAplicative` to denote functions that repres
 
 Independent operations that can be executed potentially in parallel may be placed inside `@free` algebras as abstract definitions like in the example below.
 
-```tut:silent
+```tut:book
 import freestyle._
 
 @free trait Validation[F[_]] {
@@ -47,13 +47,13 @@ Freestyle ships with ready to use instances for `scala.concurrent.Future` and co
 
 To enable these instances and support parallelism you need to explicitly import:
 
-```tut:silent
+```tut:book
 import freestyle.nondeterminism._
 ```
 
 The code below illustrate an interpreter that will allow parallel executions thanks to the unsafe nature of `scala.concurrent.Future#apply` which runs immediately.
 
-```tut:silent
+```tut:book
 import cats.data.Kleisli
 import cats.implicits._
 import scala.concurrent._
@@ -86,7 +86,7 @@ val validator = parValidation.exec[ParValidator]
 
 Sequential and parallel actions can be easily intermixed in `@free` algebras.
 
-```tut:silent
+```tut:book
 @free trait MixedFreeS[F[_]] {
 	def x: FreeS.Par[F, Int]
 	def y: FreeS.Par[F, Int]
@@ -96,7 +96,7 @@ Sequential and parallel actions can be easily intermixed in `@free` algebras.
 
 Using the [cats cartesian builder operator \|@\|]() we can easily describe steps that run in parallel
 
-```tut:silent
+```tut:book
 import freestyle.implicits._
 import cats.implicits._
 

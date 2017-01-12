@@ -15,7 +15,7 @@ without worrying about how they will be implemented.
 
 A trait or abstract class annotated with `@free` is all you need to create your first algebra with Freestyle.
 
-```tut:silent
+```tut:book
 import freestyle._
 
 case class User(id: Long, name: String)
@@ -29,7 +29,7 @@ case class User(id: Long, name: String)
 
 This is equivalent to the manual encoding
 
-```tut:silent
+```tut:book
 import cats.free.{Free, Inject}
 
 case class User(id: Long, name: String)
@@ -81,11 +81,11 @@ constructors class implementation and a `apply` methods that allows you to summo
 in the application in a convenient way. This effectively enables implicits based Dependency Injection where you may choose to override implementations
 using the implicits scoping rules to place different implementations where appropriate.
 
-```tut:silent
+```tut:book
 val userRepository = UserRepository[UserRepository.T]
 ```
 
-```tut:silent
+```tut:book
 def myService[F[_]](implicit userRepository: UserRepository[F]) = ???
 ```
 
@@ -95,7 +95,7 @@ All companions generated with `@free` contain a convenient type alias `T` that y
 ADT node. referring to the Root ADT node it's also possible but discouraged as naming conventions may change in the future.
 You may use this to manually build `Coproduct` types which will serve in the parameterization of your application and code as in the example below
 
-```tut:silent
+```tut:book
 import cats.data.Coproduct
 
 @free trait Service1[F[_]]{
