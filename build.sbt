@@ -63,6 +63,8 @@ lazy val micrositeSettings = Seq(
   micrositeGithubOwner := "47deg",
   micrositeGithubRepo := "freestyle",
   micrositeHighlightTheme := "dracula",
+  micrositeExternalLayoutsDirectory := (resourceDirectory in Compile).value / "microsite" / "layouts",
+  micrositeExternalIncludesDirectory := (resourceDirectory in Compile).value / "microsite" / "includes",
   includeFilter in makeSite := "*.html" | "*.css" | "*.png" | "*.jpg" | "*.gif" | "*.js" | "*.swf" | "*.md",
   micrositePalette := Map(
     "brand-primary"     -> "#01C2C2",
