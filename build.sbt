@@ -3,6 +3,8 @@ import microsites.MicrositeKeys.{micrositeBaseUrl, micrositeDescription, microsi
 
 addCommandAlias("debug", "; clean ; test")
 
+addCommandAlias("validate", "; +clean ; +test; makeMicrosite")
+
 onLoad in Global := (Command.process("project freestyle", _: State)) compose (onLoad in Global).value
 
 val dev  = Seq(Dev("47 Degrees (twitter: @47deg)", "47 Degrees"))
