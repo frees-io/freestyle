@@ -16,3 +16,54 @@ options:
 
   - title: Effects
     url: docs/effects.html
+
+    nested_options:
+
+      - title: Error
+        url: docs/effects.html#Error
+         
+      - title: Option
+        url: docs/effects.html#Option
+
+      - title: Reader
+        url: docs/effects.html#Reader
+
+      - title: Writer
+        url: docs/effects.html#Writer
+
+      - title: State
+        url: docs/effects.html#State
+
+      - title: Traverse
+        url: docs/effects.html#Traverse
+
+  - title: Patterns
+    url: todo.html
+
+    nested_options:
+
+      - title: Dependency Injection
+        url: todo.html
+
+      - title: Configuration
+        url: todo.html
+
+      - title: Logging
+        url: todo.html
+
+  - title: Integrations
+    url: todo.html
+
+    nested_options:
+
+      - title: Cats
+        url: todo.html
+
+      - title: Monix
+        url: todo.html
+
+      - title: Fetch
+        url: todo.html
+
+      - title: Doobie
+        url: todo.html
