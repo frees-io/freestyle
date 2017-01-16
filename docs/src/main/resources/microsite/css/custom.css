@@ -94,6 +94,10 @@ h1, h2, h3, h4, h5, h6, #site-header {
     }
 }
 
+.home-code:nth-child(2) {
+  background: #202D40;
+}
+
 .jumbotron img {
     max-width: 434px;
     height: auto;
@@ -134,7 +138,11 @@ h1, h2, h3, h4, h5, h6, #site-header {
 }
 
 .home-code {
-    padding: 30px 0;
+    padding: 50px 0 0 0;
+}
+
+.use {
+  padding-bottom: 0;
 }
 
 #site-main h1 {
@@ -164,6 +172,7 @@ code {
 
 pre {
     border: none;
+
 }
 
 .technologies {
@@ -205,6 +214,10 @@ body.docs {
     font-family: 'pragmatapro', sans-serif;
     text-transform: uppercase;
     letter-spacing: 1px;
+}
+
+.label-default {
+  background: #202D40;
 }
 
 @media screen and (min-width: 768px) {
