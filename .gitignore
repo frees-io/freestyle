@@ -25,3 +25,7 @@ project/plugins/project/
 *.iws
 /out/
 .idea_modules/
+
+# GPG Keys
+
+secring.gpg

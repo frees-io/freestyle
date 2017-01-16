@@ -4,14 +4,14 @@ scala:
 jdk:
 - oraclejdk8
 before_install:
-- if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then openssl aes-256-cbc -K $encrypted_86276aecec54_key -iv $encrypted_86276aecec54_iv
-  -in secring.gpg.enc -out secring.gpg -d; fi
+- if [ "$TRAVIS_PULL_REQUEST" = "true" ]; then bash
+  scripts/decrypt-keys.sh; fi
 script:
 - sbt ++$TRAVIS_SCALA_VERSION clean coverage test coverageReport
 
 after_success:
-- if [ "$TRAVIS_BRANCH" = "master" -a "$TRAVIS_PULL_REQUEST" = "false" ]; then sbt
-  compile makeMicrosite publishMicrosite publishSigned; fi
+- if [ "$TRAVIS_PULL_REQUEST" = "true" ]; then bash
+  scripts/publishMicrosite.sh; fi
 - if [ "$TRAVIS_PULL_REQUEST" = "true" ]; then echo "Not in master branch, skipping
   deploy and release"; fi
 - bash <(curl -s https://codecov.io/bash)
