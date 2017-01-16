@@ -6,6 +6,7 @@ jdk:
 before_install:
 - if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then bash
   scripts/decrypt-keys.sh; fi
+- export PATH=${PATH}:./vendor/bundle
 install:
 - rvm use 2.2.3 --install --fuzzy
 - gem update --system
