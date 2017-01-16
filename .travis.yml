@@ -4,13 +4,13 @@ scala:
 jdk:
 - oraclejdk8
 before_install:
-- if [ "$TRAVIS_PULL_REQUEST" = "true" ]; then bash
+- if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then bash
   scripts/decrypt-keys.sh; fi
 script:
 - sbt ++$TRAVIS_SCALA_VERSION clean coverage test coverageReport
 
 after_success:
-- if [ "$TRAVIS_PULL_REQUEST" = "true" ]; then bash
+- if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then bash
   scripts/publishMicrosite.sh; fi
 - if [ "$TRAVIS_PULL_REQUEST" = "true" ]; then echo "Not in master branch, skipping
   deploy and release"; fi
