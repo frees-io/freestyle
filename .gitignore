@@ -28,4 +28,7 @@ project/plugins/project/
 
 # GPG Keys
 
+travis-deploy-key
+travis-deploy-key.pub
 secring.gpg
+keys.tar

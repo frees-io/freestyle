@@ -1,5 +1,7 @@
 #!/bin/sh
 
-openssl aes-256-cbc -K $encrypted_86276aecec54_key -iv $encrypted_86276aecec54_iv -in secring.gpg.enc -out secring.gpg -d;
-chmod 600 secring.gpg;
-cp secring.gpg ~/.ssh/id_rsa;
+openssl aes-256-cbc -K $encrypted_fc716ecc5668_key -iv $encrypted_fc716ecc5668_iv -in keys.tar.enc -out keys.tar -d
+tar xvf keys.tar;
+chmod 600 travis-deploy-key;
+eval "$(ssh-agent -s)"
+ssh-add travis-deploy-key
