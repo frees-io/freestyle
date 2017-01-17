@@ -1,0 +1,149 @@
+<html><head><meta charset="utf-8" /><meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" /><title>Freestyle</title><meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="description" content="large-scale modular Scala applications &amp; libraries on top of Free Monads/Applicatives" /><meta name="author" content="47 Degrees" /><meta name="og:image" content="/freestyle/img/poster.png" /><meta name="og:title" content="Freestyle" /><meta name="og:site_name" content="Freestyle" /><meta name="og:url" content="https://github.com/com.fortysevendeg/freestyle" /><meta name="og:type" content="website" /><meta name="og:description" content="large-scale modular Scala applications &amp; libraries on top of Free Monads/Applicatives" /><meta name="twitter:image" content="/freestyle/img/poster.png" /><meta name="twitter:card" content="summary_large_image" /><meta name="twitter:site" content="" /><link rel="icon" type="image/png" href="/freestyle/img/favicon.png" /><link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" /><link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css" /><link rel="stylesheet" href="/freestyle/highlight/styles/dracula.css" /><link rel="stylesheet" href="/freestyle/css/style.css" /><link rel="stylesheet" href="/freestyle/css/palette.css" /><link rel="stylesheet" href="/freestyle/css/custom.css" /></head><body class="docs"><div id="wrapper"><div id="sidebar-wrapper"><ul id="sidebar" class="sidebar-nav"><li class="sidebar-brand"><a href="/freestyle/" class="brand"><div class="brand-wrapper" style="background:url('/freestyle/img/sidebar_brand.png') no-repeat"><span>Freestyle</span></div></a></li> <li><a href="/freestyle/docs/index.html" class="">Quick Start Guide</a></li> <li><a href="/freestyle/docs/algebras.html" class="">Algebras</a></li> <li><a href="/freestyle/docs/modules.html" class="">Modules</a></li> <li><a href="/freestyle/docs/interpreters.html" class=" active ">Interpreters</a></li> <li><a href="/freestyle/docs/parallelism.html" class="">Parallelism</a></li></ul></div><div id="page-content-wrapper"><div class="nav"><div class="container-fluid"><div class="row"><div class="col-lg-12"><div class="action-menu pull-left clearfix"><a href="#menu-toggle" id="menu-toggle"><i class="fa fa-bars" aria-hidden="true"></i></a></div><ul class="pull-right"><li class="hidden-xs"><a href="https://github.com/47deg/freestyle"><i class="fa fa-eye"></i><span>WATCH<span id="eyes" class="label label-default">--</span></span></a></li><li class="hidden-xs"><a href="https://github.com/47deg/freestyle"><i class="fa fa-star-o"></i><span>STARS<span id="stars" class="label label-default">--</span></span></a></li><li><a href="#" onclick="shareSiteTwitter('Freestyle large-scale modular Scala applications &amp; libraries on top of Free Monads/Applicatives');"><i class="fa fa-twitter"></i></a></li><li><a href="#" onclick="shareSiteFacebook('Freestyle large-scale modular Scala applications &amp; libraries on top of Free Monads/Applicatives');"><i class="fa fa-facebook"></i></a></li><li><a href="#" onclick="shareSiteGoogle();"><i class="fa fa-google-plus"></i></a></li></ul></div></div></div></div><div id="content" data-github-owner="47deg" data-github-repo="freestyle"><div class="content-wrapper"><section><h1 id="interpreters">Interpreters</h1>
+
+<p>Freestyle empowers program whose runtime can be easily overriden via implicit evidences.</p>
+
+<p>As part of its design Freestyle is compatible with <code class="highlighter-rouge">Free</code> and traditional patterns around it. Apps build with Freestyle give developers the freedom
+to choose Automatic or manual algebras, modules and interpreters and intremix them as you see fit in applications based on the desired encoding.</p>
+
+<h2 id="implementation">Implementation</h2>
+
+<p>Freestyle automatically generates an abstract definition of an interpreter for each one of the
+algebras annotated with <code class="highlighter-rouge">@free</code>.
+This allow you to build the proper runtime definitions for your algebras by simply extending the <code class="highlighter-rouge">Interpreter[M[_]]</code>
+member in your algebras companion.</p>
+
+<p>Consider the following Algebra adapted to Freestyle from the <a href="">Typelevel Cats Free monads examples</a></p>
+
+<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">io.freestyle._</span>
+
+<span class="nd">@free</span> <span class="k">trait</span> <span class="nc">KVStore</span><span class="o">[</span><span class="kt">F</span><span class="o">[</span><span class="k">_</span><span class="o">]]</span> <span class="o">{</span>
+  <span class="k">def</span> <span class="n">put</span><span class="o">[</span><span class="kt">A</span><span class="o">](</span><span class="n">key</span><span class="k">:</span> <span class="kt">String</span><span class="o">,</span> <span class="n">value</span><span class="k">:</span> <span class="kt">A</span><span class="o">)</span><span class="k">:</span> <span class="kt">FreeS</span><span class="o">[</span><span class="kt">F</span>, <span class="kt">Unit</span><span class="o">]</span>
+  <span class="k">def</span> <span class="n">get</span><span class="o">[</span><span class="kt">A</span><span class="o">](</span><span class="n">key</span><span class="k">:</span> <span class="kt">String</span><span class="o">)</span><span class="k">:</span> <span class="kt">FreeS</span><span class="o">[</span><span class="kt">F</span>, <span class="kt">Option</span><span class="o">[</span><span class="kt">A</span><span class="o">]]</span>
+  <span class="k">def</span> <span class="n">delete</span><span class="o">(</span><span class="n">key</span><span class="k">:</span> <span class="kt">String</span><span class="o">)</span><span class="k">:</span> <span class="kt">FreeS</span><span class="o">[</span><span class="kt">F</span>, <span class="kt">Unit</span><span class="o">]</span>
+<span class="o">}</span>
+</code></pre>
+</div>
+
+<p>In order to define a runtime interpreter for it we simply extend <code class="highlighter-rouge">KVStore.Interpreter[M[_]]</code> and implement its abstract members.</p>
+
+<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">cats.data.State</span>
+
+<span class="k">type</span> <span class="kt">KVStoreState</span><span class="o">[</span><span class="kt">A</span><span class="o">]</span> <span class="k">=</span> <span class="nc">State</span><span class="o">[</span><span class="kt">Map</span><span class="o">[</span><span class="kt">String</span>, <span class="kt">Any</span><span class="o">]</span>, <span class="kt">A</span><span class="o">]</span>
+
+<span class="k">implicit</span> <span class="k">val</span> <span class="n">kvStoreInterpreter</span><span class="k">:</span> <span class="kt">KVStore.Interpreter</span><span class="o">[</span><span class="kt">KVStoreState</span><span class="o">]</span> <span class="k">=</span>
+  <span class="k">new</span> <span class="nc">KVStore</span><span class="o">.</span><span class="nc">Interpreter</span><span class="o">[</span><span class="kt">KVStoreState</span><span class="o">]</span> <span class="o">{</span>
+
+   <span class="k">def</span> <span class="n">putImpl</span><span class="o">[</span><span class="kt">A</span><span class="o">](</span><span class="n">key</span><span class="k">:</span> <span class="kt">String</span><span class="o">,</span> <span class="n">value</span><span class="k">:</span> <span class="kt">A</span><span class="o">)</span><span class="k">:</span> <span class="kt">KVStoreState</span><span class="o">[</span><span class="kt">Unit</span><span class="o">]</span> <span class="k">=</span>
+     <span class="nc">State</span><span class="o">.</span><span class="n">modify</span><span class="o">(</span><span class="k">_</span><span class="o">.</span><span class="n">updated</span><span class="o">(</span><span class="n">key</span><span class="o">,</span> <span class="n">value</span><span class="o">))</span>
+
+   <span class="k">def</span> <span class="n">getImpl</span><span class="o">[</span><span class="kt">A</span><span class="o">](</span><span class="n">key</span><span class="k">:</span> <span class="kt">String</span><span class="o">)</span><span class="k">:</span> <span class="kt">KVStoreState</span><span class="o">[</span><span class="kt">Option</span><span class="o">[</span><span class="kt">A</span><span class="o">]]</span> <span class="k">=</span>
+     <span class="nc">State</span><span class="o">.</span><span class="n">inspect</span><span class="o">(</span><span class="k">_</span><span class="o">.</span><span class="n">get</span><span class="o">(</span><span class="n">key</span><span class="o">).</span><span class="n">map</span><span class="o">(</span><span class="k">_</span><span class="o">.</span><span class="n">asInstanceOf</span><span class="o">[</span><span class="kt">A</span><span class="o">]))</span>
+
+   <span class="k">def</span> <span class="n">deleteImpl</span><span class="o">(</span><span class="n">key</span><span class="k">:</span> <span class="kt">String</span><span class="o">)</span><span class="k">:</span> <span class="kt">KVStoreState</span><span class="o">[</span><span class="kt">Unit</span><span class="o">]</span> <span class="k">=</span>
+     <span class="nc">State</span><span class="o">.</span><span class="n">modify</span><span class="o">(</span><span class="k">_</span> <span class="o">-</span> <span class="n">key</span><span class="o">)</span>
+<span class="o">}</span>
+</code></pre>
+</div>
+
+<p>As you may have noticed in Freestyle instead of implementing a Natural transformation <code class="highlighter-rouge">F ~&gt; M</code> weimplement methods that closely resemble each one of the smart constructors in our @free algebras.
+This is not an imposition but rather a comvinience as the resulting instances are still Natural Transformations.</p>
+
+<p>In the example above <code class="highlighter-rouge">KVStore.Interpreter[M[_]]</code> it’s actually already a Natural transformation of type <code class="highlighter-rouge">KVStore.T ~&gt; KVStoreState</code> in which on its
+<code class="highlighter-rouge">apply</code> function automatically delegates each step to the abstract method that you are implementing as part of the Interpreter.</p>
+
+<p>Alternatively if you would rather implement a natural transformation by hand you can still do that by choosing not to implement
+<code class="highlighter-rouge">KVStore.Interpreter[M[_]]</code> and providing one like so:</p>
+
+<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">cats.</span><span class="o">~&gt;</span>
+
+<span class="k">implicit</span> <span class="k">def</span> <span class="n">manualKvStoreInterpreter</span><span class="k">:</span> <span class="kt">KVStore.T</span> <span class="kt">~&gt;</span> <span class="kt">KVStoreState</span> <span class="o">=</span> <span class="k">new</span> <span class="o">(</span><span class="nc">KVStore</span><span class="o">.</span><span class="n">T</span> <span class="o">~&gt;</span> <span class="nc">KVStoreState</span><span class="o">)</span> <span class="o">{</span>
+  <span class="k">def</span> <span class="n">apply</span><span class="o">[</span><span class="kt">A</span><span class="o">](</span><span class="n">fa</span><span class="k">:</span> <span class="kt">KVStore.T</span><span class="o">[</span><span class="kt">A</span><span class="o">])</span><span class="k">:</span> <span class="kt">KVStoreState</span><span class="o">[</span><span class="kt">A</span><span class="o">]</span> <span class="k">=</span>
+    <span class="n">fa</span> <span class="k">match</span> <span class="o">{</span>
+      <span class="k">case</span> <span class="nc">KVStore</span><span class="o">.</span><span class="nc">PutOP</span><span class="o">(</span><span class="n">key</span><span class="o">,</span> <span class="n">value</span><span class="o">)</span> <span class="k">=&gt;</span>
+	    <span class="nc">State</span><span class="o">.</span><span class="n">modify</span><span class="o">(</span><span class="k">_</span><span class="o">.</span><span class="n">updated</span><span class="o">(</span><span class="n">key</span><span class="o">,</span> <span class="n">value</span><span class="o">))</span>
+      <span class="k">case</span> <span class="nc">KVStore</span><span class="o">.</span><span class="nc">GetOP</span><span class="o">(</span><span class="n">key</span><span class="o">)</span> <span class="k">=&gt;</span>
+        <span class="nc">State</span><span class="o">.</span><span class="n">inspect</span><span class="o">(</span><span class="k">_</span><span class="o">.</span><span class="n">get</span><span class="o">(</span><span class="n">key</span><span class="o">).</span><span class="n">map</span><span class="o">(</span><span class="k">_</span><span class="o">.</span><span class="n">asInstanceOf</span><span class="o">[</span><span class="kt">A</span><span class="o">]))</span>
+      <span class="k">case</span> <span class="nc">KVStore</span><span class="o">.</span><span class="nc">DeleteOP</span><span class="o">(</span><span class="n">key</span><span class="o">)</span> <span class="k">=&gt;</span>
+	    <span class="nc">State</span><span class="o">.</span><span class="n">modify</span><span class="o">(</span><span class="k">_</span> <span class="o">-</span> <span class="n">key</span><span class="o">)</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre>
+</div>
+
+<h2 id="composition">Composition</h2>
+
+<p>Freestyle performs automatic composition of interpreters by providing the implicit machinery necessary to derive a Module interpreter
+by the evidence of it’s algebras’s interpreters.
+To ilustrate interpreter composition let’s define a new algebra <code class="highlighter-rouge">Log</code> which we will compose with our <code class="highlighter-rouge">KVStore</code> operations</p>
+
+<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="nd">@free</span> <span class="k">trait</span> <span class="nc">Log</span><span class="o">[</span><span class="kt">F</span><span class="o">[</span><span class="k">_</span><span class="o">]]</span> <span class="o">{</span>
+  <span class="k">def</span> <span class="n">info</span><span class="o">(</span><span class="n">msg</span><span class="k">:</span> <span class="kt">String</span><span class="o">)</span><span class="k">:</span> <span class="kt">FreeS</span><span class="o">[</span><span class="kt">F</span>, <span class="kt">Unit</span><span class="o">]</span>
+  <span class="k">def</span> <span class="n">warn</span><span class="o">(</span><span class="n">msg</span><span class="k">:</span> <span class="kt">String</span><span class="o">)</span><span class="k">:</span> <span class="kt">FreeS</span><span class="o">[</span><span class="kt">F</span>, <span class="kt">Unit</span><span class="o">]</span>
+<span class="o">}</span>
+</code></pre>
+</div>
+
+<p>Once our algebra is defined we can easily write an interpreter for it</p>
+
+<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">cats.implicits._</span>
+
+<span class="k">implicit</span> <span class="k">def</span> <span class="n">logInterpreter</span><span class="k">:</span> <span class="kt">Log.Interpreter</span><span class="o">[</span><span class="kt">KVStoreState</span><span class="o">]</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">Log</span><span class="o">.</span><span class="nc">Interpreter</span><span class="o">[</span><span class="kt">KVStoreState</span><span class="o">]</span> <span class="o">{</span>
+  <span class="k">def</span> <span class="n">infoImpl</span><span class="o">(</span><span class="n">msg</span><span class="k">:</span> <span class="kt">String</span><span class="o">)</span><span class="k">:</span> <span class="kt">KVStoreState</span><span class="o">[</span><span class="kt">Unit</span><span class="o">]</span> <span class="k">=</span> <span class="n">println</span><span class="o">(</span><span class="s">"INFO: $msg"</span><span class="o">).</span><span class="n">pure</span><span class="o">[</span><span class="kt">KVStoreState</span><span class="o">]</span>
+  <span class="k">def</span> <span class="n">warnImpl</span><span class="o">(</span><span class="n">msg</span><span class="k">:</span> <span class="kt">String</span><span class="o">)</span><span class="k">:</span> <span class="kt">KVStoreState</span><span class="o">[</span><span class="kt">Unit</span><span class="o">]</span> <span class="k">=</span> <span class="n">println</span><span class="o">(</span><span class="s">"WARN: $msg"</span><span class="o">).</span><span class="n">pure</span><span class="o">[</span><span class="kt">KVStoreState</span><span class="o">]</span>
+<span class="o">}</span>
+</code></pre>
+</div>
+
+<p>Before we create a program where we combine all operations let’s consider both <code class="highlighter-rouge">KVStore</code> and <code class="highlighter-rouge">Log</code> as part
+of a module in our application</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>@module Backend[F[_]] {
+  val store: KVStore[F]
+  val log: KVStore[F]
+}
+</code></pre>
+</div>
+
+<p>When <code class="highlighter-rouge">@module</code> is materialized it will automatically create the Coproduct that matches interpreters necessary to run the <code class="highlighter-rouge">Free</code> structure
+below.</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>def program[F[_]](implicit B: Backend[F]): FreeS[Option[Int]] = {
+  import B.store._, B.log._
+  for {
+    _ &lt;- put("wild-cats", 2)
+	_ &lt;- info("Added wild-cats")
+    _ &lt;- update[Int]("wild-cats", (_ + 12))
+ 	_ &lt;- info("Updated wild-cats")
+    _ &lt;- put("tame-cats", 5)
+    n &lt;- get[Int]("wild-cats")
+    _ &lt;- delete("tame-cats")
+	_ &lt;- warn("Deleted tame-cats")
+  } yield n
+}
+</code></pre>
+</div>
+
+<p>Once we have combined our algebras we can simply evaluate them by providing implicit evidence of the Coproduct interpreters.
+<code class="highlighter-rouge">import io.freestyle.implicits._</code> brings into scope among others the necessary implicit definitions to derive a unified interpreter given
+implicit evidences of each one of the individual algebra’s interpreters removing the burden of aligning interpreters from the user.</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>import io.freestyle.implicits._
+program[Backend.T].exec[KVStore]
+</code></pre>
+</div>
+
+<p>Alternatively you can build your interpreters by hand if you wish not to use Freestyle implicit machinery.
+This may quickly grow unwildly as the number of algebras increase in an application but it’s also possible in the spirit of providing two way compatibility
+in all areas between manually built ADTs and Natural Transformations and the ones automatically derived by Freestyle.</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>val manualInterpreters[Backend.T ~&gt; KVStore] = kvStoreInterpreter or logInterpreter
+program[Backend.T].foldMap[KVStore](manualInterpreters)
+</code></pre>
+</div>
+
+<p>Now that we’ve learnt to define our own interpreters let’s learn how to build applications that support <a href="parallelism.html">parallelism</a></p>
+</section></div></div></div></div><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script><script src="/freestyle/highlight/highlight.pack.js"></script><script>hljs.configure({
+languages:['scala','java','bash']
+});
+hljs.initHighlighting();
+             </script><script src="/freestyle/js/main.js"></script></body></html>

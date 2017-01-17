@@ -1,0 +1,162 @@
+<html><head><meta charset="utf-8" /><meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" /><title>Freestyle</title><meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="description" content="large-scale modular Scala applications &amp; libraries on top of Free Monads/Applicatives" /><meta name="author" content="47 Degrees" /><meta name="og:image" content="/freestyle/img/poster.png" /><meta name="og:title" content="Freestyle" /><meta name="og:site_name" content="Freestyle" /><meta name="og:url" content="https://github.com/com.fortysevendeg/freestyle" /><meta name="og:type" content="website" /><meta name="og:description" content="large-scale modular Scala applications &amp; libraries on top of Free Monads/Applicatives" /><meta name="twitter:image" content="/freestyle/img/poster.png" /><meta name="twitter:card" content="summary_large_image" /><meta name="twitter:site" content="" /><link rel="icon" type="image/png" href="/freestyle/img/favicon.png" /><link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" /><link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css" /><link rel="stylesheet" href="/freestyle/highlight/styles/dracula.css" /><link rel="stylesheet" href="/freestyle/css/style.css" /><link rel="stylesheet" href="/freestyle/css/palette.css" /><link rel="stylesheet" href="/freestyle/css/custom.css" /></head><body><header id="site-header"><div class="navbar-wrapper"><div class="container"><div class="row"><div class="col-xs-6"><a href="/freestyle/" class="brand"><div class="icon-wrapper"><span>Freestyle</span></div></a></div><div class="col-xs-6"><nav class="text-right"><ul class=""><li><a href="https://github.com/47deg/freestyle"><i class="fa fa-github"></i><span class="hidden-xs">GitHub</span></a></li><li><a href="/freestyle/docs/"><i class="fa fa-file-text"></i><span class="hidden-xs">Documentation</span></a></li></ul></nav></div></div></div></div><div class="jumbotron"><div class="container"><h1 class="text-center">large-scale modular Scala applications &amp; libraries on top of Free Monads/Applicatives</h1><h2></h2><p class="text-center"><a href="https://github.com/47deg/freestyle" class="btn btn-outline-inverse">View on GitHub</a></p></div></div><div><ul class="horizontalNav">                </ul></div></header><main id="site-main"><section class="use"><div class="container"><div id="content"><p>EXPERIMENTAL WIP.</p>
+
+<p><a href="https://travis-ci.org/47deg/freestyle"><img src="https://travis-ci.org/47deg/freestyle.svg?branch=master" alt="Build Status" /></a> <a href="https://gitter.im/47deg/freestyle?utm_source=badge&amp;utm_medium=badge&amp;utm_campaign=pr-badge&amp;utm_content=badge"><img src="https://badges.gitter.im/47deg/freestyle.svg" alt="Join the chat at https://gitter.im/47deg/freestyle" /></a></p>
+
+<h1 id="freestyle">Freestyle</h1>
+
+<p><strong>Freestyle</strong> is a library that enables building large-scale modular Scala applications and libraries on top of Free monads/applicatives.</p>
+
+<p>You may want to consider using Freestyle if among your concerns are:</p>
+
+<ul>
+  <li>Decoupling program declaration from runtime interpretation</li>
+  <li>Automatic composition of dispair monadic/applicative style actions originating from independent ADTs.</li>
+  <li>Automatic onion style architectures through composable modules without the complexity of manually aligning Coproducts and interpreters.</li>
+  <li>Boilerplate-free application and libraries.</li>
+</ul>
+
+<p>Freestyle optionally includes</p>
+
+<ul>
+  <li>Ready to use integrations to achieve parallelism through <a href=""><code class="highlighter-rouge">scala.concurrent.Future</code></a>, <a href=""><code class="highlighter-rouge">Akka</code></a> Actors and <a href=""><code class="highlighter-rouge">Monix</code></a> Task.</li>
+  <li>Ready to use integrations that cover most of the commons applications concerns such as <a href="">logging</a>, <a href="">configuration</a>, <a href="">dependency injection</a>, <a href="">persistence</a>, etc.</li>
+</ul>
+
+<h2 id="quick-start">Quick Start</h2>
+
+<p>Take a look at the <a href="docs/quickstart.html">quick start guide</a> to understand the main features of Freestyle</p>
+
+<h2 id="documentation">Documentation</h2>
+
+<p>Freestyle includes extensive <a href="docs/algebras.html">documentation</a> for each one of its features and third party integrations</p>
+
+<h2 id="rationale">Rationale</h2>
+
+<p><a href=""><code class="highlighter-rouge">Free</code></a> monads based architectures have become popular in Scala as a way to organize libraries and applications.
+When using <code class="highlighter-rouge">Free</code> we model effects and actions as Algebraic Data Types (ADTs).
+Scala emulates <a href=""><code class="highlighter-rouge">Algebraic Data Types</code></a> through sealed hierarchies on which each class extending the root class represents one of the monadic steps or applicative computations you can perform when
+constructing your program. Unfortunately this results in a decent amount of boilerplate in order to properly combine and <a href="">compose ADTs</a>.</p>
+
+<p>Freestyle simplifies this process by automatically generating all the boilerplate you need in order to compose <code class="highlighter-rouge">Free</code> monads/applicatives operations originating from unrelated ADTs.</p>
+
+<p>Freestyle also provides the necessary implicit machinery to agreggate algebras into modules and submodules to achieve Onion style architectures built atop Free.
+where you can group your concerns into logical components.</p>
+
+<p>Freestyle goal is to empower users unleashing the full power of Functional Programming based architectures in Scala while remaining beginner friendly.</p>
+
+<h2 id="example">Example</h2>
+
+<p>The following Freestyle code:</p>
+
+<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">io.freestyle._</span>
+
+<span class="nd">@free</span> <span class="k">trait</span> <span class="nc">Interacts</span><span class="o">[</span><span class="kt">F</span><span class="o">[</span><span class="k">_</span><span class="o">]]</span> <span class="o">{</span>
+  <span class="k">def</span> <span class="n">tell</span><span class="o">(</span><span class="n">msg</span><span class="k">:</span> <span class="kt">String</span><span class="o">)</span><span class="k">:</span> <span class="kt">FreeS</span><span class="o">[</span><span class="kt">F</span>, <span class="kt">Unit</span><span class="o">]</span>
+  <span class="k">def</span> <span class="n">ask</span><span class="o">(</span><span class="n">prompt</span><span class="k">:</span> <span class="kt">String</span><span class="o">)</span><span class="k">:</span> <span class="kt">FreeS</span><span class="o">[</span><span class="kt">F</span>, <span class="kt">String</span><span class="o">]</span>
+<span class="o">}</span>
+
+<span class="nd">@free</span> <span class="k">trait</span> <span class="nc">DataOps</span><span class="o">[</span><span class="kt">F</span><span class="o">[</span><span class="k">_</span><span class="o">]]</span> <span class="o">{</span>
+  <span class="k">def</span> <span class="n">addCat</span><span class="o">(</span><span class="n">a</span><span class="k">:</span> <span class="kt">String</span><span class="o">)</span><span class="k">:</span> <span class="kt">FreeS</span><span class="o">[</span><span class="kt">F</span>, <span class="kt">String</span><span class="o">]</span>
+  <span class="k">def</span> <span class="n">getAllCats</span><span class="k">:</span> <span class="kt">FreeS</span><span class="o">[</span><span class="kt">F</span>, <span class="kt">List</span><span class="o">[</span><span class="kt">String</span><span class="o">]]</span>
+<span class="o">}</span>
+
+<span class="nd">@module</span> <span class="k">trait</span> <span class="nc">Application</span><span class="o">[</span><span class="kt">F</span><span class="o">[</span><span class="k">_</span><span class="o">]]</span> <span class="o">{</span>
+  <span class="k">val</span> <span class="n">interacts</span><span class="k">:</span> <span class="kt">Interacts</span><span class="o">[</span><span class="kt">F</span><span class="o">]</span>
+  <span class="k">val</span> <span class="n">dataOps</span><span class="k">:</span> <span class="kt">DataOps</span><span class="o">[</span><span class="kt">F</span><span class="o">]</span>
+<span class="o">}</span>
+</code></pre>
+</div>
+
+<p>It’s closely equivalent to it’s non Freestyle version:</p>
+
+<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">cats.data.Coproduct</span>
+<span class="k">import</span> <span class="nn">cats.free.</span><span class="o">{</span><span class="nc">Free</span><span class="o">,</span> <span class="nc">Inject</span><span class="o">}</span>
+
+<span class="cm">/** User Interaction Algebra */</span>
+<span class="k">sealed</span> <span class="k">abstract</span> <span class="k">class</span> <span class="nc">Interact</span><span class="o">[</span><span class="kt">A</span><span class="o">]</span> <span class="nc">extends</span> <span class="nc">Product</span> <span class="k">with</span> <span class="nc">Serializable</span>
+<span class="k">case</span> <span class="k">class</span> <span class="nc">Ask</span><span class="o">(</span><span class="n">prompt</span><span class="k">:</span> <span class="kt">String</span><span class="o">)</span> <span class="k">extends</span> <span class="nc">Interact</span><span class="o">[</span><span class="kt">String</span><span class="o">]</span>
+<span class="k">case</span> <span class="k">class</span> <span class="nc">Tell</span><span class="o">(</span><span class="n">msg</span><span class="k">:</span> <span class="kt">String</span><span class="o">)</span> <span class="k">extends</span> <span class="nc">Interact</span><span class="o">[</span><span class="kt">Unit</span><span class="o">]</span>
+
+<span class="cm">/** Data Operations Algebra */</span>
+<span class="k">sealed</span> <span class="k">trait</span> <span class="nc">DataOp</span><span class="o">[</span><span class="kt">A</span><span class="o">]</span> <span class="nc">extends</span> <span class="nc">Product</span> <span class="k">with</span> <span class="nc">Serializable</span>
+<span class="k">case</span> <span class="k">class</span> <span class="nc">AddCat</span><span class="o">(</span><span class="n">a</span><span class="k">:</span> <span class="kt">String</span><span class="o">)</span> <span class="k">extends</span> <span class="nc">DataOp</span><span class="o">[</span><span class="kt">String</span><span class="o">]</span>
+<span class="k">case</span> <span class="k">class</span> <span class="nc">GetAllCats</span><span class="o">()</span> <span class="k">extends</span> <span class="nc">DataOp</span><span class="o">[</span><span class="kt">List</span><span class="o">[</span><span class="kt">String</span><span class="o">]]</span>
+
+<span class="cm">/** Smart Constructors */</span>
+<span class="k">class</span> <span class="nc">Interacts</span><span class="o">[</span><span class="kt">F</span><span class="o">[</span><span class="k">_</span><span class="o">]](</span><span class="k">implicit</span> <span class="n">I</span><span class="k">:</span> <span class="kt">Inject</span><span class="o">[</span><span class="kt">Interact</span>, <span class="kt">F</span><span class="o">])</span> <span class="o">{</span>
+  <span class="k">def</span> <span class="n">tell</span><span class="o">(</span><span class="n">msg</span><span class="k">:</span> <span class="kt">String</span><span class="o">)</span><span class="k">:</span> <span class="kt">Free</span><span class="o">[</span><span class="kt">F</span>, <span class="kt">Unit</span><span class="o">]</span> <span class="k">=</span> <span class="nc">Free</span><span class="o">.</span><span class="n">inject</span><span class="o">[</span><span class="kt">Interact</span>, <span class="kt">F</span><span class="o">](</span><span class="nc">Tell</span><span class="o">(</span><span class="n">msg</span><span class="o">))</span>
+  <span class="k">def</span> <span class="n">ask</span><span class="o">(</span><span class="n">prompt</span><span class="k">:</span> <span class="kt">String</span><span class="o">)</span><span class="k">:</span> <span class="kt">Free</span><span class="o">[</span><span class="kt">F</span>, <span class="kt">String</span><span class="o">]</span> <span class="k">=</span> <span class="nc">Free</span><span class="o">.</span><span class="n">inject</span><span class="o">[</span><span class="kt">Interact</span>, <span class="kt">F</span><span class="o">](</span><span class="nc">Ask</span><span class="o">(</span><span class="n">prompt</span><span class="o">))</span>
+<span class="o">}</span>
+
+<span class="k">object</span> <span class="nc">Interacts</span> <span class="o">{</span>
+  <span class="k">implicit</span> <span class="k">def</span> <span class="n">interacts</span><span class="o">[</span><span class="kt">F</span><span class="o">[</span><span class="k">_</span><span class="o">]](</span><span class="k">implicit</span> <span class="n">I</span><span class="k">:</span> <span class="kt">Inject</span><span class="o">[</span><span class="kt">Interact</span>, <span class="kt">F</span><span class="o">])</span><span class="k">:</span> <span class="kt">Interacts</span><span class="o">[</span><span class="kt">F</span><span class="o">]</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">Interacts</span><span class="o">[</span><span class="kt">F</span><span class="o">]</span>
+<span class="o">}</span>
+
+<span class="k">class</span> <span class="nc">DataOps</span><span class="o">[</span><span class="kt">F</span><span class="o">[</span><span class="k">_</span><span class="o">]](</span><span class="k">implicit</span> <span class="n">I</span><span class="k">:</span> <span class="kt">Inject</span><span class="o">[</span><span class="kt">DataOp</span>, <span class="kt">F</span><span class="o">])</span> <span class="o">{</span>
+  <span class="k">def</span> <span class="n">addCat</span><span class="o">(</span><span class="n">a</span><span class="k">:</span> <span class="kt">String</span><span class="o">)</span><span class="k">:</span> <span class="kt">Free</span><span class="o">[</span><span class="kt">F</span>, <span class="kt">String</span><span class="o">]</span> <span class="k">=</span> <span class="nc">Free</span><span class="o">.</span><span class="n">inject</span><span class="o">[</span><span class="kt">DataOp</span>, <span class="kt">F</span><span class="o">](</span><span class="nc">AddCat</span><span class="o">(</span><span class="n">a</span><span class="o">))</span>
+  <span class="k">def</span> <span class="n">getAllCats</span><span class="k">:</span> <span class="kt">Free</span><span class="o">[</span><span class="kt">F</span>, <span class="kt">List</span><span class="o">[</span><span class="kt">String</span><span class="o">]]</span> <span class="k">=</span> <span class="nc">Free</span><span class="o">.</span><span class="n">inject</span><span class="o">[</span><span class="kt">DataOp</span>, <span class="kt">F</span><span class="o">](</span><span class="nc">GetAllCats</span><span class="o">())</span>
+<span class="o">}</span>
+
+<span class="k">object</span> <span class="nc">DataOps</span> <span class="o">{</span>
+  <span class="k">implicit</span> <span class="k">def</span> <span class="n">dataOps</span><span class="o">[</span><span class="kt">F</span><span class="o">[</span><span class="k">_</span><span class="o">]](</span><span class="k">implicit</span> <span class="n">I</span><span class="k">:</span> <span class="kt">Inject</span><span class="o">[</span><span class="kt">DataOp</span>, <span class="kt">F</span><span class="o">])</span><span class="k">:</span> <span class="kt">DataOps</span><span class="o">[</span><span class="kt">F</span><span class="o">]</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">DataOps</span><span class="o">[</span><span class="kt">F</span><span class="o">]</span>
+<span class="o">}</span>
+
+<span class="cm">/** An application as a Coproduct of it's ADTs */</span>
+<span class="k">type</span> <span class="kt">Application</span><span class="o">[</span><span class="kt">A</span><span class="o">]</span> <span class="k">=</span> <span class="nc">Coproduct</span><span class="o">[</span><span class="kt">Interact</span>, <span class="kt">DataOp</span>, <span class="kt">A</span><span class="o">]</span>
+</code></pre>
+</div>
+
+<p>Freestyle generates all the necessary boilerplate machinery including ADTs, Inject instances and companions with proper implicits.
+Eliminating this boilerplate allows developers to concentrate in the business logic by simply
+describing abstract functions where one can define the needed arguments and expected return type without providing implementations.</p>
+
+<p>This is all you need to start building a Free program free of runtime interpretation.</p>
+
+<p>Freestyle is compatible with Hybrid approaches where you define your own ADTs in a more traditional way and combine them with parts built with Freestyle.
+More details about how Freestyle generates boilerplate and other utilities that make functional programming
+with Free monads in Scala easier can be found in its <a href="">documentation</a></p>
+
+<h1 id="dependencies">Dependencies</h1>
+
+<p>Freestyle is compatible with both Scala JVM and Scala.js.</p>
+
+<p>This project supports Scala 2.10, 2.11 and 2.12. The project is based on macro paradise.</p>
+
+<p>To use the project, add the following to your build.sbt:</p>
+
+<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="n">addCompilerPlugin</span><span class="o">(</span><span class="s">"org.scalamacros"</span> <span class="o">%</span> <span class="s">"paradise"</span> <span class="o">%</span> <span class="s">"2.1.0"</span> <span class="n">cross</span> <span class="nc">CrossVersion</span><span class="o">.</span><span class="n">full</span><span class="o">)</span>
+</code></pre>
+</div>
+
+<p>For Scala.jvm</p>
+
+<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="n">libraryDependencies</span> <span class="o">+=</span> <span class="s">"io.freestyle"</span> <span class="o">%%</span> <span class="s">"freestyle"</span> <span class="o">%</span> <span class="s">"0.1.0"</span>
+</code></pre>
+</div>
+
+<p>For Scala.js</p>
+
+<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="n">libraryDependencies</span> <span class="o">+=</span> <span class="s">"io.freestyle"</span> <span class="o">%%%</span> <span class="s">"freestyle"</span> <span class="o">%</span> <span class="s">"0.1.0"</span>
+</code></pre>
+</div>
+
+<h1 id="credits">Credits</h1>
+
+<p>Freestyle it’s a project sponsored and promoted by <a href="http://47deg.com">47 Degrees</a>, a functional programming consultancy
+specializing in Scala technologies.</p>
+
+<p>Freestyle is inspired among others by <a href="https://github.com/mpilquist/simulacrum"><code class="highlighter-rouge">simulacrum</code></a> and it’s possible thanks to great libraries such as:</p>
+
+<ul>
+  <li><a href="http://typelevel.org/cats">cats</a></li>
+  <li><a href="https://github.com/non/kind-projector">kind-projector</a></li>
+  <li><a href="https://47deg.github.io/sbt-microsites/">sbt-microsites</a></li>
+  <li><a href="https://monix.io/">monix</a></li>
+  <li><a href="http://akka.io/">akka</a></li>
+  <li><a href="https://github.com/tpolecat/doobie">doobie</a></li>
+</ul>
+</div></div></section><section class="technologies"><div class="container"><div class="row"></div></div></section></main><footer id="site-footer"><div class="container"><div class="row"><div class="col-xs-6"><p>Freestyle is designed and developed by <a href="https://github.com/com.fortysevendeg/freestyle" target="_blank">47 Degrees</a></p></div><div class="col-xs-6"><p class="text-right"><a href="https://github.com/47deg/freestyle"><span class="fa fa-github"></span>View on Github</a></p></div></div></div></footer><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script><script src="/freestyle/highlight/highlight.pack.js"></script><script>hljs.configure({
+languages:['scala','java','bash']
+});
+hljs.initHighlighting();
+             </script></body></html>

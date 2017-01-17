@@ -1,0 +1,118 @@
+<html><head><meta charset="utf-8" /><meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" /><title>Freestyle</title><meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="description" content="large-scale modular Scala applications &amp; libraries on top of Free Monads/Applicatives" /><meta name="author" content="47 Degrees" /><meta name="og:image" content="/freestyle/img/poster.png" /><meta name="og:title" content="Freestyle" /><meta name="og:site_name" content="Freestyle" /><meta name="og:url" content="https://github.com/com.fortysevendeg/freestyle" /><meta name="og:type" content="website" /><meta name="og:description" content="large-scale modular Scala applications &amp; libraries on top of Free Monads/Applicatives" /><meta name="twitter:image" content="/freestyle/img/poster.png" /><meta name="twitter:card" content="summary_large_image" /><meta name="twitter:site" content="" /><link rel="icon" type="image/png" href="/freestyle/img/favicon.png" /><link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" /><link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css" /><link rel="stylesheet" href="/freestyle/highlight/styles/dracula.css" /><link rel="stylesheet" href="/freestyle/css/style.css" /><link rel="stylesheet" href="/freestyle/css/palette.css" /><link rel="stylesheet" href="/freestyle/css/custom.css" /></head><body class="docs"><div id="wrapper"><div id="sidebar-wrapper"><ul id="sidebar" class="sidebar-nav"><li class="sidebar-brand"><a href="/freestyle/" class="brand"><div class="brand-wrapper" style="background:url('/freestyle/img/sidebar_brand.png') no-repeat"><span>Freestyle</span></div></a></li> <li><a href="/freestyle/docs/index.html" class="">Quick Start Guide</a></li> <li><a href="/freestyle/docs/algebras.html" class="">Algebras</a></li> <li><a href="/freestyle/docs/modules.html" class=" active ">Modules</a></li> <li><a href="/freestyle/docs/interpreters.html" class="">Interpreters</a></li> <li><a href="/freestyle/docs/parallelism.html" class="">Parallelism</a></li></ul></div><div id="page-content-wrapper"><div class="nav"><div class="container-fluid"><div class="row"><div class="col-lg-12"><div class="action-menu pull-left clearfix"><a href="#menu-toggle" id="menu-toggle"><i class="fa fa-bars" aria-hidden="true"></i></a></div><ul class="pull-right"><li class="hidden-xs"><a href="https://github.com/47deg/freestyle"><i class="fa fa-eye"></i><span>WATCH<span id="eyes" class="label label-default">--</span></span></a></li><li class="hidden-xs"><a href="https://github.com/47deg/freestyle"><i class="fa fa-star-o"></i><span>STARS<span id="stars" class="label label-default">--</span></span></a></li><li><a href="#" onclick="shareSiteTwitter('Freestyle large-scale modular Scala applications &amp; libraries on top of Free Monads/Applicatives');"><i class="fa fa-twitter"></i></a></li><li><a href="#" onclick="shareSiteFacebook('Freestyle large-scale modular Scala applications &amp; libraries on top of Free Monads/Applicatives');"><i class="fa fa-facebook"></i></a></li><li><a href="#" onclick="shareSiteGoogle();"><i class="fa fa-google-plus"></i></a></li></ul></div></div></div></div><div id="content" data-github-owner="47deg" data-github-repo="freestyle"><div class="content-wrapper"><section><h1 id="modules">Modules</h1>
+
+<p>Freestyle <code class="highlighter-rouge">@module</code> serves the purpose of logically combining related Algebras that are frequently used together.
+In the same way architectures are built traditionally in layers where separations of concerns is paramount Modules
+help organizing algebras in groups that can be arbitrarily nested.</p>
+
+<p>To illustrate how Modules work let’s define a few algebras first.
+We will start with some basic low level style ops related to persistence.
+In our Persistence related algebras we have some ops that can go against a DB and others to a Cache service or system.
+In the presentation side an application may display or perform some input validation.</p>
+
+<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">io.freestyle._</span>
+
+<span class="nd">@free</span> <span class="k">trait</span> <span class="nc">Database</span><span class="o">[</span><span class="kt">F</span><span class="o">[</span><span class="k">_</span><span class="o">]]</span> <span class="o">{</span>
+  <span class="k">def</span> <span class="n">get</span><span class="o">(</span><span class="n">id</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span><span class="k">:</span> <span class="kt">FreeS</span><span class="o">[</span><span class="kt">F</span>, <span class="kt">Int</span><span class="o">]</span>
+<span class="o">}</span>
+<span class="nd">@free</span> <span class="k">trait</span> <span class="nc">Cache</span><span class="o">[</span><span class="kt">F</span><span class="o">[</span><span class="k">_</span><span class="o">]]</span> <span class="o">{</span>
+  <span class="k">def</span> <span class="n">get</span><span class="o">(</span><span class="n">id</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span><span class="k">:</span> <span class="kt">FreeS</span><span class="o">[</span><span class="kt">F</span>, <span class="kt">Option</span><span class="o">[</span><span class="kt">Int</span><span class="o">]]</span>
+<span class="o">}</span>
+<span class="nd">@free</span> <span class="k">trait</span> <span class="nc">Presenter</span><span class="o">[</span><span class="kt">F</span><span class="o">[</span><span class="k">_</span><span class="o">]]</span> <span class="o">{</span>
+  <span class="k">def</span> <span class="n">show</span><span class="o">(</span><span class="n">id</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span><span class="k">:</span> <span class="kt">FreeS</span><span class="o">[</span><span class="kt">F</span>, <span class="kt">Int</span><span class="o">]</span>
+<span class="o">}</span>
+<span class="nd">@free</span> <span class="k">trait</span> <span class="nc">IdValidation</span><span class="o">[</span><span class="kt">F</span><span class="o">[</span><span class="k">_</span><span class="o">]]</span> <span class="o">{</span>
+  <span class="k">def</span> <span class="n">validate</span><span class="o">(</span><span class="n">id</span><span class="k">:</span> <span class="kt">Option</span><span class="o">[</span><span class="kt">Int</span><span class="o">])</span><span class="k">:</span> <span class="kt">FreeS</span><span class="o">[</span><span class="kt">F</span>, <span class="kt">Int</span><span class="o">]</span>
+<span class="o">}</span>
+</code></pre>
+</div>
+
+<p>At this point we can group these different application concerns in modules like so</p>
+
+<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="nd">@module</span> <span class="k">trait</span> <span class="nc">Persistence</span><span class="o">[</span><span class="kt">F</span><span class="o">[</span><span class="k">_</span><span class="o">]]</span> <span class="o">{</span>
+  <span class="k">val</span> <span class="n">database</span><span class="k">:</span> <span class="kt">Database</span><span class="o">[</span><span class="kt">F</span><span class="o">]</span>
+  <span class="k">val</span> <span class="n">cache</span><span class="k">:</span> <span class="kt">Cache</span><span class="o">[</span><span class="kt">F</span><span class="o">]</span>
+<span class="o">}</span>
+<span class="nd">@module</span> <span class="k">trait</span> <span class="nc">Display</span><span class="o">[</span><span class="kt">F</span><span class="o">[</span><span class="k">_</span><span class="o">]]</span> <span class="o">{</span>
+  <span class="k">val</span> <span class="n">presenter</span><span class="k">:</span> <span class="kt">Presenter</span><span class="o">[</span><span class="kt">F</span><span class="o">]</span>
+  <span class="k">val</span> <span class="n">validator</span><span class="k">:</span> <span class="kt">IdValidation</span><span class="o">[</span><span class="kt">F</span><span class="o">]</span>
+<span class="o">}</span>
+</code></pre>
+</div>
+
+<p>This enables to build programs that are properly typed and parameterized in a modular and composable way.</p>
+
+<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">def</span> <span class="n">program</span><span class="o">[</span><span class="kt">F</span><span class="o">[</span><span class="k">_</span><span class="o">]](</span>
+	<span class="k">implicit</span>
+	  <span class="n">display</span><span class="k">:</span> <span class="kt">Display</span><span class="o">[</span><span class="kt">F</span><span class="o">],</span>
+	  <span class="n">persistence</span><span class="k">:</span> <span class="kt">Persistence</span><span class="o">[</span><span class="kt">F</span><span class="o">])</span><span class="k">:</span> <span class="kt">FreeS</span><span class="o">[</span><span class="kt">F</span>, <span class="kt">Int</span><span class="o">]</span> <span class="k">=</span> <span class="o">{</span>
+  <span class="k">import</span> <span class="nn">display._</span><span class="o">,</span> <span class="n">persistence</span><span class="o">.</span><span class="k">_</span>
+  <span class="k">for</span> <span class="o">{</span>
+    <span class="n">cachedToken</span> <span class="k">&lt;-</span> <span class="n">cache</span><span class="o">.</span><span class="n">get</span><span class="o">(</span><span class="mi">1</span><span class="o">)</span>
+    <span class="n">id</span> <span class="k">&lt;-</span> <span class="n">validator</span><span class="o">.</span><span class="n">validate</span><span class="o">(</span><span class="n">cachedToken</span><span class="o">)</span>
+    <span class="n">value</span> <span class="k">&lt;-</span> <span class="n">database</span><span class="o">.</span><span class="n">get</span><span class="o">(</span><span class="n">id</span><span class="o">)</span>
+    <span class="n">view</span> <span class="k">&lt;-</span> <span class="n">presenter</span><span class="o">.</span><span class="n">show</span><span class="o">(</span><span class="n">value</span><span class="o">)</span>
+  <span class="o">}</span> <span class="k">yield</span> <span class="n">view</span>
+<span class="o">}</span>
+</code></pre>
+</div>
+
+<p>Modules can be further nested so they become part of the tree that conforms an application or library.</p>
+
+<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="nd">@module</span> <span class="k">trait</span> <span class="nc">App</span><span class="o">[</span><span class="kt">F</span><span class="o">[</span><span class="k">_</span><span class="o">]]</span> <span class="o">{</span>
+  <span class="k">val</span> <span class="n">persistence</span><span class="k">:</span> <span class="kt">Persistence</span><span class="o">[</span><span class="kt">F</span><span class="o">]</span>
+  <span class="k">val</span> <span class="n">display</span><span class="k">:</span> <span class="kt">Display</span><span class="o">[</span><span class="kt">F</span><span class="o">]</span>
+<span class="o">}</span>
+</code></pre>
+</div>
+
+<p>The <code class="highlighter-rouge">@module</code> annotation works in a similar way as the <code class="highlighter-rouge">@free</code> one by generating all the boilerplate
+and implicit machinery necessary to assemble apps and libraries based on <code class="highlighter-rouge">Free</code>.</p>
+
+<h2 id="automatic-method-implementations">Automatic method implementations</h2>
+
+<p>From the abstract sub modules references Freestyle creates implementations based on the implicit evidences of the members it finds declared.
+In the case above when <code class="highlighter-rouge">Application</code> is expanded a companion object will be generated which includes a class a definition
+implementing <code class="highlighter-rouge">Application[F[_]]</code> where both <code class="highlighter-rouge">persistence</code> and <code class="highlighter-rouge">display</code> are based on the implicits evidences generated by <code class="highlighter-rouge">@free</code> and other <code class="highlighter-rouge">@module</code>
+annotations.</p>
+
+<h2 id="dependency-injection">Dependency Injection</h2>
+
+<p>Freestyle automatically generates implicit default instances and summoners in the ‘@free’ and ‘@module’ annotated companions so that instances can be summoned implicitly at any point in an application.
+Scala uses implicit instances in companion objects as par tof its implicit resolution rules. to learn more about Scala implicits take a look at this great
+post by Li Haoyi’s <a href="http://www.lihaoyi.com/post/ImplicitDesignPatternsinScala.html">Implicit Design Patterns in Scala</a>.</p>
+
+<p>The user can exploit scala implicit resolution order to override the default instances provided by Freestyle.</p>
+
+<h2 id="convenient-type-aliases">Convenient type aliases</h2>
+
+<p>All companions generated with <code class="highlighter-rouge">@module</code> contain a convenient type alias <code class="highlighter-rouge">T</code> that you can refer to and that points to the root ADT nodes of the most inner <code class="highlighter-rouge">@free</code> leaves.
+Freestyle recursively walks the Module dependencies until it finds the deepest modules that contain <code class="highlighter-rouge">@free</code> smart constructors generating a properly aligned <code class="highlighter-rouge">Coproduct</code>
+for all it’s contained algebras. This allows contained algebras to be composed.</p>
+
+<p>If you were to create this by hand in the case of the example above it will look like this:</p>
+
+<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">cats.data.Coproduct</span>
+
+<span class="k">type</span> <span class="kt">C01</span><span class="o">[</span><span class="kt">A</span><span class="o">]</span> <span class="k">=</span> <span class="nc">Coproduct</span><span class="o">[</span><span class="kt">Database.T</span>, <span class="kt">Cache.T</span>, <span class="kt">A</span><span class="o">]</span>
+<span class="k">type</span> <span class="kt">C02</span><span class="o">[</span><span class="kt">A</span><span class="o">]</span> <span class="k">=</span> <span class="nc">Coproduct</span><span class="o">[</span><span class="kt">Presenter.T</span>, <span class="kt">C01</span>, <span class="kt">A</span><span class="o">]</span>
+<span class="k">type</span> <span class="kt">ManualAppCoproduct</span><span class="o">[</span><span class="kt">A</span><span class="o">]</span> <span class="k">=</span> <span class="nc">Coproduct</span><span class="o">[</span><span class="kt">IdValidation.T</span>, <span class="kt">C02</span>, <span class="kt">A</span><span class="o">]</span>
+</code></pre>
+</div>
+
+<p>Things get more complicated once the number of Algebras grows.
+Fortunately Freestyle automatically aligns all those for you and gives you an already aligned <code class="highlighter-rouge">Coproduct</code> of all algebras
+contained by a Module whether directly referenced or transitively through it’s modules dependencies.</p>
+
+<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="n">implicitly</span><span class="o">[</span><span class="kt">App.T</span><span class="o">[</span><span class="k">_</span><span class="o">]</span> <span class="kt">=:=</span> <span class="kt">ManualAppCoproduct</span><span class="o">[</span><span class="k">_</span><span class="o">]]</span>
+</code></pre>
+</div>
+
+<p>We’ve covered so far how Freestyle can help in building and composing module programs based on <code class="highlighter-rouge">Free</code>, but <code class="highlighter-rouge">Free</code> programs are
+useless without a runtime interpreter that can evaluate the <code class="highlighter-rouge">Free</code> structure.</p>
+
+<p>Next we will show you how <code class="highlighter-rouge">Freestyle</code> helps you simplify the way you define <a href="interpreters.html">runtime interpreters</a> for <code class="highlighter-rouge">Free</code> applications.</p>
+</section></div></div></div></div><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script><script src="/freestyle/highlight/highlight.pack.js"></script><script>hljs.configure({
+languages:['scala','java','bash']
+});
+hljs.initHighlighting();
+             </script><script src="/freestyle/js/main.js"></script></body></html>
