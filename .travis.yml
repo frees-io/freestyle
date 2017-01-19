@@ -1,6 +1,7 @@
 language: scala
 scala:
 - 2.11.8
+- 2.12.0
 jdk:
 - oraclejdk8
 before_install:
@@ -14,6 +15,7 @@ install:
 - gem install jekyll -v 3.2.1
 script:
 - sbt ++$TRAVIS_SCALA_VERSION clean coverage test coverageReport
+- sbt ++$TRAVIS_SCALA_VERSION "docs/tut"
 
 after_success:
 - if [ "$TRAVIS_BRANCH" = "master" -a "$TRAVIS_PULL_REQUEST" = "false" ]; then bash

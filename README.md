@@ -25,7 +25,7 @@ Freestyle facilitates out of the box:
 
 Freestyle includes ready to use modules and algebras for most common application concerns.
 
-- Ready to use integrations to achieve parallelism through [`scala.concurrent.Future`](), [`Akka`]() Actors and [`Monix`]() Task.
+- Ready to use integrations to achieve parallelism through [`scala.concurrent.Future`](), [`Akka`]() Actors and [`Monix`]() Task and others.
 - Ready to use integrations that cover most of the commons applications concerns such as [logging](), [configuration](), [dependency injection](), [persistence](), etc.
 
 ## Quick Start
@@ -55,7 +55,7 @@ Freestyle goal is to empower users unleashing the full power of Functional Progr
 The following Freestyle code:
 
 ```tut:silent
-import io.freestyle._
+import freestyle._
 
 @free trait Interacts[F[_]] {
   def tell(msg: String): FreeS[F, Unit]
@@ -126,9 +126,11 @@ with Free monads and applicatives in Scala easier can be found in its [documenta
 
 # Dependencies
 
+WIP Artifacts not yet available
+
 Freestyle is compatible with both Scala JVM and Scala.js.
 
-This project supports Scala 2.10, 2.11 and 2.12. The project is based on macro paradise.
+This project supports Scala 2.11 and 2.12. 
 
 To use the project, add the following to your build.sbt:
 
@@ -139,13 +141,13 @@ addCompilerPlugin("org.scalamacros" % "paradise" % "2.1.0" cross CrossVersion.fu
 For Scala.jvm
 
 ```scala
-libraryDependencies += "io.freestyle" %% "freestyle" % "0.1.0"
+libraryDependencies += "com.47deg" %% "freestyle" % "0.1.0"
 ```
 
 For Scala.js
 
 ```scala
-libraryDependencies += "io.freestyle" %%% "freestyle" % "0.1.0"
+libraryDependencies += "com.47deg" %%% "freestyle" % "0.1.0"
 ```
 
 # Credits

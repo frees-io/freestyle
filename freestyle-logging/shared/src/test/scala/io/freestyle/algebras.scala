@@ -1,12 +1,13 @@
-package io.freestyle
+package freestyle
 
-import io.freestyle.logging.LoggingM
+import freestyle.logging.LoggingM
 
 import scala.concurrent.Future
 
 object algebras {
 
-  @free trait NonLogging[F[_]] {
+  @free
+  trait NonLogging[F[_]] {
     def x: FreeS[F, Int]
   }
 
@@ -15,7 +16,8 @@ object algebras {
       def xImpl: Future[Int] = Future.successful(1)
     }
 
-  @module trait App[F[_]] {
+  @module
+  trait App[F[_]] {
     val nonLogging: NonLogging[F]
     val loggingM: LoggingM[F]
   }

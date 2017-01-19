@@ -15,7 +15,7 @@ When you build an algebra with Freestyle you only need to concentrate in the API
 A trait or abstract class annotated with `@free` is all you need to create your first algebra with Freestyle.
 
 ```tut:silent
-import io.freestyle._
+import freestyle._
 
 case class User(id: Long, name: String)
 

@@ -1,12 +1,11 @@
-package io.freestyle
+package freestyle
 
 import cats.Monad
-import cats.free.FreeApplicative
-import cats.data.Coproduct
 import cats.arrow.FunctionK
+import cats.data.Coproduct
+import cats.free.FreeApplicative
 
 trait Interpreters {
-
   implicit def interpretCoproduct[F[_], G[_], M[_]](
       implicit fm: FunctionK[F, M],
       gm: FunctionK[G, M]): FunctionK[Coproduct[F, G, ?], M] =
@@ -16,3 +15,5 @@ trait Interpreters {
       implicit fInterpreter: FunctionK[F, M]): FunctionK[FreeApplicative[F, ?], M] =
     λ[FunctionK[FreeApplicative[F, ?], M]](_.foldMap(fInterpreter))
 }
+
+object implicits extends Interpreters
