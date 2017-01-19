@@ -14,7 +14,7 @@ We will start with some basic low level style ops related to persistence.
 In our Persistence related algebras we have some ops that can go against a DB and others to a Cache service or system.
 In the presentation side an application may display or perform some input validation.
 
-```tut:silent
+```tut:book
 import freestyle._
 
 object algebras {
@@ -37,7 +37,7 @@ At this point we can group these different application concerns in modules.
 Modules can be further nested so they become part of the tree that conforms an application or library.
 
 
-```tut:silent
+```tut:book
 import algebras._
 
 object modules {
@@ -58,7 +58,7 @@ object modules {
 
 This enables to build programs that are properly typed and parameterized in a modular and composable way.
 
-```tut:silent
+```tut:book
 import modules._
 
 def program[F[_]](
@@ -97,7 +97,7 @@ Module instances in an easy way. As in `@free` this effectively enables implicit
 using the implicits scoping rules to place different implementations where appropriate.
 This also solves all Dependency Injection problems automatically for all modules in applications that model their layers a modules with the `@module` annotation.
 
-```tut:silent
+```tut:book
 def doWithApp[F[_]](implicit app: App[F]) = ???
 ```
 
@@ -109,7 +109,7 @@ for all it's contained algebras. This allows contained algebras to be composed.
 
 If you were to create this by hand in the case of the example above it will look like this:
 
-```tut:silent
+```tut:book
 import cats.data.Coproduct
 
 type C01[A] = Coproduct[Database.T, Cache.T, A]
@@ -121,7 +121,7 @@ Things get more complicated once the number of Algebras grows.
 Fortunately Freestyle automatically aligns all those for you and gives you an already aligned `Coproduct` of all algebras
 contained by a Module whether directly referenced or transitively through it's modules dependencies.
 
-```tut:silent
+```tut:book
 implicitly[App.T[_] =:= ManualAppCoproduct[_]]
 ```
 

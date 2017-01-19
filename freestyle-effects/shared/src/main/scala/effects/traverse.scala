@@ -15,7 +15,6 @@ object traverse {
      */
     @free sealed abstract class TraverseM[F[_]] {
       def empty[A]: FreeS.Par[F, A]
-      def singleton[A](a: A): FreeS.Par[F, A]
       def fromTraversable[A](ta: G[A]): FreeS.Par[F, A]
     }
 
@@ -28,7 +27,6 @@ object traverse {
           FT: Foldable[G]): TraverseM.Interpreter[M] =
         new TraverseM.Interpreter[M] {
           def emptyImpl[A]: M[A]                     = MC.empty[A]
-          def singletonImpl[A](a: A): M[A]           = MC.pure[A](a)
           def fromTraversableImpl[A](ta: G[A]): M[A] = ta.foldMap(MC.pure)(MC.algebra[A])
         }
     }

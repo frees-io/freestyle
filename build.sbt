@@ -3,6 +3,8 @@ import microsites.MicrositeKeys.{micrositeBaseUrl, micrositeDescription, microsi
 
 addCommandAlias("debug", "; clean ; test")
 
+addCommandAlias("validate", "; +clean ; +test; makeMicrosite")
+
 onLoad in Global := (Command.process("project freestyle", _: State)) compose (onLoad in Global).value
 
 val dev  = Seq(Dev("47 Degrees (twitter: @47deg)", "47 Degrees"))
@@ -60,6 +62,8 @@ lazy val micrositeSettings = Seq(
   micrositeGithubOwner := "47deg",
   micrositeGithubRepo := "freestyle",
   micrositeHighlightTheme := "dracula",
+  micrositeExternalLayoutsDirectory := (resourceDirectory in Compile).value / "microsite" / "layouts",
+  micrositeExternalIncludesDirectory := (resourceDirectory in Compile).value / "microsite" / "includes",
   includeFilter in makeSite := "*.html" | "*.css" | "*.png" | "*.jpg" | "*.gif" | "*.js" | "*.swf" | "*.md",
   micrositePalette := Map(
     "brand-primary"     -> "#01C2C2",
@@ -207,6 +211,7 @@ lazy val tests = (project in file("tests")).
 
 lazy val docs = (project in file("docs")).
   dependsOn(freestyleJVM).
+  dependsOn(freestyleEffectsJVM).
   settings(commonSettings: _*).
   settings(micrositeSettings: _*).
   settings(noPublishSettings: _*).

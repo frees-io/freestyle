@@ -26,9 +26,4 @@ project/plugins/project/
 /out/
 .idea_modules/
 
-# GPG Keys
-
-travis-deploy-key
-travis-deploy-key.pub
-secring.gpg
-keys.tar
+.DS_Store

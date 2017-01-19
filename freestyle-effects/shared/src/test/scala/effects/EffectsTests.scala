@@ -237,9 +237,8 @@ class EffectsTests extends AsyncWordSpec with Matchers {
         for {
           a <- TraverseM[F].fromTraversable(1 :: 2 :: 3 :: Nil)
           b <- Applicative[FreeS[F, ?]].pure(a + 1)
-          c <- TraverseM[F].singleton(1 + b)
-        } yield c
-      program[TraverseM.T].exec[List] shouldBe List(3, 4, 5)
+        } yield b
+      program[TraverseM.T].exec[List] shouldBe List(2, 3, 4)
     }
 
     "empty" in {
