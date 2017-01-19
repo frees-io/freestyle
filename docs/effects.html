@@ -1,0 +1,476 @@
+<html><head><meta charset="utf-8" /><meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" /><title>Freestyle</title><meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="description" content="large-scale modular Scala applications &amp; libraries on top of Free Monads/Applicatives" /><meta name="author" content="47 Degrees" /><meta name="og:image" content="/img/poster.png" /><meta name="og:title" content="Freestyle" /><meta name="og:site_name" content="Freestyle" /><meta name="og:url" content="https://github.com/com.fortysevendeg/freestyle" /><meta name="og:type" content="website" /><meta name="og:description" content="large-scale modular Scala applications &amp; libraries on top of Free Monads/Applicatives" /><meta name="twitter:image" content="/img/poster.png" /><meta name="twitter:card" content="summary_large_image" /><meta name="twitter:site" content="" /><link rel="icon" type="image/png" href="/img/favicon.png" /><link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" /><link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css" /><link rel="stylesheet" href="/highlight/styles/dracula.css" /><link rel="stylesheet" href="/css/style.css" /><link rel="stylesheet" href="/css/palette.css" /><link rel="stylesheet" href="/css/custom.css" /></head><body class="docs"><div id="wrapper"><div id="sidebar-wrapper"><ul id="sidebar" class="sidebar-nav"><li class="sidebar-brand"><a href="/" class="brand"><div class="brand-wrapper" style="background:url('/img/sidebar_brand.png') no-repeat"><span>Freestyle</span></div></a></li> <li><a href="/docs/index.html" class="">Quick Start</a></li> <li><a href="/docs/algebras.html" class="">Algebras</a></li> <li><a href="/docs/modules.html" class="">Modules</a></li> <li><a href="/docs/interpreters.html" class="">Interpreters</a></li> <li><a href="/docs/parallelism.html" class="">Parallelism</a></li> <li><a href="/docs/effects.html" class=" active ">Effects</a> <ul class="sub_section"> <li><a href="/docs/effects.html#Error" class="">Error</a></li> <li><a href="/docs/effects.html#Option" class="">Option</a></li> <li><a href="/docs/effects.html#Reader" class="">Reader</a></li> <li><a href="/docs/effects.html#Writer" class="">Writer</a></li> <li><a href="/docs/effects.html#State" class="">State</a></li> <li><a href="/docs/effects.html#Traverse" class="">Traverse</a></li></ul></li> <li><a href="/todo.html" class="">Patterns</a> <ul class="sub_section"> <li><a href="/todo.html" class="">Dependency Injection</a></li> <li><a href="/todo.html" class="">Configuration</a></li> <li><a href="/todo.html" class="">Logging</a></li></ul></li> <li><a href="/todo.html" class="">Integrations</a> <ul class="sub_section"> <li><a href="/todo.html" class="">Cats</a></li> <li><a href="/todo.html" class="">Monix</a></li> <li><a href="/todo.html" class="">Fetch</a></li> <li><a href="/todo.html" class="">Doobie</a></li></ul></li></ul></div><div id="page-content-wrapper"><div class="nav"><div class="container-fluid"><div class="row"><div class="col-lg-12"><div class="action-menu pull-left clearfix"><a href="#menu-toggle" id="menu-toggle"><i class="fa fa-bars" aria-hidden="true"></i></a></div><ul class="pull-right"><li class="hidden-xs"><a href="https://github.com/47deg/freestyle"><i class="fa fa-eye"></i><span>WATCH<span id="eyes" class="label label-default">--</span></span></a></li><li class="hidden-xs"><a href="https://github.com/47deg/freestyle"><i class="fa fa-star-o"></i><span>STARS<span id="stars" class="label label-default">--</span></span></a></li><li><a href="#" onclick="shareSiteTwitter('Freestyle large-scale modular Scala applications &amp; libraries on top of Free Monads/Applicatives');"><i class="fa fa-twitter"></i></a></li><li><a href="#" onclick="shareSiteFacebook('Freestyle large-scale modular Scala applications &amp; libraries on top of Free Monads/Applicatives');"><i class="fa fa-facebook"></i></a></li><li><a href="#" onclick="shareSiteGoogle();"><i class="fa fa-google-plus"></i></a></li></ul></div></div></div></div><div id="content" data-github-owner="47deg" data-github-repo="freestyle"><div class="content-wrapper"><section><h1 id="effects">Effects</h1>
+
+<p>Freestyle comes builtin with a list of ready to use effects modeled as <code class="highlighter-rouge">@free</code> algebras contained in the <code class="highlighter-rouge">freestyle-effects</code> module.
+The current release of <code class="highlighter-rouge">freestyle-effects</code> supports Scala.jvm and Scala.js.</p>
+
+<p>For Scala.jvm</p>
+
+<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="n">libraryDependencies</span> <span class="o">+=</span> <span class="s">"io.freestyle"</span> <span class="o">%%</span> <span class="s">"freestyle-effects"</span> <span class="o">%</span> <span class="s">"0.1.0"</span>
+</code></pre>
+</div>
+
+<p>For Scala.js</p>
+
+<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="n">libraryDependencies</span> <span class="o">+=</span> <span class="s">"io.freestyle"</span> <span class="o">%%%</span> <span class="s">"freestyle-effects"</span> <span class="o">%</span> <span class="s">"0.1.0"</span>
+</code></pre>
+</div>
+
+<p>If you are missing an effect from the following list please <a href="https://github.com/47deg/freestyle/issues/new">raise an issue</a>
+so it can be considered in future releases.</p>
+
+<ul>
+  <li><a href="">error</a></li>
+  <li><a href="">option</a></li>
+  <li><a href="">reader</a></li>
+  <li><a href="">writer</a></li>
+  <li><a href="">state</a></li>
+  <li><a href="">traverse</a></li>
+</ul>
+
+<h2 id="error">Error</h2>
+
+<p>The error effect allows short circuiting of programs and handling invocations which can potentially result in runtime exceptions.
+It includes three basic operations <code class="highlighter-rouge">either</code>, <code class="highlighter-rouge">error</code> and <code class="highlighter-rouge">catchNonFatal</code>.</p>
+
+<p>The constrains placed by this effect is that there needs to be an implicit evidence of <code class="highlighter-rouge">MonadError[M[_], Throwable]</code> 
+for <code class="highlighter-rouge">Target</code> or any other runtime <code class="highlighter-rouge">M[_]</code> used in interpretation. In the example below this constrain is satisfied by
+<code class="highlighter-rouge">import cats.implicits._</code> which provides a <code class="highlighter-rouge">MonadError</code> instance for <code class="highlighter-rouge">Either[Throwable, ?]</code>. 
+Multiple types such as <code class="highlighter-rouge">Future</code>, <code class="highlighter-rouge">monix.eval.Task</code> and even more complex transformers stacks are capable of satisfying these constrains.</p>
+
+<h3 id="either">either</h3>
+
+<p><code class="highlighter-rouge">either</code> allows us to lift values of <code class="highlighter-rouge">Either[Throwable, ?]</code> into the context of <code class="highlighter-rouge">FreeS</code> raising an error short circuiting 
+the program if the value is a <code class="highlighter-rouge">Left(throwable)</code> or continuing with the computation in the case of a <code class="highlighter-rouge">Right(a)</code></p>
+
+<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">freestyle._</span>
+<span class="c1">// import freestyle._
+</span>
+<span class="k">import</span> <span class="nn">freestyle.implicits._</span>
+<span class="c1">// import freestyle.implicits._
+</span>
+<span class="k">import</span> <span class="nn">freestyle.effects.error._</span>
+<span class="c1">// import freestyle.effects.error._
+</span>
+<span class="k">import</span> <span class="nn">freestyle.effects.error.implicits._</span>
+<span class="c1">// import freestyle.effects.error.implicits._
+</span>
+<span class="k">import</span> <span class="nn">cats.implicits._</span>
+<span class="c1">// import cats.implicits._
+</span>
+<span class="k">val</span> <span class="n">boom</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">RuntimeException</span><span class="o">(</span><span class="s">"BOOM"</span><span class="o">)</span>
+<span class="c1">// boom: RuntimeException = java.lang.RuntimeException: BOOM
+</span>
+<span class="k">type</span> <span class="kt">Target</span><span class="o">[</span><span class="kt">A</span><span class="o">]</span> <span class="k">=</span> <span class="nc">Either</span><span class="o">[</span><span class="kt">Throwable</span>, <span class="kt">A</span><span class="o">]</span>
+<span class="c1">// defined type alias Target
+</span>
+<span class="k">def</span> <span class="n">shortCircuit</span><span class="o">[</span><span class="kt">F</span><span class="o">[</span><span class="k">_</span><span class="o">]</span><span class="kt">:</span> <span class="kt">ErrorM</span><span class="o">]</span> <span class="k">=</span>
+  <span class="k">for</span> <span class="o">{</span>
+    <span class="n">a</span> <span class="k">&lt;-</span> <span class="mf">1.</span><span class="n">pure</span><span class="o">[</span><span class="kt">FreeS</span><span class="o">[</span><span class="kt">F</span>, <span class="kt">?</span><span class="o">]]</span>
+    <span class="n">b</span> <span class="k">&lt;-</span> <span class="nc">ErrorM</span><span class="o">[</span><span class="kt">F</span><span class="o">].</span><span class="n">either</span><span class="o">[</span><span class="kt">Int</span><span class="o">](</span><span class="nc">Left</span><span class="o">(</span><span class="n">boom</span><span class="o">))</span>
+    <span class="n">c</span> <span class="k">&lt;-</span> <span class="mf">1.</span><span class="n">pure</span><span class="o">[</span><span class="kt">FreeS</span><span class="o">[</span><span class="kt">F</span>, <span class="kt">?</span><span class="o">]]</span>
+  <span class="o">}</span> <span class="k">yield</span> <span class="n">a</span> <span class="o">+</span> <span class="n">b</span> <span class="o">+</span> <span class="n">c</span>
+<span class="c1">// shortCircuit: [F[_]](implicit evidence$1: freestyle.effects.error.ErrorM[F])cats.free.Free[[β$0$]cats.free.FreeApplicative[F,β$0$],Int]
+</span>
+<span class="n">shortCircuit</span><span class="o">[</span><span class="kt">ErrorM.T</span><span class="o">].</span><span class="n">exec</span><span class="o">[</span><span class="kt">Target</span><span class="o">]</span>
+<span class="c1">// res0: Target[Int] = Left(java.lang.RuntimeException: BOOM)
+</span></code></pre>
+</div>
+
+<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">def</span> <span class="n">continueWithRightValue</span><span class="o">[</span><span class="kt">F</span><span class="o">[</span><span class="k">_</span><span class="o">]</span><span class="kt">:</span> <span class="kt">ErrorM</span><span class="o">]</span> <span class="k">=</span>
+  <span class="k">for</span> <span class="o">{</span>
+    <span class="n">a</span> <span class="k">&lt;-</span> <span class="mf">1.</span><span class="n">pure</span><span class="o">[</span><span class="kt">FreeS</span><span class="o">[</span><span class="kt">F</span>, <span class="kt">?</span><span class="o">]]</span>
+    <span class="n">b</span> <span class="k">&lt;-</span> <span class="nc">ErrorM</span><span class="o">[</span><span class="kt">F</span><span class="o">].</span><span class="n">either</span><span class="o">[</span><span class="kt">Int</span><span class="o">](</span><span class="nc">Right</span><span class="o">(</span><span class="mi">1</span><span class="o">))</span>
+    <span class="n">c</span> <span class="k">&lt;-</span> <span class="mf">1.</span><span class="n">pure</span><span class="o">[</span><span class="kt">FreeS</span><span class="o">[</span><span class="kt">F</span>, <span class="kt">?</span><span class="o">]]</span>
+  <span class="o">}</span> <span class="k">yield</span> <span class="n">a</span> <span class="o">+</span> <span class="n">b</span> <span class="o">+</span> <span class="n">c</span>
+<span class="c1">// continueWithRightValue: [F[_]](implicit evidence$1: freestyle.effects.error.ErrorM[F])cats.free.Free[[β$0$]cats.free.FreeApplicative[F,β$0$],Int]
+</span>
+<span class="n">continueWithRightValue</span><span class="o">[</span><span class="kt">ErrorM.T</span><span class="o">].</span><span class="n">exec</span><span class="o">[</span><span class="kt">Target</span><span class="o">]</span>
+<span class="c1">// res1: Target[Int] = Right(3)
+</span></code></pre>
+</div>
+
+<h3 id="error-1">error</h3>
+
+<p>If you want so simply raise an error without throwing an exception you may use the <code class="highlighter-rouge">error</code> operation which short circuits
+the program.</p>
+
+<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">def</span> <span class="n">shortCircuitWithError</span><span class="o">[</span><span class="kt">F</span><span class="o">[</span><span class="k">_</span><span class="o">]</span><span class="kt">:</span> <span class="kt">ErrorM</span><span class="o">]</span> <span class="k">=</span>
+  <span class="k">for</span> <span class="o">{</span>
+    <span class="n">a</span> <span class="k">&lt;-</span> <span class="mf">1.</span><span class="n">pure</span><span class="o">[</span><span class="kt">FreeS</span><span class="o">[</span><span class="kt">F</span>, <span class="kt">?</span><span class="o">]]</span>
+    <span class="n">b</span> <span class="k">&lt;-</span> <span class="nc">ErrorM</span><span class="o">[</span><span class="kt">F</span><span class="o">].</span><span class="n">error</span><span class="o">[</span><span class="kt">Int</span><span class="o">](</span><span class="n">boom</span><span class="o">)</span>
+    <span class="n">c</span> <span class="k">&lt;-</span> <span class="mf">1.</span><span class="n">pure</span><span class="o">[</span><span class="kt">FreeS</span><span class="o">[</span><span class="kt">F</span>, <span class="kt">?</span><span class="o">]]</span>
+  <span class="o">}</span> <span class="k">yield</span> <span class="n">a</span> <span class="o">+</span> <span class="n">b</span> <span class="o">+</span> <span class="n">c</span>
+<span class="c1">// shortCircuitWithError: [F[_]](implicit evidence$1: freestyle.effects.error.ErrorM[F])cats.free.Free[[β$0$]cats.free.FreeApplicative[F,β$0$],Int]
+</span>
+<span class="n">shortCircuitWithError</span><span class="o">[</span><span class="kt">ErrorM.T</span><span class="o">].</span><span class="n">exec</span><span class="o">[</span><span class="kt">Target</span><span class="o">]</span>
+<span class="c1">// res2: Target[Int] = Left(java.lang.RuntimeException: BOOM)
+</span></code></pre>
+</div>
+
+<h3 id="catchnonfatal">catchNonFatal</h3>
+
+<p><code class="highlighter-rouge">catchNonFatal</code> allows capturing of exception in computations that are not guaranteed to succeed and may potentially throw
+a runtime exception when interacting with unprincipled APIs which signal errors as thrown exceptions.
+Not all subclass of <code class="highlighter-rouge">java.lang.Throwable</code> are captured by <code class="highlighter-rouge">catchNonFatal</code>, as its name implies just those that are considered
+in <code class="highlighter-rouge">scala.util.control.NonFatal</code>.</p>
+
+<p><code class="highlighter-rouge">catchNonFatal</code> expects a <code class="highlighter-rouge">cats.Eval</code> value which holds a lazy computation.</p>
+
+<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">cats.Eval</span>
+<span class="c1">// import cats.Eval
+</span>
+<span class="k">def</span> <span class="n">catchingExceptions</span><span class="o">[</span><span class="kt">F</span><span class="o">[</span><span class="k">_</span><span class="o">]</span><span class="kt">:</span> <span class="kt">ErrorM</span><span class="o">]</span> <span class="k">=</span>
+  <span class="k">for</span> <span class="o">{</span>
+    <span class="n">a</span> <span class="k">&lt;-</span> <span class="mf">1.</span><span class="n">pure</span><span class="o">[</span><span class="kt">FreeS</span><span class="o">[</span><span class="kt">F</span>, <span class="kt">?</span><span class="o">]]</span>
+    <span class="n">b</span> <span class="k">&lt;-</span> <span class="nc">ErrorM</span><span class="o">[</span><span class="kt">F</span><span class="o">].</span><span class="n">catchNonFatal</span><span class="o">[</span><span class="kt">Int</span><span class="o">](</span><span class="nc">Eval</span><span class="o">.</span><span class="n">later</span><span class="o">(</span><span class="k">throw</span> <span class="k">new</span> <span class="nc">RuntimeException</span><span class="o">))</span>
+    <span class="n">c</span> <span class="k">&lt;-</span> <span class="mf">1.</span><span class="n">pure</span><span class="o">[</span><span class="kt">FreeS</span><span class="o">[</span><span class="kt">F</span>, <span class="kt">?</span><span class="o">]]</span>
+  <span class="o">}</span> <span class="k">yield</span> <span class="n">a</span> <span class="o">+</span> <span class="n">b</span> <span class="o">+</span> <span class="n">c</span>
+<span class="c1">// catchingExceptions: [F[_]](implicit evidence$1: freestyle.effects.error.ErrorM[F])cats.free.Free[[β$0$]cats.free.FreeApplicative[F,β$0$],Int]
+</span>
+<span class="n">catchingExceptions</span><span class="o">[</span><span class="kt">ErrorM.T</span><span class="o">].</span><span class="n">exec</span><span class="o">[</span><span class="kt">Target</span><span class="o">]</span>
+<span class="c1">// res3: Target[Int] = Left(java.lang.RuntimeException)
+</span></code></pre>
+</div>
+
+<h2 id="option">Option</h2>
+
+<p>The option effect allows short circuiting of programs for optional values.
+It includes two basic operations: <code class="highlighter-rouge">option</code> and <code class="highlighter-rouge">non</code>.</p>
+
+<p>The constrains placed by this effect is that there needs to be an implicit evidence of <code class="highlighter-rouge">MonadFilter[M[_]] 
+for any runtime </code>M[<em>]<code class="highlighter-rouge"> used in its interpretation. Short-circuiting with </code>none<code class="highlighter-rouge"> does not mean that you'd end up with a
+</code>None<code class="highlighter-rouge"> value at some point. The final value in case of short-circuit is determined by the </code>MonadFilter[M[</em>]]#empty<code class="highlighter-rouge"> for 
+your target runtime </code>M[_]`.</p>
+
+<h3 id="option-1">option</h3>
+
+<p><code class="highlighter-rouge">option</code> allows a value of type <code class="highlighter-rouge">Option[_]</code> to be lifted into the context of <code class="highlighter-rouge">FreeS</code>. If a <code class="highlighter-rouge">None</code> it’s found the program
+will short circuit.</p>
+
+<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">freestyle.effects.option._</span>
+<span class="c1">// import freestyle.effects.option._
+</span>
+<span class="k">import</span> <span class="nn">freestyle.effects.option.implicits._</span>
+<span class="c1">// import freestyle.effects.option.implicits._
+</span>
+<span class="k">def</span> <span class="n">programNone</span><span class="o">[</span><span class="kt">F</span><span class="o">[</span><span class="k">_</span><span class="o">]</span><span class="kt">:</span> <span class="kt">OptionM</span><span class="o">]</span> <span class="k">=</span>
+  <span class="k">for</span> <span class="o">{</span>
+    <span class="n">a</span> <span class="k">&lt;-</span> <span class="mf">1.</span><span class="n">pure</span><span class="o">[</span><span class="kt">FreeS</span><span class="o">[</span><span class="kt">F</span>, <span class="kt">?</span><span class="o">]]</span>
+    <span class="n">b</span> <span class="k">&lt;-</span> <span class="nc">OptionM</span><span class="o">[</span><span class="kt">F</span><span class="o">].</span><span class="n">option</span><span class="o">[</span><span class="kt">Int</span><span class="o">](</span><span class="nc">None</span><span class="o">)</span>
+    <span class="n">c</span> <span class="k">&lt;-</span> <span class="mf">1.</span><span class="n">pure</span><span class="o">[</span><span class="kt">FreeS</span><span class="o">[</span><span class="kt">F</span>, <span class="kt">?</span><span class="o">]]</span>
+  <span class="o">}</span> <span class="k">yield</span> <span class="n">a</span> <span class="o">+</span> <span class="n">b</span> <span class="o">+</span> <span class="n">c</span>
+<span class="c1">// programNone: [F[_]](implicit evidence$1: freestyle.effects.option.OptionM[F])cats.free.Free[[β$0$]cats.free.FreeApplicative[F,β$0$],Int]
+</span>
+<span class="n">programNone</span><span class="o">[</span><span class="kt">OptionM.T</span><span class="o">].</span><span class="n">exec</span><span class="o">[</span><span class="kt">Option</span><span class="o">]</span>
+<span class="c1">// res4: Option[Int] = None
+</span></code></pre>
+</div>
+
+<p>If a <code class="highlighter-rouge">Some(_)</code> is found the value is extracted and lifted into the context and the programs resumes
+normally.</p>
+
+<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">def</span> <span class="n">programSome</span><span class="o">[</span><span class="kt">F</span><span class="o">[</span><span class="k">_</span><span class="o">]</span><span class="kt">:</span> <span class="kt">OptionM</span><span class="o">]</span> <span class="k">=</span>
+  <span class="k">for</span> <span class="o">{</span>
+    <span class="n">a</span> <span class="k">&lt;-</span> <span class="mf">1.</span><span class="n">pure</span><span class="o">[</span><span class="kt">FreeS</span><span class="o">[</span><span class="kt">F</span>, <span class="kt">?</span><span class="o">]]</span>
+    <span class="n">b</span> <span class="k">&lt;-</span> <span class="nc">OptionM</span><span class="o">[</span><span class="kt">F</span><span class="o">].</span><span class="n">option</span><span class="o">(</span><span class="nc">Some</span><span class="o">(</span><span class="mi">1</span><span class="o">))</span>
+    <span class="n">c</span> <span class="k">&lt;-</span> <span class="mf">1.</span><span class="n">pure</span><span class="o">[</span><span class="kt">FreeS</span><span class="o">[</span><span class="kt">F</span>, <span class="kt">?</span><span class="o">]]</span>
+  <span class="o">}</span> <span class="k">yield</span> <span class="n">a</span> <span class="o">+</span> <span class="n">b</span> <span class="o">+</span> <span class="n">c</span>
+<span class="c1">// programSome: [F[_]](implicit evidence$1: freestyle.effects.option.OptionM[F])cats.free.Free[[β$0$]cats.free.FreeApplicative[F,β$0$],Int]
+</span>
+<span class="n">programSome</span><span class="o">[</span><span class="kt">OptionM.T</span><span class="o">].</span><span class="n">exec</span><span class="o">[</span><span class="kt">Option</span><span class="o">]</span>
+<span class="c1">// res5: Option[Int] = Some(3)
+</span></code></pre>
+</div>
+
+<h3 id="none">none</h3>
+
+<p><code class="highlighter-rouge">none</code> immediately short circuits the program without providing further information as to what the reason is. Handle with
+care.</p>
+
+<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">def</span> <span class="n">programNone2</span><span class="o">[</span><span class="kt">F</span><span class="o">[</span><span class="k">_</span><span class="o">]</span><span class="kt">:</span> <span class="kt">OptionM</span><span class="o">]</span> <span class="k">=</span>
+  <span class="k">for</span> <span class="o">{</span>
+    <span class="n">a</span> <span class="k">&lt;-</span> <span class="mf">1.</span><span class="n">pure</span><span class="o">[</span><span class="kt">FreeS</span><span class="o">[</span><span class="kt">F</span>, <span class="kt">?</span><span class="o">]]</span>
+    <span class="n">b</span> <span class="k">&lt;-</span> <span class="nc">OptionM</span><span class="o">[</span><span class="kt">F</span><span class="o">].</span><span class="n">none</span><span class="o">[</span><span class="kt">Int</span><span class="o">]</span>
+    <span class="n">c</span> <span class="k">&lt;-</span> <span class="mf">1.</span><span class="n">pure</span><span class="o">[</span><span class="kt">FreeS</span><span class="o">[</span><span class="kt">F</span>, <span class="kt">?</span><span class="o">]]</span>
+  <span class="o">}</span> <span class="k">yield</span> <span class="n">a</span> <span class="o">+</span> <span class="n">b</span> <span class="o">+</span> <span class="n">c</span>
+<span class="c1">// programNone2: [F[_]](implicit evidence$1: freestyle.effects.option.OptionM[F])cats.free.Free[[β$0$]cats.free.FreeApplicative[F,β$0$],Int]
+</span>
+<span class="n">programNone2</span><span class="o">[</span><span class="kt">OptionM.T</span><span class="o">].</span><span class="n">exec</span><span class="o">[</span><span class="kt">Option</span><span class="o">]</span>
+<span class="c1">// res6: Option[Int] = None
+</span></code></pre>
+</div>
+
+<h2 id="reader">Reader</h2>
+
+<p>The reader effect allows obtaining values from the environment. The initial seed for the environment value is provided
+at runtime interpretation.</p>
+
+<p>The <code class="highlighter-rouge">reader</code> effect supports parametrization to any seed value type while remaining type safe throughout the program declaration.</p>
+
+<p>The constrains placed by this effect is that there needs to be an implicit evidence of <code class="highlighter-rouge">MonadReader[M[_], R]</code> 
+for any runtime <code class="highlighter-rouge">M[_]</code> used in its interpretation. <code class="highlighter-rouge">R</code> represents the seed value type.</p>
+
+<p>The reader effect comes with two operations <code class="highlighter-rouge">ask</code> and <code class="highlighter-rouge">reader</code>.</p>
+
+<h3 id="ask">ask</h3>
+
+<p><code class="highlighter-rouge">ask</code> simply returns the entire environment in its current state.</p>
+
+<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">freestyle.effects.reader</span>
+<span class="c1">// import freestyle.effects.reader
+</span>
+<span class="k">import</span> <span class="nn">cats.data.Reader</span>
+<span class="c1">// import cats.data.Reader
+</span>
+<span class="k">case</span> <span class="k">class</span> <span class="nc">Config</span><span class="o">(</span><span class="n">n</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span>
+<span class="c1">// defined class Config
+</span>
+<span class="k">type</span> <span class="kt">ConfigEnv</span><span class="o">[</span><span class="kt">A</span><span class="o">]</span> <span class="k">=</span> <span class="nc">Reader</span><span class="o">[</span><span class="kt">Config</span>, <span class="kt">A</span><span class="o">]</span>
+<span class="c1">// defined type alias ConfigEnv
+</span>
+<span class="k">val</span> <span class="n">rd</span> <span class="k">=</span> <span class="n">reader</span><span class="o">[</span><span class="kt">Config</span><span class="o">]</span>
+<span class="c1">// rd: freestyle.effects.reader.EnvironmentProvider[Config] = freestyle.effects.reader$EnvironmentProvider@76ac2770
+</span>
+<span class="k">import</span> <span class="nn">rd.implicits._</span>
+<span class="c1">// import rd.implicits._
+</span>
+<span class="k">def</span> <span class="n">programAsk</span><span class="o">[</span><span class="kt">F</span><span class="o">[</span><span class="k">_</span><span class="o">]</span><span class="kt">:</span> <span class="kt">rd.ReaderM</span><span class="o">]</span> <span class="k">=</span>
+  <span class="k">for</span> <span class="o">{</span>
+    <span class="k">_</span> <span class="k">&lt;-</span> <span class="mf">1.</span><span class="n">pure</span><span class="o">[</span><span class="kt">FreeS</span><span class="o">[</span><span class="kt">F</span>, <span class="kt">?</span><span class="o">]]</span>
+    <span class="n">c</span> <span class="k">&lt;-</span> <span class="n">rd</span><span class="o">.</span><span class="nc">ReaderM</span><span class="o">[</span><span class="kt">F</span><span class="o">].</span><span class="n">ask</span>
+    <span class="k">_</span> <span class="k">&lt;-</span> <span class="mf">1.</span><span class="n">pure</span><span class="o">[</span><span class="kt">FreeS</span><span class="o">[</span><span class="kt">F</span>, <span class="kt">?</span><span class="o">]]</span>
+  <span class="o">}</span> <span class="k">yield</span> <span class="n">c</span>
+<span class="c1">// programAsk: [F[_]](implicit evidence$1: rd.ReaderM[F])cats.free.Free[[β$0$]cats.free.FreeApplicative[F,β$0$],Config]
+</span>
+<span class="n">programAsk</span><span class="o">[</span><span class="kt">rd.ReaderM.T</span><span class="o">].</span><span class="n">exec</span><span class="o">[</span><span class="kt">ConfigEnv</span><span class="o">].</span><span class="n">run</span><span class="o">(</span><span class="nc">Config</span><span class="o">(</span><span class="n">n</span> <span class="k">=</span> <span class="mi">10</span><span class="o">))</span>
+<span class="c1">// res7: cats.Id[Config] = Config(10)
+</span></code></pre>
+</div>
+
+<h3 id="reader-1">reader</h3>
+
+<p><code class="highlighter-rouge">reader</code> allows extracting values of the environment and lifting them into the context of <code class="highlighter-rouge">FreeS</code></p>
+
+<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">def</span> <span class="n">programReader</span><span class="o">[</span><span class="kt">F</span><span class="o">[</span><span class="k">_</span><span class="o">]</span><span class="kt">:</span> <span class="kt">rd.ReaderM</span><span class="o">]</span> <span class="k">=</span>
+  <span class="k">for</span> <span class="o">{</span>
+    <span class="n">a</span> <span class="k">&lt;-</span> <span class="mf">1.</span><span class="n">pure</span><span class="o">[</span><span class="kt">FreeS</span><span class="o">[</span><span class="kt">F</span>, <span class="kt">?</span><span class="o">]]</span>
+    <span class="n">b</span> <span class="k">&lt;-</span> <span class="n">rd</span><span class="o">.</span><span class="nc">ReaderM</span><span class="o">[</span><span class="kt">F</span><span class="o">].</span><span class="n">reader</span><span class="o">(</span><span class="k">_</span><span class="o">.</span><span class="n">n</span><span class="o">)</span>
+    <span class="n">c</span> <span class="k">&lt;-</span> <span class="mf">1.</span><span class="n">pure</span><span class="o">[</span><span class="kt">FreeS</span><span class="o">[</span><span class="kt">F</span>, <span class="kt">?</span><span class="o">]]</span>
+  <span class="o">}</span> <span class="k">yield</span> <span class="n">a</span> <span class="o">+</span> <span class="n">b</span> <span class="o">+</span> <span class="n">c</span>
+<span class="c1">// programReader: [F[_]](implicit evidence$1: rd.ReaderM[F])cats.free.Free[[β$0$]cats.free.FreeApplicative[F,β$0$],Int]
+</span>
+<span class="n">programReader</span><span class="o">[</span><span class="kt">rd.ReaderM.T</span><span class="o">].</span><span class="n">exec</span><span class="o">[</span><span class="kt">ConfigEnv</span><span class="o">].</span><span class="n">run</span><span class="o">(</span><span class="nc">Config</span><span class="o">(</span><span class="n">n</span> <span class="k">=</span> <span class="mi">1</span><span class="o">))</span>
+<span class="c1">// res8: cats.Id[Int] = 3
+</span></code></pre>
+</div>
+
+<h2 id="writer">Writer</h2>
+
+<p>The writer effect allows to accumulate values which can be obtained once the program is interpreted.</p>
+
+<p>The <code class="highlighter-rouge">writer</code> effect supports parametrization to any type that supports monoidal accumulation while remaining type safe throughout the program declaration.</p>
+
+<p>The constrains placed by this effect is that there needs to be an implicit evidence of <code class="highlighter-rouge">MonadWriter[M[_], W]</code> 
+for any runtime <code class="highlighter-rouge">M[_]</code> used in its interpretation.</p>
+
+<p>The writer effect comes with two operations <code class="highlighter-rouge">writer</code> and <code class="highlighter-rouge">tell</code>.</p>
+
+<h3 id="writer-1">writer</h3>
+
+<p><code class="highlighter-rouge">writer</code> sets a tuple with the current accumulator value and returning value</p>
+
+<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">freestyle.effects.writer</span>
+<span class="c1">// import freestyle.effects.writer
+</span>
+<span class="k">import</span> <span class="nn">cats.data.Writer</span>
+<span class="c1">// import cats.data.Writer
+</span>
+<span class="k">val</span> <span class="n">wr</span> <span class="k">=</span> <span class="n">writer</span><span class="o">[</span><span class="kt">List</span><span class="o">[</span><span class="kt">Int</span><span class="o">]]</span>
+<span class="c1">// wr: freestyle.effects.writer.AccumulatorProvider[List[Int]] = freestyle.effects.writer$AccumulatorProvider@6afc893b
+</span>
+<span class="k">import</span> <span class="nn">wr.implicits._</span>
+<span class="c1">// import wr.implicits._
+</span>
+<span class="k">type</span> <span class="kt">Logger</span><span class="o">[</span><span class="kt">A</span><span class="o">]</span> <span class="k">=</span> <span class="nc">Writer</span><span class="o">[</span><span class="kt">List</span><span class="o">[</span><span class="kt">Int</span><span class="o">]</span>, <span class="kt">A</span><span class="o">]</span>
+<span class="c1">// defined type alias Logger
+</span>
+<span class="k">def</span> <span class="n">programWriter</span><span class="o">[</span><span class="kt">F</span><span class="o">[</span><span class="k">_</span><span class="o">]</span><span class="kt">:</span> <span class="kt">wr.WriterM</span><span class="o">]</span> <span class="k">=</span>
+  <span class="k">for</span> <span class="o">{</span>
+    <span class="k">_</span> <span class="k">&lt;-</span> <span class="mf">1.</span><span class="n">pure</span><span class="o">[</span><span class="kt">FreeS</span><span class="o">[</span><span class="kt">F</span>, <span class="kt">?</span><span class="o">]]</span>
+    <span class="n">b</span> <span class="k">&lt;-</span> <span class="n">wr</span><span class="o">.</span><span class="nc">WriterM</span><span class="o">[</span><span class="kt">F</span><span class="o">].</span><span class="n">writer</span><span class="o">((</span><span class="nc">Nil</span><span class="o">,</span> <span class="mi">1</span><span class="o">))</span>
+    <span class="k">_</span> <span class="k">&lt;-</span> <span class="mf">1.</span><span class="n">pure</span><span class="o">[</span><span class="kt">FreeS</span><span class="o">[</span><span class="kt">F</span>, <span class="kt">?</span><span class="o">]]</span>
+  <span class="o">}</span> <span class="k">yield</span> <span class="n">b</span>
+<span class="c1">// programWriter: [F[_]](implicit evidence$1: wr.WriterM[F])cats.free.Free[[β$0$]cats.free.FreeApplicative[F,β$0$],Int]
+</span>
+<span class="n">programWriter</span><span class="o">[</span><span class="kt">wr.WriterM.T</span><span class="o">].</span><span class="n">exec</span><span class="o">[</span><span class="kt">Logger</span><span class="o">].</span><span class="n">run</span>
+<span class="c1">// res9: cats.Id[(List[Int], Int)] = (List(),1)
+</span></code></pre>
+</div>
+
+<h3 id="tell">tell</h3>
+
+<p><code class="highlighter-rouge">tell</code> appends a value for monoidal accumulation</p>
+
+<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">def</span> <span class="n">programTell</span><span class="o">[</span><span class="kt">F</span><span class="o">[</span><span class="k">_</span><span class="o">]</span><span class="kt">:</span> <span class="kt">wr.WriterM</span><span class="o">]</span> <span class="k">=</span>
+  <span class="k">for</span> <span class="o">{</span>
+    <span class="k">_</span> <span class="k">&lt;-</span> <span class="mf">1.</span><span class="n">pure</span><span class="o">[</span><span class="kt">FreeS</span><span class="o">[</span><span class="kt">F</span>, <span class="kt">?</span><span class="o">]]</span>
+    <span class="n">b</span> <span class="k">&lt;-</span> <span class="n">wr</span><span class="o">.</span><span class="nc">WriterM</span><span class="o">[</span><span class="kt">F</span><span class="o">].</span><span class="n">writer</span><span class="o">((</span><span class="nc">List</span><span class="o">(</span><span class="mi">1</span><span class="o">),</span> <span class="mi">1</span><span class="o">))</span>
+    <span class="n">c</span> <span class="k">&lt;-</span> <span class="n">wr</span><span class="o">.</span><span class="nc">WriterM</span><span class="o">[</span><span class="kt">F</span><span class="o">].</span><span class="n">tell</span><span class="o">(</span><span class="nc">List</span><span class="o">(</span><span class="mi">1</span><span class="o">))</span>
+    <span class="k">_</span> <span class="k">&lt;-</span> <span class="mf">1.</span><span class="n">pure</span><span class="o">[</span><span class="kt">FreeS</span><span class="o">[</span><span class="kt">F</span>, <span class="kt">?</span><span class="o">]]</span>
+  <span class="o">}</span> <span class="k">yield</span> <span class="n">b</span>
+<span class="c1">// programTell: [F[_]](implicit evidence$1: wr.WriterM[F])cats.free.Free[[β$0$]cats.free.FreeApplicative[F,β$0$],Int]
+</span>
+<span class="n">programTell</span><span class="o">[</span><span class="kt">wr.WriterM.T</span><span class="o">].</span><span class="n">exec</span><span class="o">[</span><span class="kt">Logger</span><span class="o">].</span><span class="n">run</span>
+<span class="c1">// res10: cats.Id[(List[Int], Int)] = (List(1, 1),1)
+</span></code></pre>
+</div>
+
+<h2 id="state">State</h2>
+
+<p>The state effect enables purely functional state throughout programs.</p>
+
+<p>The <code class="highlighter-rouge">state</code> effect supports parametrization to any type remaining type safe throughout the program declaration.</p>
+
+<p>The constrains placed by this effect is that there needs to be an implicit evidence of <code class="highlighter-rouge">MonadState[M[_], S]</code> 
+for any runtime <code class="highlighter-rouge">M[_]</code> where <code class="highlighter-rouge">S</code> is the type of state.</p>
+
+<p>The state effect comes with four basic operations <code class="highlighter-rouge">get</code>, <code class="highlighter-rouge">set</code>, <code class="highlighter-rouge">modify</code> and <code class="highlighter-rouge">inspect</code>.</p>
+
+<h2 id="get">get</h2>
+
+<p><code class="highlighter-rouge">get</code> retrieves the current state</p>
+
+<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">freestyle.effects.state</span>
+<span class="c1">// import freestyle.effects.state
+</span>
+<span class="k">import</span> <span class="nn">cats.data.State</span>
+<span class="c1">// import cats.data.State
+</span>
+<span class="k">val</span> <span class="n">st</span> <span class="k">=</span> <span class="n">state</span><span class="o">[</span><span class="kt">Int</span><span class="o">]</span>
+<span class="c1">// st: freestyle.effects.state.StateSeedProvider[Int] = freestyle.effects.state$StateSeedProvider@2b969b28
+</span>
+<span class="k">type</span> <span class="kt">TargetState</span><span class="o">[</span><span class="kt">A</span><span class="o">]</span> <span class="k">=</span> <span class="nc">State</span><span class="o">[</span><span class="kt">Int</span>, <span class="kt">A</span><span class="o">]</span>
+<span class="c1">// defined type alias TargetState
+</span>
+<span class="k">import</span> <span class="nn">st.implicits._</span>
+<span class="c1">// import st.implicits._
+</span>
+<span class="k">def</span> <span class="n">programGet</span><span class="o">[</span><span class="kt">F</span><span class="o">[</span><span class="k">_</span><span class="o">]</span><span class="kt">:</span> <span class="kt">st.StateM</span><span class="o">]</span> <span class="k">=</span>
+  <span class="k">for</span> <span class="o">{</span>
+    <span class="n">a</span> <span class="k">&lt;-</span> <span class="mf">1.</span><span class="n">pure</span><span class="o">[</span><span class="kt">FreeS</span><span class="o">[</span><span class="kt">F</span>, <span class="kt">?</span><span class="o">]]</span>
+    <span class="n">b</span> <span class="k">&lt;-</span> <span class="n">st</span><span class="o">.</span><span class="nc">StateM</span><span class="o">[</span><span class="kt">F</span><span class="o">].</span><span class="n">get</span>
+    <span class="n">c</span> <span class="k">&lt;-</span> <span class="mf">1.</span><span class="n">pure</span><span class="o">[</span><span class="kt">FreeS</span><span class="o">[</span><span class="kt">F</span>, <span class="kt">?</span><span class="o">]]</span>
+  <span class="o">}</span> <span class="k">yield</span> <span class="n">a</span> <span class="o">+</span> <span class="n">b</span> <span class="o">+</span> <span class="n">c</span>
+<span class="c1">// programGet: [F[_]](implicit evidence$1: st.StateM[F])cats.free.Free[[β$0$]cats.free.FreeApplicative[F,β$0$],Int]
+</span>
+<span class="n">programGet</span><span class="o">[</span><span class="kt">st.StateM.T</span><span class="o">].</span><span class="n">exec</span><span class="o">[</span><span class="kt">TargetState</span><span class="o">].</span><span class="n">run</span><span class="o">(</span><span class="mi">1</span><span class="o">).</span><span class="n">value</span>
+<span class="c1">// res11: (Int, Int) = (1,3)
+</span></code></pre>
+</div>
+
+<h3 id="set">set</h3>
+
+<p><code class="highlighter-rouge">set</code> replaces the current state</p>
+
+<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">def</span> <span class="n">programSet</span><span class="o">[</span><span class="kt">F</span><span class="o">[</span><span class="k">_</span><span class="o">]</span><span class="kt">:</span> <span class="kt">st.StateM</span><span class="o">]</span> <span class="k">=</span>
+  <span class="k">for</span> <span class="o">{</span>
+    <span class="k">_</span> <span class="k">&lt;-</span> <span class="n">st</span><span class="o">.</span><span class="nc">StateM</span><span class="o">[</span><span class="kt">F</span><span class="o">].</span><span class="n">set</span><span class="o">(</span><span class="mi">1</span><span class="o">)</span>
+    <span class="n">a</span> <span class="k">&lt;-</span> <span class="n">st</span><span class="o">.</span><span class="nc">StateM</span><span class="o">[</span><span class="kt">F</span><span class="o">].</span><span class="n">get</span>
+  <span class="o">}</span> <span class="k">yield</span> <span class="n">a</span>
+<span class="c1">// programSet: [F[_]](implicit evidence$1: st.StateM[F])cats.free.Free[[β$0$]cats.free.FreeApplicative[F,β$0$],Int]
+</span>
+<span class="n">programSet</span><span class="o">[</span><span class="kt">st.StateM.T</span><span class="o">].</span><span class="n">exec</span><span class="o">[</span><span class="kt">TargetState</span><span class="o">].</span><span class="n">run</span><span class="o">(</span><span class="mi">0</span><span class="o">).</span><span class="n">value</span>
+<span class="c1">// res12: (Int, Int) = (1,1)
+</span></code></pre>
+</div>
+
+<h3 id="modify">modify</h3>
+
+<p><code class="highlighter-rouge">modify</code> modifies the current state</p>
+
+<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">def</span> <span class="n">programModify</span><span class="o">[</span><span class="kt">F</span><span class="o">[</span><span class="k">_</span><span class="o">]</span><span class="kt">:</span> <span class="kt">st.StateM</span><span class="o">]</span> <span class="k">=</span>
+  <span class="k">for</span> <span class="o">{</span>
+    <span class="n">a</span> <span class="k">&lt;-</span> <span class="n">st</span><span class="o">.</span><span class="nc">StateM</span><span class="o">[</span><span class="kt">F</span><span class="o">].</span><span class="n">get</span>
+    <span class="k">_</span> <span class="k">&lt;-</span> <span class="n">st</span><span class="o">.</span><span class="nc">StateM</span><span class="o">[</span><span class="kt">F</span><span class="o">].</span><span class="n">modify</span><span class="o">(</span><span class="k">_</span> <span class="o">+</span> <span class="n">a</span><span class="o">)</span>
+    <span class="n">b</span> <span class="k">&lt;-</span> <span class="n">st</span><span class="o">.</span><span class="nc">StateM</span><span class="o">[</span><span class="kt">F</span><span class="o">].</span><span class="n">get</span>
+  <span class="o">}</span> <span class="k">yield</span> <span class="n">b</span>
+<span class="c1">// programModify: [F[_]](implicit evidence$1: st.StateM[F])cats.free.Free[[β$0$]cats.free.FreeApplicative[F,β$0$],Int]
+</span>
+<span class="n">programModify</span><span class="o">[</span><span class="kt">st.StateM.T</span><span class="o">].</span><span class="n">exec</span><span class="o">[</span><span class="kt">TargetState</span><span class="o">].</span><span class="n">run</span><span class="o">(</span><span class="mi">1</span><span class="o">).</span><span class="n">value</span>
+<span class="c1">// res13: (Int, Int) = (2,2)
+</span></code></pre>
+</div>
+
+<h3 id="inspect">inspect</h3>
+
+<p><code class="highlighter-rouge">inspect</code> runs a function over the current state and returns the resulting value</p>
+
+<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">def</span> <span class="n">programInspect</span><span class="o">[</span><span class="kt">F</span><span class="o">[</span><span class="k">_</span><span class="o">]</span><span class="kt">:</span> <span class="kt">st.StateM</span><span class="o">]</span> <span class="k">=</span>
+  <span class="k">for</span> <span class="o">{</span>
+    <span class="n">a</span> <span class="k">&lt;-</span> <span class="n">st</span><span class="o">.</span><span class="nc">StateM</span><span class="o">[</span><span class="kt">F</span><span class="o">].</span><span class="n">get</span>
+    <span class="n">b</span> <span class="k">&lt;-</span> <span class="n">st</span><span class="o">.</span><span class="nc">StateM</span><span class="o">[</span><span class="kt">F</span><span class="o">].</span><span class="n">inspect</span><span class="o">(</span><span class="k">_</span> <span class="o">+</span> <span class="n">a</span><span class="o">)</span>
+  <span class="o">}</span> <span class="k">yield</span> <span class="n">b</span>
+<span class="c1">// programInspect: [F[_]](implicit evidence$1: st.StateM[F])cats.free.Free[[β$0$]cats.free.FreeApplicative[F,β$0$],Int]
+</span>
+<span class="n">programInspect</span><span class="o">[</span><span class="kt">st.StateM.T</span><span class="o">].</span><span class="n">exec</span><span class="o">[</span><span class="kt">TargetState</span><span class="o">].</span><span class="n">run</span><span class="o">(</span><span class="mi">1</span><span class="o">).</span><span class="n">value</span>
+<span class="c1">// res14: (Int, Int) = (1,2)
+</span></code></pre>
+</div>
+
+<h2 id="traverse">Traverse</h2>
+
+<p>Traverse acts as a generator and works with any <code class="highlighter-rouge">G[_]</code> for which a <code class="highlighter-rouge">cats.Foldable</code> instance is available.
+The target runtime <code class="highlighter-rouge">M[_]</code> requires a <code class="highlighter-rouge">MonadCombine[M]</code> instance.</p>
+
+<p>Traverse includes two basic operations <code class="highlighter-rouge">fromTraversable</code> and <code class="highlighter-rouge">empty</code></p>
+
+<h3 id="fromtraversable">fromTraversable</h3>
+
+<p><code class="highlighter-rouge">fromTraversable</code> allows lifting of any <code class="highlighter-rouge">G[_]: Foldable</code> into the context of <code class="highlighter-rouge">FreeS</code></p>
+
+<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">freestyle.effects._</span>
+<span class="c1">// import freestyle.effects._
+</span>
+<span class="k">val</span> <span class="n">list</span> <span class="k">=</span> <span class="n">traverse</span><span class="o">[</span><span class="kt">List</span><span class="o">]</span>
+<span class="c1">// list: freestyle.effects.traverse.TraverseProvider[List] = freestyle.effects.traverse$TraverseProvider@1c2c1372
+</span>
+<span class="k">import</span> <span class="nn">list._</span><span class="o">,</span> <span class="n">list</span><span class="o">.</span><span class="n">implicits</span><span class="o">.</span><span class="k">_</span>
+<span class="c1">// import list._
+// import list.implicits._
+</span>
+<span class="k">def</span> <span class="n">programTraverse</span><span class="o">[</span><span class="kt">F</span><span class="o">[</span><span class="k">_</span><span class="o">]</span><span class="kt">:</span> <span class="kt">TraverseM</span><span class="o">]</span> <span class="k">=</span>
+  <span class="k">for</span> <span class="o">{</span>
+    <span class="n">a</span> <span class="k">&lt;-</span> <span class="nc">TraverseM</span><span class="o">[</span><span class="kt">F</span><span class="o">].</span><span class="n">fromTraversable</span><span class="o">(</span><span class="mi">1</span> <span class="o">::</span> <span class="mi">2</span> <span class="o">::</span> <span class="mi">3</span> <span class="o">::</span> <span class="nc">Nil</span><span class="o">)</span>
+    <span class="n">b</span> <span class="k">&lt;-</span> <span class="o">(</span><span class="n">a</span> <span class="o">+</span> <span class="mi">1</span><span class="o">).</span><span class="n">pure</span><span class="o">[</span><span class="kt">FreeS</span><span class="o">[</span><span class="kt">F</span>, <span class="kt">?</span><span class="o">]]</span>
+  <span class="o">}</span> <span class="k">yield</span> <span class="n">b</span>
+<span class="c1">// programTraverse: [F[_]](implicit evidence$1: list.TraverseM[F])cats.free.Free[[β$0$]cats.free.FreeApplicative[F,β$0$],Int]
+</span>
+<span class="n">programTraverse</span><span class="o">[</span><span class="kt">TraverseM.T</span><span class="o">].</span><span class="n">exec</span><span class="o">[</span><span class="kt">List</span><span class="o">]</span>
+<span class="c1">// res15: List[Int] = List(2, 3, 4)
+</span></code></pre>
+</div>
+
+<h3 id="empty">empty</h3>
+
+<p><code class="highlighter-rouge">empty</code> allows short circuiting of programs providing the empty value for the <code class="highlighter-rouge">G[_]</code> through the final <code class="highlighter-rouge">MonadCombine</code>.
+In the same way as <code class="highlighter-rouge">OptionM#none</code>, the empty value is determined by how the <code class="highlighter-rouge">MonadCombine</code> instance for the final <code class="highlighter-rouge">M[_]</code>
+is implemented.</p>
+
+<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">def</span> <span class="n">programEmpty</span><span class="o">[</span><span class="kt">F</span><span class="o">[</span><span class="k">_</span><span class="o">]</span><span class="kt">:</span> <span class="kt">TraverseM</span><span class="o">]</span> <span class="k">=</span>
+  <span class="k">for</span> <span class="o">{</span>
+    <span class="k">_</span> <span class="k">&lt;-</span> <span class="nc">TraverseM</span><span class="o">[</span><span class="kt">F</span><span class="o">].</span><span class="n">empty</span><span class="o">[</span><span class="kt">Int</span><span class="o">]</span>
+    <span class="n">a</span> <span class="k">&lt;-</span> <span class="nc">TraverseM</span><span class="o">[</span><span class="kt">F</span><span class="o">].</span><span class="n">fromTraversable</span><span class="o">(</span><span class="mi">1</span> <span class="o">::</span> <span class="mi">2</span> <span class="o">::</span> <span class="mi">3</span> <span class="o">::</span> <span class="nc">Nil</span><span class="o">)</span>
+    <span class="n">b</span> <span class="k">&lt;-</span> <span class="o">(</span><span class="n">a</span> <span class="o">+</span> <span class="mi">1</span><span class="o">).</span><span class="n">pure</span><span class="o">[</span><span class="kt">FreeS</span><span class="o">[</span><span class="kt">F</span>, <span class="kt">?</span><span class="o">]]</span>
+    <span class="n">c</span> <span class="k">&lt;-</span> <span class="o">(</span><span class="n">b</span> <span class="o">+</span> <span class="mi">1</span><span class="o">).</span><span class="n">pure</span><span class="o">[</span><span class="kt">FreeS</span><span class="o">[</span><span class="kt">F</span>, <span class="kt">?</span><span class="o">]]</span>
+  <span class="o">}</span> <span class="k">yield</span> <span class="n">c</span>
+<span class="c1">// programEmpty: [F[_]](implicit evidence$1: list.TraverseM[F])cats.free.Free[[β$0$]cats.free.FreeApplicative[F,β$0$],Int]
+</span>
+<span class="n">programEmpty</span><span class="o">[</span><span class="kt">TraverseM.T</span><span class="o">].</span><span class="n">exec</span><span class="o">[</span><span class="kt">List</span><span class="o">]</span>
+<span class="c1">// res16: List[Int] = List()
+</span></code></pre>
+</div>
+</section></div></div></div></div><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script><script src="/highlight/highlight.pack.js"></script><script>hljs.configure({
+languages:['scala','java','bash']
+});
+hljs.initHighlighting();
+             </script><script src="/js/main.js"></script></body></html>
