@@ -7,7 +7,7 @@
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
     <meta content="An sbt plugin to create awesome microsites for your project" name="description">
     <meta content="47 Degrees" name="author">
-    <meta content=""{{site.url}}{{site.baseurl}}/img/poster.png" name="og:image">
+    <meta content="{{site.url}}{{site.baseurl}}/img/poster.png" name="og:image">
     <meta content="{{site.name}}" name="og:title">
     <meta content="{{site.name}}" name="og:site_name">
     <meta content="http://www.47deg.com" name="og:url">
@@ -29,9 +29,9 @@
 <main id="site-main">
     <section class="use">
 
-            <div id="content">
-                {{ content }}
-            </div>
+        <div id="content" data-github-owner="47deg" data-github-repo="freestyle">
+            {{ content }}
+        </div>
 
     </section>
     <section class="technologies">
@@ -42,7 +42,8 @@
                     <div class="{{ tech[0] }}-icon-wrapper"></div>
                     <h3>{{ tech[1][0] }}</h3>
                     <p>{{ tech[1][1] }}</p>
-                </div>{% endfor %} {% endfor %}
+                </div>
+                {% endfor %} {% endfor %}
             </div>
         </div>
     </section>
@@ -51,10 +52,13 @@
     <div class="container">
         <div class="row">
             <div class="col-xs-6">
-                <p>{{ site.name }} is designed and developed by <a href="{{site.data.commons.organizationUrl}}" target="_blank">{{site.data.commons.organization}}</a></p>
+                <p>{{ site.name }} is designed and developed by <a href="{{site.data.commons.organizationUrl}}"
+                                                                   target="_blank">{{site.data.commons.organization}}</a>
+                </p>
             </div>
             <div class="col-xs-6">
-                <p class="text-right"><a href="{{site.data.commons.repoUrl}}"><span class="fa fa-github"></span>View on Github</a></p>
+                <p class="text-right"><a href="{{site.data.commons.repoUrl}}"><span class="fa fa-github"></span>View on
+                    Github</a></p>
             </div>
         </div>
     </div>
@@ -65,11 +69,14 @@
 </script>
 <script src="./highlight/highlight.pack.js">
 </script>
+<script src="./js/main.js"></script>
 <script>
 	hljs.configure({
 	languages:['scala','java','bash']
 	});
 	hljs.initHighlighting();
-	</script>
+
+
+</script>
 </body>
 </html>
