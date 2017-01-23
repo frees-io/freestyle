@@ -1,6 +1,7 @@
 ---
 layout: docs
 title: Effects
+permalink: /docs/effects/
 ---
 
 # Effects

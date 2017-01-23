@@ -1,6 +1,7 @@
 ---
 layout: docs
 title: Modules
+permalink: /docs/modules/
 ---
 
 # Modules

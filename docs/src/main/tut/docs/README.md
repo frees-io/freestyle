@@ -1,6 +1,7 @@
 ---
 layout: docs
 title: Quick Start Guide
+permalink: /docs/
 ---
 
 # Quick Start

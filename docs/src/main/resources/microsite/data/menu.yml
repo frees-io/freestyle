@@ -1,69 +1,69 @@
 options:
   - title: Quick Start
-    url: docs/index.html
+    url: docs/
 
   - title: Algebras
-    url: docs/algebras.html
+    url: docs/algebras/
 
   - title: Modules
-    url: docs/modules.html
+    url: docs/modules/
 
   - title: Interpreters
-    url: docs/interpreters.html
+    url: docs/interpreters/
 
   - title: Parallelism
-    url: docs/parallelism.html
+    url: docs/parallelism/
 
   - title: Effects
-    url: docs/effects.html
+    url: docs/effects/
 
     nested_options:
 
       - title: Error
-        url: docs/effects.html#Error
+        url: docs/effects/#Error
          
       - title: Option
-        url: docs/effects.html#Option
+        url: docs/effects/#Option
 
       - title: Reader
-        url: docs/effects.html#Reader
+        url: docs/effects/#Reader
 
       - title: Writer
-        url: docs/effects.html#Writer
+        url: docs/effects/#Writer
 
       - title: State
-        url: docs/effects.html#State
+        url: docs/effects/#State
 
       - title: Traverse
-        url: docs/effects.html#Traverse
+        url: docs/effects/#Traverse
 
   - title: Patterns
-    url: todo.html
+    url: TODO.html
 
     nested_options:
 
       - title: Dependency Injection
-        url: todo.html
+        url: TODO.html
 
       - title: Configuration
-        url: todo.html
+        url: TODO.html
 
       - title: Logging
-        url: todo.html
+        url: TODO.html
 
   - title: Integrations
-    url: todo.html
+    url: TODO.html
 
     nested_options:
 
       - title: Cats
-        url: todo.html
+        url: TODO.html
 
       - title: Monix
-        url: todo.html
+        url: TODO.html
 
       - title: Fetch
-        url: todo.html
+        url: TODO.html
 
       - title: Doobie
-        url: todo.html
+        url: TODO.html

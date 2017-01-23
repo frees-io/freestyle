@@ -1,6 +1,7 @@
 ---
 layout: docs
 title: Interpreters
+permalink: /docs/interpreters/
 ---
 
 # Interpreters
