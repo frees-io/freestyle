@@ -69,7 +69,7 @@ From the abstract smart constructors Freestyle generates an Algebraic data types
 This Algebraic data type contains the shape needed to implement the abstract methods.
 
 Freestyle automatically implements those abstract methods using the `Inject` strategy for composing unrelated ADTs through a Coproduct as described
-in [Data types a la Carte]() by Wouter Swierstra.
+in [Data types a la Carte](http://www.cs.ru.nl/~W.Swierstra/Publications/DataTypesALaCarte.pdf) by Wouter Swierstra.
 
 ## Dependency Injection
 
@@ -87,6 +87,10 @@ val userRepository = UserRepository[UserRepository.T]
 
 ```tut:book
 def myService[F[_]](implicit userRepository: UserRepository[F]) = ???
+```
+
+```tut:book
+def myService2[F[_]: UserRepository] = ???
 ```
 
 ## Convenient type aliases
