@@ -146,4 +146,4 @@ Alternatively you can build your interpreters by hand if you wish not to use Fre
 This may quickly grow unwildly as the number of algebras increase in an application but it's also possible in the spirit of providing two way compatibility
 in all areas between manually built ADTs and Natural Transformations and the ones automatically derived by Freestyle.
 
-Now that we've learnt to define our own interpreters let's jump into [Parallelism](parallelism.html) 
+Now that we've learnt to define our own interpreters let's jump into [Parallelism](/docs/parallelism/) 

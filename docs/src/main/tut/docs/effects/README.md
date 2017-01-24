@@ -24,12 +24,12 @@ libraryDependencies += "io.freestyle" %%% "freestyle-effects" % "0.1.0"
 If you are missing an effect from the following list please [raise an issue](https://github.com/47deg/freestyle/issues/new)
 so it can be considered in future releases.
 
-- [error]()
-- [option]()
-- [reader]()
-- [writer]()
-- [state]()
-- [traverse]()
+- [error](#error)
+- [option](#option)
+- [reader](#reader)
+- [writer](#writer)
+- [state](#state)
+- [traverse](#traverse)
 
 ## Error
 
