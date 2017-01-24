@@ -1,6 +1,6 @@
 ---
 layout: docs
-permalink: TODO
+permalink: /TODO
 ---
 
 Work in progress
