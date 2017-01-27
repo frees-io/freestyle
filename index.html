@@ -7,12 +7,12 @@
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
     <meta content="An sbt plugin to create awesome microsites for your project" name="description">
     <meta content="47 Degrees" name="author">
-    <meta content=""/img/poster.png" name="og:image">
+    <meta content="/img/poster.png" name="og:image">
     <meta content="Freestyle" name="og:title">
     <meta content="Freestyle" name="og:site_name">
     <meta content="http://www.47deg.com" name="og:url">
     <meta content="website" name="og:type">
-    <meta content="large-scale modular Scala applications & libraries on top of Free Monads/Applicatives" name="og:description">
+    <meta content="A Cohesive & Pragmatic Framework of FP centric Scala libraries" name="og:description">
     <meta content="/img/poster.png" name="twitter:image">
     <meta content="summary_large_image" name="twitter:card">
     <meta content="" name="twitter:site">
@@ -29,15 +29,14 @@
     <div class="jumbotron">
         <div class="container">
             <img src="./img/jumbotron_brand2x.png" alt="">
-            <h1 class="text-center">Build large-scale modular Scala applications and libraries on top of Free monads/applicatives</h1>
+            <h1 class="text-center">A Cohesive & Pragmatic Framework of FP centric Scala libraries</h1>
             <p class="text-center">
-                <a href="#" class="btn btn-outline-inverse">View on GitHub</a>
-                <a href="#" class="btn btn-outline-inverse">Quick start</a>
+                <a href="https://github.com/47deg/freestyle" class="btn btn-outline-inverse">View on GitHub</a>
+                <a href="/docs" class="btn btn-outline-inverse">Quick start</a>
             </p>
             <ul class="GitHub-link">
-                <li><a href="#"><i class="fa fa-eye"></i>45</a></li>
-                <li><a href="#"><i class="fa fa-star"></i>65</a></li>
-                <li><a href="#"><i class="fa fa-code-fork"></i>234</a></li>
+                <li><a href="https://github.com/47deg/freestyle/stargazers"><i class="fa fa-star"></i><span id="stars"></span></a></li>
+                <li><a href="https://github.com/47deg/freestyle/watchers"><i class="fa fa-eye"></i><span id="eyes"></span></a></li>
             </ul>
         </div>
     </div>
@@ -45,26 +44,30 @@
 <main id="site-main">
     <section class="use">
 
-            <div id="content">
-                <section class="home-code">
+        <div id="content" data-github-owner="47deg" data-github-repo="freestyle">
+            <section class="home-code">
   <div class="container">
     <div class="row">
       <div class="col-md-6">
-        <h1 id="freestyle-optionally-includes">Freestyle optionally includes</h1>
-        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+        <h1 id="build-purely-functional-applications-and-libraries">Build purely functional applications and libraries</h1>
+        <p>Build stack-safe purely functional applications and libraries that support parallel and sequential computations where declaration is decoupled from interpretation.
+Freestyle encourages programs built atop <a href="/docs/algebras">Free algebras</a> that are interpreted at the edge of your application ensuring effects are localized and performed in a controlled environment.
+Applications built with Freestyle can be interpreted to any runtime semantics supported by the interpreter target type.</p>
       </div>
       <div class="col-md-6">
         <div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">freestyle._</span>
-<span class="k">import</span> <span class="nn">freestyle.implicits._</span>
 
-<span class="nd">@free</span> <span class="k">trait</span> <span class="nc">Validation</span><span class="o">[</span><span class="kt">F</span><span class="o">[</span><span class="k">_</span><span class="o">]]</span> <span class="o">{</span>
-  <span class="k">def</span> <span class="n">minSize</span><span class="o">(</span><span class="n">s</span><span class="k">:</span> <span class="kt">String</span><span class="o">,</span> <span class="n">n</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span><span class="k">:</span> <span class="kt">FreeS.Par</span><span class="o">[</span><span class="kt">F</span>, <span class="kt">Boolean</span><span class="o">]</span>
-  <span class="k">def</span> <span class="n">hasNumber</span><span class="o">(</span><span class="n">s</span><span class="k">:</span> <span class="kt">String</span><span class="o">)</span><span class="k">:</span> <span class="kt">FreeS.Par</span><span class="o">[</span><span class="kt">F</span>, <span class="kt">Boolean</span><span class="o">]</span>
+<span class="nd">@free</span> <span class="k">trait</span> <span class="nc">Database</span><span class="o">[</span><span class="kt">F</span><span class="o">[</span><span class="k">_</span><span class="o">]]</span> <span class="o">{</span>
+  <span class="k">def</span> <span class="n">get</span><span class="o">(</span><span class="n">id</span><span class="k">:</span> <span class="kt">UserId</span><span class="o">)</span><span class="k">:</span> <span class="kt">FreeS</span><span class="o">[</span><span class="kt">F</span>, <span class="kt">User</span><span class="o">]</span>
 <span class="o">}</span>
 
-<span class="nd">@free</span> <span class="k">trait</span> <span class="nc">Interaction</span><span class="o">[</span><span class="kt">F</span><span class="o">[</span><span class="k">_</span><span class="o">]]</span> <span class="o">{</span>
-  <span class="k">def</span> <span class="n">tell</span><span class="o">(</span><span class="n">msg</span><span class="k">:</span> <span class="kt">String</span><span class="o">)</span><span class="k">:</span> <span class="kt">FreeS</span><span class="o">[</span><span class="kt">F</span>, <span class="kt">Unit</span><span class="o">]</span>
-  <span class="k">def</span> <span class="n">ask</span><span class="o">(</span><span class="n">prompt</span><span class="k">:</span> <span class="kt">String</span><span class="o">)</span><span class="k">:</span> <span class="kt">FreeS</span><span class="o">[</span><span class="kt">F</span>, <span class="kt">String</span><span class="o">]</span>
+<span class="nd">@free</span> <span class="k">trait</span> <span class="nc">Cache</span><span class="o">[</span><span class="kt">F</span><span class="o">[</span><span class="k">_</span><span class="o">]]</span> <span class="o">{</span>
+  <span class="k">def</span> <span class="n">get</span><span class="o">(</span><span class="n">id</span><span class="k">:</span> <span class="kt">UserId</span><span class="o">)</span><span class="k">:</span> <span class="kt">FreeS</span><span class="o">[</span><span class="kt">F</span>, <span class="kt">User</span><span class="o">]</span>
+<span class="o">}</span>
+
+<span class="nd">@module</span> <span class="k">trait</span> <span class="nc">Persistence</span><span class="o">[</span><span class="kt">F</span><span class="o">[</span><span class="k">_</span><span class="o">]]</span> <span class="o">{</span>
+  <span class="k">val</span> <span class="n">database</span><span class="k">:</span> <span class="kt">Database</span><span class="o">[</span><span class="kt">F</span><span class="o">]</span>
+  <span class="k">val</span> <span class="n">cache</span><span class="k">:</span> <span class="kt">Cache</span><span class="o">[</span><span class="kt">F</span><span class="o">]</span>
 <span class="o">}</span>
 </code></pre>
         </div>
@@ -76,21 +79,19 @@
   <div class="container">
     <div class="row">
       <div class="col-md-6 col-md-push-6">
-        <h1 id="freestyle-optionally-includes-1">Freestyle optionally includes</h1>
-        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+        <h1 id="automatic-dependency-injection">Automatic Dependency Injection</h1>
+        <p>Freestyle includes all the implicit machinery necessary to achieve seamless dependency injection of <a href="/docs/algebras"><code class="highlighter-rouge">@free</code></a> and <a href="/docs/modules"><code class="highlighter-rouge">@module</code></a> Algebras.
+Simply require any of your <code class="highlighter-rouge">@free</code> or <code class="highlighter-rouge">@module</code> trait as implicits where needed.</p>
       </div>
       <div class="col-md-6 col-md-pull-6">
-        <div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">freestyle._</span>
-<span class="k">import</span> <span class="nn">freestyle.implicits._</span>
-
-<span class="nd">@free</span> <span class="k">trait</span> <span class="nc">Validation</span><span class="o">[</span><span class="kt">F</span><span class="o">[</span><span class="k">_</span><span class="o">]]</span> <span class="o">{</span>
-  <span class="k">def</span> <span class="n">minSize</span><span class="o">(</span><span class="n">s</span><span class="k">:</span> <span class="kt">String</span><span class="o">,</span> <span class="n">n</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span><span class="k">:</span> <span class="kt">FreeS.Par</span><span class="o">[</span><span class="kt">F</span>, <span class="kt">Boolean</span><span class="o">]</span>
-  <span class="k">def</span> <span class="n">hasNumber</span><span class="o">(</span><span class="n">s</span><span class="k">:</span> <span class="kt">String</span><span class="o">)</span><span class="k">:</span> <span class="kt">FreeS.Par</span><span class="o">[</span><span class="kt">F</span>, <span class="kt">Boolean</span><span class="o">]</span>
-<span class="o">}</span>
-
-<span class="nd">@free</span> <span class="k">trait</span> <span class="nc">Interaction</span><span class="o">[</span><span class="kt">F</span><span class="o">[</span><span class="k">_</span><span class="o">]]</span> <span class="o">{</span>
-  <span class="k">def</span> <span class="n">tell</span><span class="o">(</span><span class="n">msg</span><span class="k">:</span> <span class="kt">String</span><span class="o">)</span><span class="k">:</span> <span class="kt">FreeS</span><span class="o">[</span><span class="kt">F</span>, <span class="kt">Unit</span><span class="o">]</span>
-  <span class="k">def</span> <span class="n">ask</span><span class="o">(</span><span class="n">prompt</span><span class="k">:</span> <span class="kt">String</span><span class="o">)</span><span class="k">:</span> <span class="kt">FreeS</span><span class="o">[</span><span class="kt">F</span>, <span class="kt">String</span><span class="o">]</span>
+        <div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">def</span> <span class="n">storedUsers</span><span class="o">[</span><span class="kt">F</span><span class="o">[</span><span class="k">_</span><span class="o">]]</span>
+    <span class="o">(</span><span class="n">userId</span><span class="k">:</span> <span class="kt">UserId</span><span class="o">)</span>
+    <span class="o">(</span><span class="k">implicit</span> <span class="n">persistence</span><span class="k">:</span> <span class="kt">Persistence</span><span class="o">[</span><span class="kt">F</span><span class="o">])</span><span class="k">:</span> <span class="kt">FreeS</span><span class="o">[</span><span class="kt">F</span>, <span class="o">(</span><span class="kt">User</span>, <span class="kt">User</span><span class="o">)]</span> <span class="k">=</span> <span class="o">{</span>
+  <span class="k">import</span> <span class="nn">persistence._</span>
+  <span class="k">for</span> <span class="o">{</span>
+    <span class="n">cachedUser</span> <span class="k">&lt;-</span> <span class="n">cache</span><span class="o">.</span><span class="n">get</span><span class="o">(</span><span class="n">userId</span><span class="o">)</span>
+    <span class="n">persistentUser</span> <span class="k">&lt;-</span> <span class="n">database</span><span class="o">.</span><span class="n">get</span><span class="o">(</span><span class="n">userId</span><span class="o">)</span>
+  <span class="o">}</span> <span class="k">yield</span> <span class="o">(</span><span class="n">cachedUser</span><span class="o">,</span> <span class="n">persistentUser</span><span class="o">)</span>
 <span class="o">}</span>
 </code></pre>
         </div>
@@ -102,21 +103,26 @@
   <div class="container">
     <div class="row">
       <div class="col-md-6">
-        <h1 id="freestyle-optionally-includes-2">Freestyle optionally includes</h1>
-        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+        <h1 id="ready-to-use-integrations">Ready to use integrations</h1>
+        <p>Freestyle ships with <a href="/docs/integrations">ready to use algebras and convenient syntax extensions</a> covering most of the application concerns such as persistence, configuration, logging, etc.
+In addition Freestyle includes commonly used FP <a href="/docs/effects">effects</a> stack such as <code class="highlighter-rouge">option</code>, <code class="highlighter-rouge">error</code>, <code class="highlighter-rouge">reader</code>, <code class="highlighter-rouge">writer</code>, <code class="highlighter-rouge">state</code> based on the capabilities of
+the target runtime interpreters.</p>
+
       </div>
       <div class="col-md-6">
-        <div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">freestyle._</span>
-<span class="k">import</span> <span class="nn">freestyle.implicits._</span>
-
-<span class="nd">@free</span> <span class="k">trait</span> <span class="nc">Validation</span><span class="o">[</span><span class="kt">F</span><span class="o">[</span><span class="k">_</span><span class="o">]]</span> <span class="o">{</span>
-  <span class="k">def</span> <span class="n">minSize</span><span class="o">(</span><span class="n">s</span><span class="k">:</span> <span class="kt">String</span><span class="o">,</span> <span class="n">n</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span><span class="k">:</span> <span class="kt">FreeS.Par</span><span class="o">[</span><span class="kt">F</span>, <span class="kt">Boolean</span><span class="o">]</span>
-  <span class="k">def</span> <span class="n">hasNumber</span><span class="o">(</span><span class="n">s</span><span class="k">:</span> <span class="kt">String</span><span class="o">)</span><span class="k">:</span> <span class="kt">FreeS.Par</span><span class="o">[</span><span class="kt">F</span>, <span class="kt">Boolean</span><span class="o">]</span>
-<span class="o">}</span>
-
-<span class="nd">@free</span> <span class="k">trait</span> <span class="nc">Interaction</span><span class="o">[</span><span class="kt">F</span><span class="o">[</span><span class="k">_</span><span class="o">]]</span> <span class="o">{</span>
-  <span class="k">def</span> <span class="n">tell</span><span class="o">(</span><span class="n">msg</span><span class="k">:</span> <span class="kt">String</span><span class="o">)</span><span class="k">:</span> <span class="kt">FreeS</span><span class="o">[</span><span class="kt">F</span>, <span class="kt">Unit</span><span class="o">]</span>
-  <span class="k">def</span> <span class="n">ask</span><span class="o">(</span><span class="n">prompt</span><span class="k">:</span> <span class="kt">String</span><span class="o">)</span><span class="k">:</span> <span class="kt">FreeS</span><span class="o">[</span><span class="kt">F</span>, <span class="kt">String</span><span class="o">]</span>
+        <div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">def</span> <span class="n">loadUser</span><span class="o">[</span><span class="kt">F</span><span class="o">[</span><span class="k">_</span><span class="o">]]</span>
+  <span class="o">(</span><span class="n">userId</span><span class="k">:</span> <span class="kt">UserId</span><span class="o">)</span>
+  <span class="o">(</span><span class="k">implicit</span> 
+    <span class="n">doobie</span><span class="k">:</span> <span class="kt">DoobieM</span><span class="o">[</span><span class="kt">F</span><span class="o">],</span> 
+    <span class="n">logging</span><span class="k">:</span> <span class="kt">LoggingM</span><span class="o">[</span><span class="kt">F</span><span class="o">])</span><span class="k">:</span> <span class="kt">FreeS</span><span class="o">[</span><span class="kt">F</span>, <span class="kt">User</span><span class="o">]</span> <span class="k">=</span> <span class="o">{</span>
+    <span class="k">import</span> <span class="nn">doobie.implicits._</span>
+    <span class="k">for</span> <span class="o">{</span>
+      <span class="n">user</span> <span class="k">&lt;-</span> <span class="o">(</span><span class="n">sql</span><span class="s">"SELECT * FROM User WHERE userId = $userId"</span>
+                <span class="o">.</span><span class="n">query</span><span class="o">[</span><span class="kt">User</span><span class="o">]</span>
+                <span class="o">.</span><span class="n">unique</span>
+                <span class="o">.</span><span class="n">liftFS</span><span class="o">[</span><span class="kt">F</span><span class="o">])</span>
+      <span class="o">-</span> <span class="k">&lt;-</span> <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="o">(</span><span class="n">s</span><span class="s">"Loaded User: ${user.userId}"</span><span class="o">)</span>
+    <span class="o">}</span> <span class="k">yield</span> <span class="n">user</span>
 <span class="o">}</span>
 </code></pre>
         </div>
@@ -125,7 +131,7 @@
   </div>
 </section>
 
-            </div>
+        </div>
 
     </section>
     <section class="technologies">
@@ -140,10 +146,13 @@
     <div class="container">
         <div class="row">
             <div class="col-xs-6">
-                <p>Freestyle is designed and developed by <a href="https://github.com/47deg" target="_blank">47 Degrees</a></p>
+                <p>Freestyle is designed and developed by <a href="https://github.com/47deg"
+                                                                   target="_blank">47 Degrees</a>
+                </p>
             </div>
             <div class="col-xs-6">
-                <p class="text-right"><a href="https://github.com/47deg/freestyle"><span class="fa fa-github"></span>View on Github</a></p>
+                <p class="text-right"><a href="https://github.com/47deg/freestyle"><span class="fa fa-github"></span>View on
+                    Github</a></p>
             </div>
         </div>
     </div>
@@ -154,11 +163,14 @@
 </script>
 <script src="./highlight/highlight.pack.js">
 </script>
+<script src="./js/main.js"></script>
 <script>
 	hljs.configure({
 	languages:['scala','java','bash']
 	});
 	hljs.initHighlighting();
-	</script>
+
+
+</script>
 </body>
 </html>
