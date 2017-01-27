@@ -6,7 +6,7 @@ A Cohesive & Pragmatic Framework of FP centric Scala libraries
 
 # Build purely functional applications and libraries
 Build stack-safe purely functional applications and libraries that support parallel and sequential computations where declaration is decoupled from interpretation.
-Freestyle encourages programs built atop [Free algebras](/docs/algebras) that are interpreted at the edge of your application ensuring effects are localized and performed in a controlled environment.
+Freestyle encourages programs built atop [Free algebras](/docs/src/main/tut/docs/algebras) that are interpreted at the edge of your application ensuring effects are localized and performed in a controlled environment.
 Applications built with Freestyle can be interpreted to any runtime semantics supported by the interpreter target type.
 </div>
 <div class="col-md-6" markdown="1">
@@ -45,8 +45,8 @@ def storedUsers[F[_]]
 ```
 
 # Ready to use integrations
-Freestyle ships with [ready to use algebras and convenient syntax extensions](/docs/integrations) covering most of the application concerns such as persistence, configuration, logging, etc.
-In addition Freestyle includes commonly used FP [effects](/docs/effects) stack such as `option`, `error`, `reader`, `writer`, `state` based on the capabilities of
+Freestyle ships with [ready to use algebras and convenient syntax extensions](/docs/src/main/tut/docs/integrations) covering most of the application concerns such as persistence, configuration, logging, etc.
+In addition Freestyle includes commonly used FP [effects](/docs/src/main/tut/docs/effects) stack such as `option`, `error`, `reader`, `writer`, `state` based on the capabilities of
 the target runtime interpreters.
 
 ```scala
