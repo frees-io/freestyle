@@ -1,4 +1,4 @@
 repoUrl: "https://github.com/47deg/freestyle"
 organizationUrl: "https://github.com/47deg"
 organization: "47 Degrees"
-description: "Build large-scale modular Scala applications and libraries on top of Free monads/applicatives"
+description: "A Cohesive & Pragmatic Framework of FP centric Scala libraries"

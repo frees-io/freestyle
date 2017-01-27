@@ -20,7 +20,7 @@ lazy val commonSettings = Seq(
   homepage := Option(url("http://www.47deg.com")),
   organizationHomepage := Some(new URL("http://47deg.com")),
   startYear := Some(2016),
-  description := "Freestyle is a library to help building libraries and applications based on Free monads.",
+  description := "A Cohesive & Pragmatic Framework of FP centric Scala libraries",
   scalacOptions in ThisBuild ++= Seq(
     "-Ypartial-unification", // enable fix for SI-2712
     "-Yliteral-types",       // enable SIP-23 implementation
@@ -57,7 +57,7 @@ lazy val commonSettings = Seq(
 
 lazy val micrositeSettings = Seq(
   micrositeName := "Freestyle",
-  micrositeDescription := "large-scale modular Scala applications & libraries on top of Free Monads/Applicatives",
+  micrositeDescription := "A Cohesive & Pragmatic Framework of FP centric Scala libraries",
   micrositeDocumentationUrl := "/docs/",
   micrositeGithubOwner := "47deg",
   micrositeGithubRepo := "freestyle",
