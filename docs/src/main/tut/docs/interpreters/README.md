@@ -1,11 +1,14 @@
 ---
 layout: docs
 title: Interpreters
+permalink: /docs/interpreters/
 ---
 
 # Interpreters
 
-As part of its design Freestyle is compatible with Free and traditional patterns around it. Apps build with Freestyle give developers the freedom
+Freestyle empowers program whose runtime can be easily overriden via implicit evidences.
+
+As part of its design Freestyle is compatible with `Free` and traditional patterns around it. Apps build with Freestyle give developers the freedom
 to choose Automatic or manual algebras, modules and interpreters and intremix them as you see fit in applications based on the desired encoding.
 
 ## Implementation
@@ -17,7 +20,7 @@ member in your algebras companion.
 
 Consider the following Algebra adapted to Freestyle from the [Typelevel Cats Free monads examples]()
 
-```tut:silent
+```tut:book
 import freestyle._
 import cats.implicits._
 
@@ -33,10 +36,9 @@ import cats.implicits._
 }
 ```
 
-In order to define a runtime interpreter for it we simply extend `KVStore.Interpreter[M[_]]` and implement its
-abstract members.
+In order to define a runtime interpreter for it we simply extend `KVStore.Interpreter[M[_]]` and implement its abstract members.
 
-```tut:silent
+```tut:book
 import cats.data.State
 
 type KVStoreState[A] = State[Map[String, Any], A]
@@ -51,8 +53,7 @@ implicit val kvStoreInterpreter: KVStore.Interpreter[KVStoreState] = new KVStore
 }
 ```
 
-As you may have noticed in Freestyle instead of implementing a Natural transformation from your Algebra to a target `M[_]` we
-instead implement methods that closely resemble each one of the smart constructors in our @free algebras.
+As you may have noticed in Freestyle instead of implementing a Natural transformation `F ~> M` weimplement methods that closely resemble each one of the smart constructors in our @free algebras.
 This is not an imposition but rather a comvinience as the resulting instances are still Natural Transformations.
 
 In the example above `KVStore.Interpreter[M[_]]` it's actually already a Natural transformation of type `KVStore.T ~> KVStoreState` in which on its
@@ -61,7 +62,7 @@ In the example above `KVStore.Interpreter[M[_]]` it's actually already a Natural
 Alternatively if you would rather implement a natural transformation by hand you can still do that by choosing not to implement
 `KVStore.Interpreter[M[_]]` and providing one like so:
 
-```tut:silent
+```tut:book
 import cats.~>
 
 implicit def manualKvStoreInterpreter: KVStore.T ~> KVStoreState = 
@@ -84,7 +85,7 @@ Freestyle performs automatic composition of interpreters by providing the implic
 by the evidence of it's algebras's interpreters.
 To ilustrate interpreter composition let's define a new algebra `Log` which we will compose with our `KVStore` operations
 
-```tut:silent
+```tut:book
 @free trait Log[F[_]] {
   def info(msg: String): FreeS[F, Unit]
   def warn(msg: String): FreeS[F, Unit]
@@ -93,7 +94,7 @@ To ilustrate interpreter composition let's define a new algebra `Log` which we w
 
 Once our algebra is defined we can easily write an interpreter for it
 
-```tut:silent
+```tut:book
 import cats.implicits._
 
 implicit def logInterpreter: Log.Interpreter[KVStoreState] = 
@@ -106,7 +107,7 @@ implicit def logInterpreter: Log.Interpreter[KVStoreState] =
 Before we create a program where we combine all operations let's consider both `KVStore` and `Log` as part
 of a module in our application
 
-```tut:silent
+```tut:book
 @module trait Backend[F[_]] {
   val store: KVStore[F]
   val log: Log[F]
@@ -116,7 +117,7 @@ of a module in our application
 When `@module` is materialized it will automatically create the Coproduct that matches interpreters necessary to run the `Free` structure
 below.
 
-```tut:silent
+```tut:book
 def program[F[_]](implicit B: Backend[F]): FreeS[F, Option[Int]] = {
   import B.store._, B.log._
   for {
@@ -136,7 +137,7 @@ Once we have combined our algebras we can simply evaluate them by providing impl
 `import freestyle.implicits._` brings into scope among others the necessary implicit definitions to derive a unified interpreter given
 implicit evidences of each one of the individual algebra's interpreters.
 
-```tut:silent
+```tut:book
 import freestyle.implicits._
 program[Backend.T].exec[KVStoreState]
 ```
@@ -145,4 +146,4 @@ Alternatively you can build your interpreters by hand if you wish not to use Fre
 This may quickly grow unwildly as the number of algebras increase in an application but it's also possible in the spirit of providing two way compatibility
 in all areas between manually built ADTs and Natural Transformations and the ones automatically derived by Freestyle.
 
-Now that we've learnt to define our own interpreters let's jump into [Parallelism](parallelism.html) 
+Now that we've learnt to define our own interpreters let's jump into [Parallelism](/docs/parallelism/) 

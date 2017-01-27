@@ -1,6 +1,7 @@
 ---
 layout: docs
 title: Quick Start Guide
+permalink: /docs/
 ---
 
 # Quick Start
@@ -33,8 +34,7 @@ libraryDependencies += "com.47deg" %%% "freestyle" % "0.1.0"
 
 ## Algebras
 
-Freestyle main feature is the definition of `Free` algebras without boilerplate that support both sequential and parallel
-style computations. 
+Freestyle core feature is the definition of `Free` boilerplate-free algebras that support both sequential and parallel style computations and all the implicit machinery required to turn them into modular programs.
 
 In the example below we will define two algebras with intermixed sequential and parallel computations.
 
@@ -53,7 +53,7 @@ import freestyle.implicits._
 }
 ```
 
-Learn more about [algebras]() and how Freestyle works behind the scenes in the extended [documentation]()
+Learn more about [algebras](/docs/algebras/) in the extended documentation.
 
 ## Modules
 
@@ -69,15 +69,13 @@ parametrization of Free programs.
 
 Freestyle automatically wires all dependencies through implicit evidences that are generated so you don't have to worry about the boilerplate required to build Free based programs.
 
-Once you have these abstract definitions you can combine them in whichever way you want. Freestyle supports nested modules enabling
-onion style architectures of any arbitrary depth.
+Once you have these abstract definitions you can combine them in whichever way you want. Freestyle supports nested modules enabling onion style architectures of any arbitrary depth.
 
-Learn more about [modules]() and how Freestyle works behind the scenes in the extended [documentation]()
+Learn more about [modules](/docs/modules/) in the extended [documentation]()
 
 ## Building programs
 
-Abstract definitions it's all it takes to start building programs that support sequential and parallel operations and that are 
-entirely decoupled from their runtime interpretation.
+Abstract definitions it's all it takes to start building programs that support sequential and parallel operations and that are entirely decoupled from their runtime interpretation.
 
 The example below combines both algebras to produce a more complex program
 
@@ -116,8 +114,7 @@ implicit val interactionInterpreter = new Interaction.Interpreter[Future] {
 }
 ```
 
-The mere fact that you provide implicit evidences for the individual steps enables Freestyle to automatically discover
-and unify all interpreters involved in a program definition.
+The mere fact that you provide implicit evidences for the individual steps enables Freestyle to automatically discover and unify all interpreters involved in a program definition.
 
 At this point we can run our pure programs at the edge of the world.
 
@@ -139,9 +136,11 @@ You may want to consider using Freestyle if among your concerns are:
 - Automatic onion style architectures through composable modules without the complexity of manually aligning Coproducts and interpreters.
 - Boilerplate-free application and libraries.
 
-Freestyle optionally includes
+Freestyle includes ready to go Algebras and Integrations for the most common application concerns:
 
 - Ready to use integrations to achieve parallelism through [`scala.concurrent.Future`](), [`Akka`]() Actors and [`Monix`]() Task.
 - Ready to use integrations that cover most of the commons applications concerns such as [logging](), [configuration](), [dependency injection](), [persistence](), etc.
+- Traditional effects stacks (reader, writer, state, error, option, either)
 
-Learn more about how Freestyle works behind the scenes in the extended [documentation](algebras.html)
+Learn more about how Freestyle works behind the scenes in the extended [documentation](/docs/algebras/) and check out a the [reference application](/TODO) with examples
+of multiple algebras in use.

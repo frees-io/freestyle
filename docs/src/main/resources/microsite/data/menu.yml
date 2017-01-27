@@ -1,15 +1,69 @@
 options:
-  - title: Quick Start Guide
-    url: docs/index.html
+  - title: Quick Start
+    url: docs/
 
   - title: Algebras
-    url: docs/algebras.html
+    url: docs/algebras/
 
   - title: Modules
-    url: docs/modules.html
+    url: docs/modules/
 
   - title: Interpreters
-    url: docs/interpreters.html
+    url: docs/interpreters/
 
   - title: Parallelism
-    url: docs/parallelism.html
+    url: docs/parallelism/
+
+  - title: Effects
+    url: docs/effects/
+
+    nested_options:
+
+      - title: Error
+        url: docs/effects/#Error
+         
+      - title: Option
+        url: docs/effects/#Option
+
+      - title: Reader
+        url: docs/effects/#Reader
+
+      - title: Writer
+        url: docs/effects/#Writer
+
+      - title: State
+        url: docs/effects/#State
+
+      - title: Traverse
+        url: docs/effects/#Traverse
+
+  - title: Patterns
+    url: TODO.html
+
+    nested_options:
+
+      - title: Dependency Injection
+        url: TODO.html
+
+      - title: Configuration
+        url: TODO.html
+
+      - title: Logging
+        url: TODO.html
+
+  - title: Integrations
+    url: TODO.html
+
+    nested_options:
+
+      - title: Cats
+        url: TODO.html
+
+      - title: Monix
+        url: TODO.html
+
+      - title: Fetch
+        url: TODO.html
+
+      - title: Doobie
+        url: TODO.html

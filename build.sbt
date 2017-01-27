@@ -3,6 +3,8 @@ import microsites.MicrositeKeys.{micrositeBaseUrl, micrositeDescription, microsi
 
 addCommandAlias("debug", "; clean ; test")
 
+addCommandAlias("validate", "; +clean ; +test; makeMicrosite")
+
 onLoad in Global := (Command.process("project freestyle", _: State)) compose (onLoad in Global).value
 
 val dev  = Seq(Dev("47 Degrees (twitter: @47deg)", "47 Degrees"))
@@ -18,7 +20,7 @@ lazy val commonSettings = Seq(
   homepage := Option(url("http://www.47deg.com")),
   organizationHomepage := Some(new URL("http://47deg.com")),
   startYear := Some(2016),
-  description := "Freestyle is a library to help building libraries and applications based on Free monads.",
+  description := "A Cohesive & Pragmatic Framework of FP centric Scala libraries",
   scalacOptions in ThisBuild ++= Seq(
     "-Ypartial-unification", // enable fix for SI-2712
     "-Yliteral-types",       // enable SIP-23 implementation
@@ -55,13 +57,14 @@ lazy val commonSettings = Seq(
 
 lazy val micrositeSettings = Seq(
   micrositeName := "Freestyle",
-  micrositeDescription := "Build large-scale modular Scala applications and libraries on top of Free monads/applicatives",
-  micrositeBaseUrl := "freestyle",
-  micrositeDocumentationUrl := "/freestyle/docs/",
+  micrositeDescription := "A Cohesive & Pragmatic Framework of FP centric Scala libraries",
+  micrositeDocumentationUrl := "/docs/",
   micrositeGithubOwner := "47deg",
   micrositeGithubRepo := "freestyle",
   micrositeHighlightTheme := "dracula",
-  includeFilter in makeSite := "*.html" | "*.css" | "*.png" | "*.jpg" | "*.gif" | "*.js" | "*.swf" | "*.md",
+  micrositeExternalLayoutsDirectory := (resourceDirectory in Compile).value / "microsite" / "layouts",
+  micrositeExternalIncludesDirectory := (resourceDirectory in Compile).value / "microsite" / "includes",
+  includeFilter in makeSite := "*.html" | "*.css" | "*.png" | "*.jpg" | "*.gif" | "*.js" | "*.swf" | "*.md" | "CNAME",
   micrositePalette := Map(
     "brand-primary"     -> "#01C2C2",
     "brand-secondary"   -> "#142236",
@@ -208,6 +211,7 @@ lazy val tests = (project in file("tests")).
 
 lazy val docs = (project in file("docs")).
   dependsOn(freestyleJVM).
+  dependsOn(freestyleEffectsJVM).
   settings(commonSettings: _*).
   settings(micrositeSettings: _*).
   settings(noPublishSettings: _*).

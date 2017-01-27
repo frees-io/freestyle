@@ -1,6 +1,7 @@
 ---
 layout: docs
 title: Modules
+permalink: /docs/modules/
 ---
 
 # Modules
@@ -14,7 +15,7 @@ We will start with some basic low level style ops related to persistence.
 In our Persistence related algebras we have some ops that can go against a DB and others to a Cache service or system.
 In the presentation side an application may display or perform some input validation.
 
-```tut:silent
+```tut:book
 import freestyle._
 
 object algebras {
@@ -37,7 +38,7 @@ At this point we can group these different application concerns in modules.
 Modules can be further nested so they become part of the tree that conforms an application or library.
 
 
-```tut:silent
+```tut:book
 import algebras._
 
 object modules {
@@ -58,7 +59,7 @@ object modules {
 
 This enables to build programs that are properly typed and parameterized in a modular and composable way.
 
-```tut:silent
+```tut:book
 import modules._
 
 def program[F[_]](
@@ -86,9 +87,9 @@ annotations.
 
 ## Dependency Injection
 
-Freestyle automatically generated the most common implicit machinery def's found in most Scala application to expose instances through companion evidences.
-You don't need to provide implicit evidences for it's dependencies in Freestyle because those were already expressed inside their respective companions.
-Scala uses implicit instances in companion objects if it finds those after [traversing scopes at the call site]().
+Freestyle automatically generates implicit default instances and summoners in the '@free' and '@module' annotated companions so that instances can be summoned implicitly at any point in an application.
+Scala uses implicit instances in companion objects as par tof its implicit resolution rules. to learn more about Scala implicits take a look at this great
+post by Li Haoyi's [Implicit Design Patterns in Scala](http://www.lihaoyi.com/post/ImplicitDesignPatternsinScala.html).
 
 This gives the caller an opportunity to override at any point the instances generated automatically by Freestyle with explicit ones.
 
@@ -97,7 +98,7 @@ Module instances in an easy way. As in `@free` this effectively enables implicit
 using the implicits scoping rules to place different implementations where appropriate.
 This also solves all Dependency Injection problems automatically for all modules in applications that model their layers a modules with the `@module` annotation.
 
-```tut:silent
+```tut:book
 def doWithApp[F[_]](implicit app: App[F]) = ???
 ```
 
@@ -109,7 +110,7 @@ for all it's contained algebras. This allows contained algebras to be composed.
 
 If you were to create this by hand in the case of the example above it will look like this:
 
-```tut:silent
+```tut:book
 import cats.data.Coproduct
 
 type C01[A] = Coproduct[Database.T, Cache.T, A]
@@ -121,11 +122,11 @@ Things get more complicated once the number of Algebras grows.
 Fortunately Freestyle automatically aligns all those for you and gives you an already aligned `Coproduct` of all algebras
 contained by a Module whether directly referenced or transitively through it's modules dependencies.
 
-```tut:silent
+```tut:book
 implicitly[App.T[_] =:= ManualAppCoproduct[_]]
 ```
 
 We've covered so far how Freestyle can help in building and composing module programs based on `Free`, but `Free` programs are
 useless without a runtime interpreter that can evaluate the `Free` structure.
 
-Next we will show you how `Freestyle` helps you simplify the way you define [runtime interpreters](interpreters.html) for `Free` applications.
+Next we will show you how `Freestyle` helps you simplify the way you define [runtime interpreters](/docs/interpreters/) for `Free` applications.
