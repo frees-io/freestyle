@@ -84,7 +84,7 @@ lazy val freestyle = (crossProject in file("freestyle")).
   settings(name := "freestyle").
   settings(
     libraryDependencies ++= Seq(
-      "org.typelevel" %%% "cats-free" % "0.8.1",
+      "org.typelevel" %%% "cats-free" % "0.9.0",
       "org.scala-lang" % "scala-reflect" % scalaVersion.value
     )
   ).
@@ -98,8 +98,8 @@ lazy val freestyleMonix = (crossProject in file("freestyle-monix")).
   settings(name := "freestyle-monix").
   settings(
     libraryDependencies ++= Seq(
-      "io.monix" %%% "monix-eval" % "2.1.0",
-      "io.monix" %%% "monix-cats" % "2.1.0"
+      "io.monix" %%% "monix-eval" % "2.2.1",
+      "io.monix" %%% "monix-cats" % "2.2.1"
     )
   ).
   jsSettings(sharedJsSettings: _*)
@@ -113,7 +113,7 @@ lazy val freestyleEffects = (crossProject in file("freestyle-effects")).
   settings(name := "freestyle-effects").
   settings(
     libraryDependencies ++= Seq(
-      "org.scalatest" %% "scalatest" % "3.0.0"      % "test"
+      "org.scalatest" %% "scalatest" % "3.0.1"      % "test"
     )
   ).
   jsSettings(sharedJsSettings: _*)
@@ -127,9 +127,9 @@ lazy val freestyleDoobie = (project in file("freestyle-doobie")).
   settings(name := "freestyle-doobie").
   settings(
     libraryDependencies ++= Seq(
-      "org.tpolecat"  %% "doobie-core-cats" % "0.3.1-M3",
-      "org.tpolecat"  %% "doobie-h2-cats"   % "0.3.1-M3" % "test",
-      "org.scalatest" %% "scalatest"        % "3.0.0"          % "test"
+      "org.tpolecat"  %% "doobie-core-cats" % "0.4.1",
+      "org.tpolecat"  %% "doobie-h2-cats"   % "0.4.1" % "test",
+      "org.scalatest" %% "scalatest"        % "3.0.1"          % "test"
     )
   )
 
@@ -155,7 +155,7 @@ lazy val freestyleConfig = (crossProject in file("freestyle-config")).
   settings(
     libraryDependencies ++= Seq(
       "eu.unicredit" %%% "shocon" % "0.1.7",
-      "org.scalatest" %%% "scalatest" % "3.0.0" % "test"
+      "org.scalatest" %%% "scalatest" % "3.0.1" % "test"
     )
   )
 
@@ -169,9 +169,9 @@ lazy val freestyleFetch = (crossProject in file("freestyle-fetch")).
   settings(name := "freestyle-fetch").
   settings(
     libraryDependencies ++= Seq(
-      "com.fortysevendeg" %%% "fetch" % "0.4.0",
-      "org.scalatest" %%% "scalatest" % "3.0.0" % "test",
-      "com.fortysevendeg" %%% "fetch-monix" % "0.4.0"
+      "com.fortysevendeg" %%% "fetch" % "0.5.0",
+      "org.scalatest" %%% "scalatest" % "3.0.1" % "test",
+      "com.fortysevendeg" %%% "fetch-monix" % "0.5.0"
      )
   ).
   jsSettings(sharedJsSettings: _*)
@@ -184,7 +184,7 @@ lazy val freestyleLogging = (crossProject in file("freestyle-logging")).
   settings(commonSettings: _*).
   settings(name := "freestyle-logging").
   settings(
-    libraryDependencies += "org.scalatest" %%% "scalatest" % "3.0.0" % "test"
+    libraryDependencies += "org.scalatest" %%% "scalatest" % "3.0.1" % "test"
   ).
   jvmSettings(
     libraryDependencies += "io.verizon.journal" %% "core" % "3.0.18"
@@ -205,7 +205,7 @@ lazy val tests = (project in file("tests")).
   settings(
     libraryDependencies ++= Seq(
       "org.scala-lang" % "scala-reflect" % scalaVersion.value,
-      "org.scalatest" %%% "scalatest" % "3.0.0" % "test"
+      "org.scalatest" %%% "scalatest" % "3.0.1" % "test"
     )
   )
 

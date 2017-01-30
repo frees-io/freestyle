@@ -77,6 +77,7 @@ object datasources {
   import cats.instances.list._
 
   implicit object ToStringSource extends DataSource[Int, String] {
+    override def name = "ToString"
     override def fetchOne(id: Int): Query[Option[String]] =
       Query.sync(Option(id.toString))
     override def fetchMany(ids: NonEmptyList[Int]): Query[Map[Int, String]] =
