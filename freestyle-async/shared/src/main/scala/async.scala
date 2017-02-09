@@ -2,11 +2,10 @@ package freestyle
 
 import cats.{Eval, MonadError}
 
-import scala.util.{Failure, Success, Try}
 import scala.concurrent._
 
 object async {
-  type Proc[A] = (Try[A] => Unit) => Unit
+  type Proc[A] = (Either[Throwable, A] => Unit) => Unit
 
   trait AsyncContext[M[_]] {
     def runAsync[A](fa: Proc[A]): M[A]
@@ -27,8 +26,8 @@ object async {
         ex.execute(new Runnable {
           def run() =
             fa({
-              case Success(v)  => p.trySuccess(v)
-              case Failure(ex) => p.tryFailure(ex)
+              case Right(v) => p.trySuccess(v)
+              case Left(ex) => p.tryFailure(ex)
             })
         })
 

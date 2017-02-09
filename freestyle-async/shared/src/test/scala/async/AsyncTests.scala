@@ -9,7 +9,6 @@ import freestyle.implicits._
 import freestyle.async._
 import freestyle.async.implicits._
 
-import scala.util.{Failure, Success}
 import scala.concurrent._
 import scala.concurrent.duration._
 
@@ -22,7 +21,7 @@ class AsyncTests extends AsyncWordSpec with Matchers {
       def program[F[_]: AsyncM] =
         for {
           a <- Applicative[FreeS[F, ?]].pure(1)
-          b <- AsyncM[F].async[Int]((cb) => cb(Success(42)))
+          b <- AsyncM[F].async[Int]((cb) => cb(Right(42)))
           c <- Applicative[FreeS[F, ?]].pure(1)
         } yield a + b + c
 
@@ -34,11 +33,11 @@ class AsyncTests extends AsyncWordSpec with Matchers {
       def program[F[_]: AsyncM] =
         for {
           a <- Applicative[FreeS[F, ?]].pure(1)
-          b <- AsyncM[F].async[Int]((cb) => cb(Success(42)))
+          b <- AsyncM[F].async[Int]((cb) => cb(Right(42)))
           c <- Applicative[FreeS[F, ?]].pure(1)
           d <- AsyncM[F].async[Int]((cb) => {
             Thread.sleep(100)
-            cb(Success(10))
+            cb(Right(10))
           })
         } yield a + b + c + d
 
@@ -52,7 +51,7 @@ class AsyncTests extends AsyncWordSpec with Matchers {
       def program[F[_]: AsyncM] =
         for {
           a <- Applicative[FreeS[F, ?]].pure(1)
-          b <- AsyncM[F].async[Int]((cb) => cb(Failure(OhNoException())))
+          b <- AsyncM[F].async[Int]((cb) => cb(Left(OhNoException())))
           c <- Applicative[FreeS[F, ?]].pure(3)
         } yield a + b + c
 
