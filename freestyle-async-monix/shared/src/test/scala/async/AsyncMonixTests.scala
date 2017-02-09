@@ -8,6 +8,7 @@ import freestyle._
 import freestyle.implicits._
 import freestyle.async._
 import freestyle.async.implicits._
+import freestyle.asyncMonix.implicits._
 
 import scala.concurrent._
 import scala.concurrent.duration._
