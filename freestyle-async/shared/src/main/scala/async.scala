@@ -1,6 +1,5 @@
-package freestyle.effects
+package freestyle
 
-import freestyle._
 import cats.{Eval, MonadError}
 
 import scala.util.{Failure, Success, Try}
