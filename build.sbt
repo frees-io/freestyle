@@ -129,15 +129,29 @@ lazy val freestyleAsync = (crossProject in file("freestyle-async")).
   settings(name := "freestyle-async").
   settings(
     libraryDependencies ++= Seq(
-      "org.scalatest" %% "scalatest" % "3.0.1"      % "test",
-      "io.monix" %%% "monix-eval" % "2.2.1",
-      "io.monix" %%% "monix-cats" % "2.2.1"
+      "org.scalatest" %% "scalatest" % "3.0.1"      % "test"
     )
   ).
   jsSettings(sharedJsSettings: _*)
 
 lazy val freestyleAsyncJVM = freestyleAsync.jvm
 lazy val freestyleAsyncJS  = freestyleAsync.js
+
+lazy val freestyleAsyncMonix = (crossProject in file("freestyle-async-monix")).
+  dependsOn(freestyle, freestyleAsync).
+  settings(commonSettings: _*).
+  settings(name := "freestyle-async-monix").
+  settings(
+    libraryDependencies ++= Seq(
+      "org.scalatest" %% "scalatest" % "3.0.1" % "test",
+      "io.monix" %%% "monix-eval" % "2.2.1",
+      "io.monix" %%% "monix-cats" % "2.2.1"
+    )
+  ).
+  jsSettings(sharedJsSettings: _*)
+
+lazy val freestyleAsyncMonixJVM = freestyleAsyncMonix.jvm
+lazy val freestyleAsyncMonixJS  = freestyleAsyncMonix.js
 
 lazy val freestyleDoobie = (project in file("freestyle-doobie")).
   dependsOn(freestyleJVM).
