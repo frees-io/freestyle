@@ -166,6 +166,18 @@ lazy val freestyleAsyncFs = (crossProject in file("freestyle-async-fs2")).
 lazy val freestyleAsyncFsJVM = freestyleAsyncFs.jvm
 lazy val freestyleAsyncFsJS  = freestyleAsyncFs.js
 
+lazy val freestyleCache = (crossProject in file("freestyle-cache")).
+  dependsOn(freestyle).
+  settings(commonSettings: _*).
+  settings(name := "freestyle-cache").
+  settings(
+    libraryDependencies ++= Seq()
+  ).
+  jsSettings(sharedJsSettings: _*)
+
+lazy val freestyleCacheJVM = freestyleCache.jvm
+lazy val freestyleCacheJS  = freestyleCache.js
+
 lazy val freestyleDoobie = (project in file("freestyle-doobie")).
   dependsOn(freestyleJVM).
   settings(commonSettings: _*).
