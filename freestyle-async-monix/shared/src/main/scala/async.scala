@@ -4,7 +4,6 @@ import cats.{Eval, MonadError}
 
 import freestyle.async._
 
-import scala.util.{Failure, Success, Try}
 import scala.concurrent._
 import monix.eval.Task
 import monix.execution.{Cancelable, Scheduler}
@@ -15,9 +14,10 @@ object implicits {
       Task.create((scheduler, callback) => {
         scheduler.execute(new Runnable {
           def run() =
-            fa({
-              case Success(v)  => callback.onSuccess(v)
-              case Failure(ex) => callback.onError(ex)
+            fa((result: Either[Throwable, A]) =>
+              result match {
+                case Right(v) => callback.onSuccess(v)
+                case Left(ex) => callback.onError(ex)
             })
         })
 

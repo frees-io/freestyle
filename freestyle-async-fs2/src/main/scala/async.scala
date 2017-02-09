@@ -4,7 +4,6 @@ import cats.{Eval, MonadError}
 
 import freestyle.async._
 
-import scala.util.{Failure, Success, Try}
 import scala.concurrent._
 import fs2.{Strategy, Task}
 
