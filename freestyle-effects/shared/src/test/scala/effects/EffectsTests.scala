@@ -7,16 +7,14 @@ import org.scalatest._
 import freestyle._
 import freestyle.implicits._
 
-import scala.util.{Failure, Success}
 import scala.concurrent._
 import scala.concurrent.duration._
-import monix.execution.Scheduler
 
 class EffectsTests extends AsyncWordSpec with Matchers {
 
   import collision._
 
-  implicit override def executionContext = Scheduler.Implicits.global
+  implicit override def executionContext = ExecutionContext.Implicits.global
 
   "Option Freestyle integration" should {
 
