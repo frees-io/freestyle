@@ -5,6 +5,13 @@ import simulacrum.typeclass
 
 import scala.util.Try
 
+/*
+ * The method `Applicative#pure` in `cats.Applicative` is strict on its parameter. Thus, it
+ *  forces the evaluation of any expression passed to it.
+ *
+ * However, since we need to support different types in the Interpreters, we need to
+ *  define a `Capture` type-class..
+ */
 @typeclass
 trait Capture[F[_]] {
   def capture[A](a: => A): F[A]
