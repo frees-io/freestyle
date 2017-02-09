@@ -19,7 +19,7 @@ import fs2.interop.cats._
 class AsyncFs2Tests extends AsyncWordSpec with Matchers {
   implicit val strategy = Strategy.fromExecutionContext(ExecutionContext.Implicits.global)
 
-  "Async Monix Freestyle integration" should {
+  "Async Fs2 Freestyle integration" should {
     "support Task as the target runtime" in {
       import cats.implicits._
       def program[F[_]: AsyncM] =
