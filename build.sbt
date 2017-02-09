@@ -113,7 +113,9 @@ lazy val freestyleEffects = (crossProject in file("freestyle-effects")).
   settings(name := "freestyle-effects").
   settings(
     libraryDependencies ++= Seq(
-      "org.scalatest" %% "scalatest" % "3.0.1"      % "test"
+      "org.scalatest" %% "scalatest" % "3.0.1"      % "test",
+      "io.monix" %%% "monix-eval" % "2.2.1",
+      "io.monix" %%% "monix-cats" % "2.2.1"
     )
   ).
   jsSettings(sharedJsSettings: _*)

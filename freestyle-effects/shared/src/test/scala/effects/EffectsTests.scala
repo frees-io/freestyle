@@ -144,6 +144,26 @@ class EffectsTests extends AsyncWordSpec with Matchers {
 
       program[AsyncM.T].exec[Future] recover { case OhNoException() => 42 } map { _ shouldBe 42 }
     }
+
+    import monix.eval.Task
+    import monix.cats._
+    import monix.execution.Scheduler.Implicits.global
+
+    "support Task as the target runtime" in {
+      import cats.implicits._
+      def program[F[_]: AsyncM] =
+        for {
+          a <- Applicative[FreeS[F, ?]].pure(1)
+          b <- AsyncM[F].async[Int]((cb) => cb(Success(42)))
+          c <- Applicative[FreeS[F, ?]].pure(1)
+          d <- AsyncM[F].async[Int]((cb) => {
+            Thread.sleep(100)
+            cb(Success(10))
+          })
+        } yield a + b + c + d
+
+      program[AsyncM.T].exec[Task].runAsync map { _ shouldBe 54 }
+    }
   }
 
   "Reader integration" should {

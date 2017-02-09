@@ -37,7 +37,24 @@ object async {
       }
     }
 
-    // todo: Task
+    import monix.eval.Task
+    import monix.execution.{Cancelable, Scheduler}
+
+    implicit val taskAsyncContext = new AsyncContext[Task] {
+      def runAsync[A](fa: Proc[A]): Task[A] = {
+        Task.create((scheduler, callback) => {
+          scheduler.execute(new Runnable {
+            def run() =
+              fa({
+                case Success(v)  => callback.onSuccess(v)
+                case Failure(ex) => callback.onError(ex)
+              })
+          })
+
+          Cancelable.empty
+        })
+      }
+    }
 
     implicit def freeStyleAsyncMInterpreter[M[_]](
         implicit MA: AsyncContext[M]
