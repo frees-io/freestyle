@@ -98,6 +98,39 @@ class EffectsTests extends AsyncWordSpec with Matchers {
 
   }
 
+  "Async Freestyle integration" should {
+    import freestyle.effects.async._
+    import freestyle.effects.async.implicits._
+
+    "allow an Async to be interleaved inside a program monadic flow" in {
+      import cats.implicits._
+      def program[F[_]: AsyncM] =
+        for {
+          a <- Applicative[FreeS[F, ?]].pure(1)
+          b <- AsyncM[F].async[Int]((cb: Int => Unit) => cb(42))
+          c <- Applicative[FreeS[F, ?]].pure(1)
+        } yield a + b + c
+
+      program[AsyncM.T].exec[Future] map { _ shouldBe 44 }
+    }
+
+    "allow multiple Async to be interleaved inside a program monadic flow" in {
+      import cats.implicits._
+      def program[F[_]: AsyncM] =
+        for {
+          a <- Applicative[FreeS[F, ?]].pure(1)
+          b <- AsyncM[F].async[Int]((cb: Int => Unit) => cb(42))
+          c <- Applicative[FreeS[F, ?]].pure(1)
+          d <- AsyncM[F].async[Int]((cb: Int => Unit) => {
+            Thread.sleep(100)
+            cb(10)
+          })
+        } yield a + b + c + d
+
+      program[AsyncM.T].exec[Future] map { _ shouldBe 54 }
+    }
+  }
+
   "Reader integration" should {
 
     import freestyle.effects._
