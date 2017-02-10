@@ -10,7 +10,7 @@ import monix.execution.{Cancelable, Scheduler}
 
 object implicits {
   implicit val monixTaskAsyncContext = new AsyncContext[Task] {
-    def runAsync[A](fa: asynProc[A]): Task[A] = {
+    def runAsync[A](fa: Proc[A]): Task[A] = {
       Task.create((scheduler, callback) => {
         scheduler.execute(new Runnable {
           def run() =
