@@ -178,6 +178,20 @@ lazy val freestyleCache = (crossProject in file("freestyle-cache")).
 lazy val freestyleCacheJVM = freestyleCache.jvm
 lazy val freestyleCacheJS  = freestyleCache.js
 
+lazy val freestyleCacheRedis = (crossProject in file("freestyle-redis")).
+  dependsOn(freestyle, freestyleCache).
+  settings(commonSettings: _*).
+  settings(
+    name := "freestyle-cache-redis",
+    resolvers += "Sonatype OSS Releases" at "https://oss.sonatype.org/content/repositories/releases/" ,
+    resolvers += Resolver.mavenLocal,
+    libraryDependencies += "com.livestream" %% "scredis" % "2.1.0-SNAPSHOT"
+  ).
+  jsSettings(sharedJsSettings: _*)
+
+lazy val freestyleCacheRedisJS = freestyleCacheRedis.js
+lazy val freestyleCacheRedisJVM = freestyleCacheRedis.jvm
+
 lazy val freestyleDoobie = (project in file("freestyle-doobie")).
   dependsOn(freestyleJVM).
   settings(commonSettings: _*).
