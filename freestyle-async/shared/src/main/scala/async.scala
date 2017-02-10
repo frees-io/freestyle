@@ -5,18 +5,20 @@ import cats.{Eval, MonadError}
 import scala.concurrent._
 
 object async {
+  /** An asynchronous computation that might fail. **/
   type Proc[A] = (Either[Throwable, A] => Unit) => Unit
 
+  /** The context required to run an asynchronous computation. **/
   trait AsyncContext[M[_]] {
     def runAsync[A](fa: Proc[A]): M[A]
   }
 
+  /** Async computation algebra. **/
   @free sealed trait AsyncM[F[_]] {
     def async[A](fa: Proc[A]): FreeS.Par[F, A]
   }
 
   object implicits {
-
     implicit def futureAsyncContext(
         implicit ex: ExecutionContext
     ) = new AsyncContext[Future] {
