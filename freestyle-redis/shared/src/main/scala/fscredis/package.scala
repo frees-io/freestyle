@@ -1,5 +1,9 @@
 package freestyle.redis
 
+import cats.{~>}
+import cats.data.Kleisli
+import scala.concurrent.Future
+
 import scredis.commands.{
   KeyCommands,
   ListCommands,
@@ -15,6 +19,8 @@ package object fscredis {
   type ScredisCommands =
     KeyCommands with ListCommands with ScriptingCommands with ServerCommands with SetCommands with StringCommands
 
-  type ScredisOps[F[+ _], +A] = ScredisCommands ⇒ F[A]
+  type ScredisOps[F[+ _], A] = Kleisli[F, ScredisCommands, A]
+
+  type RawScredisOps[A] = ScredisOps[Future, A]
 
 }
