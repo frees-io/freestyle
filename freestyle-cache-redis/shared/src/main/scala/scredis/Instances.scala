@@ -1,33 +1,23 @@
 package freestyle.cache.redis.scredis
 
 import cats.{~>, Applicative}
+import cats.data.Kleisli
 import scredis.{Client ⇒ ScredisClient}
 
-class ScredisOpsApplicative[F[+ _]](appF: Applicative[F]) extends Applicative[ScredisOps[F, ?]] {
-
-  override def pure[A](x: A): ScredisOps[F, A] =
-    _client ⇒ appF.pure(x)
-
-  override def ap[A, B](ff: ScredisOps[F, A ⇒ B])(fa: ScredisOps[F, A]): ScredisOps[F, B] =
-    client ⇒ {
-      val lhs = ff(client)
-      val rhs = fa(client)
-      appF.ap(lhs)(rhs)
-    }
-
+// This is just cats.data.KleisliApplicative[F[_], ScredisCommands]
+// class ScredisOpsApplicative[F[+ _]](appF: Applicative[F]) extends Applicative[ScredisOps[F, ?]] {
+class KleisliApplyOn[F[+ _], A](input: A) extends (Kleisli[F, A, ?] ~> F) {
+  override def apply[B](karr: Kleisli[F, A, B]): F[B] = karr(input)
 }
 
+//
+// The huge problem: How do I make sure that
+// - Parallel Operations (in the FreeApplicative) are all joined into a single Kleisli
+// - This single Kleisli is the only thing that goes into the `.withTransaction`.
+//
 class ScredisOpsInterpret[F[+ _]](client: ScredisClient) extends (ScredisOps[F, ?] ~> F) {
 
-  override def apply[A](fa: ScredisOps[F, A]): F[A] =
+  override def apply[A](fa: Kleisli[F, ScredisCommands, A]): F[A] =
     client.withTransaction[F[A]](build ⇒ fa(build))
-
-}
-
-object implicits {
-
-  implicit def applicativeScredisOps[F[+ _]](
-      implicit appF: Applicative[F]): Applicative[ScredisOps[F, ?]] =
-    new ScredisOpsApplicative[F](appF)
 
 }

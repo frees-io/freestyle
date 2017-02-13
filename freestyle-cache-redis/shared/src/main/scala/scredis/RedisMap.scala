@@ -1,6 +1,8 @@
 package freestyle.cache.redis.scredis
 
 import cats.{~>, Functor}
+import cats.data.Kleisli
+import cats.data.Kleisli.catsDataFunctorForKleisli
 import cats.syntax.functor._
 import scala.concurrent.Future
 import scredis.serialization.{Reader, Writer}
@@ -14,24 +16,19 @@ class RedisMapWrapper[M[+ _], Key, Value](
 ) {
 
   def get(key: Key): ScredisOps[M, Option[Value]] =
-    (comm: ScredisCommands) => {
-      toM(comm.get[Option[Value]](format(key))).map(_.flatten)
-    }
+    ScredisCont.get[Key, Option[Value]](key).transform(toM).map(_.flatten)
 
   def put(key: Key, value: Value): ScredisOps[M, Unit] =
-    (comm: ScredisCommands) => {
-      toM(comm.set[Value](format(key), value)).void
-    }
+    ScredisCont.set(key, value).transform(toM).void
 
   def delete(key: Key): ScredisOps[M, Unit] =
-    (comm: ScredisCommands) => {
-      toM(comm.del(key)).void
-    }
+    ScredisCont.del(Seq(key)).transform(toM).void
+
+  def hasKey(key: Key): ScredisOps[M, Boolean] =
+    ScredisCont.exists(key).transform(toM)
 
   def clear(): ScredisOps[M, Unit] =
-    (comm: ScredisCommands) => {
-      toM(comm.flushAll)
-    }
+    ScredisCont.flushDB.transform(toM)
 
 }
 

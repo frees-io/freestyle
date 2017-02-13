@@ -10,6 +10,12 @@ object Format {
     def apply(a: A): String = print(a)
   }
 
+  object syntax {
+    implicit class KeyFormat[Key](key: Key) {
+      def format(implicit FK: Format[Key]): String = FK(key)
+    }
+  }
+
 }
 
 object Readers {
