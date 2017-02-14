@@ -3,8 +3,6 @@
 package freestyle.redis.fscredis
 
 import cats.{~>, Functor}
-import cats.data.Kleisli
-import cats.data.Kleisli.catsDataFunctorForKleisli
 import cats.syntax.functor._
 import scala.concurrent.Future
 import scredis.serialization.{Reader, Writer}

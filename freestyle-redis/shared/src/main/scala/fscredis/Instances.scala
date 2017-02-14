@@ -1,6 +1,6 @@
 package freestyle.redis.fscredis
 
-import cats.{~>, Applicative}
+import cats.{~>}
 import cats.data.Kleisli
 import scredis.{Client ⇒ ScredisClient}
 
