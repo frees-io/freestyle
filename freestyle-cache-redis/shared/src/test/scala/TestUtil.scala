@@ -2,19 +2,19 @@ package freestyle.cache.redis
 
 import cats.arrow.FunctionK
 import cats.instances.future
-import scredis._
 import scala.concurrent.{ExecutionContext, Future}
+import freestyle.cache.redis.rediscala._
 
 object TestUtil {
 
-  def redisMap(implicit ec: ExecutionContext): RedisMapWrapper[Future, String, Int] = {
+  def redisMap(implicit ec: ExecutionContext): MapWrapper[Future, String, Int] = {
     val format = Format((key: String) => key)
-    val reader = Readers.parser(str => scala.util.Try(Integer.parseInt(str)).toOption)
-    val writer = Writers.printer((age: Int) => age.toString)
+    val reader = Deserializers.parser(str => scala.util.Try(Integer.parseInt(str)).toOption)
+    val writer = Serializers.printer((age: Int) => age.toString)
     val toM    = FunctionK.id[Future]
     val funcM  = future.catsStdInstancesForFuture(ec)
 
-    new RedisMapWrapper()(format, reader, writer, toM, funcM)
+    new MapWrapper()(format, reader, writer, toM, funcM)
   }
 
 }

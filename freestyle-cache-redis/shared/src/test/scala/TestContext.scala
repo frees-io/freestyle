@@ -1,7 +1,7 @@
 package freestyle.cache.redis
 
 import _root_.redis.embedded.RedisServer
-import _root_.scredis.{Client ⇒ ScredisClient}
+import _root_.redis.RedisClient
 import akka.actor.ActorSystem
 import org.scalatest.{BeforeAndAfterAll, BeforeAndAfterEach, Suite}
 
@@ -11,13 +11,13 @@ trait RedisTestContext extends BeforeAndAfterAll with BeforeAndAfterEach { self:
 
   private[this] implicit val actorSystem: ActorSystem =
     ActorSystem.create("testing")
-  val client: ScredisClient =
-    ScredisClient(host = "localhost", port = server.getPort)
+  val client: RedisClient =
+    RedisClient(host = "localhost", port = server.getPort)
 
   override def beforeAll = server.start()
   override def afterAll = {
     server.stop()
     actorSystem.terminate()
   }
-  override def beforeEach = client.flushAll
+  override def beforeEach = client.flushdb
 }

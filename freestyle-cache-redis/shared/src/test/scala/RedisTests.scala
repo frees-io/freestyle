@@ -3,7 +3,7 @@ package freestyle.cache.redis
 import cats.{~>, Applicative}
 import freestyle._
 import freestyle.implicits._
-import freestyle.cache.redis.scredis._
+import freestyle.cache.redis.rediscala._
 import org.scalatest._
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -15,10 +15,10 @@ class RedisTests extends AsyncWordSpec with Matchers with RedisTestContext {
 
   import provider.cache.CacheM
 
-  implicit val redisMap: RedisMapWrapper[Future, String, Int] = TestUtil.redisMap
+  implicit val redisMap: MapWrapper[Future, String, Int] = TestUtil.redisMap
 
-  implicit val interpreter: ScredisOps[Future, ?] ~> Future =
-    new ScredisOpsInterpret[Future](client)
+  implicit val interpreter: Ops[Future, ?] ~> Future =
+    new Interpret[Future](client)
 
   import provider.implicits._
 

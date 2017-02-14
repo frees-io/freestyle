@@ -2,7 +2,7 @@ package freestyle.cache
 
 import cats.{~>}
 import freestyle.cache._
-import freestyle.cache.redis.scredis.{RedisMapWrapper, ScredisOps}
+import freestyle.cache.redis.rediscala.{MapWrapper, Ops => RediscalaOps}
 
 package redis {
 
@@ -13,14 +13,14 @@ package redis {
     object implicits {
 
       implicit def redisCacheInterpreter[M[+ _]](
-          implicit redisMap: RedisMapWrapper[M, Key, Val],
-          interpret: ScredisOps[M, ?] ~> M
+          implicit redisMap: MapWrapper[M, Key, Val],
+          interpret: RediscalaOps[M, ?] ~> M
       ): cache.CacheM.Interpreter[M] =
         new RedisCacheInterpreter[M](redisMap, interpret)
 
       private[this] class RedisCacheInterpreter[M[+ _]](
-          redisMap: RedisMapWrapper[M, Key, Val],
-          interpret: ScredisOps[M, ?] ~> M
+          redisMap: MapWrapper[M, Key, Val],
+          interpret: RediscalaOps[M, ?] ~> M
       ) extends cache.CacheM.Interpreter[M] {
 
         override def getImpl(key: Key): M[Option[Val]] =
