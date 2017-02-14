@@ -5,6 +5,7 @@ import cats.{Eval, MonadError}
 import scala.concurrent._
 
 object async {
+
   /** An asynchronous computation that might fail. **/
   type Proc[A] = (Either[Throwable, A] => Unit) => Unit
 

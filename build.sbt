@@ -151,8 +151,8 @@ lazy val freestyleAsyncMonix = (crossProject in file("freestyle-async-monix")).
 lazy val freestyleAsyncMonixJVM = freestyleAsyncMonix.jvm
 lazy val freestyleAsyncMonixJS  = freestyleAsyncMonix.js
 
-lazy val freestyleAsyncFs = (project in file("freestyle-async-fs2")).
-  dependsOn(freestyleJVM, freestyleAsyncJVM).
+lazy val freestyleAsyncFs = (crossProject in file("freestyle-async-fs2")).
+  dependsOn(freestyle, freestyleAsync).
   settings(commonSettings: _*).
   settings(name := "freestyle-async-fs2").
   settings(
@@ -162,6 +162,9 @@ lazy val freestyleAsyncFs = (project in file("freestyle-async-fs2")).
       "co.fs2" %% "fs2-cats" % "0.3.0"
     )
   )
+
+lazy val freestyleAsyncFsJVM = freestyleAsyncFs.jvm
+lazy val freestyleAsyncFsJS  = freestyleAsyncFs.js
 
 lazy val freestyleDoobie = (project in file("freestyle-doobie")).
   dependsOn(freestyleJVM).
