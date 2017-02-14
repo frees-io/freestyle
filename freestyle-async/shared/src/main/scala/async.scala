@@ -1,7 +1,5 @@
 package freestyle
 
-import cats.{Eval, MonadError}
-
 import scala.concurrent._
 
 object async {

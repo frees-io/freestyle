@@ -40,6 +40,7 @@ lazy val commonSettings = Seq(
     "-Ywarn-dead-code",
     "-Ywarn-numeric-widen",
     "-Ywarn-value-discard",
+    "-Ywarn-unused-import",
     "-Xfuture"
     //"-Xlog-implicits"
     //"-Xprint:typer"

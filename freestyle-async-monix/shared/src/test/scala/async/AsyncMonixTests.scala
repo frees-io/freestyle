@@ -1,21 +1,15 @@
 package freestyle.asyncMonix
 
-import cats.{Applicative, Eval, MonadFilter}
-
-import org.scalatest._
-
+import cats.Applicative
 import freestyle._
 import freestyle.implicits._
 import freestyle.async._
 import freestyle.async.implicits._
 import freestyle.asyncMonix.implicits._
-
-import scala.concurrent._
-import scala.concurrent.duration._
-
 import monix.eval.Task
 import monix.cats._
 import monix.execution.Scheduler
+import org.scalatest._
 
 class AsyncMonixTests extends AsyncWordSpec with Matchers {
   implicit override def executionContext = Scheduler.Implicits.global

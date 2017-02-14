@@ -1,12 +1,8 @@
 package freestyle.asyncMonix
 
-import cats.{Eval, MonadError}
-
 import freestyle.async._
-
-import scala.concurrent._
 import monix.eval.Task
-import monix.execution.{Cancelable, Scheduler}
+import monix.execution.Cancelable
 
 object implicits {
   implicit val monixTaskAsyncContext = new AsyncContext[Task] {

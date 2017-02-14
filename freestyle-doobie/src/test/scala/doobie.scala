@@ -1,7 +1,6 @@
 package freestyle
 
 import cats.Applicative
-import cats.syntax.either._
 import fs2.Task
 import fs2.interop.cats._
 import org.scalatest._

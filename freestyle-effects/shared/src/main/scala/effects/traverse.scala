@@ -1,10 +1,7 @@
 package freestyle.effects
 
 import freestyle._
-import cats.{~>, Foldable, MonadCombine}
-import cats.data.ValidatedNel
-import cats.free.Free
-
+import cats.{Foldable, MonadCombine}
 import cats.implicits._
 
 object traverse {

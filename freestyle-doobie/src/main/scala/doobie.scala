@@ -1,6 +1,5 @@
 package freestyle
 
-import cats.{~>, Foldable}
 import _root_.doobie.imports._
 import fs2.util.{Catchable, Suspendable}
 

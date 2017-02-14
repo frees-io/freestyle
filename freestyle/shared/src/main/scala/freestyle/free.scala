@@ -13,7 +13,6 @@ object free {
 
   def impl(c: whitebox.Context)(annottees: c.Expr[Any]*): c.universe.Tree = {
     import c.universe._
-    import internal.reificationSupport._
 
     def fail(msg: String) = c.abort(c.enclosingPosition, msg)
 

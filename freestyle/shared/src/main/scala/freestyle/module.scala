@@ -6,7 +6,6 @@ import cats.syntax.functor._
 import scala.annotation.{compileTimeOnly, StaticAnnotation}
 import scala.language.experimental.macros
 import scala.reflect.macros.whitebox
-import scala.reflect.runtime.universe._
 import scala.reflect.runtime.{currentMirror => cm}
 
 trait Modular
@@ -130,7 +129,6 @@ object module {
 
   def impl(c: whitebox.Context)(annottees: c.Expr[Any]*): c.universe.Tree = {
     import c.universe._
-    import scala.reflect.internal._
     import internal.reificationSupport._
 
     def fail(msg: String) = c.abort(c.enclosingPosition, msg)

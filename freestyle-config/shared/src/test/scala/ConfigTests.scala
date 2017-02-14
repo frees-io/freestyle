@@ -1,13 +1,11 @@
 package freestyle
 
-import org.scalatest._
-
-import freestyle.config._
-import freestyle.implicits._
-import freestyle.config.implicits._
-import scala.concurrent._
-import scala.concurrent.duration._
 import cats.implicits._
+import freestyle.config._
+import freestyle.config.implicits._
+import freestyle.implicits._
+import org.scalatest._
+import scala.concurrent._
 
 class ConfigTests extends AsyncWordSpec with Matchers {
 

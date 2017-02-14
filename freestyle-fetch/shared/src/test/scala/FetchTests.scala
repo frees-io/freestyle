@@ -3,13 +3,12 @@ package freestyle
 import org.scalatest._
 import _root_.fetch._
 import _root_.fetch.implicits._
-import cats.{Applicative, Eval}
+import cats.Applicative
 
 import freestyle.fetch._
 import freestyle.implicits._
 import freestyle.fetch.implicits._
 import scala.concurrent._
-import scala.concurrent.duration._
 
 class FetchTests extends AsyncWordSpec with Matchers {
 
@@ -74,7 +73,6 @@ object algebras {
 
 object datasources {
   import cats.data.NonEmptyList
-  import cats.instances.list._
 
   implicit object ToStringSource extends DataSource[Int, String] {
     override def name = "ToString"
