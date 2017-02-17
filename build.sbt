@@ -1,5 +1,4 @@
 import catext.Dependencies._
-import microsites.MicrositeKeys.{micrositeBaseUrl, micrositeDescription, micrositeDocumentationUrl, micrositeGithubOwner, micrositeGithubRepo, micrositeName, micrositePalette}
 
 addCommandAlias("debug", "; clean ; test")
 
@@ -15,8 +14,8 @@ lazy val commonSettings = Seq(
   scalaVersion in ThisBuild := "2.12.0",
   crossScalaVersions in ThisBuild := Seq("2.11.8", "2.12.0"),
   scalaOrganization in ThisBuild := "org.typelevel",
-  organization := gh.org,
-  organizationName := gh.publishOrg,
+  organization in ThisBuild  := gh.org,
+  organizationName in ThisBuild  := gh.publishOrg,
   homepage := Option(url("http://www.47deg.com")),
   organizationHomepage := Some(new URL("http://47deg.com")),
   startYear := Some(2016),
