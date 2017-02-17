@@ -1,6 +1,9 @@
-addSbtPlugin("com.fortysevendeg" % "sbt-catalysts-extras" % "0.1.2")
+resolvers += ("snapshots" at
+    "https://oss.sonatype.org/content/repositories/snapshots")
 
-addSbtPlugin("com.fortysevendeg" % "sbt-microsites" % "0.4.0")
+addSbtPlugin("com.fortysevendeg" % "sbt-catalysts-extras" % "0.1.3")
+
+addSbtPlugin("com.fortysevendeg" % "sbt-microsites" % "0.5.0-SNAPSHOT")
 
 addSbtPlugin("com.geirsson" % "sbt-scalafmt" % "0.4.10")
 
