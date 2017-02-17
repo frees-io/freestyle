@@ -73,7 +73,11 @@ lazy val micrositeSettings = Seq(
     "gray"              -> "#646D7B",
     "gray-light"        -> "#E6E7EC",
     "gray-lighter"      -> "#F4F5F9",
-    "white-color"       -> "#E6E7EC"))
+    "white-color"       -> "#E6E7EC"),
+  micrositeKazariCodeMirrorTheme := "dracula",
+  micrositeKazariDependencies := Seq(microsites.KazariDependency("com.fortysevendeg", "freestyle", version.value)),
+  micrositeKazariResolvers := Seq("https://oss.sonatype.org/content/repositories/snapshots")
+)
 
 pgpPassphrase := Some(sys.env.getOrElse("PGP_PASSPHRASE", "").toCharArray)
 pgpPublicRing := file(s"${sys.env.getOrElse("PGP_FOLDER", ".")}/pubring.gpg")
