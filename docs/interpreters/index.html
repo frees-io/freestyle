@@ -51,7 +51,7 @@ member in your algebras companion.</p>
   <span class="k">def</span> <span class="n">deleteImpl</span><span class="o">(</span><span class="n">key</span><span class="k">:</span> <span class="kt">String</span><span class="o">)</span><span class="k">:</span> <span class="kt">KVStoreState</span><span class="o">[</span><span class="kt">Unit</span><span class="o">]</span> <span class="k">=</span>
     <span class="nc">State</span><span class="o">.</span><span class="n">modify</span><span class="o">(</span><span class="k">_</span> <span class="o">-</span> <span class="n">key</span><span class="o">)</span>
 <span class="o">}</span>
-<span class="c1">// kvStoreInterpreter: KVStore.Interpreter[KVStoreState] = $anon$1@79c9e2c5
+<span class="c1">// kvStoreInterpreter: KVStore.Interpreter[KVStoreState] = $anon$1@47394272
 </span></code></pre>
 </div>
 
@@ -153,7 +153,7 @@ implicit evidences of each one of the individual algebra’s interpreters.</p>
 <span class="c1">// import freestyle.implicits._
 </span>
 <span class="n">program</span><span class="o">[</span><span class="kt">Backend.T</span><span class="o">].</span><span class="n">exec</span><span class="o">[</span><span class="kt">KVStoreState</span><span class="o">]</span>
-<span class="c1">// res0: KVStoreState[Option[Int]] = cats.data.StateT@8bdf551
+<span class="c1">// res0: KVStoreState[Option[Int]] = cats.data.StateT@645f1129
 </span></code></pre>
 </div>
 
