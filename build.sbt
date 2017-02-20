@@ -253,8 +253,15 @@ lazy val tests = (project in file("tests")).
   settings(
     libraryDependencies ++= Seq(
       "org.scala-lang" % "scala-reflect" % scalaVersion.value,
-      "org.scalatest" %%% "scalatest" % "3.0.1" % "test"
-    )
+      "org.scalatest" %%% "scalatest" % "3.0.1" % "test",
+      "org.ensime" %% "pcplod" % "1.2.0" % "test"
+    ),
+    fork in Test := true,
+    javaOptions in Test ++= Seq(
+      s"""-Dpcplod.settings=${(scalacOptions in Test).value.mkString(",")}""",
+      s"""-Dpcplod.classpath=${(fullClasspath in Test).value.map(_.data).mkString(",")}"""
+    ),
+    dependencyOverrides += "org.scala-lang" % "scala-compiler" % scalaVersion.value
   )
 
 lazy val docs = (project in file("docs")).

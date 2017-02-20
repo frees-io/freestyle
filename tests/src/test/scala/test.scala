@@ -433,6 +433,31 @@ class tests extends WordSpec with Matchers {
       Await.result(validator.run("1a"), Duration.Inf) shouldBe List(false, true)
     }
 
+    "generated code works in the presentation compiler" in {
+      import org.ensime.pcplod._
+      withPcPlod { pc =>
+        pc.loadScala("pcplodtest.scala")
+        println(pc.messages)
+        /**
+          Feb 20, 2017 11:01:39 PM org.ensime.pcplod.PoshPresentationCompiler$ $anonfun$create$1
+WARNING: classpath entry /home/raulraja/Documents/workspace/freestyle/freestyle-monix/jvm/target/scala-2.12/classes does not exist
+Feb 20, 2017 11:01:40 PM org.ensime.pcplod.PoshPresentationCompiler$ $anonfun$create$2
+SEVERE: bad option: '-Yliteral-types'
+Feb 20, 2017 11:01:41 PM org.ensime.pcplod.PoshPresentationCompiler$$anon$1 info0
+SEVERE: source-pcplodtest.scala,line-4,offset=48: expected start of definition
+Feb 20, 2017 11:01:41 PM org.ensime.pcplod.PoshPresentationCompiler$$anon$1 info0
+SEVERE: source-pcplodtest.scala,line-7,offset=140: not found: value PcplodTestAlgebra
+Feb 20, 2017 11:01:41 PM org.ensime.pcplod.PoshPresentationCompiler$$anon$1 info0
+SEVERE: RangePosition(pcplodtest.scala, 140, 140, 157): not found: value PcplodTestAlgebra
+Feb 20, 2017 11:01:41 PM org.ensime.pcplod.PoshPresentationCompiler$$anon$1 info0
+SEVERE: RangePosition(pcplodtest.scala, 242, 242, 259): not found: value PcplodTestAlgebra
+Feb 20, 2017 11:01:41 PM org.ensime.pcplod.PoshPresentationCompiler$$anon$1 info0
+SEVERE: RangePosition(pcplodtest.scala, 260, 260, 277): not found: value PcplodTestAlgebra
+List(PcMessage(pcplodtest.scala,Error,expected start of definition), PcMessage(pcplodtest.scala,Error,not found: value PcplodTestAlgebra), PcMessage(pcplodtest.scala,Error,not found: value PcplodTestAlgebra), PcMessage(pcplodtest.scala,Error,not found: value PcplodTestAlgebra), PcMessage(pcplodtest.scala,Error,not found: value PcplodTestAlgebra))
+          */
+      }
+    }
+
   }
 
 }
