@@ -1,10 +1,8 @@
 package freestyle
 
-import cats.free._
 import org.scalatest.{Matchers, WordSpec}
 import cats.implicits._
 import cats.arrow.FunctionK
-import cats.data.Coproduct
 
 class tests extends WordSpec with Matchers {
 
@@ -307,8 +305,6 @@ class tests extends WordSpec with Matchers {
     import algebras._
 
     class NonDeterminismTestShared {
-      import freestyle.nondeterminism._
-      import freestyle.implicits._
 
       val buf = scala.collection.mutable.ArrayBuffer.empty[Int]
 
@@ -352,7 +348,6 @@ class tests extends WordSpec with Matchers {
     }
 
     "allow non deterministic execution when interpreting to monix.eval.Task" in {
-      import freestyle.nondeterminism._
       import freestyle.implicits._
 
       import scala.concurrent._
@@ -376,7 +371,6 @@ class tests extends WordSpec with Matchers {
     }
 
     "allow deterministic programs with FreeS.Par nodes run deterministically" in {
-      import freestyle.nondeterminism._
       import freestyle.implicits._
 
       val test = new NonDeterminismTestShared
@@ -402,9 +396,6 @@ class tests extends WordSpec with Matchers {
       import scala.concurrent._
       import scala.concurrent.duration._
       import scala.concurrent.ExecutionContext.Implicits.global
-
-      import freestyle.nondeterminism._
-      import freestyle.implicits._
 
       type ParValidator[A] = Kleisli[Future, String, A]
 

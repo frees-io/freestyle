@@ -39,6 +39,7 @@ lazy val commonSettings = Seq(
     "-Ywarn-dead-code",
     "-Ywarn-numeric-widen",
     "-Ywarn-value-discard",
+    "-Ywarn-unused-import",
     "-Xfuture"
     //"-Xlog-implicits"
     //"-Xprint:typer"
@@ -168,6 +169,37 @@ lazy val freestyleAsyncFs = (crossProject in file("freestyle-async-fs2")).
 
 lazy val freestyleAsyncFsJVM = freestyleAsyncFs.jvm
 lazy val freestyleAsyncFsJS  = freestyleAsyncFs.js
+
+lazy val freestyleCache = (crossProject in file("freestyle-cache")).
+  dependsOn(freestyle).
+  settings(commonSettings: _*).
+  settings(name := "freestyle-cache").
+  settings(
+    libraryDependencies ++= Seq()
+  ).
+  jsSettings(sharedJsSettings: _*)
+
+lazy val freestyleCacheJVM = freestyleCache.jvm
+lazy val freestyleCacheJS  = freestyleCache.js
+
+lazy val freestyleCacheRedis = (crossProject in file("freestyle-redis")).
+  dependsOn(freestyle, freestyleCache).
+  settings(commonSettings: _*).
+  settings(
+    name := "freestyle-cache-redis",
+    resolvers += "Sonatype OSS Releases" at "https://oss.sonatype.org/content/repositories/releases/" ,
+    resolvers += Resolver.mavenLocal,
+    libraryDependencies ++= Seq(
+      "com.livestream" %% "scredis" % "2.1.0-SNAPSHOT",
+      "org.scalatest" %% "scalatest" % "3.0.1" % "test",
+      "com.typesafe.akka" %% "akka-actor" % "2.4.17" % "test",
+      "com.orange.redis-embedded" % "embedded-redis" % "0.6" % "test"
+    )
+  ).
+  jsSettings(sharedJsSettings: _*)
+
+lazy val freestyleCacheRedisJVM = freestyleCacheRedis.jvm
+lazy val freestyleCacheRedisJS = freestyleCacheRedis.js
 
 lazy val freestyleDoobie = (project in file("freestyle-doobie")).
   dependsOn(freestyleJVM).

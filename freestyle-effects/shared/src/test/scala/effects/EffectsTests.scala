@@ -1,6 +1,6 @@
 package freestyle.effects
 
-import cats.{Applicative, Eval, MonadFilter}
+import cats.{Applicative, Eval}
 
 import org.scalatest._
 
@@ -8,7 +8,6 @@ import freestyle._
 import freestyle.implicits._
 
 import scala.concurrent._
-import scala.concurrent.duration._
 
 class EffectsTests extends AsyncWordSpec with Matchers {
 
@@ -100,13 +99,11 @@ class EffectsTests extends AsyncWordSpec with Matchers {
 
   "Reader integration" should {
 
-    import freestyle.effects._
     import cats.data.Reader
 
     import rd.implicits._
 
     "allow retrieving an environment for a user defined type" in {
-      import cats.implicits._
       def program[F[_]: rd.ReaderM] =
         for {
           _ <- Applicative[FreeS[F, ?]].pure(1)
@@ -117,7 +114,6 @@ class EffectsTests extends AsyncWordSpec with Matchers {
     }
 
     "allow maping over the environment for a user defined type" in {
-      import cats.implicits._
       def program[F[_]: rd.ReaderM] =
         for {
           _ <- Applicative[FreeS[F, ?]].pure(1)
@@ -131,13 +127,11 @@ class EffectsTests extends AsyncWordSpec with Matchers {
 
   "State integration" should {
 
-    import freestyle.effects._
     import cats.data.State
 
     import st.implicits._
 
     "get" in {
-      import cats.implicits._
       def program[F[_]: st.StateM] =
         for {
           a <- Applicative[FreeS[F, ?]].pure(1)
@@ -148,7 +142,6 @@ class EffectsTests extends AsyncWordSpec with Matchers {
     }
 
     "set" in {
-      import cats.implicits._
       def program[F[_]: st.StateM] =
         for {
           _ <- st.StateM[F].set(1)
@@ -158,7 +151,6 @@ class EffectsTests extends AsyncWordSpec with Matchers {
     }
 
     "modify" in {
-      import cats.implicits._
       def program[F[_]: st.StateM] =
         for {
           a <- st.StateM[F].get
@@ -169,7 +161,6 @@ class EffectsTests extends AsyncWordSpec with Matchers {
     }
 
     "inspect" in {
-      import cats.implicits._
       def program[F[_]: st.StateM] =
         for {
           a <- st.StateM[F].get
@@ -179,7 +170,6 @@ class EffectsTests extends AsyncWordSpec with Matchers {
     }
 
     "syntax" in {
-      import cats.implicits._
       def program[F[_]: st.StateM] =
         for {
           a <- st.StateM[F].get
@@ -192,7 +182,6 @@ class EffectsTests extends AsyncWordSpec with Matchers {
 
   "Writer integration" should {
 
-    import freestyle.effects._
     import cats.data.Writer
 
     import wr.implicits._

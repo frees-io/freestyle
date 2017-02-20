@@ -1,16 +1,11 @@
 package freestyle
 
-import cats.{Applicative, Eval, MonadFilter}
-
-import org.scalatest._
-
-import freestyle._
-import freestyle.implicits._
+import cats.Applicative
 import freestyle.async._
 import freestyle.async.implicits._
-
+import freestyle.implicits._
+import org.scalatest._
 import scala.concurrent._
-import scala.concurrent.duration._
 
 class AsyncTests extends AsyncWordSpec with Matchers {
   implicit override def executionContext = ExecutionContext.Implicits.global

@@ -1,8 +1,7 @@
 package freestyle.effects
 
 import freestyle._
-import cats.{Eval, Monad, MonadReader}
-import cats.arrow.FunctionK
+import cats.MonadReader
 
 object reader {
 
