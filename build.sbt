@@ -172,9 +172,9 @@ lazy val freestyleAsyncFsJS  = freestyleAsyncFs.js
 lazy val freestyleCache = (crossProject in file("freestyle-cache")).
   dependsOn(freestyle).
   settings(commonSettings: _*).
-  settings(name := "freestyle-cache").
   settings(
-    libraryDependencies ++= Seq()
+    name := "freestyle-cache",
+    libraryDependencies += "org.scalatest" %% "scalatest" % "3.0.1" % "test"
   ).
   jsSettings(sharedJsSettings: _*)
 

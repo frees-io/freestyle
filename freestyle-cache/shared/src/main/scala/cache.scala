@@ -1,5 +1,7 @@
 package freestyle
 
+import cats.{~>}
+
 package cache {
 
   class KeyValueProvider[Key, Val] {
@@ -16,11 +18,9 @@ package cache {
       def get(key: Key): FreeS.Par[F, Option[Val]]
 
       // Sets the value of a key to a newValue.
-      //  @returns: Was there a previous entry for `key`? */
       def put(key: Key, newVal: Val): FreeS.Par[F, Unit]
 
       // Removes the entry for the key if one exists
-      // @returns: Was there a previous entry for `key`?
       def del(key: Key): FreeS.Par[F, Unit]
 
       // Returns whether there is an entry for key or not.
@@ -63,35 +63,46 @@ package cache {
      *      del(m)   >> get(n) === get(n) >>= (w => (del(m)   >>= return(w) )
      *
      */
+
     object implicits {
+      implicit def cacheInterpreter[F[_], G[_]](
+          implicit rawMap: KeyValueMap[F, Key, Val],
+          interpret: F ~> G
+      ): CacheM.Interpreter[G] = new CacheInterpreter[F, G]
 
-      import cats.Functor
-      import hashmap._
+      private[this] class CacheInterpreter[F[_], G[_]](
+          implicit rawMap: KeyValueMap[F, Key, Val],
+          interpret: F ~> G
+      ) extends CacheM.Interpreter[G] {
 
-      private[this] class HashMapCacheInterpreter[M[_]](
-          implicit hasher: Hasher[Key],
-          C: Capture[M],
-          F: Functor[M]
-      ) extends CacheM.Interpreter[M] {
-
-        private[this] val wrapper: ConcurrentHashMapWrapper[Key, Val] =
-          new ConcurrentHashMapWrapper[Key, Val]()
-
-        override def getImpl(key: Key): M[Option[Val]] =
-          C.capture(wrapper.get(key))
-        override def putImpl(key: Key, newVal: Val): M[Unit] =
-          F.void(C.capture(wrapper.put(key, newVal)))
-        override def delImpl(key: Key): M[Unit] =
-          F.void(C.capture(wrapper.delete(key)))
-        override def hasImpl(key: Key): M[Boolean] =
-          C.capture(wrapper.get(key).isDefined)
-        override def clearImpl: M[Unit] =
-          F.void(C.capture(wrapper.flushAll()))
+        override def getImpl(key: Key): G[Option[Val]] =
+          interpret(rawMap.get(key))
+        override def putImpl(key: Key, newVal: Val): G[Unit] =
+          interpret(rawMap.put(key, newVal))
+        override def delImpl(key: Key): G[Unit] =
+          interpret(rawMap.delete(key))
+        override def hasImpl(key: Key): G[Boolean] =
+          interpret(rawMap.hasKey(key))
+        override def clearImpl: G[Unit] =
+          interpret(rawMap.clear)
       }
 
     }
-
   }
+
+  trait KeyValueMap[F[_], Key, Val] {
+
+    def get(key: Key): F[Option[Val]]
+
+    def put(key: Key, newVal: Val): F[Unit]
+
+    def delete(key: Key): F[Unit]
+
+    def hasKey(key: Key): F[Boolean]
+
+    def clear: F[Unit]
+  }
+
 }
 
 package object cache {
