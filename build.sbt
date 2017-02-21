@@ -4,56 +4,6 @@ addCommandAlias("debug", "; clean ; test")
 
 addCommandAlias("validate", "; +clean ; +test; makeMicrosite")
 
-onLoad in Global := (Command.process("project freestyle", _: State)) compose (onLoad in Global).value
-
-val dev  = Seq(Dev("47 Degrees (twitter: @47deg)", "47 Degrees"))
-val gh   = GitHubSettings("com.fortysevendeg", "freestyle", "47 Degrees", apache)
-val vAll = Versions(versions, libraries, scalacPlugins)
-
-lazy val commonSettings = Seq(
-  scalaVersion in ThisBuild := "2.12.0",
-  crossScalaVersions in ThisBuild := Seq("2.11.8", "2.12.0"),
-  scalaOrganization in ThisBuild := "org.typelevel",
-  organization in ThisBuild  := gh.org,
-  organizationName in ThisBuild  := gh.publishOrg,
-  homepage := Option(url("http://www.47deg.com")),
-  organizationHomepage := Some(new URL("http://47deg.com")),
-  startYear := Some(2016),
-  description := "A Cohesive & Pragmatic Framework of FP centric Scala libraries",
-  scalacOptions in ThisBuild ++= Seq(
-    "-Ypartial-unification", // enable fix for SI-2712
-    "-Yliteral-types",       // enable SIP-23 implementation
-    "-Xplugin-require:macroparadise",
-    "-deprecation",
-    "-encoding", "UTF-8",
-    "-feature",
-    "-language:existentials",
-    "-language:higherKinds",
-    "-language:implicitConversions",
-    "-language:reflectiveCalls",
-    "-language:experimental.macros",
-    "-unchecked",
-    //"-Xfatal-warnings",
-    //"-Xlint",
-    "-Yno-adapted-args",
-    "-Ywarn-dead-code",
-    "-Ywarn-numeric-widen",
-    "-Ywarn-value-discard",
-    "-Xfuture"
-    //"-Xlog-implicits"
-    //"-Xprint:typer"
-    //"-Ymacro-debug-lite"
-  ),
-  scalafmtConfig in ThisBuild := Some(file(".scalafmt.conf"))
-) ++
-  reformatOnCompileSettings ++
-  sharedCommonSettings ++
-  sharedReleaseProcess ++
-  credentialSettings ++
-  sharedPublishSettings(gh, dev) ++
-  miscSettings ++
-  addCompilerPlugins(vAll, "paradise", "kind-projector")
-
 lazy val micrositeSettings = Seq(
   micrositeName := "Freestyle",
   micrositeDescription := "A Cohesive & Pragmatic Framework of FP centric Scala libraries",
@@ -83,7 +33,6 @@ pgpPublicRing := file(s"${sys.env.getOrElse("PGP_FOLDER", ".")}/pubring.gpg")
 pgpSecretRing := file(s"${sys.env.getOrElse("PGP_FOLDER", ".")}/secring.gpg")
 
 lazy val freestyle = (crossProject in file("freestyle")).
-  settings(commonSettings: _*).
   settings(name := "freestyle").
   settings(
     libraryDependencies ++= Seq(
@@ -97,7 +46,6 @@ lazy val freestyleJVM = freestyle.jvm
 lazy val freestyleJS  = freestyle.js
 
 lazy val freestyleMonix = (crossProject in file("freestyle-monix")).
-  settings(commonSettings: _*).
   settings(name := "freestyle-monix").
   settings(
     libraryDependencies ++= Seq(
@@ -112,7 +60,6 @@ lazy val freestyleMonixJS  = freestyleMonix.js
 
 lazy val freestyleEffects = (crossProject in file("freestyle-effects")).
   dependsOn(freestyle).
-  settings(commonSettings: _*).
   settings(name := "freestyle-effects").
   settings(
     libraryDependencies ++= Seq(
@@ -126,7 +73,6 @@ lazy val freestyleEffectsJS  = freestyleEffects.js
 
 lazy val freestyleAsync = (crossProject in file("freestyle-async")).
   dependsOn(freestyle).
-  settings(commonSettings: _*).
   settings(name := "freestyle-async").
   settings(
     libraryDependencies ++= Seq(
@@ -140,7 +86,6 @@ lazy val freestyleAsyncJS  = freestyleAsync.js
 
 lazy val freestyleAsyncMonix = (crossProject in file("freestyle-async-monix")).
   dependsOn(freestyle, freestyleAsync).
-  settings(commonSettings: _*).
   settings(name := "freestyle-async-monix").
   settings(
     libraryDependencies ++= Seq(
@@ -156,7 +101,6 @@ lazy val freestyleAsyncMonixJS  = freestyleAsyncMonix.js
 
 lazy val freestyleAsyncFs = (crossProject in file("freestyle-async-fs2")).
   dependsOn(freestyle, freestyleAsync).
-  settings(commonSettings: _*).
   settings(name := "freestyle-async-fs2").
   settings(
     libraryDependencies ++= Seq(
@@ -171,7 +115,6 @@ lazy val freestyleAsyncFsJS  = freestyleAsyncFs.js
 
 lazy val freestyleDoobie = (project in file("freestyle-doobie")).
   dependsOn(freestyleJVM).
-  settings(commonSettings: _*).
   settings(name := "freestyle-doobie").
   settings(
     libraryDependencies ++= Seq(
@@ -186,7 +129,6 @@ lazy val fixResources = taskKey[Unit](
 
 lazy val freestyleConfig = (crossProject in file("freestyle-config")).
   dependsOn(freestyle).
-  settings(commonSettings: _*).
   settings(
     name := "freestyle-config",
     fixResources := {
@@ -213,7 +155,6 @@ lazy val freestyleConfigJS  = freestyleConfig.js
 
 lazy val freestyleFetch = (crossProject in file("freestyle-fetch")).
   dependsOn(freestyle).
-  settings(commonSettings: _*).
   settings(name := "freestyle-fetch").
   settings(
     libraryDependencies ++= Seq(
@@ -229,7 +170,6 @@ lazy val freestyleFetchJS  = freestyleFetch.js
 
 lazy val freestyleLogging = (crossProject in file("freestyle-logging")).
   dependsOn(freestyle).
-  settings(commonSettings: _*).
   settings(name := "freestyle-logging").
   settings(
     libraryDependencies += "org.scalatest" %%% "scalatest" % "3.0.1" % "test"
@@ -248,7 +188,6 @@ lazy val freestyleLoggingJS  = freestyleLogging.js
 lazy val tests = (project in file("tests")).
   dependsOn(freestyleJVM).
   dependsOn(freestyleMonixJVM).
-  settings(commonSettings: _*).
   settings(noPublishSettings: _*).
   settings(
     libraryDependencies ++= Seq(
@@ -267,7 +206,6 @@ lazy val tests = (project in file("tests")).
 lazy val docs = (project in file("docs")).
   dependsOn(freestyleJVM).
   dependsOn(freestyleEffectsJVM).
-  settings(commonSettings: _*).
   settings(micrositeSettings: _*).
   settings(noPublishSettings: _*).
   settings(
