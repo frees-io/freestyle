@@ -36,6 +36,8 @@ trait KeyCommandsCont {
   def exists[Key](key: Key)(implicit format: Format[Key]): Ops[Future, Boolean] =
     Kleisli((client: KeyCommands) => client.exists(format(key)))
 
+  def keys[Key]: Ops[Future, Seq[String]] =
+    Kleisli((client: KeyCommands) => client.keys("*"))
 }
 
 trait ServerCommandsCont {

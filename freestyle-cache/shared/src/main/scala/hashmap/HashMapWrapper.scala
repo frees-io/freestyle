@@ -14,8 +14,13 @@ final class ConcurrentHashMapWrapper[F[_], Key, Value](
     C: Capture[F]
 ) extends KeyValueMap[F, Key, Value] {
 
-  private[this] final class HKey(key: Key, hash: Int) {
+  private[this] final case class HKey(key: Key, hash: Int) {
     override def hashCode() = hash
+    override def equals(other: Any): Boolean =
+      if (other.isInstanceOf[HKey]) {
+        this.key == other.asInstanceOf[HKey].key
+      } else false
+
   }
 
   private[this] def hkey(key: Key) = new HKey(key, hasher.hashCode(key))
@@ -27,8 +32,11 @@ final class ConcurrentHashMapWrapper[F[_], Key, Value](
    * @returns Some(v) if v is the value to which the specified key is mapped, or
    *   None if this map contains no mapping for the key
    */
-  override def get(key: Key): F[Option[Value]] =
-    C.capture(Option(table.get(hkey(key)))) // Option.apply handles null
+  override def get(key: Key): F[Option[Value]] = {
+    val hk  = hkey(key)
+    val res = Option(table.get(hkey(key)))
+    C.capture(res) // Option.apply handles null
+  }
 
   override def put(key: Key, value: Value): F[Unit] =
     C.capture(table.put(hkey(key), value)) // Option.apply handles null
@@ -38,6 +46,11 @@ final class ConcurrentHashMapWrapper[F[_], Key, Value](
 
   override def hasKey(key: Key): F[Boolean] =
     C.capture(table.containsKey(hkey(key)))
+
+  override def keys: F[Seq[Key]] = {
+    import scala.collection.JavaConverters
+    C.capture(JavaConverters.asScalaSet(table.keySet()).map(_.key).toSeq)
+  }
 
   override def clear: F[Unit] = C.capture(table.clear)
 

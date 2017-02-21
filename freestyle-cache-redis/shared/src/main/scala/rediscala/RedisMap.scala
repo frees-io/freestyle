@@ -8,6 +8,7 @@ import freestyle.cache.KeyValueMap
 
 class MapWrapper[M[_], Key, Value](
     implicit format: Format[Key],
+    parser: Parser[Key],
     read: Deserializer[Option[Value]],
     writer: Serializer[Value],
     toM: Future ~> M,
@@ -26,6 +27,9 @@ class MapWrapper[M[_], Key, Value](
   override def hasKey(key: Key): Ops[M, Boolean] =
     RediscalaCont.exists(key).transform(toM)
 
+  override def keys: Ops[M, Seq[Key]] =
+    RediscalaCont.keys.transform(toM).map(_.map(parser).flatten)
+
   override def clear(): Ops[M, Unit] =
     RediscalaCont.flushDB.transform(toM).void
 
@@ -35,6 +39,7 @@ object MapWrapper {
 
   implicit def apply[M[_], Key, Value](
       implicit format: Format[Key],
+      parser: Parser[Key],
       read: Deserializer[Option[Value]],
       writer: Serializer[Value],
       toM: Future ~> M,

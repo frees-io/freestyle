@@ -10,10 +10,14 @@ object Format {
     def apply(a: A): String = print(a)
   }
 
-  object syntax {
-    implicit class KeyFormat[Key](key: Key) {
-      def format(implicit FK: Format[Key]): String = FK(key)
-    }
+  implicit val string: Format[String] = identity[String]
+}
+
+trait Parser[A] extends (String => Option[A])
+
+object Parser {
+  def apply[A](parse: String => Option[A]) = new Parser[A] {
+    def apply(s: String): Option[A] = parse(s)
   }
 
 }
