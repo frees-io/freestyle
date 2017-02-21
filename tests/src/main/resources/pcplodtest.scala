@@ -1,4 +1,6 @@
 import freestyle._
+import freestyle.implicits._
+import cats.implicits._
 
 object pcplodtest {
   @free trait PcplodTestAlgebra[F[_]] {
@@ -7,5 +9,7 @@ object pcplodtest {
   implicit val impl = new PcplodTestAlgebra.I@interpreter@nterpreter[Option] {
     override def testImpl(n:Int): Option[Int] = Some(1)
   }
-  PcplodTestAlgebra[PcplodTestAlgebra.T].exec[Option]
+  def program[F[_]: PcplodTestAlgebra]: FreeS[F, Int] = PcplodTestAlgebra[F].test(1)
+
+  program[PcplodTestAlgebra.T].exec[Option]
 }
