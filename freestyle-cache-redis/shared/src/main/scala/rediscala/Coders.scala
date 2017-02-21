@@ -10,7 +10,10 @@ object Format {
     def apply(a: A): String = print(a)
   }
 
-  implicit val string: Format[String] = identity[String]
+  implicit val string: Format[String] = new Format[String] {
+    def apply(str: String): String = str
+  }
+
 }
 
 trait Parser[A] extends (String => Option[A])

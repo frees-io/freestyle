@@ -48,8 +48,8 @@ final class ConcurrentHashMapWrapper[F[_], Key, Value](
     C.capture(table.containsKey(hkey(key)))
 
   override def keys: F[Seq[Key]] = {
-    import scala.collection.JavaConverters
-    C.capture(JavaConverters.asScalaSet(table.keySet()).map(_.key).toSeq)
+    import scala.collection.JavaConverters._
+    C.capture(table.keySet().asScala.toSeq.map(_.key))
   }
 
   override def clear: F[Unit] = C.capture(table.clear)
