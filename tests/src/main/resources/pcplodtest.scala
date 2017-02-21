@@ -9,7 +9,7 @@ object pcplodtest {
   implicit val impl = new PcplodTestAlgebra.I@interpreter@nterpreter[Option] {
     override def testImpl(n:Int): Option[Int] = Some(1)
   }
-  def program[F[_]: PcplodTestAlgebra]: FreeS[F, Int] = PcplodTestAlgebra[F].test(1)
+  def program[F[_]: PcplodTestAlgebra]: FreeS[F, Int] = PcplodTestAlgebra[F].t@test@est(1)
 
-  program[PcplodTestAlgebra.T].exec[Option]
+  val r@result@esult = program[PcplodTestAlgebra.T].exec[Option]
 }
