@@ -1,7 +1,7 @@
 import freestyle._
 
 object pcplodtest {
-  @free PcplodTestAlgebra[F[_]] {
+  @free trait PcplodTestAlgebra[F[_]] {
     def test(n: Int): FreeS[F, Int]
   }
   implicit val impl = new PcplodTestAlgebra.I@interpreter@nterpreter[Option] {
