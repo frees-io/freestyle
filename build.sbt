@@ -196,10 +196,14 @@ lazy val tests = (project in file("tests")).
       "org.ensime" %% "pcplod" % "1.2.0" % "test"
     ),
     fork in Test := true,
-    javaOptions in Test ++= Seq(
-      s"""-Dpcplod.settings=${(scalacOptions in Test).value.mkString(",")}""",
-      s"""-Dpcplod.classpath=${(fullClasspath in Test).value.map(_.data).mkString(",")}"""
-    ),
+    javaOptions in Test ++= {
+      val options = (scalacOptions in Test).value.distinct.mkString(",")
+      val cp = (fullClasspath in Test).value.map(_.data).filter(_.exists()).distinct.mkString(",")
+      Seq(
+        s"""-Dpcplod.settings=$options""",
+        s"""-Dpcplod.classpath=$cp"""
+      )
+    },
     dependencyOverrides += "org.scala-lang" % "scala-compiler" % scalaVersion.value
   )
 
