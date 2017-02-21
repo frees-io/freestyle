@@ -28,12 +28,12 @@ trait CaptureInstances {
       override def capture[A](a: => A): Future[A] = Future(a)
     }
 
-  implicit def freeStyleIdCaptureInstance: Capture[Id] =
+  implicit val freeStyleIdCaptureInstance: Capture[Id] =
     new Capture[Id] {
       override def capture[A](a: => A): Id[A] = a
     }
 
-  implicit def freeStyleTryCaptureInstance: Capture[Try] =
+  implicit val freeStyleTryCaptureInstance: Capture[Try] =
     new Capture[Try] {
       override def capture[A](a: => A): Try[A] = Try(a)
     }
