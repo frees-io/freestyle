@@ -1,36 +1,40 @@
 package freestyle.cache
 
+import cats.{~>}
 import freestyle.cache._
-import freestyle.cache.redis.scredis.{RedisMapWrapper, ScredisOpsInterpret}
+import freestyle.cache.redis.scredis.{RedisMapWrapper, ScredisOps}
 
 package redis {
 
   class RedisKeyValueProvider[Key, Val] {
 
-    val delegate = new KeyValueProvider[Key, Val]
-    import delegate._
+    val cache = new KeyValueProvider[Key, Val]
 
     object implicits {
 
-      class RedisCacheInterpreter[M[+ _]](
+      implicit def redisCacheInterpreter[M[+ _]](
           implicit redisMap: RedisMapWrapper[M, Key, Val],
-          runner: ScredisOpsInterpret[M]
-      ) extends CacheM.Interpreter[M] {
+          interpret: ScredisOps[M, ?] ~> M
+      ): cache.CacheM.Interpreter[M] =
+        new RedisCacheInterpreter[M](redisMap, interpret)
 
-        import scredis.RedisMapWrapper
+      private[this] class RedisCacheInterpreter[M[+ _]](
+          redisMap: RedisMapWrapper[M, Key, Val],
+          interpret: ScredisOps[M, ?] ~> M
+      ) extends cache.CacheM.Interpreter[M] {
 
         override def getImpl(key: Key): M[Option[Val]] =
-          runner(redisMap.get(key))
+          interpret(redisMap.get(key))
         override def putImpl(key: Key, newVal: Val): M[Unit] =
-          runner(redisMap.put(key, newVal))
+          interpret(redisMap.put(key, newVal))
         override def delImpl(key: Key): M[Unit] =
-          runner(redisMap.delete(key))
+          interpret(redisMap.delete(key))
         override def hasImpl(key: Key): M[Boolean] =
-          runner(redisMap.hasKey(key))
+          interpret(redisMap.hasKey(key))
         override def clearImpl: M[Unit] =
-          runner(redisMap.clear)
-
+          interpret(redisMap.clear)
       }
+
     }
   }
 }

@@ -188,7 +188,12 @@ lazy val freestyleCacheRedis = (crossProject in file("freestyle-cache-redis")).
     name := "freestyle-cache-redis",
     resolvers += "Sonatype OSS Releases" at "https://oss.sonatype.org/content/repositories/releases/" ,
     resolvers += Resolver.mavenLocal,
-    libraryDependencies += "com.livestream" %% "scredis" % "2.1.0-SNAPSHOT"
+    libraryDependencies ++= Seq(
+      "com.livestream" %% "scredis" % "2.1.0-SNAPSHOT",
+      "org.scalatest" %% "scalatest" % "3.0.1" % "test",
+      "com.typesafe.akka" %% "akka-actor" % "2.4.17" % "test",
+      "com.orange.redis-embedded" % "embedded-redis" % "0.6" % "test"
+    )
   ).
   jsSettings(sharedJsSettings: _*)
 

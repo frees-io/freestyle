@@ -1,6 +1,6 @@
 package freestyle.cache.redis.scredis
 
-import scredis.serialization.{Reader, UTF8StringReader, UTF8StringWriter, Writer}
+import _root_.scredis.serialization.{Reader, UTF8StringReader, UTF8StringWriter, Writer}
 
 trait Format[A] extends (A ⇒ String)
 

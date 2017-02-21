@@ -1,11 +1,9 @@
 package freestyle.cache.redis.scredis
 
 import cats.{~>, Functor}
-import cats.data.Kleisli
-import cats.data.Kleisli.catsDataFunctorForKleisli
 import cats.syntax.functor._
 import scala.concurrent.Future
-import scredis.serialization.{Reader, Writer}
+import _root_.scredis.serialization.{Reader, Writer}
 
 class RedisMapWrapper[M[+ _], Key, Value](
     implicit format: Format[Key],

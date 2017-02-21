@@ -1,14 +1,8 @@
 package freestyle.cache.redis.scredis
 
-import cats.{~>, Applicative}
+import cats.{~>}
 import cats.data.Kleisli
-import scredis.{Client ⇒ ScredisClient}
-
-// This is just cats.data.KleisliApplicative[F[_], ScredisCommands]
-// class ScredisOpsApplicative[F[+ _]](appF: Applicative[F]) extends Applicative[ScredisOps[F, ?]] {
-class KleisliApplyOn[F[+ _], A](input: A) extends (Kleisli[F, A, ?] ~> F) {
-  override def apply[B](karr: Kleisli[F, A, B]): F[B] = karr(input)
-}
+import _root_.scredis.{Client ⇒ ScredisClient}
 
 //
 // The huge problem: How do I make sure that
