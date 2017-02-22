@@ -28,7 +28,7 @@ class MapWrapper[M[_], Key, Value](
     RediscalaCont.exists(key).transform(toM)
 
   override def keys: Ops[M, List[Key]] =
-    RediscalaCont.keys.transform(toM).map(_.map(parser).flatten.toList)
+    RediscalaCont.keys.transform(toM).map(_.toList.flatMap(parser.apply))
 
   override def clear(): Ops[M, Unit] =
     RediscalaCont.flushDB.transform(toM).void
