@@ -4,11 +4,10 @@ import cats.{~>}
 import cats.data.Kleisli
 import _root_.redis.commands.Transactions
 
-//
-// The huge problem: How do I make sure that
-// - Parallel Operations (in the FreeApplicative) are all joined into a single Kleisli
-// - This single Kleisli is the only thing that goes into the `.withTransaction`.
-//
+/* An important challenge when executing operations in FreeStyle is to ensure that
+ * parallel fragments execute their operations as _parallel_ as possible.
+ * Since Redis is a single-threaded server, _parallel_ means sending operations together
+ * in a single batch, which is possible if there are no data dependencies between them. */
 class Interpret[F[_]](client: Transactions) extends (Ops[F, ?] ~> F) {
 
   override def apply[A](fa: Kleisli[F, Commands, A]): F[A] = {

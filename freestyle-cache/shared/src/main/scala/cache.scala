@@ -27,7 +27,7 @@ package cache {
       def has(key: Key): FreeS.Par[F, Boolean]
 
       // Returns the set of keys in the store
-      def keys: FreeS.Par[F, Seq[Key]]
+      def keys: FreeS.Par[F, List[Key]]
 
       // Removes all entries
       def clear: FreeS.Par[F, Unit]
@@ -86,7 +86,7 @@ package cache {
           interpret(rawMap.delete(key))
         override def hasImpl(key: Key): G[Boolean] =
           interpret(rawMap.hasKey(key))
-        override def keysImpl: G[Seq[Key]] =
+        override def keysImpl: G[List[Key]] =
           interpret(rawMap.keys)
         override def clearImpl: G[Unit] =
           interpret(rawMap.clear)
@@ -105,7 +105,7 @@ package cache {
 
     def hasKey(key: Key): F[Boolean]
 
-    def keys: F[Seq[Key]]
+    def keys: F[List[Key]]
 
     def clear: F[Unit]
   }

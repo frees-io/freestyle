@@ -30,7 +30,7 @@ trait StringCommandsCont {
 
 trait KeyCommandsCont {
 
-  def del[Key](keys: Seq[Key])(implicit format: Format[Key]): Ops[Future, Long] =
+  def del[Key](keys: List[Key])(implicit format: Format[Key]): Ops[Future, Long] =
     Kleisli((client: KeyCommands) => client.del(keys.map(format): _*))
 
   def exists[Key](key: Key)(implicit format: Format[Key]): Ops[Future, Boolean] =

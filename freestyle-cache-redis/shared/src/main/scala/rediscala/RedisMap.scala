@@ -22,13 +22,13 @@ class MapWrapper[M[_], Key, Value](
     RediscalaCont.set(key, value).transform(toM).void
 
   override def delete(key: Key): Ops[M, Unit] =
-    RediscalaCont.del(Seq(key)).transform(toM).void
+    RediscalaCont.del(List(key)).transform(toM).void
 
   override def hasKey(key: Key): Ops[M, Boolean] =
     RediscalaCont.exists(key).transform(toM)
 
-  override def keys: Ops[M, Seq[Key]] =
-    RediscalaCont.keys.transform(toM).map(_.map(parser).flatten)
+  override def keys: Ops[M, List[Key]] =
+    RediscalaCont.keys.transform(toM).map(_.map(parser).flatten.toList)
 
   override def clear(): Ops[M, Unit] =
     RediscalaCont.flushDB.transform(toM).void
