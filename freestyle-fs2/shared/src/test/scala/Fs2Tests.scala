@@ -58,7 +58,7 @@ class Fs2Tests extends AsyncWordSpec with Matchers {
     "allow a stream to be run for its effects inside a program monadic flow" in {
       val program = for {
         a <- app.nonStream.x
-        _ <- app.streamM.run(Stream.eval(Free.pure({ println("FASF") })))
+        _ <- app.streamM.run(Stream.eval(Free.pure(42)))
       } yield a
 
       program.exec[Future] map { _ shouldBe 1 }
