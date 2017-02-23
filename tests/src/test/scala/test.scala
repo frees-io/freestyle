@@ -433,6 +433,16 @@ class tests extends WordSpec with Matchers {
       Await.result(validator.run("1a"), Duration.Inf) shouldBe List(false, true)
     }
 
+    "generate code that works in the presentation compiler" in {
+      import org.ensime.pcplod._
+      withMrPlod("pcplodtest.scala") { pc =>
+        pc.typeAtPoint('result) shouldBe Some("Option[Int]")
+        pc.typeAtPoint('test) shouldBe Some("(n: Int)freestyle.FreeS[F,Int]")
+        pc.typeAtPoint('interpreter) shouldBe Some("pcplodtest.PcplodTestAlgebra.Interpreter")
+        pc.messages should be a 'empty
+      }
+    }
+
   }
 
 }
