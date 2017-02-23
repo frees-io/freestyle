@@ -203,9 +203,8 @@ lazy val tests = (project in file("tests")).
         s"""-Dpcplod.settings=$options""",
         s"""-Dpcplod.classpath=$cp"""
       )
-    },
-    dependencyOverrides += "org.scala-lang" % "scala-compiler" % scalaVersion.value
-  )
+    }
+   )
 
 lazy val docs = (project in file("docs")).
   dependsOn(freestyleJVM).
