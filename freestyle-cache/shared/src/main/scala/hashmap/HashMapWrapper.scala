@@ -32,17 +32,19 @@ final class ConcurrentHashMapWrapper[F[_], Key, Value](
    * @returns Some(v) if v is the value to which the specified key is mapped, or
    *   None if this map contains no mapping for the key
    */
-  override def get(key: Key): F[Option[Value]] = {
-    val hk  = hkey(key)
-    val res = Option(table.get(hkey(key)))
-    C.capture(res) // Option.apply handles null
+  override def get(key: Key): F[Option[Value]] = C.capture {
+    Option(table.get(hkey(key))) // Option.apply handles null
   }
 
-  override def put(key: Key, value: Value): F[Unit] =
-    C.capture(table.put(hkey(key), value)) // Option.apply handles null
+  override def put(key: Key, value: Value): F[Unit] = C.capture {
+    table.put(hkey(key), value) // Option.apply handles null
+    ()
+  }
 
-  override def delete(key: Key): F[Unit] =
-    C.capture(table.remove(hkey(key))) // Option.apply handles null
+  override def delete(key: Key): F[Unit] = C.capture {
+    table.remove(hkey(key)) // Option.apply handles null
+    ()
+  }
 
   override def hasKey(key: Key): F[Boolean] =
     C.capture(table.containsKey(hkey(key)))

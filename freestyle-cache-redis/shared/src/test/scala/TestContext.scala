@@ -14,10 +14,17 @@ trait RedisTestContext extends BeforeAndAfterAll with BeforeAndAfterEach { self:
   val client: RedisClient =
     RedisClient(host = "localhost", port = server.getPort)
 
-  override def beforeAll = server.start()
+  override def beforeAll = {
+    server.start()
+    ()
+  }
   override def afterAll = {
     server.stop()
     actorSystem.terminate()
+    ()
   }
-  override def beforeEach = client.flushdb
+  override def beforeEach = {
+    client.flushdb
+    ()
+  }
 }
