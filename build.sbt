@@ -113,6 +113,34 @@ lazy val freestyleAsyncFs = (crossProject in file("freestyle-async-fs2")).
 lazy val freestyleAsyncFsJVM = freestyleAsyncFs.jvm
 lazy val freestyleAsyncFsJS  = freestyleAsyncFs.js
 
+lazy val freestyleCache = (crossProject in file("freestyle-cache")).
+  dependsOn(freestyle).
+  settings(
+    name := "freestyle-cache",
+    libraryDependencies += "org.scalatest" %% "scalatest" % "3.0.1" % "test"
+  ).
+  jsSettings(sharedJsSettings: _*)
+
+lazy val freestyleCacheJVM = freestyleCache.jvm
+lazy val freestyleCacheJS  = freestyleCache.js
+
+lazy val freestyleCacheRedis = (crossProject in file("freestyle-cache-redis")).
+  dependsOn(freestyle, freestyleCache).
+  settings(
+    name := "freestyle-cache-redis",
+    resolvers += "Sonatype OSS Releases" at "https://oss.sonatype.org/content/repositories/releases/" ,
+    resolvers += Resolver.mavenLocal,
+    libraryDependencies ++= Seq(
+      "com.github.etaty" %% "rediscala" % "1.8.0",
+      "org.scalatest" %% "scalatest" % "3.0.1" % "test",
+      "com.typesafe.akka" %% "akka-actor" % "2.4.17" % "test",
+      "com.orange.redis-embedded" % "embedded-redis" % "0.6" % "test"
+    )
+  ).
+  jsSettings(sharedJsSettings: _*)
+
+lazy val freestyleCacheRedisJVM = freestyleCacheRedis.jvm
+
 lazy val freestyleDoobie = (project in file("freestyle-doobie")).
   dependsOn(freestyleJVM).
   settings(name := "freestyle-doobie").
