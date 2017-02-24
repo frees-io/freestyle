@@ -59,5 +59,13 @@ object fs2 {
           s.runLast.run.foldMap(attemptF)
       }
     }
+
+    implicit class Fs2FreeSyntax[A](private val s: Stream[Eff, A]) extends AnyVal {
+      def liftFS[F[_]](implicit MA: Monoid[A], SF: StreamM[F]): FreeS[F, A] =
+        liftFSPar.freeS
+
+      def liftFSPar[F[_]](implicit MA: Monoid[A], SF: StreamM[F]): FreeS.Par[F, A] =
+        SF.runFold(MA.empty, MA.combine)(s)
+    }
   }
 }

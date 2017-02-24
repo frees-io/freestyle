@@ -10,6 +10,7 @@ import fs2._
 import freestyle.fs2._
 import freestyle.implicits._
 import freestyle.fs2.implicits._
+import cats.Monoid
 import cats.instances.future._
 import scala.concurrent._
 import scala.concurrent.duration._
@@ -75,6 +76,31 @@ class Fs2Tests extends AsyncWordSpec with Matchers {
       program.exec[Future] recover {
         case OhNoException() => 42
       } map { _ shouldBe 42 }
+    }
+
+    implicit val sumMonoid: Monoid[Int] = new Monoid[Int] {
+      def empty: Int                   = 0
+      def combine(x: Int, y: Int): Int = x + y
+    }
+
+    "allow streams to be lifted to a FreeS program" in {
+      val stream: Stream[Eff, Int] = Stream.emits(List(1, 1, 40))
+
+      val program = for {
+        v <- stream.liftFS[App.T]
+      } yield v
+
+      program.exec[Future] map { _ shouldBe 42 }
+    }
+
+    "allow streams to be lifted to a FreeS parallel program" in {
+      val stream: Stream[Eff, Int] = Stream.emits(List(1, 1, 40))
+
+      val program = for {
+        v <- stream.liftFSPar[App.T]
+      } yield v
+
+      program.exec[Future] map { _ shouldBe 42 }
     }
   }
 
