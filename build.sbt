@@ -213,9 +213,24 @@ lazy val freestyleLogging = (crossProject in file("freestyle-logging")).
 lazy val freestyleLoggingJVM = freestyleLogging.jvm
 lazy val freestyleLoggingJS  = freestyleLogging.js
 
+lazy val freestyleFs2 = (crossProject in file("freestyle-fs2")).
+  dependsOn(freestyle).
+  settings(name := "freestyle-fs2").
+  settings(
+    libraryDependencies ++= Seq(
+      "org.scalatest" %%% "scalatest" % "3.0.1" % "test",
+      "co.fs2" %%% "fs2-core" % "0.9.2"
+     )
+  ).
+  jsSettings(sharedJsSettings: _*)
+
+lazy val freestyleFs2JVM = freestyleFs2.jvm
+lazy val freestyleFs2JS  = freestyleFs2.js
+
 lazy val tests = (project in file("tests")).
   dependsOn(freestyleJVM).
   dependsOn(freestyleMonixJVM).
+  dependsOn(freestyleFs2JVM).
   settings(noPublishSettings: _*).
   settings(
     libraryDependencies ++= Seq(
