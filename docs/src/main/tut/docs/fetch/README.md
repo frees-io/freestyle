@@ -20,7 +20,7 @@ object OneSource extends DataSource[Int, Int]{
  def name = "One"
  def fetchOne(id: Int): Query[Option[Int]] = Query.sync({
     println(s"Fetching ${id}")
-	Option(1)
+    Option(1)
  })
  def fetchMany(ids: NonEmptyList[Int]): Query[Map[Int, Int]] = batchingNotSupported(ids)
 }
@@ -58,8 +58,8 @@ def program[F[_]](
   implicit app: App[F]
 ): FreeS[F, Int] =  for {
     _ <- app.interact.tell("Hello")
-	x <- app.fetches.runA(fetchOne(1))
-	_ <- app.interact.tell(s"Result: ${x}")
+    x <- app.fetches.runA(fetchOne(1))
+    _ <- app.interact.tell(s"Result: ${x}")
   } yield x
 ```
 
@@ -101,8 +101,8 @@ def program[F[_]](
   implicit app: App[F]
 ): FreeS[F, Int] =  for {
     _ <- app.interact.tell("Hello")
-	x <- app.fetches.runA(fetchOne(1))
-	_ <- app.interact.tell(s"Result: ${x}")
+    x <- app.fetches.runA(fetchOne(1))
+    _ <- app.interact.tell(s"Result: ${x}")
   } yield x
 
 Await.result(program[App.T].exec[Future], Duration.Inf)
@@ -115,8 +115,8 @@ def program[F[_]](
   implicit app: App[F]
 ): FreeS[F, Int] =  for {
     _ <- app.interact.tell("Hello")
-	x <- app.fetches.runAWithCache(fetchOne(1), InMemoryCache.empty)
-	_ <- app.interact.tell(s"Result: ${x}")
+    x <- app.fetches.runAWithCache(fetchOne(1), InMemoryCache.empty)
+    _ <- app.interact.tell(s"Result: ${x}")
   } yield x
 
 Await.result(program[App.T].exec[Future], Duration.Inf)
@@ -131,8 +131,8 @@ def program[F[_]](
   implicit app: App[F]
 ): FreeS[F, FetchEnv] =  for {
     _ <- app.interact.tell("Hello")
-	env <- app.fetches.runE(fetchOne(1))
-	_ <- app.interact.tell(s"Result: ${env}")
+    env <- app.fetches.runE(fetchOne(1))
+    _ <- app.interact.tell(s"Result: ${env}")
   } yield env
 
 Await.result(program[App.T].exec[Future], Duration.Inf)
@@ -145,8 +145,8 @@ def program[F[_]](
   implicit app: App[F]
 ): FreeS[F, FetchEnv] =  for {
     _ <- app.interact.tell("Hello")
-	env <- app.fetches.runEWithCache(fetchOne(1), InMemoryCache.empty)
-	_ <- app.interact.tell(s"Result: ${env}")
+    env <- app.fetches.runEWithCache(fetchOne(1), InMemoryCache.empty)
+    _ <- app.interact.tell(s"Result: ${env}")
   } yield env
 
 Await.result(program[App.T].exec[Future], Duration.Inf)
@@ -161,9 +161,9 @@ def program[F[_]](
   implicit app: App[F]
 ): FreeS[F, FetchEnv] =  for {
     _ <- app.interact.tell("Hello")
-	r <- app.fetches.runF(fetchOne(1))
-	(env, x) = r
-	_ <- app.interact.tell(s"Result: ${env}")
+    r <- app.fetches.runF(fetchOne(1))
+    (env, x) = r
+    _ <- app.interact.tell(s"Result: ${env}")
   } yield env
 
 Await.result(program[App.T].exec[Future], Duration.Inf)
