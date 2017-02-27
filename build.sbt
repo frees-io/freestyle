@@ -252,6 +252,7 @@ lazy val tests = (project in file("tests")).
 lazy val docs = (project in file("docs")).
   dependsOn(freestyleJVM).
   dependsOn(freestyleEffectsJVM).
+  dependsOn(freestyleFetchJVM).  
   settings(micrositeSettings: _*).
   settings(noPublishSettings: _*).
   settings(
