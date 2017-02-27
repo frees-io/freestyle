@@ -1,7 +1,7 @@
 package freestyle
 
 import _root_.fs2._
-import _root_.fs2.util.{Attempt, Catchable, Free}
+import _root_.fs2.util.{Attempt, Catchable, Suspendable, Free}
 
 import cats._
 import cats.free.{Free => CFree}
@@ -20,11 +20,17 @@ object fs2 {
       a.flatMap(f)
   }
 
-  implicit val effC: Catchable[Eff] = new Catchable[Eff] {
+  implicit val effCatchable: Catchable[Eff] = new Catchable[Eff] {
     def pure[A](a: A): Eff[A]                            = Free.pure(a)
     def attempt[A](fa: Eff[A]): Eff[Attempt[A]]          = fa.attempt
     def fail[A](err: Throwable): Eff[A]                  = Free.fail(err)
     def flatMap[A, B](a: Eff[A])(f: A => Eff[B]): Eff[B] = a.flatMap(f)
+  }
+
+  implicit val effSuspendable: Suspendable[Eff] = new Suspendable[Eff] {
+    def pure[A](a: A): Eff[A]                            = Free.pure(a)
+    def flatMap[A, B](a: Eff[A])(f: A => Eff[B]): Eff[B] = a.flatMap(f)
+    def suspend[A](fa: => Eff[A]): Eff[A] = fa
   }
 
   @free sealed trait StreamM[F[_]] {
