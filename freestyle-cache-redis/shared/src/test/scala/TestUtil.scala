@@ -7,15 +7,14 @@ import freestyle.cache.redis.rediscala._
 
 object TestUtil {
 
-  def redisMap(implicit ec: ExecutionContext): MapWrapper[Future, String, Int] = {
-    val format = Format((key: String) => key)
-    val parser = Parser((str: String) => Some(str))
-    val reader = Deserializers.parser(str => scala.util.Try(Integer.parseInt(str)).toOption)
-    val writer = Serializers.printer((age: Int) => age.toString)
-    val toM    = FunctionK.id[Future]
-    val funcM  = future.catsStdInstancesForFuture(ec)
-
-    new MapWrapper()(format, parser, reader, writer, toM, funcM)
-  }
+  def redisMap(implicit ec: ExecutionContext): MapWrapper[Future, String, Int] =
+    new MapWrapper()(
+      formatKey = Format((key: String) => key),
+      parseKey = Parser((str: String) => Some(str)),
+      formatVal = Format((age: Int) => age.toString),
+      parseVal = Parser((str:String) => scala.util.Try(Integer.parseInt(str)).toOption),
+      toM    = FunctionK.id[Future],
+      funcM  = future.catsStdInstancesForFuture(ec)
+    )
 
 }
