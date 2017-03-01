@@ -9,7 +9,7 @@ import _root_.redis.commands.{
   Strings => StringCommands
 }
 
-trait StringCommandsCont {
+private[rediscala] trait StringCommandsCont {
 
   def append[Key, Value](key: Key, value: Value)(
       implicit format: Format[Key],
@@ -28,7 +28,7 @@ trait StringCommandsCont {
 
 }
 
-trait KeyCommandsCont {
+private[rediscala] trait KeyCommandsCont {
 
   def del[Key](keys: List[Key])(implicit format: Format[Key]): Ops[Future, Long] =
     Kleisli((client: KeyCommands) => client.del(keys.map(format): _*))
@@ -40,11 +40,11 @@ trait KeyCommandsCont {
     Kleisli((client: KeyCommands) => client.keys("*"))
 }
 
-trait ServerCommandsCont {
+private[rediscala] trait ServerCommandsCont {
 
   def flushDB: Ops[Future, Boolean] =
     Kleisli((client: ServerCommands) => client.flushdb)
 
 }
 
-object RediscalaCont extends StringCommandsCont with KeyCommandsCont with ServerCommandsCont
+private[rediscala] object RediscalaCont extends StringCommandsCont with KeyCommandsCont with ServerCommandsCont

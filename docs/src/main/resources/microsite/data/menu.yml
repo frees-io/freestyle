@@ -37,6 +37,9 @@ options:
       - title: Traverse
         url: docs/effects/#Traverse
 
+      - title: Cache
+        url: docs/effects/Cache/
+
   - title: Patterns
     url: TODO.html
 

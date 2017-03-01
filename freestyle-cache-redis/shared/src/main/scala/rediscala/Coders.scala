@@ -1,7 +1,5 @@
 package freestyle.cache.redis.rediscala
 
-import _root_.redis.{ByteStringSerializer => Serializer, ByteStringDeserializer => Deserializer}
-
 trait Format[A] extends (A ⇒ String)
 
 object Format {
@@ -25,16 +23,3 @@ object Parser {
 
 }
 
-object Deserializers {
-
-  def parser[A](parser: String ⇒ Option[A]): Deserializer[Option[A]] =
-    Deserializer.String.map(parser)
-
-}
-
-object Serializers {
-
-  def printer[A](printer: A ⇒ String): Serializer[A] =
-    Serializer.String.contramap(printer)
-
-}
