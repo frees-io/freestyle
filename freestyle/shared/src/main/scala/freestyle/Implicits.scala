@@ -3,17 +3,25 @@ package freestyle
 import cats.Monad
 import cats.arrow.FunctionK
 import cats.data.Coproduct
-import cats.free.FreeApplicative
+import cats.free.{FreeApplicative, Inject}
+import shapeless.Lazy
+
 
 trait Interpreters {
+
   implicit def interpretCoproduct[F[_], G[_], M[_]](
       implicit fm: FunctionK[F, M],
-      gm: FunctionK[G, M]): FunctionK[Coproduct[F, G, ?], M] =
-    fm or gm
+      gm: Lazy[FunctionK[G, M]]): FunctionK[Coproduct[F, G, ?], M] =
+    fm or gm.value
 
   implicit def interpretAp[F[_], M[_]: Monad](
       implicit fInterpreter: FunctionK[F, M]): FunctionK[FreeApplicative[F, ?], M] =
     λ[FunctionK[FreeApplicative[F, ?], M]](_.foldMap(fInterpreter))
+
+  // workaround for https://github.com/typelevel/cats/issues/1505
+  implicit def catsFreeRightInjectInstanceLazy[F[_], G[_], H[_]](
+      implicit I: Lazy[Inject[F, G]]): Inject[F, Coproduct[H, G, ?]] =
+    Inject.catsFreeRightInjectInstance(I.value)
 }
 
 object implicits extends Interpreters
