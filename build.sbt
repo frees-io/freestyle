@@ -253,7 +253,8 @@ lazy val docs = (project in file("docs")).
   dependsOn(freestyleJVM).
   dependsOn(freestyleEffectsJVM).
   dependsOn(freestyleFs2JVM).
-  dependsOn(freestyleFetchJVM).  
+  dependsOn(freestyleFetchJVM).
+  dependsOn(freestyleCacheJVM).
   settings(micrositeSettings: _*).
   settings(noPublishSettings: _*).
   settings(
@@ -261,7 +262,9 @@ lazy val docs = (project in file("docs")).
     description := "freestyle docs"
   ).
   settings(
-    libraryDependencies +=
-      "co.fs2" %% "fs2-io" % "0.9.2"
+    libraryDependencies ++= Seq(
+      "co.fs2" %% "fs2-io"   % "0.9.2",
+      "co.fs2" %% "fs2-cats" % "0.3.0"
+    )
   )
   .enablePlugins(MicrositesPlugin)
