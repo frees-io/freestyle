@@ -129,6 +129,8 @@ object program2 {
 
   type Stack[A] = Kleisli[Task, Config, A]
 
+  val me: cats.MonadError[Stack, Throwable] = cats.MonadError[Stack, Throwable]
+
   val customerId1 = UUID.fromString("00000000-0000-0000-0000-000000000000")
 
   implicit val customerPersistencteInterpreter: CustomerPersistence.Interpreter[Stack] =
