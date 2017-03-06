@@ -121,8 +121,7 @@ object free {
 
     def mkCompanionDefaultInstance(
         userTrait: ClassDef,
-        smartCtorsImpl: ClassDef,
-        adtRootName: TypeName): DefDef = {
+        smartCtorsImpl: ClassDef): DefDef = {
       val firstTParam = userTrait.tparams.head
       q"implicit def defaultInstance[..${userTrait.tparams}](implicit I: cats.free.Inject[T, ${firstTParam.name}]): ${userTrait.name}[..${userTrait.tparams
         .map(_.name)}] = new ${smartCtorsImpl.name}[..${userTrait.tparams.map(_.name)}]"
@@ -149,7 +148,6 @@ object free {
 
     def mkAbstractInterpreter(
         userTrait: ClassDef,
-        adtRootName: TypeName,
         scAdtPairs: List[(DefDef, ImplDef)]): ClassDef = {
       val firstTParam = userTrait.tparams.head
       val impls: List[(DefDef, ImplDef, DefDef)] = for {
@@ -165,7 +163,7 @@ object free {
           case _   => q"def $implName[..${sc.tparams}](..$params): ${firstTParam.name}[$retType]"
         })
       val abstractImpls = impls map (_._3)
-      val matchCases    = mkDefaultFunctionK(adtRootName, impls)
+      val matchCases    = mkDefaultFunctionK(impls)
       q"""abstract class Interpreter[..${userTrait.tparams}] extends cats.arrow.FunctionK[T, ${firstTParam.name}] {
             ..$abstractImpls
             override def apply[A](fa: T[A]): ${firstTParam.name}[A] = $matchCases
@@ -188,9 +186,9 @@ object free {
       val smartCtorsClassImpl =
         mkSmartCtorsClassImpls(userTrait, name.toTypeName, adtRootName, cpTypes, smartCtorsImpls)
       val implicitInstance =
-        mkCompanionDefaultInstance(userTrait, smartCtorsClassImpl, adtRootName)
+        mkCompanionDefaultInstance(userTrait, smartCtorsClassImpl)
       val adtType             = mkAdtType(adtRootName)
-      val abstractInterpreter = mkAbstractInterpreter(userTrait, adtRootName, scAdtPairs)
+      val abstractInterpreter = mkAbstractInterpreter(userTrait, scAdtPairs)
       val injectInstance =
         q"implicit def injectInstance[F[_]](implicit I: cats.free.Inject[T, F]): cats.free.Inject[T, F] = I"
       val result = q"""
