@@ -18,17 +18,19 @@ object free {
     def fail(msg: String) = c.abort(c.enclosingPosition, msg)
 
     def gen(): Tree = annottees match {
-      case List(Expr(cls: ClassDef)) => genModule(cls)
+      case List(Expr(cls: ClassDef)) =>
+        val effectTrait @ ClassDef(clsMods, _, _, _) = cls.duplicate
+        if (clsMods.hasFlag(Flag.TRAIT | Flag.ABSTRACT)) {
+          val effectObject = mkEffectObject(effectTrait)
+          q"""
+            $effectTrait
+            $effectObject
+          """
+        } else
+          fail(s"@free requires trait or abstract class")
       case _ =>
         fail(
           s"Invalid @free usage, only traits and abstract classes without companions are supported")
-    }
-
-    def genModule(cls: ClassDef) = {
-      val effectTrait @ ClassDef(clsMods, clsName, clsParams, clsTemplate) = cls.duplicate
-      if (!clsMods.hasFlag(Flag.TRAIT | Flag.ABSTRACT))
-        fail(s"@free requires trait or abstract class")
-      mkCompanion(clsName.toTermName, effectTrait.tparams, effectTrait)
     }
 
     def toRequestAdtName(requestDefName: TypeName) =
@@ -174,29 +176,29 @@ object free {
         case _ => false
       }.map(_.asInstanceOf[DefDef])
 
-    def mkCompanion(
-        name: TermName,
-        clsParams: List[TypeDef],
-        effectTrait: ClassDef
-    ) = {
-      val requestDefs: List[DefDef] = getRequestDefs(effectTrait)
+    def mkEffectObject(effectTrait: ClassDef) : ModuleDef= {
 
-      val requestType     = toRequestAdtName(name.toTypeName)
-      val requestTrait    = mkRequestTrait(requestType)
-      val requestClasses  = mkRequestClasses(effectTrait, requestDefs, requestType)
-      val requestTyAlias  = q"type T[A] = $requestType[A]" 
-      val cpTypes         = getTypeParams(clsParams)
+      val name: TermName = effectTrait.name.toTermName
+      val requestDefs    : List[DefDef]   = getRequestDefs(effectTrait)
+      val requestType    : TypeName       = toRequestAdtName(name.toTypeName)
+      val requestTrait   : ClassDef       = mkRequestTrait(requestType)
+      val requestClasses : List[ClassDef] = mkRequestClasses(effectTrait, requestDefs, requestType)
+      val requestTyAlias = q"type T[A] = $requestType[A]"
+
+      val effectTyParams: List[TypeDef] = effectTrait.tparams
+
+      val cpTypes: List[TypeName] = getTypeParams(effectTyParams)
 
       val smartCtorsImpls = mkSmartCtorsImpls(cpTypes, requestType, requestDefs, requestClasses)
       val smartCtorsClassImpl =
         mkSmartCtorsClassImpls(effectTrait, name.toTypeName, requestType, cpTypes, smartCtorsImpls)
       val implicitInstance =
         mkCompanionDefaultInstance(effectTrait, smartCtorsClassImpl)
-      val abstractInterpreter = mkAbstractInterpreter(effectTrait.tparams, requestDefs, requestClasses)
+      val abstractInterpreter = mkAbstractInterpreter(effectTyParams, requestDefs, requestClasses)
       val injectInstance =
         q"implicit def injectInstance[F[_]](implicit I: cats.free.Inject[T, F]): cats.free.Inject[T, F] = I"
-      val result = q"""
-        $effectTrait
+
+      q"""
         object $name {
           $requestTrait
           ..$requestClasses
@@ -208,7 +210,6 @@ object free {
           $abstractInterpreter
         }
       """
-      result
     }
 
     def getTypeParams(params: List[TypeDef]): List[TypeName] = {
