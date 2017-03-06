@@ -63,23 +63,27 @@ object free {
         adtRootName: TypeName,
         requestDefs: List[DefDef],
         requestClasses: List[ImplDef]): List[DefDef] = {
-      for {
-        (sc, adtLeaf) <- requestDefs.zip(requestClasses)
-        cpType <- typeArgs.headOption.toList
-        injTpeArgs = adtRootName :: cpType :: Nil
-        ctor <- adtLeaf find {
+
+      // Constraitn: typeArgs non empty
+      val cpType = typeArgs.head
+      val injTpeArgs = adtRootName :: cpType :: Nil
+
+      def mkSmartCtorImpl(requestDef: DefDef, requestClass: ImplDef): DefDef = {
+
+        val ctor = requestClass.find {
           case DefDef(_, TermName("<init>"), _, _, _, _) => true
           case _                                         => false
-        }
-        args = sc.vparamss.flatten.collect {
+        }.get
+
+        val args = requestDef.vparamss.flatten.collect {
           case v /*if !v.mods.hasFlag(Flag.IMPLICIT)*/ => v.name
         }
-        companionApply = adtLeaf match {
-          case c: ClassDef => q"${adtLeaf.name.toTermName}[..${c.tparams.map(_.name)}](..$args)"
-          case _           => q"new ${adtLeaf.name.toTypeName}"
+        val companionApply = requestClass match {
+          case c: ClassDef => q"${requestClass.name.toTermName}[..${c.tparams.map(_.name)}](..$args)"
+          case _           => q"new ${requestClass.name.toTypeName}"
         }
-        AppliedTypeTree(tpt, _) = sc.tpt
-        impl = tpt match {
+        val tpt = requestDef.tpt.asInstanceOf[AppliedTypeTree].tpt
+        val impl = tpt match {
           case Ident(TypeName(tp)) if tp.endsWith("FreeS") =>
             q"""
               freestyle.FreeS.liftPar(freestyle.FreeS.inject[..$injTpeArgs]($companionApply))
@@ -89,7 +93,11 @@ object free {
           case _ =>
             fail(s"unknown abstract type found in @free container: $tpt : raw: ${showRaw(tpt)}")
         }
-      } yield q"override def ${sc.name}[..${sc.tparams}](...${sc.vparamss}): ${sc.tpt} = $impl"
+        q"override def ${requestDef.name}[..${requestDef.tparams}](...${requestDef.vparamss}): ${requestDef.tpt} = $impl"
+
+      }
+
+      requestDefs.zip(requestClasses).map(p => mkSmartCtorImpl(p._1, p._2) )
     }
 
     def mkSmartCtorsClassImpls(
@@ -121,17 +129,17 @@ object free {
     def mkAdtType(adtRootName: TypeName): Tree =
       q"type T[A] = $adtRootName[A]"
 
-    def mkDefaultFunctionK(impls: List[(DefDef, ImplDef, DefDef)]): Match = {
+    def mkDefaultFunctionK(impls: List[(DefDef, ImplDef)]): Match = {
       val functorSteps = for {
-        impl <- impls
-        (sc, adtLeaf, forwarder) = impl
+        (sc, requestClass) <- impls
         wildcardsArgsTpl = sc.vparamss.flatten.collect {
           case v /*if !v.mods.hasFlag(Flag.IMPLICIT)*/ => (q"l.${v.name}", pq"_")
         }
-        pattern = pq"l @ ${adtLeaf.name.toTermName}(..${wildcardsArgsTpl.map(_._2)})"
+        delegate = TermName(sc.name.toTermName.encodedName.toString + "Impl")
+        pattern = pq"l @ ${requestClass.name.toTermName}(..${wildcardsArgsTpl.map(_._2)})"
         matchCase = wildcardsArgsTpl match {
-          case Nil => cq"$pattern => ${forwarder.name}"
-          case _   => cq"$pattern => ${forwarder.name}(..${wildcardsArgsTpl.map(_._1)})"
+          case Nil => cq"$pattern => $delegate"
+          case _   => cq"$pattern => $delegate(..${wildcardsArgsTpl.map(_._1)})"
         }
       } yield matchCase
       q"fa match {case ..$functorSteps}"
@@ -142,19 +150,20 @@ object free {
         requestDefs: List[DefDef],
         requestClasses: List[ImplDef]): ClassDef = {
       val firstTParam = userTrait.tparams.head
-      val impls: List[(DefDef, ImplDef, DefDef)] = for {
-        (sc, adtLeaf) <- requestDefs zip requestClasses
-        implName                                    = TermName(sc.name.toTermName.encodedName.toString + "Impl")
-        DefDef(_, _, _, _, tpe: AppliedTypeTree, _) = sc
-        retType <- tpe.args.lastOption.toList
-        params = sc.vparamss.flatten
-      } yield
-        (sc, adtLeaf, params match {
+
+      def mkAbstractImpl(sc: DefDef) = {
+        val implName = TermName(sc.name.toTermName.encodedName.toString + "Impl")
+        // args has at least one element
+        val retType = sc.tpt.asInstanceOf[AppliedTypeTree].args.last
+        val params = sc.vparamss.flatten
+        params match {
           case Nil => q"def $implName[..${sc.tparams}]: ${firstTParam.name}[$retType]"
           case _   => q"def $implName[..${sc.tparams}](..$params): ${firstTParam.name}[$retType]"
-        })
-      val abstractImpls = impls map (_._3)
-      val matchCases    = mkDefaultFunctionK(impls)
+        }
+      }
+
+      val abstractImpls = requestDefs.map( p => mkAbstractImpl(p) )
+      val matchCases    = mkDefaultFunctionK(requestDefs.zip(requestClasses))
       q"""abstract class Interpreter[..${userTrait.tparams}] extends cats.arrow.FunctionK[T, ${firstTParam.name}] {
             ..$abstractImpls
             override def apply[A](fa: T[A]): ${firstTParam.name}[A] = $matchCases
