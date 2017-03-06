@@ -28,10 +28,7 @@ object free {
       val userTrait @ ClassDef(clsMods, clsName, clsParams, clsTemplate) = cls.duplicate
       if (!clsMods.hasFlag(Flag.TRAIT | Flag.ABSTRACT))
         fail(s"@free requires trait or abstract class")
-      mkCompanion(clsName.toTermName, clsTemplate.filter {
-        case _: DefDef => true
-        case _         => false
-      }, clsParams, userTrait)
+      mkCompanion(clsName.toTermName, clsParams, userTrait)
     }
 
     def smartCtorNamedADT(smartCtorName: TypeName) =
@@ -42,16 +39,11 @@ object free {
 
     def mkAdtLeaves(
         userTrait: ClassDef,
-        clsRestBody: List[Tree],
+        requestDefs: List[DefDef],
         rootName: TypeName): List[(DefDef, ClassDef)] = {
       for {
-        method <- clsRestBody filter {
-          case q"$mods def $name[..$tparams](...$paramss): FreeS[..$args]"     => true
-          case q"$mods def $name[..$tparams](...$paramss): FreeS.Par[..$args]" => true
-          case _                                                               => false
-        }
-        sc @ DefDef(_, _, _, _, tpe: AppliedTypeTree, _) = method
-        retType <- tpe.args.lastOption.toList
+        sc <- requestDefs
+        retType = sc.tpt.asInstanceOf[AppliedTypeTree].args.last
         tparams = userTrait.tparams.tail ++ sc.tparams
         args    = sc.vparamss.flatten //.filter(v => !v.mods.hasFlag(Flag.IMPLICIT))
         //TODO user trait type params need to be added to the case class leave generated because its args may contain them
@@ -130,7 +122,7 @@ object free {
     def mkAdtType(adtRootName: TypeName): Tree =
       q"type T[A] = $adtRootName[A]"
 
-    def mkDefaultFunctionK(adtRootName: TypeName, impls: List[(DefDef, ImplDef, DefDef)]): Match = {
+    def mkDefaultFunctionK(impls: List[(DefDef, ImplDef, DefDef)]): Match = {
       val functorSteps = for {
         impl <- impls
         (sc, adtLeaf, forwarder) = impl
@@ -171,15 +163,23 @@ object free {
       """
     }
 
+    def getRequestDefs(effectTrait: ClassDef): List[DefDef] =
+      effectTrait.impl.filter {
+        case q"$mods def $name[..$tparams](...$paramss): FreeS[..$args]"     => true
+        case q"$mods def $name[..$tparams](...$paramss): FreeS.Par[..$args]" => true
+        case _ => false
+      }.map(_.asInstanceOf[DefDef])
+
     def mkCompanion(
         name: TermName,
-        clsRestBody: List[Tree],
         clsParams: List[TypeDef],
         userTrait: ClassDef
     ) = {
+      val requestDefs: List[DefDef] = getRequestDefs(userTrait)
+
       val adtRootName     = smartCtorNamedADT(name.toTypeName)
       val adtRoot         = mkAdtRoot(adtRootName)
-      val scAdtPairs      = mkAdtLeaves(userTrait, clsRestBody, adtRootName)
+      val scAdtPairs      = mkAdtLeaves(userTrait, requestDefs, adtRootName)
       val adtLeaves       = scAdtPairs map (_._2)
       val cpTypes         = getTypeParams(clsParams)
       val smartCtorsImpls = mkSmartCtorsImpls(cpTypes, adtRootName, scAdtPairs)
