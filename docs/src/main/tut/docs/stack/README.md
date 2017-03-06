@@ -127,7 +127,7 @@ def processOrder[F[_]: ErrorM: rd.ReaderM: cacheP.CacheM](order: Order)(implicit
                        (),
                        QuantityNotAvailable(
                          s"""There are not sufficient crates of ${order.cultivar} apples in stock
-                            |(only $nbAvailable available, while ${order.crates} needed - $order).""".stripMargin)
+                            |(${order.crates} needed, but only $nbAvailable available).""".stripMargin)
                      )
                    )
     _          <- app.persistence.stock.registerOrder(order)
@@ -207,7 +207,10 @@ type AppError[A]            = Coproduct[ErrorM.T, App.T, A]
 type AppErrorReader[A]      = Coproduct[rd.ReaderM.T, AppError, A]
 type AppErrorReaderCache[A] = Coproduct[cacheP.CacheM.T, AppErrorReader, A]
 
-val errorM = ErrorM[AppError]
+// val errorM = ErrorM[AppError]
+
+val program: FreeS[App.T, String] =
+  processOrder[App.T](Order(50, "granny smith", customerId1))
 
 val program: FreeS[AppErrorReaderCache, String] =
   processOrder[AppErrorReaderCache](Order(50, "granny smith", customerId1))

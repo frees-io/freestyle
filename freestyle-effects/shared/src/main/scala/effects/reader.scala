@@ -15,7 +15,7 @@ object reader {
 
     object implicits {
 
-      implicit def interpreter[M[_]](implicit MR: MonadReader[M, R]): ReaderM.Interpreter[M] =
+      implicit def freestyleEffectsReaderInterpreter[M[_]](implicit MR: MonadReader[M, R]): ReaderM.Interpreter[M] =
         new ReaderM.Interpreter[M] {
           def askImpl: M[R]                  = MR.ask
           def readerImpl[B](f: R => B): M[B] = MR.reader(f)

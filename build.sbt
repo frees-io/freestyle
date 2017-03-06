@@ -148,7 +148,7 @@ lazy val freestyleDoobie = (project in file("freestyle-doobie")).
     libraryDependencies ++= Seq(
       "org.tpolecat"  %% "doobie-core-cats" % "0.4.1",
       "org.tpolecat"  %% "doobie-h2-cats"   % "0.4.1" % "test",
-      "org.scalatest" %% "scalatest"        % "3.0.1"          % "test"
+      "org.scalatest" %% "scalatest"        % "3.0.1" % "test"
     )
   )
 
@@ -268,3 +268,21 @@ lazy val docs = (project in file("docs")).
     )
   )
   .enablePlugins(MicrositesPlugin)
+
+lazy val example = (project in file("freestyle-example")).
+  dependsOn(freestyleJVM).
+  dependsOn(freestyleEffectsJVM).
+  dependsOn(freestyleFs2JVM).
+  dependsOn(freestyleCacheJVM).
+  settings(noPublishSettings: _*).
+  settings(
+    name := "example",
+    description := "freestyle example"
+  ).
+  settings(
+    libraryDependencies ++= Seq(
+      "co.fs2" %% "fs2-io"   % "0.9.2",
+      "co.fs2" %% "fs2-cats" % "0.3.0"
+    )
+  ).
+  settings(scalacOptions += "-Xlog-implicits")
