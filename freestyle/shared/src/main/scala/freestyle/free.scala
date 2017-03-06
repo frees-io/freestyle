@@ -39,38 +39,50 @@ object free {
     def mkRequestTrait(requestTypeName: TypeName) =
       q"sealed trait $requestTypeName[A] extends Product with Serializable"
 
-    def mkRequestClasses(
-        effectTrait: ClassDef,
-        requestDefs: List[DefDef],
-        requestType: TypeName): List[ClassDef] = {
-
-      def mkRequestClass(sc: DefDef): ClassDef = {
+      def mkRequestClass(effectTyParams: List[TypeDef], requestType: TypeName, sc: DefDef): ClassDef = {
         val retType = sc.tpt.asInstanceOf[AppliedTypeTree].args.last
-        val tparams = effectTrait.tparams.tail ++ sc.tparams
+        val tparams = effectTyParams.tail ++ sc.tparams
         val args    = sc.vparamss.flatten //.filter(v => !v.mods.hasFlag(Flag.IMPLICIT))
         //TODO user trait type params need to be added to the case class leave generated because its args may contain them
         val className = toRequestAdtName(sc.name.toTypeName)
         args match {
           case Nil =>
-            q"""case class $className[..${tparams}]() extends $requestType[$retType] """
+            q"""case class $className[..$tparams]() extends $requestType[$retType] """
           case _ =>
-            q"""case class $className[..${tparams}](..$args) extends $requestType[$retType]"""
+            q"""case class $className[..$tparams](..$args) extends $requestType[$retType]"""
         }
       }
-      requestDefs.map( sc => mkRequestClass(sc))
+
+    def mkSmartCtor(
+      effectTrait: ClassDef,
+      effectTyParams: List[TypeDef],
+      requestType: TypeName,
+      requestDefs: List[DefDef],
+      requestClasses: List[ClassDef]
+    ): ClassDef = {
+      // Constraint: cpTypes non empty
+      val cpType: TypeName = getTypeParams(effectTyParams).head
+      val smartCtorsImpls =
+        requestDefs.zip(requestClasses)
+          .map(p => mkSmartCtorImpl(requestType, cpType, p._1, p._2) )
+
+      val effectName  = effectTrait.name.toTermName.toTypeName
+      val implName    = TypeName( effectName.decodedName.toString + "_default_impl")
+      val firstTParam = effectTyParams.head
+
+      q"""
+       class $implName[..$effectTyParams](implicit I: cats.free.Inject[T, ${firstTParam.name}])
+          extends $effectName[..${effectTyParams.map(_.name)}] {
+            ..$smartCtorsImpls
+          }
+      """
     }
 
-    def mkSmartCtorsImpls(
-        typeArgs: List[TypeName],
+      def mkSmartCtorImpl(
         requestType: TypeName,
-        requestDefs: List[DefDef],
-        requestClasses: List[ImplDef]): List[DefDef] = {
-
-      // Constraitn: typeArgs non empty
-      val cpType = typeArgs.head
-      val injTpeArgs = requestType :: cpType :: Nil
-
-      def mkSmartCtorImpl(requestDef: DefDef, requestClass: ImplDef): DefDef = {
+        cpType: TypeName,
+        requestDef: DefDef,
+        requestClass: ImplDef): DefDef = {
 
         val ctor = requestClass.find {
           case DefDef(_, TermName("<init>"), _, _, _, _) => true
@@ -84,14 +96,13 @@ object free {
           case c: ClassDef => q"${requestClass.name.toTermName}[..${c.tparams.map(_.name)}](..$args)"
           case _           => q"new ${requestClass.name.toTypeName}"
         }
+        val inject = q"freestyle.FreeS.inject[$requestType, $cpType]($companionApply)"
         val tpt = requestDef.tpt.asInstanceOf[AppliedTypeTree].tpt
         val impl = tpt match {
           case Ident(TypeName(tp)) if tp.endsWith("FreeS") =>
-            q"""
-              freestyle.FreeS.liftPar(freestyle.FreeS.inject[..$injTpeArgs]($companionApply))
-             """
+            q"freestyle.FreeS.liftPar($inject)"
           case Select(Ident(TermName(term)), TypeName(tp)) if tp.endsWith("Par") =>
-            q"freestyle.FreeS.inject[..$injTpeArgs]($companionApply)"
+            inject
           case _ =>
             fail(s"unknown abstract type found in @free container: $tpt : raw: ${showRaw(tpt)}")
         }
@@ -99,25 +110,6 @@ object free {
 
       }
 
-      requestDefs.zip(requestClasses).map(p => mkSmartCtorImpl(p._1, p._2) )
-    }
-
-    def mkSmartCtorsClassImpls(
-        effectTrait: ClassDef,
-        parentName: TypeName,
-        requestType: TypeName,
-        parentTypeArgs: List[TypeName],
-        smartCtorsImpls: List[DefDef]): ClassDef = {
-      val implName    = TypeName(parentName.decodedName.toString + "_default_impl")
-      val injTpeArgs  = requestType +: parentTypeArgs
-      val firstTParam = effectTrait.tparams.head
-      q"""
-       class $implName[..${effectTrait.tparams}](implicit I: cats.free.Inject[T, ${firstTParam.name}])
-          extends $parentName[..${effectTrait.tparams.map(_.name)}] {
-            ..$smartCtorsImpls
-          }
-      """
-    }
 
     def mkCompanionDefaultInstance(
         effectTrait: ClassDef,
@@ -179,21 +171,16 @@ object free {
     def mkEffectObject(effectTrait: ClassDef) : ModuleDef= {
 
       val name: TermName = effectTrait.name.toTermName
+      val effectTyParams: List[TypeDef] = effectTrait.tparams
+
       val requestDefs    : List[DefDef]   = getRequestDefs(effectTrait)
       val requestType    : TypeName       = toRequestAdtName(name.toTypeName)
       val requestTrait   : ClassDef       = mkRequestTrait(requestType)
-      val requestClasses : List[ClassDef] = mkRequestClasses(effectTrait, requestDefs, requestType)
+      val requestClasses : List[ClassDef] = requestDefs.map( sc => mkRequestClass(effectTyParams, requestType, sc))
       val requestTyAlias = q"type T[A] = $requestType[A]"
 
-      val effectTyParams: List[TypeDef] = effectTrait.tparams
-
-      val cpTypes: List[TypeName] = getTypeParams(effectTyParams)
-
-      val smartCtorsImpls = mkSmartCtorsImpls(cpTypes, requestType, requestDefs, requestClasses)
-      val smartCtorsClassImpl =
-        mkSmartCtorsClassImpls(effectTrait, name.toTypeName, requestType, cpTypes, smartCtorsImpls)
-      val implicitInstance =
-        mkCompanionDefaultInstance(effectTrait, smartCtorsClassImpl)
+      val smartCtorsClassImpl = mkSmartCtor(effectTrait, effectTyParams, requestType, requestDefs, requestClasses)
+      val implicitInstance = mkCompanionDefaultInstance(effectTrait, smartCtorsClassImpl)
       val abstractInterpreter = mkAbstractInterpreter(effectTyParams, requestDefs, requestClasses)
       val injectInstance =
         q"implicit def injectInstance[F[_]](implicit I: cats.free.Inject[T, F]): cats.free.Inject[T, F] = I"
@@ -205,8 +192,8 @@ object free {
           $requestTyAlias
           $smartCtorsClassImpl
           $implicitInstance
-          def apply[..${effectTrait.tparams}](implicit c: ${effectTrait.name}[..${effectTrait.tparams
-        .map(_.name)}]): ${effectTrait.name}[..${effectTrait.tparams.map(_.name)}] = c
+          def apply[..$effectTyParams](implicit c: ${effectTrait.name}[..${effectTyParams.map(_.name)}]):
+              ${effectTrait.name}[..${effectTyParams.map(_.name)}] = c
           $abstractInterpreter
         }
       """
