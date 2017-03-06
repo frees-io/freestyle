@@ -36,6 +36,9 @@ object free {
     def toRequestAdtName(requestDefName: TypeName) =
       TypeName(requestDefName.encodedName.toString.capitalize + "OP")
 
+    def classNameFor(reqDef: DefDef): TypeName =
+      toRequestAdtName(reqDef.name.toTypeName)
+
     def mkRequestTrait(requestTypeName: TypeName) =
       q"sealed trait $requestTypeName[A] extends Product with Serializable"
 
@@ -44,7 +47,7 @@ object free {
         val tparams = effectTyParams.tail ++ sc.tparams
         val args    = sc.vparamss.flatten //.filter(v => !v.mods.hasFlag(Flag.IMPLICIT))
         //TODO user trait type params need to be added to the case class leave generated because its args may contain them
-        val className = toRequestAdtName(sc.name.toTypeName)
+        val className = classNameFor(sc)
         args match {
           case Nil =>
             q"""case class $className[..$tparams]() extends $requestType[$retType] """
@@ -82,7 +85,7 @@ object free {
         requestType: TypeName,
         cpType: TypeName,
         requestDef: DefDef,
-        requestClass: ImplDef): DefDef = {
+        requestClass: ClassDef): DefDef = {
 
         val ctor = requestClass.find {
           case DefDef(_, TermName("<init>"), _, _, _, _) => true
@@ -92,9 +95,11 @@ object free {
         val args = requestDef.vparamss.flatten.collect {
           case v /*if !v.mods.hasFlag(Flag.IMPLICIT)*/ => v.name
         }
+        val reqClassName = classNameFor(requestDef)
+
         val companionApply = requestClass match {
-          case c: ClassDef => q"${requestClass.name.toTermName}[..${c.tparams.map(_.name)}](..$args)"
-          case _           => q"new ${requestClass.name.toTypeName}"
+          case c: ClassDef => q"${reqClassName.toTermName}[..${c.tparams.map(_.name)}](..$args)"
+          case _           => q"new ${reqClassName.toTypeName}"
         }
         val inject = q"freestyle.FreeS.inject[$requestType, $cpType]($companionApply)"
         val tpt = requestDef.tpt.asInstanceOf[AppliedTypeTree].tpt
@@ -119,40 +124,40 @@ object free {
         .map(_.name)}] = new ${smartCtorsImpl.name}[..${effectTrait.tparams.map(_.name)}]"
     }
 
-    def mkAbstractInterpreter(
+    def mkEffectHandler(
         effectTyParams: List[TypeDef],
-        requestDefs: List[DefDef],
-        requestClasses: List[ImplDef]): ClassDef = {
+        requestDefs: List[DefDef]): ClassDef = {
 
       val firstTParam = effectTyParams.head
 
-      def mkMatchCase(sc: DefDef, requestClass: ImplDef): CaseDef  = {
-        val wildcardsArgsTpl = sc.vparamss.flatten.collect {
+      def mkMatchCase(reqDef: DefDef): CaseDef  = {
+        val wildcardsArgsTpl = reqDef.vparamss.flatten.collect {
           case v /*if !v.mods.hasFlag(Flag.IMPLICIT)*/ => (q"l.${v.name}", pq"_")
         }
         val fields = wildcardsArgsTpl.map(_._1)
         val wildcards = wildcardsArgsTpl.map(_._2)
-        val delegate = TermName(sc.name.toTermName.encodedName.toString + "Impl")
-        val pattern = pq"l @ ${requestClass.name.toTermName}(..$wildcards)"
+        val delegate = TermName(reqDef.name.toTermName.encodedName.toString + "Impl")
+        val className = classNameFor(reqDef)
+        val pattern = pq"l @ ${className.toTermName}(..$wildcards)"
         wildcardsArgsTpl match {
           case Nil => cq"$pattern => $delegate"
           case _   => cq"$pattern => $delegate(..$fields)"
         }
       }
 
-      def mkAbstractImpl(sc: DefDef) = {
-        val implName = TermName(sc.name.toTermName.encodedName.toString + "Impl")
+      def mkRequestHandler(reqDef: DefDef) = {
+        val implName = TermName(reqDef.name.toTermName.encodedName.toString + "Impl")
         // args has at least one element
-        val retType = sc.tpt.asInstanceOf[AppliedTypeTree].args.last
-        val params = sc.vparamss.flatten
+        val retType = reqDef.tpt.asInstanceOf[AppliedTypeTree].args.last
+        val params = reqDef.vparamss.flatten
         params match {
-          case Nil => q"def $implName[..${sc.tparams}]: ${firstTParam.name}[$retType]"
-          case _   => q"def $implName[..${sc.tparams}](..$params): ${firstTParam.name}[$retType]"
+          case Nil => q"protected[this] def $implName[..${reqDef.tparams}]: ${firstTParam.name}[$retType]"
+          case _   => q"protected[this] def $implName[..${reqDef.tparams}](..$params): ${firstTParam.name}[$retType]"
         }
       }
 
-      val abstractImpls = requestDefs.map( p => mkAbstractImpl(p) )
-      val matchCases = requestDefs.zip(requestClasses).map( p => mkMatchCase(p._1, p._2) )
+      val abstractImpls = requestDefs.map( reqDef => mkRequestHandler(reqDef) )
+      val matchCases = requestDefs.map( reqDef => mkMatchCase(reqDef) )
 
       q"""abstract class Interpreter[..$effectTyParams] extends cats.arrow.FunctionK[T, ${firstTParam.name}] {
             ..$abstractImpls
@@ -181,9 +186,7 @@ object free {
 
       val smartCtorsClassImpl = mkSmartCtor(effectTrait, effectTyParams, requestType, requestDefs, requestClasses)
       val implicitInstance = mkCompanionDefaultInstance(effectTrait, smartCtorsClassImpl)
-      val abstractInterpreter = mkAbstractInterpreter(effectTyParams, requestDefs, requestClasses)
-      val injectInstance =
-        q"implicit def injectInstance[F[_]](implicit I: cats.free.Inject[T, F]): cats.free.Inject[T, F] = I"
+      val effectHandler = mkEffectHandler(effectTyParams, requestDefs)
 
       q"""
         object $name {
@@ -194,7 +197,7 @@ object free {
           $implicitInstance
           def apply[..$effectTyParams](implicit c: ${effectTrait.name}[..${effectTyParams.map(_.name)}]):
               ${effectTrait.name}[..${effectTyParams.map(_.name)}] = c
-          $abstractInterpreter
+          $effectHandler
         }
       """
     }
