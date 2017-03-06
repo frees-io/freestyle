@@ -40,32 +40,31 @@ object free {
     def mkAdtLeaves(
         userTrait: ClassDef,
         requestDefs: List[DefDef],
-        rootName: TypeName): List[(DefDef, ClassDef)] = {
-      for {
-        sc <- requestDefs
-        retType = sc.tpt.asInstanceOf[AppliedTypeTree].args.last
-        tparams = userTrait.tparams.tail ++ sc.tparams
-        args    = sc.vparamss.flatten //.filter(v => !v.mods.hasFlag(Flag.IMPLICIT))
+        rootName: TypeName): List[ClassDef] = {
+
+      def mkRequestClass(sc: DefDef): ClassDef = {
+        val retType = sc.tpt.asInstanceOf[AppliedTypeTree].args.last
+        val tparams = userTrait.tparams.tail ++ sc.tparams
+        val args    = sc.vparamss.flatten //.filter(v => !v.mods.hasFlag(Flag.IMPLICIT))
         //TODO user trait type params need to be added to the case class leave generated because its args may contain them
-        leaf: ClassDef = args match {
+        val className = smartCtorNamedADT(sc.name.toTypeName)
+        args match {
           case Nil =>
-            q"""case class ${smartCtorNamedADT(sc.name.toTypeName)}[..${tparams}]()
-            extends $rootName[$retType]
-            """
+            q"""case class $className[..${tparams}]() extends $rootName[$retType] """
           case _ =>
-            q"""case class ${smartCtorNamedADT(sc.name.toTypeName)}[..${tparams}](..$args)
-            extends $rootName[$retType]"""
+            q"""case class $className[..${tparams}](..$args) extends $rootName[$retType]"""
         }
-      } yield (sc, leaf)
+      }
+      requestDefs.map( sc => mkRequestClass(sc))
     }
 
     def mkSmartCtorsImpls(
         typeArgs: List[TypeName],
         adtRootName: TypeName,
-        scAdtPairs: List[(DefDef, ImplDef)]): List[DefDef] = {
+        requestDefs: List[DefDef],
+        requestClasses: List[ImplDef]): List[DefDef] = {
       for {
-        scAdtPair <- scAdtPairs
-        (sc, adtLeaf) = scAdtPair
+        (sc, adtLeaf) <- requestDefs.zip(requestClasses)
         cpType <- typeArgs.headOption.toList
         injTpeArgs = adtRootName :: cpType :: Nil
         ctor <- adtLeaf find {
@@ -140,11 +139,11 @@ object free {
 
     def mkAbstractInterpreter(
         userTrait: ClassDef,
-        scAdtPairs: List[(DefDef, ImplDef)]): ClassDef = {
+        requestDefs: List[DefDef],
+        requestClasses: List[ImplDef]): ClassDef = {
       val firstTParam = userTrait.tparams.head
       val impls: List[(DefDef, ImplDef, DefDef)] = for {
-        scAdtPair <- scAdtPairs
-        (sc, adtLeaf)                               = scAdtPair
+        (sc, adtLeaf) <- requestDefs zip requestClasses
         implName                                    = TermName(sc.name.toTermName.encodedName.toString + "Impl")
         DefDef(_, _, _, _, tpe: AppliedTypeTree, _) = sc
         retType <- tpe.args.lastOption.toList
@@ -178,25 +177,26 @@ object free {
       val requestDefs: List[DefDef] = getRequestDefs(userTrait)
 
       val adtRootName     = smartCtorNamedADT(name.toTypeName)
-      val adtRoot         = mkAdtRoot(adtRootName)
-      val scAdtPairs      = mkAdtLeaves(userTrait, requestDefs, adtRootName)
-      val adtLeaves       = scAdtPairs map (_._2)
+      val requestTrait    = mkAdtRoot(adtRootName)
+      val requestClasses  = mkAdtLeaves(userTrait, requestDefs, adtRootName) 
+      val requestTyAlias  = mkAdtType(adtRootName)
+      val scAdtPairs      = requestDefs.zip(requestClasses)
       val cpTypes         = getTypeParams(clsParams)
-      val smartCtorsImpls = mkSmartCtorsImpls(cpTypes, adtRootName, scAdtPairs)
+
+      val smartCtorsImpls = mkSmartCtorsImpls(cpTypes, adtRootName, requestDefs, requestClasses)
       val smartCtorsClassImpl =
         mkSmartCtorsClassImpls(userTrait, name.toTypeName, adtRootName, cpTypes, smartCtorsImpls)
       val implicitInstance =
         mkCompanionDefaultInstance(userTrait, smartCtorsClassImpl)
-      val adtType             = mkAdtType(adtRootName)
-      val abstractInterpreter = mkAbstractInterpreter(userTrait, scAdtPairs)
+      val abstractInterpreter = mkAbstractInterpreter(userTrait, requestDefs, requestClasses)
       val injectInstance =
         q"implicit def injectInstance[F[_]](implicit I: cats.free.Inject[T, F]): cats.free.Inject[T, F] = I"
       val result = q"""
         $userTrait
         object $name {
-          $adtRoot
-          ..$adtLeaves
-          $adtType
+          $requestTrait
+          ..$requestClasses
+          $requestTyAlias
           $smartCtorsClassImpl
           $implicitInstance
           def apply[..${userTrait.tparams}](implicit c: ${userTrait.name}[..${userTrait.tparams
