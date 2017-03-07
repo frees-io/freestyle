@@ -284,8 +284,9 @@ lazy val example = (project in file("freestyle-example")).
     libraryDependencies ++= Seq(
       "co.fs2" %% "fs2-io"   % "0.9.2",
       "co.fs2" %% "fs2-cats" % "0.3.0"
+      // before macro expansion ??
       // ,compilerPlugin("tryp" %% "splain" % "0.1.21")
     )
   )
-  .settings(scalacOptions += "-Ypartial-unification")
-  // .settings(scalacOptions += "-Xlog-implicits")
+  // .settings(scalacOptions += "-Ypartial-unification")
+  .settings(scalacOptions += "-Xlog-implicits")

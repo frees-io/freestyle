@@ -83,8 +83,8 @@ object program3 {
   import algebras._
   import cats.data.{Kleisli, WriterT}
   import _root_.fs2.Task
-  // import _root_.fs2.interop.cats._
-  import _root_.fs2.interop.cats.{uf1ToFunctionK => _, _}
+  import _root_.fs2.interop.cats._
+  // import _root_.fs2.interop.cats.{uf1ToFunctionK => _, _}
 
   type Stack[A] = Kleisli[WriterT[Task, Vector[String], ?], Config, A]
 
@@ -117,13 +117,14 @@ object program3 {
 
 
   // provide MTL instances for kleisli
-  import cats.{MonadError, MonadWriter}
+  import cats.{Monad, MonadError, MonadWriter}
 
 
   object KleisliMTL extends KleisliMTL1 {
-
     implicit def kleisliMonadWriter[F[_], A, L](implicit MW: MonadWriter[F, L]): MonadWriter[Kleisli[F, A, ?], L] = 
-      new MonadWriter[Kleisli[F, A, ?], L] {
+      new MonadWriter[Kleisli[F, A, ?], L] with KleisliMonad[F, A] {
+        implicit val F = MW
+
         def writer[B](bw: (L, B)): Kleisli[F, A, B] =
           Kleisli.lift(MW.writer(bw))
 
@@ -135,42 +136,33 @@ object program3 {
 
         override def tell(l: L): Kleisli[F, A, Unit] = 
           Kleisli.lift(MW.tell(l))
-
-        def pure[B](x: B): Kleisli[F, A, B] =
-          Kleisli.pure[F, A, B](x)
-
-        def flatMap[B, C](fa: Kleisli[F, A, B])(f: B => Kleisli[F, A, C]): Kleisli[F, A, C] =
-          fa.flatMap(f)
-
-        val ask: Kleisli[F, A, A] = Kleisli(MW.pure)
-
-        def local[B](f: A => A)(fa: Kleisli[F, A, B]): Kleisli[F, A, B] =
-          Kleisli(f.andThen(fa.run))
-
-        def tailRecM[B, C](b: B)(f: B => Kleisli[F, A, Either[B, C]]): Kleisli[F, A, C] =
-          Kleisli[F, A, C]({ a => MW.tailRecM(b) { f(_).run(a) } })
       }
   }
 
   trait KleisliMTL1 {
-
     implicit def kleisliMonadError[F[_], A, E](implicit ME: MonadError[F, E]): MonadError[Kleisli[F, A, ?], E] = 
-      new MonadError[Kleisli[F, A, ?], E] {
+      new MonadError[Kleisli[F, A, ?], E] with KleisliMonad[F, A] {
+        implicit val F = ME
+
         def raiseError[B](e: E): Kleisli[F, A, B] = Kleisli(_ => ME.raiseError(e))
 
         def handleErrorWith[B](kb: Kleisli[F, A, B])(f: E => Kleisli[F, A, B]): Kleisli[F, A, B] = Kleisli { a: A =>
           ME.handleErrorWith(kb.run(a))((e: E) => f(e).run(a))
         }
-
-        def pure[B](x: B): Kleisli[F, A, B] =
-          Kleisli.pure[F, A, B](x)
-
-        def flatMap[B, C](fa: Kleisli[F, A, B])(f: B => Kleisli[F, A, C]): Kleisli[F, A, C] =
-          fa.flatMap(f)
-
-        def tailRecM[B, C](b: B)(f: B => Kleisli[F, A, Either[B, C]]): Kleisli[F, A, C] =
-          Kleisli[F, A, C]({ a => ME.tailRecM(b) { f(_).run(a) } })
       }
+  }
+
+  private trait KleisliMonad[F[_], A] {
+    implicit val F: Monad[F]
+
+    def pure[B](x: B): Kleisli[F, A, B] =
+      Kleisli.pure[F, A, B](x)
+
+    def flatMap[B, C](fa: Kleisli[F, A, B])(f: B => Kleisli[F, A, C]): Kleisli[F, A, C] =
+      fa.flatMap(f)
+
+    def tailRecM[B, C](b: B)(f: B => Kleisli[F, A, Either[B, C]]): Kleisli[F, A, C] =
+      Kleisli[F, A, C]({ a => F.tailRecM(b) { f(_).run(a) } })
   }
 
   
@@ -180,8 +172,8 @@ object program3 {
 
   // check instances for provider effects are here
 
-  import cats.{Monad, MonadReader}
-  val m  = Monad[Stack]
+  import cats.MonadReader
+  val monadStack  = Monad[Stack]
   val mw = MonadWriter[Stack, Vector[String]]
   val mr = MonadReader[Stack, Config]
   val me = MonadError[Stack, Throwable]
@@ -206,13 +198,16 @@ object program3 {
   val write:  FreeS[App.T, Unit] = app.writerM.tell(Vector("hello foo"))
 
 
+  // manual coproduct
+
   import cats.data.Coproduct
   type CP1[α] = Coproduct[ErrorM.T, Persistence.T, α]
   type CP2[α] = Coproduct[wr.WriterM.T, CP1, α]
   type AppCP[α] = Coproduct[rd.ReaderM.T, CP2, α]
 
-  val write2:  FreeS[AppCP, Unit] = app.writerM.tell(Vector("hello foo"))
+  val write2:  FreeS[AppCP, Unit] = app.writerM.tell(Vector("hello foo")).freeS
 
+  val appEq = implicitly[App.T[α] =:= AppCP[α] forSome { type α }]
 
 
   // check if interpreters can be resolved
@@ -222,7 +217,7 @@ object program3 {
   val interp3: wr.WriterM.T  ~> Stack = implicitly[wr.WriterM.T  ~> Stack]
   val interp4: ErrorM.T      ~> Stack = implicitly[ErrorM.T      ~> Stack]
 
-  val interp0: App.T         ~> Stack = implicitly[App.T         ~> Stack]
+  // val interp0: App.T         ~> Stack = implicitly[App.T         ~> Stack]
 
 
   // diverging implicit expansion for type freestyle.example.program3.CP2 ~> freestyle.example.program3.Stack
@@ -233,17 +228,40 @@ object program3 {
   // starting with method freestyleWriterMInterpreter in object implicits
   //   val inCApp: AppCP ~> Stack = implicitly[AppCP ~> Stack]
   //
-  // val inC1:   CP1   ~> Stack = implicitly[CP1 ~> Stack]
+  val inC1:   CP1   ~> Stack = implicitly[CP1 ~> Stack]
   // val inC2:   CP2   ~> Stack = implicitly[CP2 ~> Stack]
   // val inCApp: AppCP ~> Stack = implicitly[AppCP ~> Stack]
 
+
+  type ReaderWriterCP[α] = Coproduct[rd.ReaderM.T, wr.WriterM.T, α]
+  val interpReaderWriterCP: ReaderWriterCP ~> Stack = implicitly[ReaderWriterCP ~> Stack]
+
+  type WriterReaderCP[α] = Coproduct[wr.WriterM.T, rd.ReaderM.T, α]
+  val interpWriterReaderCP: WriterReaderCP ~> Stack = implicitly[WriterReaderCP ~> Stack]
+
+  type ErrorReaderWriterCP[α] = Coproduct[ErrorM.T, ReaderWriterCP, α]
+  // val interpErrorReaderWriterCP: ErrorReaderWriterCP ~> Stack =
+  //   implicitly[ErrorReaderWriterCP ~> Stack]
+  val interpErrorReaderWriterCPmanual: ErrorReaderWriterCP ~> Stack = 
+    interpretCoproduct(interp4, interpretCoproduct[rd.ReaderM.T, wr.WriterM.T, Stack])
+  // val interpErrorReaderWriterCPsemi: ErrorReaderWriterCP ~> Stack = 
+  //   interpretCoproduct[ErrorM.T, ReaderWriterCP, Stack]
+
+
+  val appInterpreter: App.T ~> Stack =
+    interpretCoproduct(interp2, interpretCoproduct(interp3, interpretCoproduct[ErrorM.T, Persistence.T, Stack]))
 
   // run program
 
   val cultivars = Set("granny smith", "jonagold", "boskoop")
   val config = Config(cultivars)
 
-  val task: Task[(Vector[String], String)] = program.exec[Stack].run(config).run
+  // val task: Task[(Vector[String], String)] = program.exec[Stack].run(config).run
+  val task: Task[(Vector[String], String)] =
+    program.exec[Stack](
+      monadStack,
+      interpretAp(monadStack, appInterpreter)
+    ).run(config).run
 
   task.unsafeRunSync.fold(println, println)
 
