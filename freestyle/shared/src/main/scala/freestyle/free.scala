@@ -33,11 +33,8 @@ object free {
           s"Invalid @free usage, only traits and abstract classes without companions are supported")
     }
 
-    def toRequestAdtName(name: TypeName) =
-      TypeName(name.encodedName.toString.capitalize + "OP")
-
-    def mkRequestTrait(requestType: TypeName): ClassDef =
-      q"sealed trait $requestType[A] extends Product with Serializable"
+    // Op is the name of the Root trait of the Effect ADT
+    lazy val OP = TypeName("T")
 
     class Request(reqDef: DefDef) {
 
@@ -48,7 +45,7 @@ object free {
 
       val params: List[ValDef] = reqDef.vparamss.flatten
 
-      val className: TypeName = toRequestAdtName(reqDef.name.toTypeName)
+      val className: TypeName = TypeName(reqDef.name.toTypeName.encodedName.toString.capitalize + "OP")
 
       def handlerCase: CaseDef  = {
         // filter: !v.mods.hasFlag(Flag.IMPLICIT)
@@ -81,25 +78,24 @@ object free {
        *
        *     case class Get(id: Long) extends UserRepositoryOp[User]
        */
-      def mkRequestClass(effectTyParams: List[TypeDef], ReqT: TypeName): ClassDef = {
+      def mkRequestClass(effectTyParams: List[TypeDef]): ClassDef = {
         // Note: Effect trait type params are added to the request case class because its args may contain them
         val TTs = effectTyParams.tail ++ reqDef.tparams
         val ReqC = className
         if (params.isEmpty)
-            q"""case class $ReqC[..$TTs]() extends $ReqT[$Res] """
+            q"""case class $ReqC[..$TTs]() extends $OP[$Res] """
         else
-            q"""case class $ReqC[..$TTs](..$params) extends $ReqT[$Res]"""
+            q"""case class $ReqC[..$TTs](..$params) extends $OP[$Res]"""
       }
 
-      def lifter(requestType: TypeName, cpType: TypeName, effectTyParams: List[TypeDef]): DefDef = {
+      def lifter(cpType: TypeName, effectTyParams: List[TypeDef]): DefDef = {
         /*filter: if !v.mods.hasFlag(Flag.IMPLICIT)*/
         val tparams = effectTyParams.tail ++ reqDef.tparams
         val injected = {
           val args = params.map(_.name)
           val ReqC = className.toTermName
-          val ReqT = requestType
 
-          q"FreeS.inject[$ReqT, $cpType]( $ReqC[..${tparams.map(_.name)} ](..$args) )"
+          q"FreeS.inject[$OP, $cpType]( $ReqC[..${tparams.map(_.name)} ](..$args) )"
         }
 
         val tpt = reqDef.tpt.asInstanceOf[AppliedTypeTree].tpt
@@ -119,18 +115,17 @@ object free {
     def mkLifter(
       effectName: TypeName,
       effectTyParams: List[TypeDef],
-      requestType: TypeName,
       requests: List[Request]
     ): ClassDef = {
       // Constraint: cpTypes non empty
       val cpType: TypeName = getTypeParams(effectTyParams).head
-      val reqCtors = requests.map(_.lifter(requestType, cpType, effectTyParams) )
+      val reqCtors = requests.map(_.lifter(cpType, effectTyParams) )
 
       val liftC  = TypeName( effectName.decodedName.toString + "_default_impl")
       val FF = effectTyParams.head.name
 
       q"""
-       private[this] class $liftC[..$effectTyParams](implicit I: Inject[T, $FF])
+       private[this] class $liftC[..$effectTyParams](implicit I: Inject[$OP, $FF])
           extends $effectName[..${effectTyParams.map(_.name)}] {
             ..$reqCtors
           }
@@ -145,7 +140,7 @@ object free {
       val FF = effectTyParams.head.name
       val tts = effectTyParams.map(_.name)
       q"""
-        implicit def defaultInstance[..$effectTyParams]( implicit I: Inject[T, $FF] ): $effectName[..$tts] =
+        implicit def defaultInstance[..$effectTyParams]( implicit I: Inject[$OP, $FF] ): $effectName[..$tts] =
             new ${lifter.name}[..$tts]
       """
     }
@@ -155,9 +150,9 @@ object free {
       val delegates = requests.map( _.handlerDef(FF) )
       val cases = requests.map(_.handlerCase )
 
-      q"""trait Interpreter[..$effectTyParams] extends FunctionK[T, $FF] {
+      q"""trait Interpreter[..$effectTyParams] extends FunctionK[$OP, $FF] {
             ..$delegates
-            override def apply[A](fa: T[A]): $FF[A] = fa match { case ..$cases }
+            override def apply[A](fa: $OP[A]): $FF[A] = fa match { case ..$cases }
           }
       """
     }
@@ -175,12 +170,10 @@ object free {
       val effectTyParams: List[TypeDef] = effectTrait.tparams
 
       val requests       : List[Request]  = getRequestDefs(effectTrait).map( p => new Request(p))
-      val requestType    : TypeName       = toRequestAdtName(effectName)
-      val requestTrait   : ClassDef       = mkRequestTrait(requestType)
-      val requestClasses : List[ClassDef] = requests.map( _.mkRequestClass(effectTyParams, requestType))
-      val requestTyAlias = q"type T[A] = $requestType[A]"
 
-      val lifter = mkLifter(effectName, effectTyParams, requestType, requests)
+      val requestClasses : List[ClassDef] = requests.map( _.mkRequestClass(effectTyParams))
+
+      val lifter = mkLifter(effectName, effectTyParams, requests)
       val implicitInstance = mkDefaultInstance(effectName, effectTyParams, lifter)
       val effectHandler = mkEffectHandler(effectTyParams, requests)
 
@@ -190,9 +183,8 @@ object free {
           import cats.free.Inject
           import freestyle.FreeS
 
-          $requestTrait
+          sealed trait $OP[A] extends Product with Serializable
           ..$requestClasses
-          $requestTyAlias
           $lifter
           $implicitInstance
           def apply[..$effectTyParams](implicit c: $effectName[..${effectTyParams.map(_.name)}]):
