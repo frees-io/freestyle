@@ -33,8 +33,10 @@ object free {
           s"Invalid @free usage, only traits and abstract classes without companions are supported")
     }
 
-    // Op is the name of the Root trait of the Effect ADT
+    // OP is the name of the Root trait of the Effect ADT
     lazy val OP = TypeName("T")
+    // MM Is the target of the Interpreter's natural Transformation
+    lazy val MM = TypeName("MM")
 
     class Request(reqDef: DefDef) {
 
@@ -59,13 +61,13 @@ object free {
           cq"$pattern => $delegate(..$fields)"
       }
 
-      def handlerDef(FF: TypeName) = {
+      def handlerDef = {
         val TTs = reqDef.tparams
         // args has at least one element
         if (params.isEmpty)
-          q"protected[this] def $delegate[..$TTs]: $FF[$Res]"
+          q"protected[this] def $delegate[..$TTs]: $MM[$Res]"
         else
-          q"protected[this] def $delegate[..$TTs](..$params): $FF[$Res]"
+          q"protected[this] def $delegate[..$TTs](..$params): $MM[$Res]"
       }
 
 
@@ -146,13 +148,12 @@ object free {
     }
 
     def mkEffectHandler( effectTyParams: List[TypeDef], requests: List[Request]): ClassDef = {
-      val FF = effectTyParams.head.name
-      val delegates = requests.map( _.handlerDef(FF) )
+      val delegates = requests.map( _.handlerDef )
       val cases = requests.map(_.handlerCase )
 
-      q"""trait Interpreter[..$effectTyParams] extends FunctionK[$OP, $FF] {
+      q"""trait Interpreter[$MM[_], ..${effectTyParams.tail}] extends FunctionK[$OP, $MM] {
             ..$delegates
-            override def apply[A](fa: $OP[A]): $FF[A] = fa match { case ..$cases }
+            override def apply[A](fa: $OP[A]): $MM[A] = fa match { case ..$cases }
           }
       """
     }
