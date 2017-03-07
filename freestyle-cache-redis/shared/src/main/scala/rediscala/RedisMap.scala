@@ -26,6 +26,12 @@ class MapWrapper[M[_], Key, Value](
   override def put(key: Key, value: Value): Ops[M, Unit] =
     RediscalaCont.set(key, value).transform(toM).void
 
+  override def putAll(keyValues: Map[Key, Value]): Ops[M, Unit] =
+    RediscalaCont.mset(keyValues).transform(toM).void
+
+  override def putIfAbsent(key: Key, newVal: Value): Ops[M, Unit] =
+    RediscalaCont.setnx(key, newVal).transform(toM).void
+
   override def delete(key: Key): Ops[M, Unit] =
     RediscalaCont.del(List(key)).transform(toM).void
 

@@ -20,6 +20,12 @@ package cache {
       // Sets the value of a key to a newValue.
       def put(key: Key, newVal: Val): FreeS.Par[F, Unit]
 
+      // Copy all of the mappings from the specified map to this map
+      def putAll(keyValues: Map[Key, Val]): FreeS.Par[F, Unit]
+
+      //If the specified key is not already associated with a value, associate it with the given value.
+      def putIfAbsent(key: Key, newVal: Val): FreeS.Par[F, Unit]
+
       // Removes the entry for the key if one exists
       def del(key: Key): FreeS.Par[F, Unit]
 
@@ -82,6 +88,10 @@ package cache {
           interpret(rawMap.get(key))
         override def putImpl(key: Key, newVal: Val): G[Unit] =
           interpret(rawMap.put(key, newVal))
+        override def putAllImpl(keyValues: Map[Key, Val]):G[Unit] =
+          interpret(rawMap.putAll(keyValues))
+        override def putIfAbsentImpl(key: Key, newVal: Val) : G[Unit]=
+          interpret(rawMap.putIfAbsent(key,newVal))
         override def delImpl(key: Key): G[Unit] =
           interpret(rawMap.delete(key))
         override def hasImpl(key: Key): G[Boolean] =
@@ -100,6 +110,10 @@ package cache {
     def get(key: Key): F[Option[Val]]
 
     def put(key: Key, newVal: Val): F[Unit]
+
+    def putAll(keyValues: Map[Key, Val]) : F[Unit]
+
+    def putIfAbsent(key: Key, newVal: Val) : F[Unit]
 
     def delete(key: Key): F[Unit]
 

@@ -26,6 +26,14 @@ private[rediscala] trait StringCommandsCont {
   def set[Key: Format, Value: Serializer](key: Key, value: Value): Ops[Future, Boolean] =
     Kleisli((client: StringCommands) => client.set(key, value))
 
+  def mset[Key : Format, Value: Serializer](keyValues: Map[Key, Value])(implicit format: Format[Key]): Ops[Future, Boolean] = {
+    val b = keyValues.map { case (k,v) => (format(k), v) }
+    Kleisli((client: StringCommands) => client.mset(b))
+  }
+
+  def setnx[Key : Format, Value: Serializer](key: Key, value: Value): Ops[Future, Boolean] =
+    Kleisli((client: StringCommands) => client.setnx(key, value))
+
 }
 
 private[rediscala] trait KeyCommandsCont {
