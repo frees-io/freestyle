@@ -44,35 +44,34 @@ object free {
 
     class Request(reqDef: DefDef) {
 
-      val delegate = TermName(reqDef.name.toTermName.encodedName.toString + "Impl")
+      import reqDef.tparams
 
-      val returnType = reqDef.tpt.asInstanceOf[AppliedTypeTree].args.last
-      private[this] val Res = returnType
+      val reqImpl = TermName(reqDef.name.toTermName.encodedName.toString + "Impl")
+
+      // Name of the Request ADT Class
+      private[this] val Req: TypeName = TypeName(reqDef.name.toTypeName.encodedName.toString.capitalize + "OP")
+      private[this] val Res = reqDef.tpt.asInstanceOf[AppliedTypeTree].args.last
 
       val params: List[ValDef] = reqDef.vparamss.flatten
 
-      val className: TypeName = TypeName(reqDef.name.toTypeName.encodedName.toString.capitalize + "OP")
-
       def handlerCase: CaseDef  = {
-        // filter: !v.mods.hasFlag(Flag.IMPLICIT)
-        val fields = params.map( v => q"l.${v.name}")
-        val wildcards = params.map( v => pq"_")
-        val ReqC = className.toTermName
-        val pattern = pq"l @ $ReqC(..$wildcards)"
-        if (fields.isEmpty)
-          cq"$pattern => $delegate"
-        else
-          cq"$pattern => $delegate(..$fields)"
+        val ReqC = Req.toTermName
+        if (params.isEmpty)
+          cq"$ReqC() => $reqImpl"
+        else {
+          // filter: !v.mods.hasFlag(Flag.IMPLICIT)
+          val ffs = params.map( v => q"l.${v.name}")
+          val uss = params.map( v => pq"_")
+          cq"l @ $ReqC(..$uss) => $reqImpl(..$ffs)"
+        }
+
       }
 
-      def handlerDef = {
-        val TTs = reqDef.tparams
-        // args has at least one element
+      def handlerDef: DefDef =
         if (params.isEmpty)
-          q"protected[this] def $delegate[..$TTs]: $MM[$Res]"
+          q"protected[this] def $reqImpl[..$tparams]: $MM[$Res]"
         else
-          q"protected[this] def $delegate[..$TTs](..$params): $MM[$Res]"
-      }
+          q"protected[this] def $reqImpl[..$tparams](..$params): $MM[$Res]"
 
 
       /* A Request declaration in an Effect Trait, such as
@@ -86,22 +85,20 @@ object free {
        */
       def mkRequestClass(effectTyParams: List[TypeDef]): ClassDef = {
         // Note: Effect trait type params are added to the request case class because its args may contain them
-        val TTs = effectTyParams.tail ++ reqDef.tparams
-        val ReqC = className
+        val TTs = effectTyParams.tail ++ tparams
         if (params.isEmpty)
-            q"""case class $ReqC[..$TTs]() extends $OP[$Res] """
+          q"case class $Req[..$TTs]() extends $OP[$Res]"
         else
-            q"""case class $ReqC[..$TTs](..$params) extends $OP[$Res]"""
+          q"case class $Req[..$TTs](..$params) extends $OP[$Res]"
       }
 
-      def lifter(cpType: TypeName): DefDef = {
+      def lifter(FF: TypeName): DefDef = {
         val injected = {
-          val tparams = reqDef.tparams
           /*filter: if !v.mods.hasFlag(Flag.IMPLICIT)*/
           val args = params.map(_.name)
-          val ReqC = className.toTermName
+          val ReqC = Req.toTermName
 
-          q"FreeS.inject[$OP, $cpType]( $ReqC[..${tparams.map(_.name)} ](..$args) )"
+          q"FreeS.inject[$OP, $FF]( $ReqC[..${tparams.map(_.name)} ](..$args) )"
         }
 
         val tpt = reqDef.tpt.asInstanceOf[AppliedTypeTree].tpt
@@ -114,52 +111,38 @@ object free {
             fail(s"unknown abstract type found in @free container: $tpt : raw: ${showRaw(tpt)}")
         }
 
-        q"override def ${reqDef.name}[..${reqDef.tparams}](...${reqDef.vparamss}): ${reqDef.tpt} = $impl"
+        q"override def ${reqDef.name}[..$tparams](...${reqDef.vparamss}): ${reqDef.tpt} = $impl"
       }
     }
 
-    def mkLifterClass(
-      effectName: TypeName,
-      effectTyParams: List[TypeDef],
-      requests: List[Request]
-    ): ClassDef = {
+    def mkLifterClass( effectName: TypeName, effectTyParams: List[TypeDef], requests: List[Request] ): ClassDef = {
       // Constraint: cpTypes non empty
-      val cpType: TypeName = effectTyParams.filter(_.mods.hasFlag(Flag.PARAM)).head.name
-
-      val reqLifters = requests.map(_.lifter(cpType) )
       val FF = effectTyParams.head.name
       val TTs = effectTyParams.tail
 
       q"""
-       private[this] class $LIFT[$FF[_], ..$TTs](implicit I: Inject[$OP, $FF])
+       class $LIFT[$FF[_], ..$TTs](implicit I: Inject[$OP, $FF])
           extends $effectName[$FF, ..${TTs.map(_.name)}] {
-            ..$reqLifters
+            ..${requests.map(_.lifter(FF) )}
           }
       """
     }
 
-    def mkLifterFactory( effectName: TypeName, effectTyParams: List[TypeDef]): DefDef = {
-      val FF = effectTyParams.head.name
-      val tts = effectTyParams.tail
+    def mkLifterFactory( eff: TypeName, effTTs: List[TypeDef]): DefDef =
       q"""
-        implicit def defaultInstance[$FF[_], ..$tts](
-            implicit I: Inject[$OP, $FF]
-        ): $effectName[$FF, ..${tts.map(_.name)}] = 
-            new $LIFT[$FF, ..$tts]
+        implicit def defaultInstance[$LL[_], ..$effTTs](implicit I: Inject[$OP, $LL]): 
+            $eff[$LL, ..${effTTs.map(_.name)}] = new $LIFT[$LL, ..$effTTs]
       """
-    }
 
-    def mkEffectHandler( effectTyParams: List[TypeDef], requests: List[Request]): ClassDef = {
-      val delegates = requests.map( _.handlerDef )
-      val cases = requests.map(_.handlerCase )
-      val TTs = effectTyParams.tail
-
-      q"""trait Interpreter[$MM[_], ..$TTs] extends FunctionK[$OP, $MM] {
-            ..$delegates
-            override def apply[A](fa: $OP[A]): $MM[A] = fa match { case ..$cases }
+    def mkHandler( effTTs: List[TypeDef], requests: List[Request]): ClassDef =
+      q"""
+        trait Interpreter[$MM[_], ..$effTTs] extends FunctionK[$OP, $MM] {
+          ..${requests.map( _.handlerDef )}
+          override def apply[A](fa: $OP[A]): $MM[A] = fa match { 
+            case ..${requests.map(_.handlerCase )}
           }
+        }
       """
-    }
 
     def getRequestDefs(effectTrait: ClassDef): List[DefDef] =
       effectTrait.impl.filter {
@@ -175,8 +158,8 @@ object free {
       val requests       : List[Request]  = getRequestDefs(effectTrait).map( p => new Request(p))
       val requestClasses : List[ClassDef] = requests.map( _.mkRequestClass(effectTyParams))
       val lifterClass = mkLifterClass(effectName, effectTyParams, requests)
-      val lifterFactory = mkLifterFactory(effectName, effectTyParams)
-      val effectHandler = mkEffectHandler(effectTyParams, requests)
+      val lifterFactory = mkLifterFactory(effectName, effectTyParams.tail)
+      val effectHandler = mkHandler(effectTyParams.tail, requests)
 
       q"""
         object ${effectName.toTermName} {
