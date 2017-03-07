@@ -77,7 +77,7 @@ class tests extends WordSpec with Matchers {
         def sc1(a: Int, b: Int, c: Int): FreeS[F, Int]
         def sc2(a: Int, b: Int, c: Int): FreeS[F, Int]
       }
-      implicitly[FriendlyFreeS.T[_] =:= FriendlyFreeS.FriendlyFreeSOP[_]]
+      implicitly[FriendlyFreeS.T[_] =:= FriendlyFreeS.T[_]]
       implicitly[FriendlyFreeS.Sc1OP <:< FriendlyFreeS.T[Int]]
       implicitly[FriendlyFreeS.Sc2OP <:< FriendlyFreeS.T[Int]]
       ()
