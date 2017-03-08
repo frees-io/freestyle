@@ -229,7 +229,7 @@ for any runtime <code class="highlighter-rouge">M[_]</code> used in its interpre
 <span class="c1">// defined type alias ConfigEnv
 </span>
 <span class="k">val</span> <span class="n">rd</span> <span class="k">=</span> <span class="n">reader</span><span class="o">[</span><span class="kt">Config</span><span class="o">]</span>
-<span class="c1">// rd: freestyle.effects.reader.EnvironmentProvider[Config] = freestyle.effects.reader$EnvironmentProvider@5979f8ea
+<span class="c1">// rd: freestyle.effects.reader.EnvironmentProvider[Config] = freestyle.effects.reader$EnvironmentProvider@6a397223
 </span>
 <span class="k">import</span> <span class="nn">rd.implicits._</span>
 <span class="c1">// import rd.implicits._
@@ -286,7 +286,7 @@ for any runtime <code class="highlighter-rouge">M[_]</code> used in its interpre
 <span class="c1">// import cats.data.Writer
 </span>
 <span class="k">val</span> <span class="n">wr</span> <span class="k">=</span> <span class="n">writer</span><span class="o">[</span><span class="kt">List</span><span class="o">[</span><span class="kt">Int</span><span class="o">]]</span>
-<span class="c1">// wr: freestyle.effects.writer.AccumulatorProvider[List[Int]] = freestyle.effects.writer$AccumulatorProvider@40580281
+<span class="c1">// wr: freestyle.effects.writer.AccumulatorProvider[List[Int]] = freestyle.effects.writer$AccumulatorProvider@14dff9ee
 </span>
 <span class="k">import</span> <span class="nn">wr.implicits._</span>
 <span class="c1">// import wr.implicits._
@@ -347,7 +347,7 @@ for any runtime <code class="highlighter-rouge">M[_]</code> where <code class="h
 <span class="c1">// import cats.data.State
 </span>
 <span class="k">val</span> <span class="n">st</span> <span class="k">=</span> <span class="n">state</span><span class="o">[</span><span class="kt">Int</span><span class="o">]</span>
-<span class="c1">// st: freestyle.effects.state.StateSeedProvider[Int] = freestyle.effects.state$StateSeedProvider@6e9d0c07
+<span class="c1">// st: freestyle.effects.state.StateSeedProvider[Int] = freestyle.effects.state$StateSeedProvider@530eddcd
 </span>
 <span class="k">type</span> <span class="kt">TargetState</span><span class="o">[</span><span class="kt">A</span><span class="o">]</span> <span class="k">=</span> <span class="nc">State</span><span class="o">[</span><span class="kt">Int</span>, <span class="kt">A</span><span class="o">]</span>
 <span class="c1">// defined type alias TargetState
@@ -432,7 +432,7 @@ The target runtime <code class="highlighter-rouge">M[_]</code> requires a <code 
 <span class="c1">// import freestyle.effects._
 </span>
 <span class="k">val</span> <span class="n">list</span> <span class="k">=</span> <span class="n">traverse</span><span class="o">[</span><span class="kt">List</span><span class="o">]</span>
-<span class="c1">// list: freestyle.effects.traverse.TraverseProvider[List] = freestyle.effects.traverse$TraverseProvider@6b4687dc
+<span class="c1">// list: freestyle.effects.traverse.TraverseProvider[List] = freestyle.effects.traverse$TraverseProvider@74be1bab
 </span>
 <span class="k">import</span> <span class="nn">list._</span><span class="o">,</span> <span class="n">list</span><span class="o">.</span><span class="n">implicits</span><span class="o">.</span><span class="k">_</span>
 <span class="c1">// import list._
