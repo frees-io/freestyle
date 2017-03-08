@@ -3,7 +3,6 @@ package freestyle.example
 import freestyle._
 import freestyle.implicits._
 
-import cats.~>
 import cats.implicits._
 
 import java.util.UUID
@@ -14,7 +13,32 @@ import types._
 import freestyle.effects.error._
 import freestyle.effects.{reader, writer}
 
-object modules3 {
+object types {
+  type CustomerId = UUID
+}
+import types._
+
+case class Customer(id: CustomerId, name: String)
+case class Order(crates: Int, cultivar: String, customerId: CustomerId)
+
+case class Config(cultivars: Set[String])
+
+
+
+object algebras {
+  @free trait CustomerPersistence[F[_]] {
+    def getCustomer(id: CustomerId): FreeS.Par[F, Option[Customer]]
+  }
+
+  @free trait StockPersistence[F[_]] {
+    def checkQuantityAvailable(cultivar: String): FreeS.Par[F, Int]
+    def registerOrder(order: Order): FreeS.Par[F, Unit]
+  }
+}
+
+
+
+object modules {
   val rd = reader[Config]
   val wr = writer[Vector[String]]
 
@@ -27,16 +51,15 @@ object modules3 {
     val persistence: Persistence[F]
 
     val errorM: ErrorM[F]
-    // val readerM: rd.ReaderM[F]
-    val writerM: wr.WriterM[F]
     val readerM: rd.ReaderM[F]
+    val writerM: wr.WriterM[F]
   }
 }
 
 
-object program3 {
+object program {
 
-  import modules3._
+  import modules._
   import cats.data.{NonEmptyList, ValidatedNel}
 
   def validateOrder[F[_]](order: Order, customer: Customer)(implicit app: App[F]): FreeS.Par[F, ValidatedNel[String, Unit]] =
@@ -65,7 +88,7 @@ object program3 {
       validation  <- validateOrder[F](order, customer)
       _           <- app.errorM.either(validation.toEither.leftMap(ValidationFailed))
       nbAvailable <- app.persistence.stock.checkQuantityAvailable(order.cultivar)
-      _           <- app.writerM.tell(Vector(s"availble crates of ${order.cultivar} apples"))
+      _           <- app.writerM.tell(Vector(s"availble crates of ${order.cultivar} apples = $nbAvailable"))
       _           <- app.errorM.either(
                        Either.cond(
                          order.crates <= nbAvailable,
@@ -84,7 +107,6 @@ object program3 {
   import cats.data.{Kleisli, WriterT}
   import _root_.fs2.Task
   import _root_.fs2.interop.cats._
-  // import _root_.fs2.interop.cats.{uf1ToFunctionK => _, _}
 
   type Stack[A] = Kleisli[WriterT[Task, Vector[String], ?], Config, A]
 
@@ -118,7 +140,6 @@ object program3 {
 
   // provide MTL instances for kleisli
   import cats.{Monad, MonadError, MonadWriter}
-
 
   object KleisliMTL extends KleisliMTL1 {
     implicit def kleisliMonadWriter[F[_], A, L](implicit MW: MonadWriter[F, L]): MonadWriter[Kleisli[F, A, ?], L] = 
@@ -169,100 +190,26 @@ object program3 {
 
   import KleisliMTL._
 
+  // // create program
 
-  // check instances for provider effects are here
+  def main(args: Array[String]): Unit = {
 
-  import cats.MonadReader
-  val monadStack  = Monad[Stack]
-  val mw = MonadWriter[Stack, Vector[String]]
-  val mr = MonadReader[Stack, Config]
-  val me = MonadError[Stack, Throwable]
+    val program: FreeS[App.T, String] =
+      processOrder[App.T](Order(50, "granny smith", customerId1))
 
+    // run program
 
-  // create program
+    import freestyle.effects.error.implicits._
+    import wr.implicits._
+    import rd.implicits._
 
-  import freestyle.effects.error.implicits._
-  import wr.implicits._
-  import rd.implicits._
+    val cultivars = Set("granny smith", "jonagold", "boskoop")
+    val config = Config(cultivars)
 
-  val program: FreeS[App.T, String] =
-    processOrder[App.T](Order(50, "granny smith", customerId1))
+    val task: Task[(Vector[String], String)] = program.exec[Stack].run(config).run
 
-  
-  // check if we can create frees programs using App module
+    task.unsafeRunSync.fold(println, println)
+  }
 
-  val app = App[App.T]
-  def g[A]: (Config => A) => FreeS[App.T, A] = f => app.readerM.reader(f)
-  val cfgInt: FreeS[App.T, Int]  = app.readerM.reader(_.cultivars.size)
-  val error:  FreeS[App.T, Int]  = app.errorM.catchNonFatal(cats.Eval.later(1 + 2))
-  val write:  FreeS[App.T, Unit] = app.writerM.tell(Vector("hello foo"))
-
-
-  // manual coproduct
-
-  import cats.data.Coproduct
-  type CP1[α] = Coproduct[ErrorM.T, Persistence.T, α]
-  type CP2[α] = Coproduct[wr.WriterM.T, CP1, α]
-  type AppCP[α] = Coproduct[rd.ReaderM.T, CP2, α]
-
-  val write2:  FreeS[AppCP, Unit] = app.writerM.tell(Vector("hello foo")).freeS
-
-  val appEq = implicitly[App.T[α] =:= AppCP[α] forSome { type α }]
-
-
-  // check if interpreters can be resolved
-
-  val interp1: Persistence.T ~> Stack = implicitly[Persistence.T ~> Stack]
-  val interp2: rd.ReaderM.T  ~> Stack = implicitly[rd.ReaderM.T  ~> Stack]
-  val interp3: wr.WriterM.T  ~> Stack = implicitly[wr.WriterM.T  ~> Stack]
-  val interp4: ErrorM.T      ~> Stack = implicitly[ErrorM.T      ~> Stack]
-
-  // val interp0: App.T         ~> Stack = implicitly[App.T         ~> Stack]
-
-
-  // diverging implicit expansion for type freestyle.example.program3.CP2 ~> freestyle.example.program3.Stack
-  //  starting with method freeStyleErrorMInterpreter in object implicits
-  //    val inC2:   CP2   ~> Stack = implicitly[CP2 ~> Stack]
-  //
-  // diverging implicit expansion for type freestyle.example.program3.AppCP ~> freestyle.example.program3.Stack
-  // starting with method freestyleWriterMInterpreter in object implicits
-  //   val inCApp: AppCP ~> Stack = implicitly[AppCP ~> Stack]
-  //
-  val inC1:   CP1   ~> Stack = implicitly[CP1 ~> Stack]
-  // val inC2:   CP2   ~> Stack = implicitly[CP2 ~> Stack]
-  // val inCApp: AppCP ~> Stack = implicitly[AppCP ~> Stack]
-
-
-  type ReaderWriterCP[α] = Coproduct[rd.ReaderM.T, wr.WriterM.T, α]
-  val interpReaderWriterCP: ReaderWriterCP ~> Stack = implicitly[ReaderWriterCP ~> Stack]
-
-  type WriterReaderCP[α] = Coproduct[wr.WriterM.T, rd.ReaderM.T, α]
-  val interpWriterReaderCP: WriterReaderCP ~> Stack = implicitly[WriterReaderCP ~> Stack]
-
-  type ErrorReaderWriterCP[α] = Coproduct[ErrorM.T, ReaderWriterCP, α]
-  // val interpErrorReaderWriterCP: ErrorReaderWriterCP ~> Stack =
-  //   implicitly[ErrorReaderWriterCP ~> Stack]
-  val interpErrorReaderWriterCPmanual: ErrorReaderWriterCP ~> Stack = 
-    interpretCoproduct(interp4, interpretCoproduct[rd.ReaderM.T, wr.WriterM.T, Stack])
-  // val interpErrorReaderWriterCPsemi: ErrorReaderWriterCP ~> Stack = 
-  //   interpretCoproduct[ErrorM.T, ReaderWriterCP, Stack]
-
-
-  val appInterpreter: App.T ~> Stack =
-    interpretCoproduct(interp2, interpretCoproduct(interp3, interpretCoproduct[ErrorM.T, Persistence.T, Stack]))
-
-  // run program
-
-  val cultivars = Set("granny smith", "jonagold", "boskoop")
-  val config = Config(cultivars)
-
-  // val task: Task[(Vector[String], String)] = program.exec[Stack].run(config).run
-  val task: Task[(Vector[String], String)] =
-    program.exec[Stack](
-      monadStack,
-      interpretAp(monadStack, appInterpreter)
-    ).run(config).run
-
-  task.unsafeRunSync.fold(println, println)
 
 }

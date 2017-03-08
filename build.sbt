@@ -37,7 +37,8 @@ lazy val freestyle = (crossProject in file("freestyle")).
   settings(
     libraryDependencies ++= Seq(
       "org.typelevel" %%% "cats-free" % "0.9.0",
-      "org.scala-lang" % "scala-reflect" % scalaVersion.value
+      "org.scala-lang" % "scala-reflect" % scalaVersion.value,
+      "com.chuusai" %%% "shapeless" % "2.3.2"
     )
   ).
   jsSettings(sharedJsSettings: _*)
@@ -254,7 +255,7 @@ lazy val docs = (project in file("docs")).
   dependsOn(freestyleEffectsJVM).
   dependsOn(freestyleFs2JVM).
   dependsOn(freestyleFetchJVM).
-  dependsOn(freestyleCacheJVM).
+  // dependsOn(freestyleCacheJVM).
   settings(micrositeSettings: _*).
   settings(noPublishSettings: _*).
   settings(
@@ -268,6 +269,7 @@ lazy val docs = (project in file("docs")).
     )
   )
   .enablePlugins(MicrositesPlugin)
+  .settings(scalacOptions += "-Xlog-implicits")
 
 lazy val example = (project in file("freestyle-example")).
   dependsOn(freestyleJVM).
@@ -289,4 +291,4 @@ lazy val example = (project in file("freestyle-example")).
     )
   )
   // .settings(scalacOptions += "-Ypartial-unification")
-  .settings(scalacOptions += "-Xlog-implicits")
+  // .settings(scalacOptions += "-Xlog-implicits")
