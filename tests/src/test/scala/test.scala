@@ -12,30 +12,30 @@ class tests extends WordSpec with Matchers {
 
   "the @free annotation" should {
 
-    "create a companion with a `T` type alias" in {
-      type T[A] = SCtors1.T[A]
+    "create a companion with a `Op` type alias" in {
+      type Op[A] = SCtors1.Op[A]
     }
 
     "provide instances through it's companion `apply`" in {
-      SCtors1[SCtors1.T].isInstanceOf[SCtors1[SCtors1.T]] shouldBe true
+      SCtors1[SCtors1.Op].isInstanceOf[SCtors1[SCtors1.Op]] shouldBe true
     }
 
     "allow implicit sumoning" in {
-      implicitly[SCtors1[SCtors1.T]].isInstanceOf[SCtors1[SCtors1.T]] shouldBe true
+      implicitly[SCtors1[SCtors1.Op]].isInstanceOf[SCtors1[SCtors1.Op]] shouldBe true
     }
 
     "provide automatic implementations for smart constructors" in {
-      val s = SCtors1[SCtors1.T]
+      val s = SCtors1[SCtors1.Op]
       val program = for {
         a <- s.x(1)
         b <- s.y(1)
       } yield a + b
-      program.isInstanceOf[FreeS[SCtors1.T, Int]] shouldBe true
+      program.isInstanceOf[FreeS[SCtors1.Op, Int]] shouldBe true
     }
 
     "respond to implicit evidences with compilable runtimes" in {
       implicit val optionHandler = interps.optionHandler1
-      val s                          = SCtors1[SCtors1.T]
+      val s                          = SCtors1[SCtors1.Op]
       val program = for {
         a <- s.x(1)
         b <- s.y(1)
@@ -47,7 +47,7 @@ class tests extends WordSpec with Matchers {
     "reuse program interpretation in diferent runtimes" in {
       implicit val optionHandler = interps.optionHandler1
       implicit val listHandler   = interps.listHandler1
-      val s                          = SCtors1[SCtors1.T]
+      val s                          = SCtors1[SCtors1.Op]
       val program = for {
         a <- s.x(1)
         b <- s.y(1)
@@ -77,9 +77,9 @@ class tests extends WordSpec with Matchers {
         def sc1(a: Int, b: Int, c: Int): FreeS[F, Int]
         def sc2(a: Int, b: Int, c: Int): FreeS[F, Int]
       }
-      implicitly[FriendlyFreeS.T[_] =:= FriendlyFreeS.T[_]]
-      implicitly[FriendlyFreeS.Sc1OP <:< FriendlyFreeS.T[Int]]
-      implicitly[FriendlyFreeS.Sc2OP <:< FriendlyFreeS.T[Int]]
+      implicitly[FriendlyFreeS.Op[_] =:= FriendlyFreeS.Op[_]]
+      implicitly[FriendlyFreeS.Sc1OP <:< FriendlyFreeS.Op[Int]]
+      implicitly[FriendlyFreeS.Sc2OP <:< FriendlyFreeS.Op[Int]]
       ()
     }
 
@@ -109,7 +109,7 @@ class tests extends WordSpec with Matchers {
         override def y(key: String): Option[String] = Some(key)
         override def z(key: String): Option[String] = Some(key)
       }
-      val v = ApplicativesServ[ApplicativesServ.T]
+      val v = ApplicativesServ[ApplicativesServ.Op]
       import v._
       import freestyle.implicits._
       val program = (x("a") |@| y("b") |@| z("c")).map { _ + _ + _ }.freeS
@@ -128,7 +128,7 @@ class tests extends WordSpec with Matchers {
         override def y(key: String): Option[String] = Some(key)
         override def z(key: String): Option[String] = Some(key)
       }
-      val v = MixedFreeS[MixedFreeS.T]
+      val v = MixedFreeS[MixedFreeS.Op]
       import v._
       import freestyle.implicits._
       val apProgram = (x("a") |@| y("b")).map { _ + _ }
@@ -146,56 +146,56 @@ class tests extends WordSpec with Matchers {
     import modules._
 
     "[simple] create a companion with a `T` type alias" in {
-      type T[A] = M1.T[A]
+      type T[A] = M1.Op[A]
     }
 
     "[onion] create a companion with a `T` type alias" in {
-      type T[A] = O1.T[A]
+      type T[A] = O1.Op[A]
     }
 
     "[simple] provide instances through it's companion `apply`" in {
-      M1[M1.T].isInstanceOf[M1[M1.T]] shouldBe true
+      M1[M1.Op].isInstanceOf[M1[M1.Op]] shouldBe true
     }
 
     "[onion] provide instances through it's companion `apply`" in {
-      O1[O1.T].isInstanceOf[O1[O1.T]] shouldBe true
+      O1[O1.Op].isInstanceOf[O1[O1.Op]] shouldBe true
     }
 
     "[simple] implicit sumoning" in {
-      implicitly[M1[M1.T]].isInstanceOf[M1[M1.T]] shouldBe true
+      implicitly[M1[M1.Op]].isInstanceOf[M1[M1.Op]] shouldBe true
     }
 
     "[onion] allow implicit sumoning" in {
-      implicitly[O1[O1.T]].isInstanceOf[O1[O1.T]] shouldBe true
+      implicitly[O1[O1.Op]].isInstanceOf[O1[O1.Op]] shouldBe true
     }
 
     "[simple] autowire implementations of it's contained smart constructors" in {
-      val m1 = M1[M1.T]
-      m1.sctors1.isInstanceOf[SCtors1[M1.T]] shouldBe true
-      m1.sctors2.isInstanceOf[SCtors2[M1.T]] shouldBe true
+      val m1 = M1[M1.Op]
+      m1.sctors1.isInstanceOf[SCtors1[M1.Op]] shouldBe true
+      m1.sctors2.isInstanceOf[SCtors2[M1.Op]] shouldBe true
     }
 
     "[onion] autowire implementations of it's contained smart constructors" in {
-      val o1 = O1[O1.T]
-      o1.m1.sctors1.isInstanceOf[SCtors1[O1.T]] shouldBe true
-      o1.m1.sctors2.isInstanceOf[SCtors2[O1.T]] shouldBe true
-      o1.m2.sctors3.isInstanceOf[SCtors3[O1.T]] shouldBe true
-      o1.m2.sctors4.isInstanceOf[SCtors4[O1.T]] shouldBe true
+      val o1 = O1[O1.Op]
+      o1.m1.sctors1.isInstanceOf[SCtors1[O1.Op]] shouldBe true
+      o1.m1.sctors2.isInstanceOf[SCtors2[O1.Op]] shouldBe true
+      o1.m2.sctors3.isInstanceOf[SCtors3[O1.Op]] shouldBe true
+      o1.m2.sctors4.isInstanceOf[SCtors4[O1.Op]] shouldBe true
     }
 
     "[simple] allow composition of it's contained algebras" in {
-      val m1 = M1[M1.T]
+      val m1 = M1[M1.Op]
       val result = for {
         a <- m1.sctors1.x(1)
         b <- m1.sctors1.y(1)
         c <- m1.sctors2.i(1)
         d <- m1.sctors2.j(1)
       } yield a + b + c + d
-      result.isInstanceOf[FreeS[M1.T, Int]] shouldBe true
+      result.isInstanceOf[FreeS[M1.Op, Int]] shouldBe true
     }
 
     "[onion] allow composition of it's contained algebras" in {
-      val o1 = O1[O1.T]
+      val o1 = O1[O1.Op]
       val result = for {
         a <- o1.m1.sctors1.x(1)
         b <- o1.m1.sctors1.y(1)
@@ -206,23 +206,23 @@ class tests extends WordSpec with Matchers {
         g <- o1.m2.sctors4.k(1)
         h <- o1.m2.sctors4.m(1)
       } yield a + b + c + d + e + f + g + h
-      result.isInstanceOf[FreeS[O1.T, Int]] shouldBe true
+      result.isInstanceOf[FreeS[O1.Op, Int]] shouldBe true
     }
 
-    "[simple] find a FunctionK[Module.T, ?] providing there is existing ones for it's smart constructors" in {
+    "[simple] find a FunctionK[Module.Op, ?] providing there is existing ones for it's smart constructors" in {
       import freestyle.implicits._
       implicit val optionHandler1 = interps.optionHandler1
       implicit val optionHandler2 = interps.optionHandler2
-      implicitly[FunctionK[M1.T, Option]].isInstanceOf[FunctionK[M1.T, Option]] shouldBe true
+      implicitly[FunctionK[M1.Op, Option]].isInstanceOf[FunctionK[M1.Op, Option]] shouldBe true
     }
 
-    "[onion] find a FunctionK[Module.T, ?] providing there is existing ones for it's smart constructors" in {
+    "[onion] find a FunctionK[Module.Op, ?] providing there is existing ones for it's smart constructors" in {
       import freestyle.implicits._
       implicit val optionHandler1 = interps.optionHandler1
       implicit val optionHandler2 = interps.optionHandler2
       implicit val optionHandler3 = interps.optionHandler3
       implicit val optionHandler4 = interps.optionHandler4
-      implicitly[FunctionK[O1.T, Option]].isInstanceOf[FunctionK[O1.T, Option]] shouldBe true
+      implicitly[FunctionK[O1.Op, Option]].isInstanceOf[FunctionK[O1.Op, Option]] shouldBe true
     }
 
     "[simple] reuse program interpretation in diferent runtimes" in {
@@ -231,7 +231,7 @@ class tests extends WordSpec with Matchers {
       implicit val listHandler1   = interps.listHandler1
       implicit val optionHandler2 = interps.optionHandler2
       implicit val listHandler2   = interps.listHandler2
-      val m1                          = M1[M1.T]
+      val m1                          = M1[M1.Op]
       val program = for {
         a <- m1.sctors1.x(1)
         b <- m1.sctors1.y(1)
@@ -253,7 +253,7 @@ class tests extends WordSpec with Matchers {
       implicit val optionHandler4 = interps.optionHandler4
       implicit val listHandler4   = interps.listHandler4
 
-      val o1 = O1[O1.T]
+      val o1 = O1[O1.Op]
       val program = for {
         a <- o1.m1.sctors1.x(1)
         b <- o1.m1.sctors1.y(1)
@@ -270,13 +270,13 @@ class tests extends WordSpec with Matchers {
     }
 
     "Pass through concrete members to implementations" in {
-      val o2 = O2[O2.T]
+      val o2 = O2[O2.Op]
       o2.x shouldBe 1
       o2.y shouldBe 2
     }
 
     "Allow modules with just concrete members unrelated to freestyle's concerns" in {
-      val o3 = O3[O3.T]
+      val o3 = O3[O3.Op]
       o3.x shouldBe 1
       o3.y shouldBe 2
     }
@@ -318,7 +318,7 @@ class tests extends WordSpec with Matchers {
         value
       }
 
-      val v = MixedFreeS[MixedFreeS.T]
+      val v = MixedFreeS[MixedFreeS.Op]
       import v._
 
       val program = for {
@@ -421,7 +421,7 @@ class tests extends WordSpec with Matchers {
           Kleisli(s => Future(s.exists(c => "0123456789".contains(c))))
       }
 
-      val validation = Validation[Validation.T]
+      val validation = Validation[Validation.Op]
       import validation._
 
       val parValidation = (minSize(3) |@| hasNumber).map(_ :: _ :: Nil)
@@ -539,42 +539,42 @@ object interps {
 
   import algebras._
 
-  val optionHandler1: FunctionK[SCtors1.T, Option] = new SCtors1.Handler[Option] {
+  val optionHandler1: FunctionK[SCtors1.Op, Option] = new SCtors1.Handler[Option] {
     def x(a: Int): Option[Int] = Some(a)
     def y(a: Int): Option[Int] = Some(a)
   }
 
-  val listHandler1: FunctionK[SCtors1.T, List] = new SCtors1.Handler[List] {
+  val listHandler1: FunctionK[SCtors1.Op, List] = new SCtors1.Handler[List] {
     def x(a: Int): List[Int] = List(a)
     def y(a: Int): List[Int] = List(a)
   }
 
-  val optionHandler2: FunctionK[SCtors2.T, Option] = new SCtors2.Handler[Option] {
+  val optionHandler2: FunctionK[SCtors2.Op, Option] = new SCtors2.Handler[Option] {
     def i(a: Int): Option[Int] = Some(a)
     def j(a: Int): Option[Int] = Some(a)
   }
 
-  val listHandler2: FunctionK[SCtors2.T, List] = new SCtors2.Handler[List] {
+  val listHandler2: FunctionK[SCtors2.Op, List] = new SCtors2.Handler[List] {
     def i(a: Int): List[Int] = List(a)
     def j(a: Int): List[Int] = List(a)
   }
 
-  val optionHandler3: FunctionK[SCtors3.T, Option] = new SCtors3.Handler[Option] {
+  val optionHandler3: FunctionK[SCtors3.Op, Option] = new SCtors3.Handler[Option] {
     def o(a: Int): Option[Int] = Some(a)
     def p(a: Int): Option[Int] = Some(a)
   }
 
-  val listHandler3: FunctionK[SCtors3.T, List] = new SCtors3.Handler[List] {
+  val listHandler3: FunctionK[SCtors3.Op, List] = new SCtors3.Handler[List] {
     def o(a: Int): List[Int] = List(a)
     def p(a: Int): List[Int] = List(a)
   }
 
-  val optionHandler4: FunctionK[SCtors4.T, Option] = new SCtors4.Handler[Option] {
+  val optionHandler4: FunctionK[SCtors4.Op, Option] = new SCtors4.Handler[Option] {
     def k(a: Int): Option[Int] = Some(a)
     def m(a: Int): Option[Int] = Some(a)
   }
 
-  val listHandler4: FunctionK[SCtors4.T, List] = new SCtors4.Handler[List] {
+  val listHandler4: FunctionK[SCtors4.Op, List] = new SCtors4.Handler[List] {
     def k(a: Int): List[Int] = List(a)
     def m(a: Int): List[Int] = List(a)
   }

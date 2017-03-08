@@ -46,7 +46,7 @@ To enable these instances and support parallelism you need to explicitly import:
 import freestyle.nondeterminism._
 ```
 
-The code below illustrate an interpreter that will allow parallel executions thanks to the unsafe nature of `scala.concurrent.Future#apply` which runs immediately.
+The code below illustrate a handler that will allow parallel executions thanks to the unsafe nature of `scala.concurrent.Future#apply` which runs immediately.
 
 ```tut:book
 import cats.data.Kleisli
@@ -67,7 +67,7 @@ implicit val interpreter = new Validation.Handler[ParValidator] {
     Kleisli(s => Future(s.exists(c => "0123456789".contains(c))))
 }
 
-val validation = Validation[Validation.T]
+val validation = Validation[Validation.Op]
 import validation._
 
 val parValidation = (minSize(3) |@| hasNumber).map(_ :: _ :: Nil)

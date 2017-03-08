@@ -82,7 +82,7 @@ This effectively enables implicits based Dependency Injection where you may choo
 using the implicits scoping rules to place different implementations where appropriate.
 
 ```tut:book
-val userRepository = UserRepository[UserRepository.T]
+val userRepository = UserRepository[UserRepository.Op]
 ```
 
 ```tut:book
@@ -111,8 +111,8 @@ import cats.data.Coproduct
 @free trait Service3[F[_]]{
   def z(n: Int): FreeS[F, Int]
 }
-type C1[A] = Coproduct[Service1.T, Service2.T, A]
-type Module[A] = Coproduct[Service3.T, C1, A]
+type C1[A] = Coproduct[Service1.Op, Service2.Op, A]
+type Module[A] = Coproduct[Service3.Op, C1, A]
 ```
 
 This is obviously far from ideal as building `Coproduct` types by hand often times result in bizarre compile errors

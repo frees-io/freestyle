@@ -34,7 +34,7 @@ object free {
     }
 
     // OP is the name of the Root trait of the Effect ADT
-    lazy val OP = TypeName("T")
+    lazy val OP = TypeName("Op")
     // MM Is the target of the Handler's natural Transformation
     lazy val MM = TypeName("MM")
     // LL is the target of the Lifter's Injection

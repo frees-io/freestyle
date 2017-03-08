@@ -1,6 +1,6 @@
 package freestyle
 
-import cats.{Applicative, Eval, MonadFilter}
+import cats.Applicative
 
 import org.scalatest._
 
@@ -25,7 +25,7 @@ class AsyncTests extends AsyncWordSpec with Matchers {
           c <- Applicative[FreeS[F, ?]].pure(1)
         } yield a + b + c
 
-      program[AsyncM.T].exec[Future] map { _ shouldBe 44 }
+      program[AsyncM.Op].exec[Future] map { _ shouldBe 44 }
     }
 
     "allow multiple Async to be interleaved inside a program monadic flow" in {
@@ -41,7 +41,7 @@ class AsyncTests extends AsyncWordSpec with Matchers {
           })
         } yield a + b + c + d
 
-      program[AsyncM.T].exec[Future] map { _ shouldBe 54 }
+      program[AsyncM.Op].exec[Future] map { _ shouldBe 54 }
     }
 
     case class OhNoException() extends Exception
@@ -55,7 +55,7 @@ class AsyncTests extends AsyncWordSpec with Matchers {
           c <- Applicative[FreeS[F, ?]].pure(3)
         } yield a + b + c
 
-      program[AsyncM.T].exec[Future] recover { case OhNoException() => 42 } map { _ shouldBe 42 }
+      program[AsyncM.Op].exec[Future] recover { case OhNoException() => 42 } map { _ shouldBe 42 }
     }
   }
 }

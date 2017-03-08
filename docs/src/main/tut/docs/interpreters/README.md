@@ -56,7 +56,7 @@ implicit val kvStoreHandler: KVStore.Handler[KVStoreState] = new KVStore.Handler
 As you may have noticed in Freestyle instead of implementing a Natural transformation `F ~> M` weimplement methods that closely resemble each one of the smart constructors in our @free algebras.
 This is not an imposition but rather a comvinience as the resulting instances are still Natural Transformations.
 
-In the example above `KVStore.Handler[M[_]]` it's actually already a Natural transformation of type `KVStore.T ~> KVStoreState` in which on its
+In the example above `KVStore.Handler[M[_]]` it's actually already a Natural transformation of type `KVStore.Op ~> KVStoreState` in which on its
 `apply` function automatically delegates each step to the abstract method that you are implementing as part of the Handler.
 
 Alternatively if you would rather implement a natural transformation by hand you can still do that by choosing not to implement
@@ -65,9 +65,9 @@ Alternatively if you would rather implement a natural transformation by hand you
 ```tut:book
 import cats.~>
 
-implicit def manualKvStoreHandler: KVStore.T ~> KVStoreState = 
-  new (KVStore.T ~> KVStoreState) {
-    def apply[A](fa: KVStore.T[A]): KVStoreState[A] =
+implicit def manualKvStoreHandler: KVStore.Op ~> KVStoreState = 
+  new (KVStore.Op ~> KVStoreState) {
+    def apply[A](fa: KVStore.Op[A]): KVStoreState[A] =
       fa match {
         case KVStore.PutOP(key, value) =>
           State.modify(_.updated(key, value))
@@ -139,7 +139,7 @@ implicit evidences of each one of the individual algebra's interpreters.
 
 ```tut:book
 import freestyle.implicits._
-program[Backend.T].exec[KVStoreState]
+program[Backend.Op].exec[KVStoreState]
 ```
 
 Alternatively you can build your interpreters by hand if you wish not to use Freestyle implicit machinery.

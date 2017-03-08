@@ -1,6 +1,6 @@
 package freestyle.effects
 
-import cats.{Applicative, Eval, MonadFilter}
+import cats.{Applicative, Eval}
 
 import org.scalatest._
 
@@ -29,7 +29,7 @@ class EffectsTests extends AsyncWordSpec with Matchers {
           b <- OptionM[F].option(Option(1))
           c <- Applicative[FreeS[F, ?]].pure(1)
         } yield a + b + c
-      program[OptionM.T].exec[Option] shouldBe Some(3)
+      program[OptionM.Op].exec[Option] shouldBe Some(3)
     }
 
     "allow an Option to shortcircuit inside a program monadic flow" in {
@@ -40,7 +40,7 @@ class EffectsTests extends AsyncWordSpec with Matchers {
           b <- OptionM[F].none[Int]
           c <- Applicative[FreeS[F, ?]].pure(1)
         } yield a + b + c
-      program[OptionM.T].exec[Option] shouldBe None
+      program[OptionM.Op].exec[Option] shouldBe None
     }
 
   }
@@ -60,7 +60,7 @@ class EffectsTests extends AsyncWordSpec with Matchers {
           b <- ErrorM[F].error[Int](ex)
           c <- Applicative[FreeS[F, ?]].pure(1)
         } yield a + b + c
-      program[ErrorM.T].exec[Either[Throwable, ?]] shouldBe Left(ex)
+      program[ErrorM.Op].exec[Either[Throwable, ?]] shouldBe Left(ex)
     }
 
     "allow an Exception to be captured inside a program monadic flow" in {
@@ -71,7 +71,7 @@ class EffectsTests extends AsyncWordSpec with Matchers {
           b <- ErrorM[F].catchNonFatal[Int](Eval.later(throw ex))
           c <- Applicative[FreeS[F, ?]].pure(1)
         } yield a + b + c
-      program[ErrorM.T].exec[Either[Throwable, ?]] shouldBe Left(ex)
+      program[ErrorM.Op].exec[Either[Throwable, ?]] shouldBe Left(ex)
     }
 
     "allow an Either to propagate right biased" in {
@@ -82,7 +82,7 @@ class EffectsTests extends AsyncWordSpec with Matchers {
           b <- ErrorM[F].either[Int](Right(1))
           c <- Applicative[FreeS[F, ?]].pure(1)
         } yield a + b + c
-      program[ErrorM.T].exec[Either[Throwable, ?]] shouldBe Right(3)
+      program[ErrorM.Op].exec[Either[Throwable, ?]] shouldBe Right(3)
     }
 
     "allow an Either to short circuit" in {
@@ -93,7 +93,7 @@ class EffectsTests extends AsyncWordSpec with Matchers {
           b <- ErrorM[F].either[Int](Left(ex))
           c <- Applicative[FreeS[F, ?]].pure(1)
         } yield a + b + c
-      program[ErrorM.T].exec[Either[Throwable, ?]] shouldBe Left(ex)
+      program[ErrorM.Op].exec[Either[Throwable, ?]] shouldBe Left(ex)
     }
 
   }
@@ -113,7 +113,7 @@ class EffectsTests extends AsyncWordSpec with Matchers {
           c <- rd.ReaderM[F].ask
           _ <- Applicative[FreeS[F, ?]].pure(1)
         } yield c
-      program[rd.ReaderM.T].exec[Reader[Config, ?]].run(Config()) shouldBe Config()
+      program[rd.ReaderM.Op].exec[Reader[Config, ?]].run(Config()) shouldBe Config()
     }
 
     "allow maping over the environment for a user defined type" in {
@@ -124,7 +124,7 @@ class EffectsTests extends AsyncWordSpec with Matchers {
           c <- rd.ReaderM[F].reader(_.n)
           _ <- Applicative[FreeS[F, ?]].pure(1)
         } yield c
-      program[rd.ReaderM.T].exec[Reader[Config, ?]].run(Config()) shouldBe 5
+      program[rd.ReaderM.Op].exec[Reader[Config, ?]].run(Config()) shouldBe 5
     }
 
   }
@@ -144,7 +144,7 @@ class EffectsTests extends AsyncWordSpec with Matchers {
           b <- st.StateM[F].get
           c <- Applicative[FreeS[F, ?]].pure(1)
         } yield a + b + c
-      program[st.StateM.T].exec[State[Int, ?]].run(1).value shouldBe Tuple2(1, 3)
+      program[st.StateM.Op].exec[State[Int, ?]].run(1).value shouldBe Tuple2(1, 3)
     }
 
     "set" in {
@@ -154,7 +154,7 @@ class EffectsTests extends AsyncWordSpec with Matchers {
           _ <- st.StateM[F].set(1)
           a <- st.StateM[F].get
         } yield a
-      program[st.StateM.T].exec[State[Int, ?]].run(0).value shouldBe Tuple2(1, 1)
+      program[st.StateM.Op].exec[State[Int, ?]].run(0).value shouldBe Tuple2(1, 1)
     }
 
     "modify" in {
@@ -165,7 +165,7 @@ class EffectsTests extends AsyncWordSpec with Matchers {
           _ <- st.StateM[F].modify(_ + a)
           b <- st.StateM[F].get
         } yield b
-      program[st.StateM.T].exec[State[Int, ?]].run(1).value shouldBe Tuple2(2, 2)
+      program[st.StateM.Op].exec[State[Int, ?]].run(1).value shouldBe Tuple2(2, 2)
     }
 
     "inspect" in {
@@ -175,7 +175,7 @@ class EffectsTests extends AsyncWordSpec with Matchers {
           a <- st.StateM[F].get
           b <- st.StateM[F].inspect(_ + a)
         } yield b
-      program[st.StateM.T].exec[State[Int, ?]].run(1).value shouldBe Tuple2(1, 2)
+      program[st.StateM.Op].exec[State[Int, ?]].run(1).value shouldBe Tuple2(1, 2)
     }
 
     "syntax" in {
@@ -185,7 +185,7 @@ class EffectsTests extends AsyncWordSpec with Matchers {
           a <- st.StateM[F].get
           b <- ((x: Int) => x + a).liftFS
         } yield b
-      program[st.StateM.T].exec[State[Int, ?]].run(1).value shouldBe Tuple2(1, 2)
+      program[st.StateM.Op].exec[State[Int, ?]].run(1).value shouldBe Tuple2(1, 2)
     }
 
   }
@@ -207,7 +207,7 @@ class EffectsTests extends AsyncWordSpec with Matchers {
           b <- wr.WriterM[F].writer((Nil, 1))
           _ <- Applicative[FreeS[F, ?]].pure(1)
         } yield b
-      program[wr.WriterM.T].exec[Logger].run shouldBe Tuple2(Nil, 1)
+      program[wr.WriterM.Op].exec[Logger].run shouldBe Tuple2(Nil, 1)
     }
 
     "tell" in {
@@ -219,7 +219,7 @@ class EffectsTests extends AsyncWordSpec with Matchers {
           c <- wr.WriterM[F].tell(List(1))
           _ <- Applicative[FreeS[F, ?]].pure(1)
         } yield b
-      program[wr.WriterM.T].exec[Logger].run shouldBe Tuple2(List(1, 1), 1)
+      program[wr.WriterM.Op].exec[Logger].run shouldBe Tuple2(List(1, 1), 1)
     }
   }
 
@@ -238,7 +238,7 @@ class EffectsTests extends AsyncWordSpec with Matchers {
           a <- TraverseM[F].fromTraversable(1 :: 2 :: 3 :: Nil)
           b <- Applicative[FreeS[F, ?]].pure(a + 1)
         } yield b
-      program[TraverseM.T].exec[List] shouldBe List(2, 3, 4)
+      program[TraverseM.Op].exec[List] shouldBe List(2, 3, 4)
     }
 
     "empty" in {
@@ -251,7 +251,7 @@ class EffectsTests extends AsyncWordSpec with Matchers {
           b <- Applicative[FreeS[F, ?]].pure(a + 1)
           c <- Applicative[FreeS[F, ?]].pure(b + 1)
         } yield c
-      program[TraverseM.T].exec[List] shouldBe Nil
+      program[TraverseM.Op].exec[List] shouldBe Nil
     }
 
     "syntax" in {
@@ -263,7 +263,7 @@ class EffectsTests extends AsyncWordSpec with Matchers {
           b <- Applicative[FreeS[F, ?]].pure(a + 1)
           c <- Applicative[FreeS[F, ?]].pure(b + 1)
         } yield c
-      program[TraverseM.T].exec[List] shouldBe List(3, 4, 5)
+      program[TraverseM.Op].exec[List] shouldBe List(3, 4, 5)
     }
 
   }

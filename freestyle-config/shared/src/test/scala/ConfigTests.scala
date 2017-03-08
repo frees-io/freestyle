@@ -56,6 +56,6 @@ object algebras {
     val configM: ConfigM[F]
   }
 
-  val app = App[App.T]
+  val app = App[App.Op]
 
 }

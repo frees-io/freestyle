@@ -1,6 +1,6 @@
 package freestyle.asyncFs2
 
-import cats.{Applicative, Eval, MonadFilter}
+import cats.Applicative
 
 import org.scalatest._
 
@@ -33,7 +33,7 @@ class AsyncFs2Tests extends AsyncWordSpec with Matchers {
           })
         } yield a + b + c + d
 
-      program[AsyncM.T].exec[Task].unsafeRunAsyncFuture map { _ shouldBe 54 }
+      program[AsyncM.Op].exec[Task].unsafeRunAsyncFuture map { _ shouldBe 54 }
     }
   }
 }

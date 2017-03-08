@@ -22,5 +22,5 @@ object algebras {
     val loggingM: LoggingM[F]
   }
 
-  val app = App[App.T]
+  val app = App[App.Op]
 }

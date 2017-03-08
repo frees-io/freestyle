@@ -30,24 +30,24 @@ class DoobieTests extends AsyncWordSpec with Matchers {
       val program = for {
         a <- app.nonDoobie.x
         b <- app.doobieM.transact(query).freeS
-        c <- Applicative[FreeS[App.T, ?]].pure(1)
+        c <- Applicative[FreeS[App.Op, ?]].pure(1)
       } yield a + b + c
       program.exec[Task] map { _ shouldBe 4 } unsafeRunAsyncFuture
     }
 
     "allow doobie syntax to lift to FreeS" in {
-      val program: FreeS[App.T, Int] = for {
+      val program: FreeS[App.Op, Int] = for {
         a <- app.nonDoobie.x
-        b <- query.liftFS[App.T]
+        b <- query.liftFS[App.Op]
         c <- app.nonDoobie.x
       } yield a + b + c
       program.exec[Task] map { _ shouldBe 4 } unsafeRunAsyncFuture
     }
 
     "allow doobie syntax to lift to FreeS.Par" in {
-      val program: FreeS[App.T, Int] = for {
+      val program: FreeS[App.Op, Int] = for {
         a <- app.nonDoobie.x
-        b <- query.liftFSPar[App.T].freeS
+        b <- query.liftFSPar[App.Op].freeS
         c <- app.nonDoobie.x
       } yield a + b + c
       program.exec[Task] map { _ shouldBe 4 } unsafeRunAsyncFuture
@@ -73,5 +73,5 @@ object algebras {
     val doobieM: DoobieM[F]
   }
 
-  val app = App[App.T]
+  val app = App[App.Op]
 }

@@ -3,7 +3,7 @@ package freestyle
 import org.scalatest._
 import _root_.fetch._
 import _root_.fetch.implicits._
-import cats.{Applicative, Eval}
+import cats.Applicative
 
 import freestyle.fetch._
 import freestyle.implicits._
@@ -24,24 +24,24 @@ class FetchTests extends AsyncWordSpec with Matchers {
       val program = for {
         a <- app.nonFetch.x
         b <- app.fetchM.runA(fetchString(a)).freeS
-        c <- Applicative[FreeS[App.T, ?]].pure(1)
+        c <- Applicative[FreeS[App.Op, ?]].pure(1)
       } yield a + b + c
       program.exec[Future] map { _ shouldBe "111" }
     }
 
     "allow fetch syntax to lift to FreeS" in {
-      val program: FreeS[App.T, String] = for {
+      val program: FreeS[App.Op, String] = for {
         a <- app.nonFetch.x
-        b <- fetchString(a).liftFS[App.T]
+        b <- fetchString(a).liftFS[App.Op]
         c <- app.nonFetch.x
       } yield a + b + c
       program.exec[Future] map { _ shouldBe "111" }
     }
 
     "allow fetch syntax to lift to FreeS.Par" in {
-      val program: FreeS[App.T, String] = for {
+      val program: FreeS[App.Op, String] = for {
         a <- app.nonFetch.x
-        b <- fetchString(a).liftFSPar[App.T].freeS
+        b <- fetchString(a).liftFSPar[App.Op].freeS
         c <- app.nonFetch.x
       } yield a + b + c
       program.exec[Future] map { _ shouldBe "111" }
@@ -68,7 +68,7 @@ object algebras {
     val fetchM: FetchM[F]
   }
 
-  val app = App[App.T]
+  val app = App[App.Op]
 
 }
 

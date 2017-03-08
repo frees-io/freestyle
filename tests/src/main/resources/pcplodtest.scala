@@ -11,5 +11,5 @@ object pcplodtest {
   }
   def program[F[_]: PcplodTestAlgebra]: FreeS[F, Int] = PcplodTestAlgebra[F].t@test@est(1)
 
-  val r@result@esult = program[PcplodTestAlgebra.T].exec[Option]
+  val r@result@esult = program[PcplodTestAlgebra.Op].exec[Option]
 }

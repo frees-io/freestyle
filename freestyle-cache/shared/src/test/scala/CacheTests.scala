@@ -19,21 +19,21 @@ class CacheTests extends WordSpec with Matchers with CacheTestContext {
       def program[F[_]: CacheM]: FreeS[F, Option[Int]] =
         CacheM[F].get("a")
 
-      program[CacheM.T].exec[Id] shouldBe None
+      program[CacheM.Op].exec[Id] shouldBe None
     }
 
     "result in None if a different key is set" in {
       def program[F[_]: CacheM]: FreeS[F, Option[Int]] =
         CacheM[F].put("a", 0) *> CacheM[F].get("b")
 
-      program[CacheM.T].exec[Id] shouldBe None
+      program[CacheM.Op].exec[Id] shouldBe None
     }
 
     "result in Some(v) if v is the only set value" in {
       def program[F[_]: CacheM]: FreeS[F, Option[Int]] =
         CacheM[F].put("a", 0) *> CacheM[F].get("a")
 
-      program[CacheM.T].exec[Id] shouldBe Some(0)
+      program[CacheM.Op].exec[Id] shouldBe Some(0)
     }
   }
 
@@ -47,7 +47,7 @@ class CacheTests extends WordSpec with Matchers with CacheTestContext {
           k <- CacheM[F].keys
         } yield (a, k.size)
 
-      program[CacheM.T].exec[Id] shouldBe ((Some(1), 1))
+      program[CacheM.Op].exec[Id] shouldBe ((Some(1), 1))
     }
 
     "ignore succeeding PUT to other Keys" in {
@@ -58,7 +58,7 @@ class CacheTests extends WordSpec with Matchers with CacheTestContext {
           k <- CacheM[F].keys
         } yield (a, k.size)
 
-      program[CacheM.T].exec[Id] shouldBe ((Some(0), 2))
+      program[CacheM.Op].exec[Id] shouldBe ((Some(0), 2))
     }
 
     "ignore preceding PUT to other Keys" in {
@@ -69,7 +69,7 @@ class CacheTests extends WordSpec with Matchers with CacheTestContext {
           k <- CacheM[F].keys
         } yield (a, k.size)
 
-      program[CacheM.T].exec[Id] shouldBe ((Some(0), 2))
+      program[CacheM.Op].exec[Id] shouldBe ((Some(0), 2))
     }
   }
 
@@ -83,7 +83,7 @@ class CacheTests extends WordSpec with Matchers with CacheTestContext {
           k <- CacheM[F].keys
         } yield (a, k.size)
 
-      program[CacheM.T].exec[Id] shouldBe ((None, 0))
+      program[CacheM.Op].exec[Id] shouldBe ((None, 0))
     }
 
     "be overridden by succeeding PUT on same Key" in {
@@ -94,21 +94,21 @@ class CacheTests extends WordSpec with Matchers with CacheTestContext {
           k <- CacheM[F].keys
         } yield (a, k.size)
 
-      program[CacheM.T].exec[Id] shouldBe ((Some(0), 1))
+      program[CacheM.Op].exec[Id] shouldBe ((Some(0), 1))
     }
 
     "ignore a preceeding PUT on different key" in {
       def program[F[_]: CacheM]: FreeS[F, Option[Int]] =
         CacheM[F].put("a", 0) *> CacheM[F].del("b") *> CacheM[F].get("a")
 
-      program[CacheM.T].exec[Id] shouldBe Some(0)
+      program[CacheM.Op].exec[Id] shouldBe Some(0)
     }
 
     "ignore a succeeding PUT on different key" in {
       def program[F[_]: CacheM]: FreeS[F, Option[Int]] =
         CacheM[F].del("b") *> CacheM[F].put("a", 0) *> CacheM[F].get("a")
 
-      program[CacheM.T].exec[Id] shouldBe Some(0)
+      program[CacheM.Op].exec[Id] shouldBe Some(0)
     }
   }
 
@@ -120,7 +120,7 @@ class CacheTests extends WordSpec with Matchers with CacheTestContext {
           k2 <- (CacheM[F].clear *> CacheM[F].keys)
         } yield (k1.size, k2.size)
 
-      program[CacheM.T].exec[Id] shouldBe ((2, 0))
+      program[CacheM.Op].exec[Id] shouldBe ((2, 0))
     }
   }
 

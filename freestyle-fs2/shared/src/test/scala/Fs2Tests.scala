@@ -3,7 +3,7 @@ package freestyle
 import org.scalatest._
 import _root_.fs2._
 import _root_.fs2.util.Free
-import cats.{Applicative, Eval}
+import cats.Applicative
 
 import fs2._
 
@@ -25,7 +25,7 @@ class Fs2Tests extends AsyncWordSpec with Matchers {
       val program = for {
         a <- app.nonStream.x
         b <- app.streamM.runLog(Stream.emit(40))
-        c <- Applicative[FreeS[App.T, ?]].pure(1)
+        c <- Applicative[FreeS[App.Op, ?]].pure(1)
       } yield a + b.head + c
       program.exec[Future] map { _ shouldBe 42 }
     }
@@ -87,7 +87,7 @@ class Fs2Tests extends AsyncWordSpec with Matchers {
       val stream: Stream[Eff, Int] = Stream.emits(List(1, 1, 40))
 
       val program = for {
-        v <- stream.liftFS[App.T]
+        v <- stream.liftFS[App.Op]
       } yield v
 
       program.exec[Future] map { _ shouldBe 42 }
@@ -97,7 +97,7 @@ class Fs2Tests extends AsyncWordSpec with Matchers {
       val stream: Stream[Eff, Int] = Stream.emits(List(1, 1, 40))
 
       val program = for {
-        v <- stream.liftFSPar[App.T]
+        v <- stream.liftFSPar[App.Op]
       } yield v
 
       program.exec[Future] map { _ shouldBe 42 }
@@ -123,5 +123,5 @@ object algebras {
     val streamM: StreamM[F]
   }
 
-  val app = App[App.T]
+  val app = App[App.Op]
 }

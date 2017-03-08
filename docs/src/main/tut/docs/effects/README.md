@@ -64,7 +64,7 @@ def shortCircuit[F[_]: ErrorM] =
     c <- 1.pure[FreeS[F, ?]]
   } yield a + b + c
 
-shortCircuit[ErrorM.T].exec[Target]
+shortCircuit[ErrorM.Op].exec[Target]
 ```
 
 ```tut:book
@@ -76,7 +76,7 @@ def continueWithRightValue[F[_]: ErrorM] =
     c <- 1.pure[FreeS[F, ?]]
   } yield a + b + c
 
-continueWithRightValue[ErrorM.T].exec[Target]
+continueWithRightValue[ErrorM.Op].exec[Target]
 ```
 
 ### error
@@ -92,7 +92,7 @@ def shortCircuitWithError[F[_]: ErrorM] =
     c <- 1.pure[FreeS[F, ?]]
   } yield a + b + c
 
-shortCircuitWithError[ErrorM.T].exec[Target]
+shortCircuitWithError[ErrorM.Op].exec[Target]
 ```
 
 ### catchNonFatal
@@ -114,7 +114,7 @@ def catchingExceptions[F[_]: ErrorM] =
     c <- 1.pure[FreeS[F, ?]]
   } yield a + b + c
   
-catchingExceptions[ErrorM.T].exec[Target]
+catchingExceptions[ErrorM.Op].exec[Target]
 ```
 
 ## Option
@@ -143,7 +143,7 @@ def programNone[F[_]: OptionM] =
     c <- 1.pure[FreeS[F, ?]]
   } yield a + b + c
   
-programNone[OptionM.T].exec[Option]
+programNone[OptionM.Op].exec[Option]
 ```
 
 If a `Some(_)` is found the value is extracted and lifted into the context and the programs resumes
@@ -157,7 +157,7 @@ def programSome[F[_]: OptionM] =
     c <- 1.pure[FreeS[F, ?]]
   } yield a + b + c
   
-programSome[OptionM.T].exec[Option]
+programSome[OptionM.Op].exec[Option]
 ```
 
 ### none
@@ -173,7 +173,7 @@ def programNone2[F[_]: OptionM] =
     c <- 1.pure[FreeS[F, ?]]
   } yield a + b + c
   
-programNone2[OptionM.T].exec[Option]
+programNone2[OptionM.Op].exec[Option]
 ```
 
 ## Reader
@@ -211,7 +211,7 @@ def programAsk[F[_]: rd.ReaderM] =
     _ <- 1.pure[FreeS[F, ?]]
   } yield c
     
-programAsk[rd.ReaderM.T].exec[ConfigEnv].run(Config(n = 10))
+programAsk[rd.ReaderM.Op].exec[ConfigEnv].run(Config(n = 10))
 ```
 
 ### reader
@@ -226,7 +226,7 @@ def programReader[F[_]: rd.ReaderM] =
     c <- 1.pure[FreeS[F, ?]]
   } yield a + b + c
     
-programReader[rd.ReaderM.T].exec[ConfigEnv].run(Config(n = 1))
+programReader[rd.ReaderM.Op].exec[ConfigEnv].run(Config(n = 1))
 ```
 
 ## Writer
@@ -261,7 +261,7 @@ def programWriter[F[_]: wr.WriterM] =
     _ <- 1.pure[FreeS[F, ?]]
   } yield b
   
-programWriter[wr.WriterM.T].exec[Logger].run
+programWriter[wr.WriterM.Op].exec[Logger].run
 ```
 
 ### tell
@@ -277,7 +277,7 @@ def programTell[F[_]: wr.WriterM] =
     _ <- 1.pure[FreeS[F, ?]]
   } yield b
       
-programTell[wr.WriterM.T].exec[Logger].run
+programTell[wr.WriterM.Op].exec[Logger].run
 ```
 
 ## State
@@ -312,7 +312,7 @@ def programGet[F[_]: st.StateM] =
     c <- 1.pure[FreeS[F, ?]]
   } yield a + b + c
       
-programGet[st.StateM.T].exec[TargetState].run(1).value
+programGet[st.StateM.Op].exec[TargetState].run(1).value
 ```
 
 ### set
@@ -326,7 +326,7 @@ def programSet[F[_]: st.StateM] =
     a <- st.StateM[F].get
   } yield a
 
-programSet[st.StateM.T].exec[TargetState].run(0).value
+programSet[st.StateM.Op].exec[TargetState].run(0).value
 ```
 
 ### modify
@@ -341,7 +341,7 @@ def programModify[F[_]: st.StateM] =
     b <- st.StateM[F].get
   } yield b
 
-programModify[st.StateM.T].exec[TargetState].run(1).value
+programModify[st.StateM.Op].exec[TargetState].run(1).value
 ```
 
 ### inspect
@@ -355,7 +355,7 @@ def programInspect[F[_]: st.StateM] =
     b <- st.StateM[F].inspect(_ + a)
   } yield b
 
-programInspect[st.StateM.T].exec[TargetState].run(1).value
+programInspect[st.StateM.Op].exec[TargetState].run(1).value
 ```
 
 ## Traverse
@@ -381,7 +381,7 @@ def programTraverse[F[_]: TraverseM] =
     b <- (a + 1).pure[FreeS[F, ?]]
   } yield b
 
-programTraverse[TraverseM.T].exec[List]
+programTraverse[TraverseM.Op].exec[List]
 ```
 
 ### empty
@@ -399,5 +399,5 @@ def programEmpty[F[_]: TraverseM] =
     c <- (b + 1).pure[FreeS[F, ?]]
   } yield c
 
-programEmpty[TraverseM.T].exec[List]
+programEmpty[TraverseM.Op].exec[List]
 ```
