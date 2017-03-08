@@ -34,7 +34,7 @@ class tests extends WordSpec with Matchers {
     }
 
     "respond to implicit evidences with compilable runtimes" in {
-      implicit val optionInterpreter = interps.optionInterpreter1
+      implicit val optionHandler = interps.optionHandler1
       val s                          = SCtors1[SCtors1.T]
       val program = for {
         a <- s.x(1)
@@ -45,8 +45,8 @@ class tests extends WordSpec with Matchers {
     }
 
     "reuse program interpretation in diferent runtimes" in {
-      implicit val optionInterpreter = interps.optionInterpreter1
-      implicit val listInterpreter   = interps.listInterpreter1
+      implicit val optionHandler = interps.optionHandler1
+      implicit val listHandler   = interps.listHandler1
       val s                          = SCtors1[SCtors1.T]
       val program = for {
         a <- s.x(1)
@@ -90,7 +90,7 @@ class tests extends WordSpec with Matchers {
         def get[A](key: String): FreeS[F, Option[A]]
         def delete(key: String): FreeS[F, Unit]
       }
-      val interpreter = new KVStore.Interpreter[List] {
+      val interpreter = new KVStore.Handler[List] {
         def putImpl[A](key: String, value: A): List[Unit] = Nil
         def getImpl[A](key: String): List[Option[A]]      = Nil
         def deleteImpl(key: String): List[Unit]           = Nil
@@ -104,7 +104,7 @@ class tests extends WordSpec with Matchers {
         def y(key: String): FreeS.Par[F, String]
         def z(key: String): FreeS.Par[F, String]
       }
-      implicit val interpreter = new ApplicativesServ.Interpreter[Option] {
+      implicit val interpreter = new ApplicativesServ.Handler[Option] {
         override def xImpl(key: String): Option[String] = Some(key)
         override def yImpl(key: String): Option[String] = Some(key)
         override def zImpl(key: String): Option[String] = Some(key)
@@ -123,7 +123,7 @@ class tests extends WordSpec with Matchers {
         def y(key: String): FreeS.Par[F, String]
         def z(key: String): FreeS[F, String]
       }
-      implicit val interpreter = new MixedFreeS.Interpreter[Option] {
+      implicit val interpreter = new MixedFreeS.Handler[Option] {
         override def xImpl(key: String): Option[String] = Some(key)
         override def yImpl(key: String): Option[String] = Some(key)
         override def zImpl(key: String): Option[String] = Some(key)
@@ -211,26 +211,26 @@ class tests extends WordSpec with Matchers {
 
     "[simple] find a FunctionK[Module.T, ?] providing there is existing ones for it's smart constructors" in {
       import freestyle.implicits._
-      implicit val optionInterpreter1 = interps.optionInterpreter1
-      implicit val optionInterpreter2 = interps.optionInterpreter2
+      implicit val optionHandler1 = interps.optionHandler1
+      implicit val optionHandler2 = interps.optionHandler2
       implicitly[FunctionK[M1.T, Option]].isInstanceOf[FunctionK[M1.T, Option]] shouldBe true
     }
 
     "[onion] find a FunctionK[Module.T, ?] providing there is existing ones for it's smart constructors" in {
       import freestyle.implicits._
-      implicit val optionInterpreter1 = interps.optionInterpreter1
-      implicit val optionInterpreter2 = interps.optionInterpreter2
-      implicit val optionInterpreter3 = interps.optionInterpreter3
-      implicit val optionInterpreter4 = interps.optionInterpreter4
+      implicit val optionHandler1 = interps.optionHandler1
+      implicit val optionHandler2 = interps.optionHandler2
+      implicit val optionHandler3 = interps.optionHandler3
+      implicit val optionHandler4 = interps.optionHandler4
       implicitly[FunctionK[O1.T, Option]].isInstanceOf[FunctionK[O1.T, Option]] shouldBe true
     }
 
     "[simple] reuse program interpretation in diferent runtimes" in {
       import freestyle.implicits._
-      implicit val optionInterpreter1 = interps.optionInterpreter1
-      implicit val listInterpreter1   = interps.listInterpreter1
-      implicit val optionInterpreter2 = interps.optionInterpreter2
-      implicit val listInterpreter2   = interps.listInterpreter2
+      implicit val optionHandler1 = interps.optionHandler1
+      implicit val listHandler1   = interps.listHandler1
+      implicit val optionHandler2 = interps.optionHandler2
+      implicit val listHandler2   = interps.listHandler2
       val m1                          = M1[M1.T]
       val program = for {
         a <- m1.sctors1.x(1)
@@ -244,14 +244,14 @@ class tests extends WordSpec with Matchers {
 
     "[onion] reuse program interpretation in diferent runtimes" in {
       import freestyle.implicits._
-      implicit val optionInterpreter1 = interps.optionInterpreter1
-      implicit val listInterpreter1   = interps.listInterpreter1
-      implicit val optionInterpreter2 = interps.optionInterpreter2
-      implicit val listInterpreter2   = interps.listInterpreter2
-      implicit val optionInterpreter3 = interps.optionInterpreter3
-      implicit val listInterpreter3   = interps.listInterpreter3
-      implicit val optionInterpreter4 = interps.optionInterpreter4
-      implicit val listInterpreter4   = interps.listInterpreter4
+      implicit val optionHandler1 = interps.optionHandler1
+      implicit val listHandler1   = interps.listHandler1
+      implicit val optionHandler2 = interps.optionHandler2
+      implicit val listHandler2   = interps.listHandler2
+      implicit val optionHandler3 = interps.optionHandler3
+      implicit val listHandler3   = interps.listHandler3
+      implicit val optionHandler4 = interps.optionHandler4
+      implicit val listHandler4   = interps.listHandler4
 
       val o1 = O1[O1.T]
       val program = for {
@@ -341,7 +341,7 @@ class tests extends WordSpec with Matchers {
       val test = new NonDeterminismTestShared
       import test._
 
-      implicit val interpreter = new MixedFreeS.Interpreter[Future] {
+      implicit val interpreter = new MixedFreeS.Handler[Future] {
         override def xImpl: Future[Int] = Future(blocker(1, 1000L))
         override def yImpl: Future[Int] = Future(blocker(2, 0L))
         override def zImpl: Future[Int] = Future(blocker(3, 2000L))
@@ -365,7 +365,7 @@ class tests extends WordSpec with Matchers {
       val test = new NonDeterminismTestShared
       import test._
 
-      implicit val interpreter = new MixedFreeS.Interpreter[Task] {
+      implicit val interpreter = new MixedFreeS.Handler[Task] {
         override def xImpl: Task[Int] = Task(blocker(1, 1000L))
         override def yImpl: Task[Int] = Task(blocker(2, 0L))
         override def zImpl: Task[Int] = Task(blocker(3, 2000L))
@@ -382,7 +382,7 @@ class tests extends WordSpec with Matchers {
       val test = new NonDeterminismTestShared
       import test._
 
-      implicit val interpreter = new MixedFreeS.Interpreter[Option] {
+      implicit val interpreter = new MixedFreeS.Handler[Option] {
         override def xImpl: Option[Int] = Option(blocker(1, 1000L))
         override def yImpl: Option[Int] = Option(blocker(2, 0L))
         override def zImpl: Option[Int] = Option(blocker(3, 2000L))
@@ -414,7 +414,7 @@ class tests extends WordSpec with Matchers {
         def hasNumber: FreeS.Par[F, Boolean]
       }
 
-      implicit val interpreter = new Validation.Interpreter[ParValidator] {
+      implicit val interpreter = new Validation.Handler[ParValidator] {
         override def minSizeImpl(n: Int): ParValidator[Boolean] =
           Kleisli(s => Future(s.size >= n))
         override def hasNumberImpl: ParValidator[Boolean] =
@@ -438,7 +438,7 @@ class tests extends WordSpec with Matchers {
       withMrPlod("pcplodtest.scala") { pc =>
         pc.typeAtPoint('result) shouldBe Some("Option[Int]")
         pc.typeAtPoint('test) shouldBe Some("(n: Int)freestyle.FreeS[F,Int]")
-        pc.typeAtPoint('interpreter) shouldBe Some("pcplodtest.PcplodTestAlgebra.Interpreter")
+        pc.typeAtPoint('interpreter) shouldBe Some("pcplodtest.PcplodTestAlgebra.Handler")
         pc.messages should be a 'empty
       }
     }
@@ -539,42 +539,42 @@ object interps {
 
   import algebras._
 
-  val optionInterpreter1: FunctionK[SCtors1.T, Option] = new SCtors1.Interpreter[Option] {
+  val optionHandler1: FunctionK[SCtors1.T, Option] = new SCtors1.Handler[Option] {
     def xImpl(a: Int): Option[Int] = Some(a)
     def yImpl(a: Int): Option[Int] = Some(a)
   }
 
-  val listInterpreter1: FunctionK[SCtors1.T, List] = new SCtors1.Interpreter[List] {
+  val listHandler1: FunctionK[SCtors1.T, List] = new SCtors1.Handler[List] {
     def xImpl(a: Int): List[Int] = List(a)
     def yImpl(a: Int): List[Int] = List(a)
   }
 
-  val optionInterpreter2: FunctionK[SCtors2.T, Option] = new SCtors2.Interpreter[Option] {
+  val optionHandler2: FunctionK[SCtors2.T, Option] = new SCtors2.Handler[Option] {
     def iImpl(a: Int): Option[Int] = Some(a)
     def jImpl(a: Int): Option[Int] = Some(a)
   }
 
-  val listInterpreter2: FunctionK[SCtors2.T, List] = new SCtors2.Interpreter[List] {
+  val listHandler2: FunctionK[SCtors2.T, List] = new SCtors2.Handler[List] {
     def iImpl(a: Int): List[Int] = List(a)
     def jImpl(a: Int): List[Int] = List(a)
   }
 
-  val optionInterpreter3: FunctionK[SCtors3.T, Option] = new SCtors3.Interpreter[Option] {
+  val optionHandler3: FunctionK[SCtors3.T, Option] = new SCtors3.Handler[Option] {
     def oImpl(a: Int): Option[Int] = Some(a)
     def pImpl(a: Int): Option[Int] = Some(a)
   }
 
-  val listInterpreter3: FunctionK[SCtors3.T, List] = new SCtors3.Interpreter[List] {
+  val listHandler3: FunctionK[SCtors3.T, List] = new SCtors3.Handler[List] {
     def oImpl(a: Int): List[Int] = List(a)
     def pImpl(a: Int): List[Int] = List(a)
   }
 
-  val optionInterpreter4: FunctionK[SCtors4.T, Option] = new SCtors4.Interpreter[Option] {
+  val optionHandler4: FunctionK[SCtors4.T, Option] = new SCtors4.Handler[Option] {
     def kImpl(a: Int): Option[Int] = Some(a)
     def lImpl(a: Int): Option[Int] = Some(a)
   }
 
-  val listInterpreter4: FunctionK[SCtors4.T, List] = new SCtors4.Interpreter[List] {
+  val listHandler4: FunctionK[SCtors4.T, List] = new SCtors4.Handler[List] {
     def kImpl(a: Int): List[Int] = List(a)
     def lImpl(a: Int): List[Int] = List(a)
   }

@@ -16,8 +16,8 @@ object state {
 
     object implicits {
 
-      implicit def freestyleStateMInterpreter[M[_]](
-          implicit MS: MonadState[M, S]): StateM.Interpreter[M] = new StateM.Interpreter[M] {
+      implicit def freestyleStateMHandler[M[_]](
+          implicit MS: MonadState[M, S]): StateM.Handler[M] = new StateM.Handler[M] {
         def getImpl: M[S]                   = MS.get
         def setImpl(s: S): M[Unit]          = MS.set(s)
         def modifyImpl(f: S => S): M[Unit]  = MS.modify(f)

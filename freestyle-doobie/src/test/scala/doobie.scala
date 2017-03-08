@@ -62,8 +62,8 @@ object algebras {
     def x: FreeS[F, Int]
   }
 
-  implicit def nonDoobieInterpreter: NonDoobie.Interpreter[Task] =
-    new NonDoobie.Interpreter[Task] {
+  implicit def nonDoobieHandler: NonDoobie.Handler[Task] =
+    new NonDoobie.Handler[Task] {
       def xImpl: Task[Int] = Task.now(1)
     }
 

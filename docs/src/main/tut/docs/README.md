@@ -103,12 +103,12 @@ In order to run programs we need interpreters. We define interpreters providing 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-implicit val validationInterpreter = new Validation.Interpreter[Future] {
+implicit val validationHandler = new Validation.Handler[Future] {
   override def minSizeImpl(s: String, n: Int): Future[Boolean] = Future(s.size >= n)
   override def hasNumberImpl(s: String): Future[Boolean] = Future(s.exists(c => "0123456789".contains(c)))
 }
 
-implicit val interactionInterpreter = new Interaction.Interpreter[Future] {
+implicit val interactionHandler = new Interaction.Handler[Future] {
   override def tellImpl(s: String): Future[Unit] = Future.successful(println(s))
   override def askImpl(s: String): Future[String] = Future.successful { println(s); "This could have been user input 1" }
 }

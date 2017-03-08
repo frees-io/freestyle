@@ -7,9 +7,9 @@ import journal._
 object loggingJVM {
 
   object implicits {
-    implicit def freeStyleLoggingInterpreter[M[_], C: Manifest](
-        implicit ME: MonadError[M, Throwable]): LoggingM.Interpreter[M] =
-      new LoggingM.Interpreter[M] {
+    implicit def freeStyleLoggingHandler[M[_], C: Manifest](
+        implicit ME: MonadError[M, Throwable]): LoggingM.Handler[M] =
+      new LoggingM.Handler[M] {
 
         val logger = Logger[C]
 

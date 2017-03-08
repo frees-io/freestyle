@@ -11,9 +11,9 @@ object doobie {
   }
 
   object implicits {
-    implicit def freeStyleDoobieInterpreter[M[_]: Catchable: Suspendable](
-        implicit xa: Transactor[M]): DoobieM.Interpreter[M] =
-      new DoobieM.Interpreter[M] {
+    implicit def freeStyleDoobieHandler[M[_]: Catchable: Suspendable](
+        implicit xa: Transactor[M]): DoobieM.Handler[M] =
+      new DoobieM.Handler[M] {
         def transactImpl[A](fa: ConnectionIO[A]): M[A] = fa.transact(xa)
       }
 

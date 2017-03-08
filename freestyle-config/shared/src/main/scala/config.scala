@@ -51,9 +51,9 @@ object config {
 
     lazy val underlying = loadConfig(ConfigFactory.load())
 
-    implicit def freestyleConfigInterpreter[M[_]](
-        implicit ME: MonadError[M, Throwable]): ConfigM.Interpreter[M] =
-      new ConfigM.Interpreter[M] {
+    implicit def freestyleConfigHandler[M[_]](
+        implicit ME: MonadError[M, Throwable]): ConfigM.Handler[M] =
+      new ConfigM.Handler[M] {
         def loadImpl: M[Config]  = ME.pure(underlying)
         def emptyImpl: M[Config] = ME.pure(loadConfig(ConfigFactory.empty()))
         def parseStringImpl(s: String): M[Config] =

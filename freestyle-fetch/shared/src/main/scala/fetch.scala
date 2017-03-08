@@ -15,8 +15,8 @@ object fetch {
 
   object implicits {
 
-    implicit def freeStyleFetchInterpreter[M[_]: FetchMonadError]: FetchM.Interpreter[M] =
-      new FetchM.Interpreter[M] {
+    implicit def freeStyleFetchHandler[M[_]: FetchMonadError]: FetchM.Handler[M] =
+      new FetchM.Handler[M] {
         import _root_.fetch.syntax._
         def runAImpl[A](fa: Fetch[A]): M[A]                                  = fa.runA[M]
         def runFImpl[A](fa: Fetch[A]): M[(FetchEnv, A)]                      = fa.runF[M]

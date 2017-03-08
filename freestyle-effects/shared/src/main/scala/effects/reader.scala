@@ -1,8 +1,7 @@
 package freestyle.effects
 
 import freestyle._
-import cats.{Eval, Monad, MonadReader}
-import cats.arrow.FunctionK
+import cats.MonadReader
 
 object reader {
 
@@ -15,8 +14,8 @@ object reader {
 
     object implicits {
 
-      implicit def interpreter[M[_]](implicit MR: MonadReader[M, R]): ReaderM.Interpreter[M] =
-        new ReaderM.Interpreter[M] {
+      implicit def interpreter[M[_]](implicit MR: MonadReader[M, R]): ReaderM.Handler[M] =
+        new ReaderM.Handler[M] {
           def askImpl: M[R]                  = MR.ask
           def readerImpl[B](f: R => B): M[B] = MR.reader(f)
         }

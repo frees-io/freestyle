@@ -55,7 +55,7 @@ import cats._
 
 implicit def interactInterp[F[_]](
   implicit ME: MonadError[F, Throwable]
-): Interact.Interpreter[F] = new Interact.Interpreter[F] {
+): Interact.Handler[F] = new Interact.Handler[F] {
   def tellImpl(msg: String): F[Unit] = {
     println(msg)
     ME.pure(())

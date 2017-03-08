@@ -14,8 +14,8 @@ object writer {
 
     object implicits {
 
-      implicit def freestyleWriterMInterpreter[M[_]](
-          implicit MW: MonadWriter[M, W]): WriterM.Interpreter[M] = new WriterM.Interpreter[M] {
+      implicit def freestyleWriterMHandler[M[_]](
+          implicit MW: MonadWriter[M, W]): WriterM.Handler[M] = new WriterM.Handler[M] {
         def writerImpl[A](aw: (W, A)): M[A] = MW.writer(aw)
         def tell(w: W): M[Unit]             = MW.tell(w)
       }

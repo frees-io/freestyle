@@ -12,8 +12,8 @@ object option {
 
   object implicits {
 
-    implicit def freeStyleOptionMInterpreter[M[_]](
-        implicit MF: MonadFilter[M]): OptionM.Interpreter[M] = new OptionM.Interpreter[M] {
+    implicit def freeStyleOptionMHandler[M[_]](
+        implicit MF: MonadFilter[M]): OptionM.Handler[M] = new OptionM.Handler[M] {
       def optionImpl[A](fa: Option[A]): M[A] = fa.map(MF.pure[A]).getOrElse(MF.empty[A])
       def noneImpl[A]: M[A]                  = MF.empty[A]
     }

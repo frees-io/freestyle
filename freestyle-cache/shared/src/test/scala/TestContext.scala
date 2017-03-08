@@ -17,8 +17,8 @@ trait CacheTestContext extends BeforeAndAfterEach { self: Suite =>
 
   protected[this] final val provider = new KeyValueProvider[String, Int]
 
-  protected[this] implicit val interpret: provider.CacheM.Interpreter[Id] =
-    provider.implicits.cacheInterpreter(rawMap, idInt)
+  protected[this] implicit val interpret: provider.CacheM.Handler[Id] =
+    provider.implicits.cacheHandler(rawMap, idInt)
 
   override def beforeEach = rawMap.clear
 

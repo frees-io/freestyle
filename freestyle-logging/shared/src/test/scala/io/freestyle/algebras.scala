@@ -11,8 +11,8 @@ object algebras {
     def x: FreeS[F, Int]
   }
 
-  implicit def nonLoggingInterpreter: NonLogging.Interpreter[Future] =
-    new NonLogging.Interpreter[Future] {
+  implicit def nonLoggingHandler: NonLogging.Handler[Future] =
+    new NonLogging.Handler[Future] {
       def xImpl: Future[Int] = Future.successful(1)
     }
 

@@ -68,15 +68,15 @@ package cache {
      */
 
     object implicits {
-      implicit def cacheInterpreter[F[_], G[_]](
+      implicit def cacheHandler[F[_], G[_]](
           implicit rawMap: KeyValueMap[F, Key, Val],
           interpret: F ~> G
-      ): CacheM.Interpreter[G] = new CacheInterpreter[F, G]
+      ): CacheM.Handler[G] = new CacheHandler[F, G]
 
-      private[this] class CacheInterpreter[F[_], G[_]](
+      private[this] class CacheHandler[F[_], G[_]](
           implicit rawMap: KeyValueMap[F, Key, Val],
           interpret: F ~> G
-      ) extends CacheM.Interpreter[G] {
+      ) extends CacheM.Handler[G] {
 
         override def getImpl(key: Key): G[Option[Val]] =
           interpret(rawMap.get(key))

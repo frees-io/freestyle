@@ -35,7 +35,7 @@ object free {
 
     // OP is the name of the Root trait of the Effect ADT
     lazy val OP = TypeName("T")
-    // MM Is the target of the Interpreter's natural Transformation
+    // MM Is the target of the Handler's natural Transformation
     lazy val MM = TypeName("MM")
     // LL is the target of the Lifter's Injection
     lazy val LL = TypeName("LL")
@@ -127,7 +127,7 @@ object free {
 
     def mkHandler( effTTs: List[TypeDef], requests: List[Request]): ClassDef =
       q"""
-        trait Interpreter[$MM[_], ..$effTTs] extends FunctionK[$OP, $MM] {
+        trait Handler[$MM[_], ..$effTTs] extends FunctionK[$OP, $MM] {
           ..${requests.map( _.handlerDef )}
           override def apply[A](fa: $OP[A]): $MM[A] = fa match { 
             case ..${requests.map(_.handlerCase )}

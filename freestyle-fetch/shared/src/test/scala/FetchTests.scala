@@ -57,8 +57,8 @@ object algebras {
     def x: FreeS[F, Int]
   }
 
-  implicit def nonFetchInterpreter: NonFetch.Interpreter[Future] =
-    new NonFetch.Interpreter[Future] {
+  implicit def nonFetchHandler: NonFetch.Handler[Future] =
+    new NonFetch.Handler[Future] {
       def xImpl: Future[Int] = Future.successful(1)
     }
 

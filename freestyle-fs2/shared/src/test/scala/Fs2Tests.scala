@@ -112,8 +112,8 @@ object algebras {
     def x: FreeS[F, Int]
   }
 
-  implicit def nonStreamInterpreter: NonStream.Interpreter[Future] =
-    new NonStream.Interpreter[Future] {
+  implicit def nonStreamHandler: NonStream.Handler[Future] =
+    new NonStream.Handler[Future] {
       def xImpl: Future[Int] = Future.successful(1)
     }
 

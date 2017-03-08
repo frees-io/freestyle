@@ -38,10 +38,10 @@ object async {
       }
     }
 
-    implicit def freeStyleAsyncMInterpreter[M[_]](
+    implicit def freeStyleAsyncMHandler[M[_]](
         implicit MA: AsyncContext[M]
-    ): AsyncM.Interpreter[M] =
-      new AsyncM.Interpreter[M] {
+    ): AsyncM.Handler[M] =
+      new AsyncM.Handler[M] {
         def asyncImpl[A](fa: Proc[A]): M[A] =
           MA.runAsync(fa)
       }

@@ -7,9 +7,9 @@ import slogging._
 object loggingJS {
 
   object implicits {
-    implicit def freeStyleLoggingInterpreter[M[_]](
-        implicit ME: MonadError[M, Throwable]): LoggingM.Interpreter[M] =
-      new LoggingM.Interpreter[M] with LazyLogging {
+    implicit def freeStyleLoggingHandler[M[_]](
+        implicit ME: MonadError[M, Throwable]): LoggingM.Handler[M] =
+      new LoggingM.Handler[M] with LazyLogging {
 
         LoggerConfig.factory = PrintLoggerFactory()
 

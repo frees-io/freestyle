@@ -41,9 +41,9 @@ object fs2 {
   }
 
   object implicits {
-    implicit def freeStyleFs2StreamInterpreter[F[_]](
+    implicit def freeStyleFs2StreamHandler[F[_]](
         implicit ME: MonadError[F, Throwable]
-    ): StreamM.Interpreter[F] = {
+    ): StreamM.Handler[F] = {
       val attemptF = new FunctionK[Attempt, F] {
         def apply[A](fa: Attempt[A]): F[A] = fa match {
           case Left(err) => ME.raiseError(err)
@@ -51,7 +51,7 @@ object fs2 {
         }
       }
 
-      new StreamM.Interpreter[F] {
+      new StreamM.Handler[F] {
         def runImpl[A](s: Stream[Eff, A]): F[Unit] =
           s.run.run.foldMap(attemptF)
 
