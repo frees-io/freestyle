@@ -39,8 +39,6 @@ object free {
     lazy val MM = TypeName("MM")
     // LL is the target of the Lifter's Injection
     lazy val LL = TypeName("LL")
-    // LIFT is the name of the Lifter's Injector Class: no sense in separate name
-    lazy val LIFT = TypeName("Lift")
 
     class Request(reqDef: DefDef) {
 
@@ -92,7 +90,7 @@ object free {
           q"case class $Req[..$TTs](..$params) extends $OP[$Res]"
       }
 
-      def lifter: DefDef = {
+      def raiser: DefDef = {
         val injected = {
           /*filter: if !v.mods.hasFlag(Flag.IMPLICIT)*/
           val args = params.map(_.name)
@@ -112,19 +110,19 @@ object free {
       }
     }
 
-    def mkLifterClass( effectName: TypeName, effTTs: List[TypeDef], requests: List[Request] ): ClassDef = {
+    def mkRaiseTo( effectName: TypeName, effTTs: List[TypeDef], requests: List[Request] ): ClassDef = {
       q"""
-       class $LIFT[$LL[_], ..$effTTs](implicit I: Inject[$OP, $LL])
+       class RaiseTo[$LL[_], ..$effTTs](implicit I: Inject[$OP, $LL])
           extends $effectName[$LL, ..${effTTs.map(_.name)}] {
-            ..${requests.map(_.lifter )}
+            ..${requests.map(_.raiser )}
           }
       """
     }
 
-    def mkLifterFactory( eff: TypeName, effTTs: List[TypeDef]): DefDef =
+    def mkRaiseMethod( eff: TypeName, effTTs: List[TypeDef]): DefDef =
       q"""
-        implicit def defaultInstance[$LL[_], ..$effTTs](implicit I: Inject[$OP, $LL]): 
-            $eff[$LL, ..${effTTs.map(_.name)}] = new $LIFT[$LL, ..$effTTs]
+        implicit def raiseTo[$LL[_], ..$effTTs](implicit I: Inject[$OP, $LL]):
+            $eff[$LL, ..${effTTs.map(_.name)}] = new RaiseTo[$LL, ..$effTTs]
       """
 
     def mkHandler( effTTs: List[TypeDef], requests: List[Request]): ClassDef =
@@ -150,8 +148,8 @@ object free {
       val requests       : List[Request]  = getRequestDefs(effectTrait).map( p => new Request(p))
       val effectTyParams : List[TypeDef] = effectTrait.tparams
       val requestClasses : List[ClassDef] = requests.map( _.mkRequestClass(effectTyParams.tail))
-      val lifterClass = mkLifterClass(effectName, effectTyParams.tail, requests)
-      val lifterFactory = mkLifterFactory(effectName, effectTyParams.tail)
+      val raiseToClass = mkRaiseTo(effectName, effectTyParams.tail, requests)
+      val raiseToMethod = mkRaiseMethod(effectName, effectTyParams.tail)
       val effectHandler = mkHandler(effectTyParams.tail, requests)
 
       q"""
@@ -161,8 +159,8 @@ object free {
           import freestyle.FreeS
           sealed trait $OP[A] extends Product with Serializable
           ..$requestClasses
-          $lifterClass
-          $lifterFactory
+          $raiseToClass
+          $raiseToMethod
           def apply[..$effectTyParams](implicit c: $effectName[..${effectTyParams.map(_.name)}]):
               $effectName[..${effectTyParams.map(_.name)}] = c
           $effectHandler
