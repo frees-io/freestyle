@@ -47,7 +47,7 @@ object algebras {
 
   implicit def nonConfigHandler: NonConfig.Handler[Future] =
     new NonConfig.Handler[Future] {
-      def xImpl: Future[Int] = Future.successful(1)
+      def x: Future[Int] = Future.successful(1)
     }
 
   @module

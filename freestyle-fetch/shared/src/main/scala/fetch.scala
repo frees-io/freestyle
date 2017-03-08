@@ -18,13 +18,13 @@ object fetch {
     implicit def freeStyleFetchHandler[M[_]: FetchMonadError]: FetchM.Handler[M] =
       new FetchM.Handler[M] {
         import _root_.fetch.syntax._
-        def runAImpl[A](fa: Fetch[A]): M[A]                                  = fa.runA[M]
-        def runFImpl[A](fa: Fetch[A]): M[(FetchEnv, A)]                      = fa.runF[M]
-        def runEImpl[A](fa: Fetch[A]): M[FetchEnv]                           = fa.runE[M]
-        def runAWithCacheImpl[A](fa: Fetch[A], cache: DataSourceCache): M[A] = fa.runA[M](cache)
-        def runFWithCacheImpl[A](fa: Fetch[A], cache: DataSourceCache): M[(FetchEnv, A)] =
+        def runA[A](fa: Fetch[A]): M[A]                                  = fa.runA[M]
+        def runF[A](fa: Fetch[A]): M[(FetchEnv, A)]                      = fa.runF[M]
+        def runE[A](fa: Fetch[A]): M[FetchEnv]                           = fa.runE[M]
+        def runAWithCache[A](fa: Fetch[A], cache: DataSourceCache): M[A] = fa.runA[M](cache)
+        def runFWithCache[A](fa: Fetch[A], cache: DataSourceCache): M[(FetchEnv, A)] =
           fa.runF[M](cache)
-        def runEWithCacheImpl[A](fa: Fetch[A], cache: DataSourceCache): M[FetchEnv] =
+        def runEWithCache[A](fa: Fetch[A], cache: DataSourceCache): M[FetchEnv] =
           fa.runE[M](cache)
       }
 

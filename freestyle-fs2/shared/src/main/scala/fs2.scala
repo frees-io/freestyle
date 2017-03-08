@@ -52,16 +52,16 @@ object fs2 {
       }
 
       new StreamM.Handler[F] {
-        def runImpl[A](s: Stream[Eff, A]): F[Unit] =
+        def run[A](s: Stream[Eff, A]): F[Unit] =
           s.run.run.foldMap(attemptF)
 
-        def runLogImpl[A](s: Stream[Eff, A]): F[Vector[A]] =
+        def runLog[A](s: Stream[Eff, A]): F[Vector[A]] =
           s.runLog.run.foldMap(attemptF)
 
-        def runFoldImpl[A, B](z: B, f: (B, A) => B, s: Stream[Eff, A]): F[B] =
+        def runFold[A, B](z: B, f: (B, A) => B, s: Stream[Eff, A]): F[B] =
           s.runFold(z)(f).run.foldMap(attemptF)
 
-        def runLastImpl[A](s: Stream[Eff, A]): F[Option[A]] =
+        def runLast[A](s: Stream[Eff, A]): F[Option[A]] =
           s.runLast.run.foldMap(attemptF)
       }
     }

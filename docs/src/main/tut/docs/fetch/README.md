@@ -71,7 +71,7 @@ import cats.Monad
 implicit def interactInterp[F[_]](
   implicit ME: Monad[F]
 ): Interact.Handler[F] = new Interact.Handler[F] {
-  def tellImpl(msg: String): F[Unit] = {
+  def tell(msg: String): F[Unit] = {
     println(msg)
     ME.pure(())
   }

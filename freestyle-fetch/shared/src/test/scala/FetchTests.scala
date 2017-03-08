@@ -59,7 +59,7 @@ object algebras {
 
   implicit def nonFetchHandler: NonFetch.Handler[Future] =
     new NonFetch.Handler[Future] {
-      def xImpl: Future[Int] = Future.successful(1)
+      def x: Future[Int] = Future.successful(1)
     }
 
   @module

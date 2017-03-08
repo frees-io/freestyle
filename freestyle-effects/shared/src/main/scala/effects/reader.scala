@@ -16,8 +16,8 @@ object reader {
 
       implicit def interpreter[M[_]](implicit MR: MonadReader[M, R]): ReaderM.Handler[M] =
         new ReaderM.Handler[M] {
-          def askImpl: M[R]                  = MR.ask
-          def readerImpl[B](f: R => B): M[B] = MR.reader(f)
+          def ask: M[R]                  = MR.ask
+          def reader[B](f: R => B): M[B] = MR.reader(f)
         }
 
     }

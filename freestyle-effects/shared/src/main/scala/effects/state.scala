@@ -18,10 +18,10 @@ object state {
 
       implicit def freestyleStateMHandler[M[_]](
           implicit MS: MonadState[M, S]): StateM.Handler[M] = new StateM.Handler[M] {
-        def getImpl: M[S]                   = MS.get
-        def setImpl(s: S): M[Unit]          = MS.set(s)
-        def modifyImpl(f: S => S): M[Unit]  = MS.modify(f)
-        def inspectImpl[A](f: S => A): M[A] = MS.inspect(f)
+        def get: M[S]                   = MS.get
+        def set(s: S): M[Unit]          = MS.set(s)
+        def modify(f: S => S): M[Unit]  = MS.modify(f)
+        def inspect[A](f: S => A): M[A] = MS.inspect(f)
       }
 
       class StateInspectFreeSLift[F[_]: StateM] extends FreeSLift[F, Function1[S, ?]] {

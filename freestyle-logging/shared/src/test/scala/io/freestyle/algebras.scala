@@ -13,7 +13,7 @@ object algebras {
 
   implicit def nonLoggingHandler: NonLogging.Handler[Future] =
     new NonLogging.Handler[Future] {
-      def xImpl: Future[Int] = Future.successful(1)
+      def x: Future[Int] = Future.successful(1)
     }
 
   @module

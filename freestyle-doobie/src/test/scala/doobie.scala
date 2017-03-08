@@ -64,7 +64,7 @@ object algebras {
 
   implicit def nonDoobieHandler: NonDoobie.Handler[Task] =
     new NonDoobie.Handler[Task] {
-      def xImpl: Task[Int] = Task.now(1)
+      def x: Task[Int] = Task.now(1)
     }
 
   @module

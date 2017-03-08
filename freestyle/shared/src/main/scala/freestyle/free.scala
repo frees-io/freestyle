@@ -44,7 +44,7 @@ object free {
 
       import reqDef.tparams
 
-      val reqImpl = TermName(reqDef.name.toTermName.encodedName.toString + "Impl")
+      val reqImpl = TermName(reqDef.name.toTermName.encodedName.toString)
 
       // Name of the Request ADT Class
       private[this] val Req: TypeName = TypeName(reqDef.name.toTypeName.encodedName.toString.capitalize + "OP")

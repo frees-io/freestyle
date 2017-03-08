@@ -42,7 +42,7 @@ object async {
         implicit MA: AsyncContext[M]
     ): AsyncM.Handler[M] =
       new AsyncM.Handler[M] {
-        def asyncImpl[A](fa: Proc[A]): M[A] =
+        def async[A](fa: Proc[A]): M[A] =
           MA.runAsync(fa)
       }
   }

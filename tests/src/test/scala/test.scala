@@ -91,9 +91,9 @@ class tests extends WordSpec with Matchers {
         def delete(key: String): FreeS[F, Unit]
       }
       val interpreter = new KVStore.Handler[List] {
-        def putImpl[A](key: String, value: A): List[Unit] = Nil
-        def getImpl[A](key: String): List[Option[A]]      = Nil
-        def deleteImpl(key: String): List[Unit]           = Nil
+        def put[A](key: String, value: A): List[Unit] = Nil
+        def get[A](key: String): List[Option[A]]      = Nil
+        def delete(key: String): List[Unit]           = Nil
       }
     }
 
@@ -105,9 +105,9 @@ class tests extends WordSpec with Matchers {
         def z(key: String): FreeS.Par[F, String]
       }
       implicit val interpreter = new ApplicativesServ.Handler[Option] {
-        override def xImpl(key: String): Option[String] = Some(key)
-        override def yImpl(key: String): Option[String] = Some(key)
-        override def zImpl(key: String): Option[String] = Some(key)
+        override def x(key: String): Option[String] = Some(key)
+        override def y(key: String): Option[String] = Some(key)
+        override def z(key: String): Option[String] = Some(key)
       }
       val v = ApplicativesServ[ApplicativesServ.T]
       import v._
@@ -124,9 +124,9 @@ class tests extends WordSpec with Matchers {
         def z(key: String): FreeS[F, String]
       }
       implicit val interpreter = new MixedFreeS.Handler[Option] {
-        override def xImpl(key: String): Option[String] = Some(key)
-        override def yImpl(key: String): Option[String] = Some(key)
-        override def zImpl(key: String): Option[String] = Some(key)
+        override def x(key: String): Option[String] = Some(key)
+        override def y(key: String): Option[String] = Some(key)
+        override def z(key: String): Option[String] = Some(key)
       }
       val v = MixedFreeS[MixedFreeS.T]
       import v._
@@ -204,7 +204,7 @@ class tests extends WordSpec with Matchers {
         e <- o1.m2.sctors3.o(1)
         f <- o1.m2.sctors3.p(1)
         g <- o1.m2.sctors4.k(1)
-        h <- o1.m2.sctors4.l(1)
+        h <- o1.m2.sctors4.m(1)
       } yield a + b + c + d + e + f + g + h
       result.isInstanceOf[FreeS[O1.T, Int]] shouldBe true
     }
@@ -262,7 +262,7 @@ class tests extends WordSpec with Matchers {
         e <- o1.m2.sctors3.o(1)
         f <- o1.m2.sctors3.p(1)
         g <- o1.m2.sctors4.k(1)
-        h <- o1.m2.sctors4.l(1)
+        h <- o1.m2.sctors4.m(1)
       } yield a + b + c + d + e + f + g + h
 
       program.exec[Option] shouldBe Option(8)
@@ -342,9 +342,9 @@ class tests extends WordSpec with Matchers {
       import test._
 
       implicit val interpreter = new MixedFreeS.Handler[Future] {
-        override def xImpl: Future[Int] = Future(blocker(1, 1000L))
-        override def yImpl: Future[Int] = Future(blocker(2, 0L))
-        override def zImpl: Future[Int] = Future(blocker(3, 2000L))
+        override def x: Future[Int] = Future(blocker(1, 1000L))
+        override def y: Future[Int] = Future(blocker(2, 0L))
+        override def z: Future[Int] = Future(blocker(3, 2000L))
       }
 
       Await.result(program.exec[Future], Duration.Inf) shouldBe List(3, 1, 2, 3)
@@ -366,9 +366,9 @@ class tests extends WordSpec with Matchers {
       import test._
 
       implicit val interpreter = new MixedFreeS.Handler[Task] {
-        override def xImpl: Task[Int] = Task(blocker(1, 1000L))
-        override def yImpl: Task[Int] = Task(blocker(2, 0L))
-        override def zImpl: Task[Int] = Task(blocker(3, 2000L))
+        override def x: Task[Int] = Task(blocker(1, 1000L))
+        override def y: Task[Int] = Task(blocker(2, 0L))
+        override def z: Task[Int] = Task(blocker(3, 2000L))
       }
 
       Await.result(program.exec[Task].runAsync, Duration.Inf) shouldBe List(3, 1, 2, 3)
@@ -383,9 +383,9 @@ class tests extends WordSpec with Matchers {
       import test._
 
       implicit val interpreter = new MixedFreeS.Handler[Option] {
-        override def xImpl: Option[Int] = Option(blocker(1, 1000L))
-        override def yImpl: Option[Int] = Option(blocker(2, 0L))
-        override def zImpl: Option[Int] = Option(blocker(3, 2000L))
+        override def x: Option[Int] = Option(blocker(1, 1000L))
+        override def y: Option[Int] = Option(blocker(2, 0L))
+        override def z: Option[Int] = Option(blocker(3, 2000L))
       }
 
       program.exec[Option] shouldBe Option(List(3, 1, 2, 3))
@@ -415,9 +415,9 @@ class tests extends WordSpec with Matchers {
       }
 
       implicit val interpreter = new Validation.Handler[ParValidator] {
-        override def minSizeImpl(n: Int): ParValidator[Boolean] =
+        override def minSize(n: Int): ParValidator[Boolean] =
           Kleisli(s => Future(s.size >= n))
-        override def hasNumberImpl: ParValidator[Boolean] =
+        override def hasNumber: ParValidator[Boolean] =
           Kleisli(s => Future(s.exists(c => "0123456789".contains(c))))
       }
 
@@ -438,7 +438,7 @@ class tests extends WordSpec with Matchers {
       withMrPlod("pcplodtest.scala") { pc =>
         pc.typeAtPoint('result) shouldBe Some("Option[Int]")
         pc.typeAtPoint('test) shouldBe Some("(n: Int)freestyle.FreeS[F,Int]")
-        pc.typeAtPoint('interpreter) shouldBe Some("pcplodtest.PcplodTestAlgebra.Handler")
+        pc.typeAtPoint('handler) shouldBe Some("pcplodtest.PcplodTestAlgebra.Handler")
         pc.messages should be a 'empty
       }
     }
@@ -470,7 +470,7 @@ object algebras {
   @free
   trait SCtors4[F[_]] {
     def k(a: Int): FreeS[F, Int]
-    def l(a: Int): FreeS[F, Int]
+    def m(a: Int): FreeS[F, Int]
   }
 
   @free
@@ -540,42 +540,42 @@ object interps {
   import algebras._
 
   val optionHandler1: FunctionK[SCtors1.T, Option] = new SCtors1.Handler[Option] {
-    def xImpl(a: Int): Option[Int] = Some(a)
-    def yImpl(a: Int): Option[Int] = Some(a)
+    def x(a: Int): Option[Int] = Some(a)
+    def y(a: Int): Option[Int] = Some(a)
   }
 
   val listHandler1: FunctionK[SCtors1.T, List] = new SCtors1.Handler[List] {
-    def xImpl(a: Int): List[Int] = List(a)
-    def yImpl(a: Int): List[Int] = List(a)
+    def x(a: Int): List[Int] = List(a)
+    def y(a: Int): List[Int] = List(a)
   }
 
   val optionHandler2: FunctionK[SCtors2.T, Option] = new SCtors2.Handler[Option] {
-    def iImpl(a: Int): Option[Int] = Some(a)
-    def jImpl(a: Int): Option[Int] = Some(a)
+    def i(a: Int): Option[Int] = Some(a)
+    def j(a: Int): Option[Int] = Some(a)
   }
 
   val listHandler2: FunctionK[SCtors2.T, List] = new SCtors2.Handler[List] {
-    def iImpl(a: Int): List[Int] = List(a)
-    def jImpl(a: Int): List[Int] = List(a)
+    def i(a: Int): List[Int] = List(a)
+    def j(a: Int): List[Int] = List(a)
   }
 
   val optionHandler3: FunctionK[SCtors3.T, Option] = new SCtors3.Handler[Option] {
-    def oImpl(a: Int): Option[Int] = Some(a)
-    def pImpl(a: Int): Option[Int] = Some(a)
+    def o(a: Int): Option[Int] = Some(a)
+    def p(a: Int): Option[Int] = Some(a)
   }
 
   val listHandler3: FunctionK[SCtors3.T, List] = new SCtors3.Handler[List] {
-    def oImpl(a: Int): List[Int] = List(a)
-    def pImpl(a: Int): List[Int] = List(a)
+    def o(a: Int): List[Int] = List(a)
+    def p(a: Int): List[Int] = List(a)
   }
 
   val optionHandler4: FunctionK[SCtors4.T, Option] = new SCtors4.Handler[Option] {
-    def kImpl(a: Int): Option[Int] = Some(a)
-    def lImpl(a: Int): Option[Int] = Some(a)
+    def k(a: Int): Option[Int] = Some(a)
+    def m(a: Int): Option[Int] = Some(a)
   }
 
   val listHandler4: FunctionK[SCtors4.T, List] = new SCtors4.Handler[List] {
-    def kImpl(a: Int): List[Int] = List(a)
-    def lImpl(a: Int): List[Int] = List(a)
+    def k(a: Int): List[Int] = List(a)
+    def m(a: Int): List[Int] = List(a)
   }
 }

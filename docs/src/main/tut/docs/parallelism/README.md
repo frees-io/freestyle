@@ -60,10 +60,10 @@ import freestyle.implicits._
 type ParValidator[A] = Kleisli[Future, String, A]
 
 implicit val interpreter = new Validation.Handler[ParValidator] {
-  override def minSizeImpl(n: Int): ParValidator[Boolean] =
+  override def minSize(n: Int): ParValidator[Boolean] =
     Kleisli(s => Future(s.size >= n))
 
-  override def hasNumberImpl: ParValidator[Boolean] =
+  override def hasNumber: ParValidator[Boolean] =
     Kleisli(s => Future(s.exists(c => "0123456789".contains(c))))
 }
 

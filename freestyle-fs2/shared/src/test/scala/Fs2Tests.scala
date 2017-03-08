@@ -114,7 +114,7 @@ object algebras {
 
   implicit def nonStreamHandler: NonStream.Handler[Future] =
     new NonStream.Handler[Future] {
-      def xImpl: Future[Int] = Future.successful(1)
+      def x: Future[Int] = Future.successful(1)
     }
 
   @module

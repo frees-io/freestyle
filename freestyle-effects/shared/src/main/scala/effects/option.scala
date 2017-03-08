@@ -14,8 +14,8 @@ object option {
 
     implicit def freeStyleOptionMHandler[M[_]](
         implicit MF: MonadFilter[M]): OptionM.Handler[M] = new OptionM.Handler[M] {
-      def optionImpl[A](fa: Option[A]): M[A] = fa.map(MF.pure[A]).getOrElse(MF.empty[A])
-      def noneImpl[A]: M[A]                  = MF.empty[A]
+      def option[A](fa: Option[A]): M[A] = fa.map(MF.pure[A]).getOrElse(MF.empty[A])
+      def none[A]: M[A]                  = MF.empty[A]
     }
 
     class OptionFreeSLift[F[_]: OptionM] extends FreeSLift[F, Option] {

@@ -44,11 +44,11 @@ import cats.data.State
 type KVStoreState[A] = State[Map[String, Any], A]
 
 implicit val kvStoreHandler: KVStore.Handler[KVStoreState] = new KVStore.Handler[KVStoreState] {
-  def putImpl[A](key: String, value: A): KVStoreState[Unit] =
+  def put[A](key: String, value: A): KVStoreState[Unit] =
     State.modify(_.updated(key, value))
-  def getImpl[A](key: String): KVStoreState[Option[A]] =
+  def get[A](key: String): KVStoreState[Option[A]] =
     State.inspect(_.get(key).map(_.asInstanceOf[A]))
-  def deleteImpl(key: String): KVStoreState[Unit] =
+  def delete(key: String): KVStoreState[Unit] =
     State.modify(_ - key)
 }
 ```
@@ -99,8 +99,8 @@ import cats.implicits._
 
 implicit def logHandler: Log.Handler[KVStoreState] = 
   new Log.Handler[KVStoreState] {
-    def infoImpl(msg: String): KVStoreState[Unit] = println("INFO: $msg").pure[KVStoreState]
-    def warnImpl(msg: String): KVStoreState[Unit] = println("WARN: $msg").pure[KVStoreState]
+    def info(msg: String): KVStoreState[Unit] = println("INFO: $msg").pure[KVStoreState]
+    def warn(msg: String): KVStoreState[Unit] = println("WARN: $msg").pure[KVStoreState]
   }
 ```
 

@@ -14,7 +14,7 @@ object doobie {
     implicit def freeStyleDoobieHandler[M[_]: Catchable: Suspendable](
         implicit xa: Transactor[M]): DoobieM.Handler[M] =
       new DoobieM.Handler[M] {
-        def transactImpl[A](fa: ConnectionIO[A]): M[A] = fa.transact(xa)
+        def transact[A](fa: ConnectionIO[A]): M[A] = fa.transact(xa)
       }
 
     implicit def freeSLiftDoobie[F[_]: DoobieM]: FreeSLift[F, ConnectionIO] =

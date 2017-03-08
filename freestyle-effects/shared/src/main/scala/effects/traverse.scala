@@ -23,8 +23,8 @@ object traverse {
           implicit MC: MonadCombine[M],
           FT: Foldable[G]): TraverseM.Handler[M] =
         new TraverseM.Handler[M] {
-          def emptyImpl[A]: M[A]                     = MC.empty[A]
-          def fromTraversableImpl[A](ta: G[A]): M[A] = ta.foldMap(MC.pure)(MC.algebra[A])
+          def empty[A]: M[A]                     = MC.empty[A]
+          def fromTraversable[A](ta: G[A]): M[A] = ta.foldMap(MC.pure)(MC.algebra[A])
         }
     }
 

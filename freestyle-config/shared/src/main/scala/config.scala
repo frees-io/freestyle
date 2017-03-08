@@ -54,9 +54,9 @@ object config {
     implicit def freestyleConfigHandler[M[_]](
         implicit ME: MonadError[M, Throwable]): ConfigM.Handler[M] =
       new ConfigM.Handler[M] {
-        def loadImpl: M[Config]  = ME.pure(underlying)
-        def emptyImpl: M[Config] = ME.pure(loadConfig(ConfigFactory.empty()))
-        def parseStringImpl(s: String): M[Config] =
+        def load: M[Config]  = ME.pure(underlying)
+        def empty: M[Config] = ME.pure(loadConfig(ConfigFactory.empty()))
+        def parseString(s: String): M[Config] =
           ME.catchNonFatal(loadConfig(ConfigFactory.parseString(s)))
       }
   }

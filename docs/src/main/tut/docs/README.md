@@ -104,13 +104,13 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 implicit val validationHandler = new Validation.Handler[Future] {
-  override def minSizeImpl(s: String, n: Int): Future[Boolean] = Future(s.size >= n)
-  override def hasNumberImpl(s: String): Future[Boolean] = Future(s.exists(c => "0123456789".contains(c)))
+  override def minSize(s: String, n: Int): Future[Boolean] = Future(s.size >= n)
+  override def hasNumber(s: String): Future[Boolean] = Future(s.exists(c => "0123456789".contains(c)))
 }
 
 implicit val interactionHandler = new Interaction.Handler[Future] {
-  override def tellImpl(s: String): Future[Unit] = Future.successful(println(s))
-  override def askImpl(s: String): Future[String] = Future.successful { println(s); "This could have been user input 1" }
+  override def tell(s: String): Future[Unit] = Future.successful(println(s))
+  override def ask(s: String): Future[String] = Future.successful { println(s); "This could have been user input 1" }
 }
 ```
 
