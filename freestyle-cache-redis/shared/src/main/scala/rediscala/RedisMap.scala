@@ -3,7 +3,7 @@ package freestyle.cache.redis.rediscala
 import cats.{~>, Functor}
 import cats.syntax.functor._
 import scala.concurrent.Future
-import _root_.redis.{ByteStringDeserializer, ByteStringSerializer}
+import _root_.redis.{ByteStringDeserializer, ByteStringSerializer, Cursor}
 import freestyle.cache.KeyValueMap
 
 class MapWrapper[M[_], Key, Value](
@@ -43,6 +43,12 @@ class MapWrapper[M[_], Key, Value](
 
   override def clear(): Ops[M, Unit] =
     RediscalaCont.flushDB.transform(toM).void
+
+  override def replace(key: Key, newVal: Value): Ops[M, Unit] =
+    RediscalaCont.setxx(key, newVal).transform(toM).void
+
+  override def isEmpty : Ops[M, Boolean] =
+    RediscalaCont.scan.transform(toM).map(_.data.isEmpty)
 
 }
 

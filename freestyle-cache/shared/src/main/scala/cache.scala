@@ -37,6 +37,13 @@ package cache {
 
       // Removes all entries
       def clear: FreeS.Par[F, Unit]
+
+      //Replaces the entry for a key only if currently mapped to some value
+      def replace(key: Key, newVal: Val): FreeS.Par[F, Unit]
+
+      //Returns true if this map contains no key-value mappings.
+      def isEmpty: FreeS.Par[F, Boolean]
+
     }
 
     /*
@@ -100,6 +107,10 @@ package cache {
           interpret(rawMap.keys)
         override def clearImpl: G[Unit] =
           interpret(rawMap.clear)
+        override def replaceImpl(key: Key,newVal: Val): G[Unit] =
+          interpret(rawMap.replace(key,newVal))
+        override def isEmptyImpl : G[Boolean] =
+          interpret(rawMap.isEmpty)
       }
 
     }
@@ -122,6 +133,10 @@ package cache {
     def keys: F[List[Key]]
 
     def clear: F[Unit]
+
+    def replace(key: Key, newVal: Val) : F[Unit]
+
+    def isEmpty: F[Boolean]
   }
 
 }
