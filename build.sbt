@@ -255,7 +255,7 @@ lazy val docs = (project in file("docs")).
   dependsOn(freestyleEffectsJVM).
   dependsOn(freestyleFs2JVM).
   dependsOn(freestyleFetchJVM).
-  // dependsOn(freestyleCacheJVM).
+  dependsOn(freestyleCacheJVM).
   settings(micrositeSettings: _*).
   settings(noPublishSettings: _*).
   settings(
@@ -269,26 +269,3 @@ lazy val docs = (project in file("docs")).
     )
   )
   .enablePlugins(MicrositesPlugin)
-  .settings(scalacOptions += "-Xlog-implicits")
-
-lazy val example = (project in file("freestyle-example")).
-  dependsOn(freestyleJVM).
-  dependsOn(freestyleEffectsJVM).
-  dependsOn(freestyleFs2JVM).
-  dependsOn(freestyleCacheJVM).
-  settings(noPublishSettings: _*).
-  settings(
-    name := "example",
-    description := "freestyle example"
-  ).
-  settings(resolvers += Resolver.bintrayRepo("tek", "maven")).
-  settings(
-    libraryDependencies ++= Seq(
-      "co.fs2" %% "fs2-io"   % "0.9.2",
-      "co.fs2" %% "fs2-cats" % "0.3.0"
-      // before macro expansion ??
-      // ,compilerPlugin("tryp" %% "splain" % "0.1.21")
-    )
-  )
-  // .settings(scalacOptions += "-Ypartial-unification")
-  // .settings(scalacOptions += "-Xlog-implicits")

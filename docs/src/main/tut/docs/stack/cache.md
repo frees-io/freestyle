@@ -1,7 +1,7 @@
 ---
 layout: docs
-title: A common stack
-permalink: /docs/stack/
+title: A common stack with cache
+permalink: /docs/stack/cache/
 ---
 
 In the following example we will see how a module with two algebras can be used in combination with some of the effect algebras provided by Freestyle.
@@ -50,15 +50,16 @@ object algebras {
 ```
 
 These two algebras will be combined together in a `Persistence` module, that in its turn will be a part of our `App` module, that additionally includes the
-capabilities to fail, to read from our `Config` configuration and to accumulate some logging messages using respectively the `error`, the `reader` and  the `writer` effect.
+capabilities to fail, to read from our `Config` configuration and to cache `Customer`s using respectively `error` and `reader` from the _freestyle-effects_ module and `cache` from the _freestyle-cache_ module.
 
 ```tut:book
 import freestyle.effects.error._
-import freestyle.effects.{reader, writer}
+import freestyle.effects.reader
+import freestyle.cache.KeyValueProvider
 
 object modules {
   val rd = reader[Config]
-  val wr = writer[Vector[String]]
+  val cacheP = new KeyValueProvider[CustomerId, Customer]
 
   @module trait Persistence[F[_]] {
     val customer: algebras.CustomerPersistence[F]
@@ -69,8 +70,8 @@ object modules {
     val persistence: Persistence[F]
 
     val errorM: ErrorM[F]
+    val cacheM: cacheP.CacheM[F]
     val readerM: rd.ReaderM[F]
-    val writerM: wr.WriterM[F]
   }
 }
 ```
@@ -80,10 +81,9 @@ To validate the order we check if the number of crates that is ordered bigger is
 For the second part we use the `reader` effect algebra to read the set of apple cultivars from our `Config`.
 
 ```tut:book
-import cats.implicits._
-
 import modules._
 import cats.data.{NonEmptyList, ValidatedNel}
+import cats.implicits._
 
 def validateOrder[F[_]](order: Order, customer: Customer)(implicit app: App[F]): FreeS.Par[F, ValidatedNel[String, Unit]] =
   app.readerM.reader { config =>
@@ -97,7 +97,29 @@ def validateOrder[F[_]](order: Order, customer: Customer)(implicit app: App[F]):
   }
 ```
 
-We will create a couple of domain specific exception case classes.
+When validating an order we need to get the information of the customer, if a customer places multiple orders we don't want to send a database request every time, so we could use the `freestyle-cache` module.
+
+In the `getCustomer` function we try to find the customer in the cache, otherwise falling back to getting the customer from a database (or other persistence store).
+
+
+```tut:book
+import cats.data.OptionT
+
+def getCustomer[F[_]](id: CustomerId)(implicit app: App[F]): FreeS[F, Option[Customer]] =
+  // first try to get the customer from the cache
+  OptionT(app.cacheM.get(id).freeS).orElseF {
+    // otherwise fallback and get the customer from a persistent store
+    for {
+      customer <- app.persistence.customer.getCustomer(id).freeS
+      _        <- customer.fold(
+                    ().pure[FreeS[F, ?]])(
+                    // put customer in cache
+                    cust => app.cacheM.put(id, cust))
+    } yield customer
+  }.value
+```
+
+Next we create a couple of domain specific exception case classes.
 
 ```tut:book
 sealed abstract class AppleException(val message: String) extends Exception(message)
@@ -106,41 +128,38 @@ case class QuantityNotAvailable(error: String)            extends AppleException
 case class ValidationFailed(errors: NonEmptyList[String]) extends AppleException(errors.intercalate("\n"))
 ```
 
-We can use the `validateOrder` method in combination with our persistence algebras and the `error` and `writer` effect algebras, to create the `processOrder` method tying everything together.
+We can use the `validateOrder` and `getCustomer` methods in combination with our persistence algebras and the `error` effect algebra, to create the `processOrder` method tying everything together.
 
 ```tut:book
 def processOrder[F[_]](order: Order)(implicit app: App[F]): FreeS[F, String] =
   for {
-    customerOpt <- app.persistence.customer.getCustomer(order.customerId)
+    customerOpt <- getCustomer[F](order.customerId)
     customer    <- app.errorM.either(customerOpt.toRight(CustomerNotFound(order.customerId)))
-    _           <- app.writerM.tell(Vector(s"customer name is ${customer.name}"))
     validation  <- validateOrder[F](order, customer)
     _           <- app.errorM.either(validation.toEither.leftMap(ValidationFailed))
     nbAvailable <- app.persistence.stock.checkQuantityAvailable(order.cultivar)
-    _           <- app.writerM.tell(Vector(s"availble crates of ${order.cultivar} apples"))
     _           <- app.errorM.either(
                      Either.cond(
                        order.crates <= nbAvailable,
                        (),
                        QuantityNotAvailable(
                          s"""There are not sufficient crates of ${order.cultivar} apples in stock
-                            |(only $nbAvailable available, while ${order.crates} needed).""".stripMargin)
+                            |(only $nbAvailable available, while ${order.crates} needed - $order).""".stripMargin)
                      )
                    )
     _          <- app.persistence.stock.registerOrder(order)
   } yield s"Order registered for customer ${order.customerId}"
 ```
 
-As target type of our computation we choose a combination of `Kleisli` (also known as `ReaderT`), `WriterT` and `fs2.Task`.
+As target type of our computation we choose a combination of `Kleisli` and `fs2.Task`.
 
 ```tut:book
-import cats.data.{Kleisli, WriterT}
+import cats.data.Kleisli
 import _root_.fs2.Task
 import _root_.fs2.interop.cats._
 
-type Stack[A] = Kleisli[WriterT[Task, Vector[String], ?], Config, A]
+type Stack[A] = Kleisli[Task, Config, A]
 ```
-
 
 Now we create the interpreters for algebras of our `Persistence` module by implementing their specific `Interpreter` traits as `x.Interpreter[Stack]`.
 
@@ -154,81 +173,47 @@ implicit val customerPersistencteInterpreter: CustomerPersistence.Interpreter[St
     val customers: Map[CustomerId, Customer] =
       Map(customerId1 -> Customer(customerId1, "Apple Juice Ltd"))
     def getCustomerImpl(id: CustomerId): Stack[Option[Customer]] =
-      customers.get(id).pure[Stack]
+      Kleisli(_ => Task.now(customers.get(id)))
   }
 
 implicit val stockPersistencteInterpreter: StockPersistence.Interpreter[Stack] =
   new StockPersistence.Interpreter[Stack] {
     def checkQuantityAvailableImpl(cultivar: String): Stack[Int] =
-      (cultivar.toLowerCase match {
-        case "granny smith" => 150
-        case "jonagold"     => 200
-        case _              => 25
-      }).pure[Stack]
-
+      Kleisli(_ =>
+        Task.now(cultivar.toLowerCase match {
+          case "granny smith" => 150
+          case "jonagold"     => 200
+          case _              => 25
+        })
+      )
 
     def registerOrderImpl(order: Order): Stack[Unit] =
-      Kleisli.lift(WriterT.lift(Task.delay(println(s"Register $order"))))
+      Kleisli(_ => Task.delay(println(s"Register $order")))
   }
 ```
 
-Below are some type class instances for `Kleisli` which are currently not yet provided by Cats.
+An interpreter which can cache the `Customer`s can be created with a `ConcurrentHashMapWrapper` and natural transformation to our `Stack` type.
 
 ```tut:book
-import cats.data.Kleisli
+import cats.{~>, Id}
+import freestyle.cache.hashmap._
+import freestyle.cache.KeyValueMap
 
-// MonadError for Kleisli is on its way already
-// https://github.com/typelevel/cats/pull/1543
+implicit val freestyleHasherCustomerId: Hasher[CustomerId] =
+  Hasher[CustomerId](_.hashCode)
 
-import cats.{Monad, MonadError, MonadWriter}
+implicit val cacheInterpreter: cacheP.CacheM.Interpreter[Stack] = {
+  val rawMap: KeyValueMap[Id, CustomerId, Customer] =
+    new ConcurrentHashMapWrapper[Id, CustomerId, Customer]
 
-trait KleisliMonad[F[_], A] {
-  implicit val F: Monad[F]
-
-  def pure[B](x: B): Kleisli[F, A, B] =
-    Kleisli.pure[F, A, B](x)
-
-  def flatMap[B, C](fa: Kleisli[F, A, B])(f: B => Kleisli[F, A, C]): Kleisli[F, A, C] =
-    fa.flatMap(f)
-
-  def tailRecM[B, C](b: B)(f: B => Kleisli[F, A, Either[B, C]]): Kleisli[F, A, C] =
-    Kleisli[F, A, C]({ a => F.tailRecM(b) { f(_).run(a) } })
-}
-
-trait KleisliMTL1 {
-  implicit def kleisliMonadError[F[_], A, E](implicit ME: MonadError[F, E]): MonadError[Kleisli[F, A, ?], E] = 
-    new MonadError[Kleisli[F, A, ?], E] with KleisliMonad[F, A] {
-      implicit val F = ME
-
-      def raiseError[B](e: E): Kleisli[F, A, B] = Kleisli(_ => ME.raiseError(e))
-
-      def handleErrorWith[B](kb: Kleisli[F, A, B])(f: E => Kleisli[F, A, B]): Kleisli[F, A, B] = Kleisli { a: A =>
-        ME.handleErrorWith(kb.run(a))((e: E) => f(e).run(a))
-      }
+  val cacheIdToStack: Id ~> Stack =
+    new (Id ~> Stack) {
+      def apply[A](a: Id[A]): Stack[A] = a.pure[Stack]
     }
-}
 
-object KleisliMTL extends KleisliMTL1 {
-  implicit def kleisliMonadWriter[F[_], A, L](implicit MW: MonadWriter[F, L]): MonadWriter[Kleisli[F, A, ?], L] = 
-    new MonadWriter[Kleisli[F, A, ?], L] with KleisliMonad[F, A] {
-      implicit val F = MW
-
-      def writer[B](bw: (L, B)): Kleisli[F, A, B] =
-        Kleisli.lift(MW.writer(bw))
-
-      def listen[B](fa: Kleisli[F, A, B]): Kleisli[F, A, (L, B)] =
-        Kleisli(a => MW.listen(fa.run(a)))
-
-      def pass[B](fb: Kleisli[F, A, (L => L, B)]): Kleisli[F, A, B] =
-        Kleisli(a => MW.pass(fb.run(a)))
-
-      override def tell(l: L): Kleisli[F, A, Unit] = 
-        Kleisli.lift(MW.tell(l))
-    }
+  cacheP.implicits.cacheInterpreter(rawMap, cacheIdToStack)
 }
 ```
-
-
 
 We can now create a Freestyle program by specifying the type in `processOrder` as `App.T`.
 
@@ -237,27 +222,22 @@ val program: FreeS[App.T, String] =
   processOrder[App.T](Order(50, "granny smith", customerId1))
 ```
 
-
-With the persistence algebras interpreters in place and with the right imports for the Freestyle effect algebras, we can execute to program resulting in `Stack[String]`.
+With the persistence algebras interpreters and the `Customer` cache interpreter in place and with the right imports for the `reader` and `error` effect, we can execute to program resulting in `Stack[String]`.
 
 ```tut:book
 import freestyle.effects.error.implicits._
-import wr.implicits._
 import rd.implicits._
-import KleisliMTL._
+
+val cultivars = Set("granny smith", "jonagold", "boskoop")
+val config = Config(cultivars)
 
 val result: Stack[String] = program.exec[Stack]
 ```
 
-We can run our `Stack` by supplying a `Config` value, running the `WriterT` and running the `Task`.
+We can run our `Stack` by supplying a `Config` value and running the `Task`.
 
 ```tut:book
-val cultivars = Set("granny smith", "jonagold", "boskoop")
-val config = Config(cultivars)
-
-val task: Task[(Vector[String], String)] = result.run(config).run
+val task: Task[String] = program.exec[Stack].run(config)
 
 task.unsafeRunSync.fold(println, println)
 ```
-
-
