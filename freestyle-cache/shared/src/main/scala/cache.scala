@@ -81,31 +81,31 @@ package cache {
      */
 
     object implicits {
-      implicit def cacheInterpreter[F[_], G[_]](
+      implicit def cacheHandler[F[_], G[_]](
           implicit rawMap: KeyValueMap[F, Key, Val],
           interpret: F ~> G
-      ): CacheM.Interpreter[G] = new CacheInterpreter[F, G]
+      ): CacheM.Handler[G] = new CacheHandler[F, G]
 
-      private[this] class CacheInterpreter[F[_], G[_]](
+      private[this] class CacheHandler[F[_], G[_]](
           implicit rawMap: KeyValueMap[F, Key, Val],
           interpret: F ~> G
-      ) extends CacheM.Interpreter[G] {
+      ) extends CacheM.Handler[G] {
 
-        override def getImpl(key: Key): G[Option[Val]] =
+        override def get(key: Key): G[Option[Val]] =
           interpret(rawMap.get(key))
-        override def putImpl(key: Key, newVal: Val): G[Unit] =
+        override def put(key: Key, newVal: Val): G[Unit] =
           interpret(rawMap.put(key, newVal))
         override def putAllImpl(keyValues: Map[Key, Val]):G[Unit] =
           interpret(rawMap.putAll(keyValues))
         override def putIfAbsentImpl(key: Key, newVal: Val) : G[Unit]=
           interpret(rawMap.putIfAbsent(key,newVal))
-        override def delImpl(key: Key): G[Unit] =
+        override def del(key: Key): G[Unit] =
           interpret(rawMap.delete(key))
-        override def hasImpl(key: Key): G[Boolean] =
+        override def has(key: Key): G[Boolean] =
           interpret(rawMap.hasKey(key))
-        override def keysImpl: G[List[Key]] =
+        override def keys: G[List[Key]] =
           interpret(rawMap.keys)
-        override def clearImpl: G[Unit] =
+        override def clear: G[Unit] =
           interpret(rawMap.clear)
         override def replaceImpl(key: Key,newVal: Val): G[Unit] =
           interpret(rawMap.replace(key,newVal))

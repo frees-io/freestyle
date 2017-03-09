@@ -45,9 +45,9 @@ object algebras {
     def x: FreeS[F, Int]
   }
 
-  implicit def nonConfigInterpreter: NonConfig.Interpreter[Future] =
-    new NonConfig.Interpreter[Future] {
-      def xImpl: Future[Int] = Future.successful(1)
+  implicit def nonConfigHandler: NonConfig.Handler[Future] =
+    new NonConfig.Handler[Future] {
+      def x: Future[Int] = Future.successful(1)
     }
 
   @module
@@ -56,6 +56,6 @@ object algebras {
     val configM: ConfigM[F]
   }
 
-  val app = App[App.T]
+  val app = App[App.Op]
 
 }

@@ -113,9 +113,9 @@ If you were to create this by hand in the case of the example above it will look
 ```tut:book
 import cats.data.Coproduct
 
-type C01[A] = Coproduct[Database.T, Cache.T, A]
-type C02[A] = Coproduct[Presenter.T, C01, A]
-type ManualAppCoproduct[A] = Coproduct[IdValidation.T, C02, A]
+type C01[A] = Coproduct[Database.Op, Cache.Op, A]
+type C02[A] = Coproduct[Presenter.Op, C01, A]
+type ManualAppCoproduct[A] = Coproduct[IdValidation.Op, C02, A]
 ```
 
 Things get more complicated once the number of Algebras grows.
@@ -123,7 +123,7 @@ Fortunately Freestyle automatically aligns all those for you and gives you an al
 contained by a Module whether directly referenced or transitively through it's modules dependencies.
 
 ```tut:book
-implicitly[App.T[_] =:= ManualAppCoproduct[_]]
+implicitly[App.Op[_] =:= ManualAppCoproduct[_]]
 ```
 
 We've covered so far how Freestyle can help in building and composing module programs based on `Free`, but `Free` programs are

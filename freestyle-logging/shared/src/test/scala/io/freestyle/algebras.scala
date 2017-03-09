@@ -11,9 +11,9 @@ object algebras {
     def x: FreeS[F, Int]
   }
 
-  implicit def nonLoggingInterpreter: NonLogging.Interpreter[Future] =
-    new NonLogging.Interpreter[Future] {
-      def xImpl: Future[Int] = Future.successful(1)
+  implicit def nonLoggingHandler: NonLogging.Handler[Future] =
+    new NonLogging.Handler[Future] {
+      def x: Future[Int] = Future.successful(1)
     }
 
   @module
@@ -22,5 +22,5 @@ object algebras {
     val loggingM: LoggingM[F]
   }
 
-  val app = App[App.T]
+  val app = App[App.Op]
 }

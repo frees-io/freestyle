@@ -37,7 +37,7 @@ import freestyle._
 
 # Parallel interpretation
 
-Interpreters for operations that are executed in parallel should target a type for which there is a monad instance that supports parallelism.
+Handlers for operations that are executed in parallel should target a type for which there is a monad instance that supports parallelism.
 Freestyle ships with ready to use instances for `scala.concurrent.Future` and contains extension modules for [`monix.eval.Task`](https://monix.io/docs/2x/eval/task.html) and [`akka actors`](http://akka.io/) (WIP)
 
 To enable these instances and support parallelism you need to explicitly import:
@@ -46,7 +46,7 @@ To enable these instances and support parallelism you need to explicitly import:
 import freestyle.nondeterminism._
 ```
 
-The code below illustrate an interpreter that will allow parallel executions thanks to the unsafe nature of `scala.concurrent.Future#apply` which runs immediately.
+The code below illustrate a handler that will allow parallel executions thanks to the unsafe nature of `scala.concurrent.Future#apply` which runs immediately.
 
 ```tut:book
 import cats.data.Kleisli
@@ -59,15 +59,15 @@ import freestyle.implicits._
 
 type ParValidator[A] = Kleisli[Future, String, A]
 
-implicit val interpreter = new Validation.Interpreter[ParValidator] {
-  override def minSizeImpl(n: Int): ParValidator[Boolean] =
+implicit val interpreter = new Validation.Handler[ParValidator] {
+  override def minSize(n: Int): ParValidator[Boolean] =
     Kleisli(s => Future(s.size >= n))
 
-  override def hasNumberImpl: ParValidator[Boolean] =
+  override def hasNumber: ParValidator[Boolean] =
     Kleisli(s => Future(s.exists(c => "0123456789".contains(c))))
 }
 
-val validation = Validation[Validation.T]
+val validation = Validation[Validation.Op]
 import validation._
 
 val parValidation = (minSize(3) |@| hasNumber).map(_ :: _ :: Nil)
