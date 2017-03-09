@@ -142,7 +142,7 @@ get(x).map(_.isDefined) === keys.map(_.contains(x) ) //1
 keys *> get(x) === get(x)
 ```
 
-### Interpreters
+### Handlers
 
 #### Concurrent Hash Map
 

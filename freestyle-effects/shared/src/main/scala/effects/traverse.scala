@@ -2,9 +2,6 @@ package freestyle.effects
 
 import freestyle._
 import cats.{~>, Foldable, MonadCombine}
-import cats.data.ValidatedNel
-import cats.free.Free
-
 import cats.implicits._
 
 object traverse {
@@ -22,12 +19,12 @@ object traverse {
      * in scope
      */
     object implicits {
-      implicit def freestyleTraverseMInterpreter[F[_], M[_]](
+      implicit def freestyleTraverseMHandler[F[_], M[_]](
           implicit MC: MonadCombine[M],
-          FT: Foldable[G]): TraverseM.Interpreter[M] =
-        new TraverseM.Interpreter[M] {
-          def emptyImpl[A]: M[A]                     = MC.empty[A]
-          def fromTraversableImpl[A](ta: G[A]): M[A] = ta.foldMap(MC.pure)(MC.algebra[A])
+          FT: Foldable[G]): TraverseM.Handler[M] =
+        new TraverseM.Handler[M] {
+          def empty[A]: M[A]                     = MC.empty[A]
+          def fromTraversable[A](ta: G[A]): M[A] = ta.foldMap(MC.pure)(MC.algebra[A])
         }
     }
 

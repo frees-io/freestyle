@@ -31,7 +31,7 @@ class RedisTests extends AsyncWordSpec with Matchers with RedisTestContext {
           b <- (CacheM[F].put("Joe", 13) *> CacheM[F].get("Joe"))
           c <- Applicative[FreeS[F, ?]].pure(Some(1))
         } yield Seq(a, b, c).flatten.sum
-      program[CacheM.T].exec[Future] map { _ shouldBe 15 }
+      program[CacheM.Op].exec[Future] map { _ shouldBe 15 }
     }
 
   }

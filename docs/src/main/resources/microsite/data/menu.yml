@@ -8,7 +8,7 @@ options:
   - title: Modules
     url: docs/modules/
 
-  - title: Interpreters
+  - title: Handlers
     url: docs/interpreters/
 
   - title: Parallelism

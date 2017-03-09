@@ -30,34 +30,56 @@ case class User(id: Long, name: String)
 This is similar to the simplified manual encoding below.
 
 ```tut:book
-import cats.free.{Free, Inject}
+import freestyle.FreeS
 
 case class User(id: Long, name: String)
 
 trait UserRepository[F[_]] {
-  def get(id: Long): Free[F, User]
-  def save(user: User): Free[F, User]
-  def getAll(filter: String): Free[F, List[User]]
+  def get(id: Long): FreeS[F, User]
+  def save(user: User): FreeS[F, User]
+  def getAll(filter: String): FreeS[F, List[User]]
 }
 
 object UserRepository {
-  trait UserRepositoryOp[A] extends Product with Serializable
-  final case class Get(id: Long) extends UserRepositoryOp[User]
-  final case class Save(user: User) extends UserRepositoryOp[User]
-  final case class GetAll(filter: String) extends UserRepositoryOp[List[User]]
+  import cats.arrow.FunctionK
+  import cats.free.Inject
+  import freestyle.FreeS
 
-  type T[A] = UserRepositoryOp[A]
+  sealed trait Op[A] extends Product with Serializable
+  final case class Get(id: Long) extends Op[User]
+  final case class Save(user: User) extends Op[User]
+  final case class GetAll(filter: String) extends Op[List[User]]
 
-  class UserRepositoryImpl[F[_]](implicit I: Inject[UserRepositoryOp, F]) extends UserRepository[F] {
-    def get(id: Long): Free[F, User] = Free.inject[UserRepositoryOp, F](Get(id))
-    def save(user: User): Free[F, User] = Free.inject[UserRepositoryOp, F](Save(user))
-    def getAll(filter: String): Free[F, List[User]] = Free.inject[UserRepositoryOp, F](GetAll(filter))
+  class RaiseTo[L[_]](implicit I: Inject[Op, L]) extends UserRepository[L] {
+
+    def get(id: Long): FreeS[L, User] =
+        FreeS.liftPar( FreeS.inject[Op, L]( Get(id)) )
+
+    def save(user: User): FreeS[L, User] =
+        FreeS.liftPar( FreeS.inject[Op, L]( Save(user)) )
+
+    def getAll(filter: String): FreeS[L, List[User]] =
+        FreeS.liftPar( FreeS.inject[Op, L]( GetAll(filter)) )
   }
 
-  implicit def instance[F[_]](implicit I: Inject[UserRepositoryOp, F]): UserRepository[F] =
-    new UserRepositoryImpl[F]
+  implicit def raiseTo[L[_]](implicit I: Inject[Op, L]): UserRepository[L] =
+    new RaiseTo[L]
 
-  def apply[F[_]](implicit ev: UserRepository[F]): UserRepository[F] = ev
+  def apply[F[_]](implicit c: UserRepository[F]): UserRepository[F] = c
+
+  trait Handler[M[_]] extends FunctionK[Op, M] {
+
+    protected[this] def get(id: Long): M[User]
+    protected[this] def save(user: User): M[User]
+    protected[this] def getAll(filter: String): M[List[User]]
+
+    override def apply[A](fa: Op[A]): M[A] = fa match {
+      case l @ Get(_) => get(l.id)
+      case l @ Save(_) => save(l.user)
+      case l @ GetAll(_) => getAll(l.filter)
+    }
+  }
+
 }
 ```
 
@@ -76,13 +98,13 @@ in [Data types a la Carte](http://www.cs.ru.nl/~W.Swierstra/Publications/DataTyp
 As you may have noticed when defining algebras with `@free` there is no need to provide implicit evidences for the necessary
 `Inject` typeclasses that otherwise you need to manually provide to further evaluate your free monads when they are interleaved with other `Free` programs.
 
-Beside providing the appropriate `Inject` evidences Freestyle creates an implicit method that will enable implicit summoning of the smart
-constructors class implementation and an `apply` method that allows summoning instances of your smart constructors where needed. 
+Beside providing the appropriate `Inject` evidences,  Freestyle creates an implicit method that will enable implicit summoning of the smart
+constructors class implementation and an `apply` method that allows summoning instances of your smart constructors where needed.
 This effectively enables implicits based Dependency Injection where you may choose to override implementations
 using the implicits scoping rules to place different implementations where appropriate.
 
 ```tut:book
-val userRepository = UserRepository[UserRepository.T]
+val userRepository = UserRepository[UserRepository.Op]
 ```
 
 ```tut:book
@@ -95,8 +117,7 @@ def myService2[F[_]: UserRepository] = ???
 
 ## Convenient type aliases
 
-All companions generated with `@free` contain a convenient type alias `T` that you can refer to and that points to the root
-ADT node. referring to the Root ADT node it's also possible but discouraged as naming conventions may change in the future.
+All companions generated with `@free` define a `sealed trait Op[A]` as the root node of the requests ADT.a
 You may use this to manually build `Coproduct` types which will serve in the parameterization of your application and code as in the example below
 
 ```tut:book
@@ -111,14 +132,14 @@ import cats.data.Coproduct
 @free trait Service3[F[_]]{
   def z(n: Int): FreeS[F, Int]
 }
-type C1[A] = Coproduct[Service1.T, Service2.T, A]
-type Module[A] = Coproduct[Service3.T, C1, A]
+type C1[A] = Coproduct[Service1.Op, Service2.Op, A]
+type Module[A] = Coproduct[Service3.Op, C1, A]
 ```
 
 This is obviously far from ideal as building `Coproduct` types by hand often times result in bizarre compile errors
 when the types don't align properly arising from placing them in the wrong order.
 
-Fear not. Freestyle provides a [modular system](/docs/modules/) to achieve Onion style architectures and remove all the complexity from building `Coproduct` types by hand and
-compose arbitrarily nested Modules containing Algebras.
+Fear not. Freestyle provides a [modular system](/docs/modules/) to achieve Onion style architectures
+and remove all the complexity from building `Coproduct` types by hand and compose arbitrarily nested Modules containing Algebras.
 
 [Continue to Modules](/docs/modules)

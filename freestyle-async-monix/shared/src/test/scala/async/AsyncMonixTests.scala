@@ -34,7 +34,7 @@ class AsyncMonixTests extends AsyncWordSpec with Matchers {
           })
         } yield a + b + c + d
 
-      program[AsyncM.T].exec[Task].runAsync map { _ shouldBe 54 }
+      program[AsyncM.Op].exec[Task].runAsync map { _ shouldBe 54 }
     }
   }
 }

@@ -1,10 +1,10 @@
 ---
 layout: docs
-title: Interpreters
+title: Handlers
 permalink: /docs/interpreters/
 ---
 
-# Interpreters
+# Handlers
 
 Freestyle empowers program whose runtime can be easily overriden via implicit evidences.
 
@@ -15,7 +15,7 @@ to choose Automatic or manual algebras, modules and interpreters and intremix th
 
 Freestyle automatically generates an abstract definition of an interpreter for each one of the
 algebras annotated with `@free`.
-This allow you to build the proper runtime definitions for your algebras by simply extending the `Interpreter[M[_]]`
+This allow you to build the proper runtime definitions for your algebras by simply extending the `Handler[M[_]]`
 member in your algebras companion.
 
 Consider the following Algebra adapted to Freestyle from the [Typelevel Cats Free monads examples]()
@@ -36,19 +36,19 @@ import cats.implicits._
 }
 ```
 
-In order to define a runtime interpreter for it we simply extend `KVStore.Interpreter[M[_]]` and implement its abstract members.
+In order to define a runtime interpreter for it we simply extend `KVStore.Handler[M[_]]` and implement its abstract members.
 
 ```tut:book
 import cats.data.State
 
 type KVStoreState[A] = State[Map[String, Any], A]
 
-implicit val kvStoreInterpreter: KVStore.Interpreter[KVStoreState] = new KVStore.Interpreter[KVStoreState] {
-  def putImpl[A](key: String, value: A): KVStoreState[Unit] =
+implicit val kvStoreHandler: KVStore.Handler[KVStoreState] = new KVStore.Handler[KVStoreState] {
+  def put[A](key: String, value: A): KVStoreState[Unit] =
     State.modify(_.updated(key, value))
-  def getImpl[A](key: String): KVStoreState[Option[A]] =
+  def get[A](key: String): KVStoreState[Option[A]] =
     State.inspect(_.get(key).map(_.asInstanceOf[A]))
-  def deleteImpl(key: String): KVStoreState[Unit] =
+  def delete(key: String): KVStoreState[Unit] =
     State.modify(_ - key)
 }
 ```
@@ -56,18 +56,18 @@ implicit val kvStoreInterpreter: KVStore.Interpreter[KVStoreState] = new KVStore
 As you may have noticed in Freestyle instead of implementing a Natural transformation `F ~> M` weimplement methods that closely resemble each one of the smart constructors in our @free algebras.
 This is not an imposition but rather a comvinience as the resulting instances are still Natural Transformations.
 
-In the example above `KVStore.Interpreter[M[_]]` it's actually already a Natural transformation of type `KVStore.T ~> KVStoreState` in which on its
-`apply` function automatically delegates each step to the abstract method that you are implementing as part of the Interpreter.
+In the example above `KVStore.Handler[M[_]]` it's actually already a Natural transformation of type `KVStore.Op ~> KVStoreState` in which on its
+`apply` function automatically delegates each step to the abstract method that you are implementing as part of the Handler.
 
 Alternatively if you would rather implement a natural transformation by hand you can still do that by choosing not to implement
-`KVStore.Interpreter[M[_]]` and providing one like so:
+`KVStore.Handler[M[_]]` and providing one like so:
 
 ```tut:book
 import cats.~>
 
-implicit def manualKvStoreInterpreter: KVStore.T ~> KVStoreState = 
-  new (KVStore.T ~> KVStoreState) {
-    def apply[A](fa: KVStore.T[A]): KVStoreState[A] =
+implicit def manualKvStoreHandler: KVStore.Op ~> KVStoreState = 
+  new (KVStore.Op ~> KVStoreState) {
+    def apply[A](fa: KVStore.Op[A]): KVStoreState[A] =
       fa match {
         case KVStore.PutOP(key, value) =>
           State.modify(_.updated(key, value))
@@ -97,10 +97,10 @@ Once our algebra is defined we can easily write an interpreter for it
 ```tut:book
 import cats.implicits._
 
-implicit def logInterpreter: Log.Interpreter[KVStoreState] = 
-  new Log.Interpreter[KVStoreState] {
-    def infoImpl(msg: String): KVStoreState[Unit] = println("INFO: $msg").pure[KVStoreState]
-    def warnImpl(msg: String): KVStoreState[Unit] = println("WARN: $msg").pure[KVStoreState]
+implicit def logHandler: Log.Handler[KVStoreState] = 
+  new Log.Handler[KVStoreState] {
+    def info(msg: String): KVStoreState[Unit] = println("INFO: $msg").pure[KVStoreState]
+    def warn(msg: String): KVStoreState[Unit] = println("WARN: $msg").pure[KVStoreState]
   }
 ```
 
@@ -139,7 +139,7 @@ implicit evidences of each one of the individual algebra's interpreters.
 
 ```tut:book
 import freestyle.implicits._
-program[Backend.T].exec[KVStoreState]
+program[Backend.Op].exec[KVStoreState]
 ```
 
 Alternatively you can build your interpreters by hand if you wish not to use Freestyle implicit machinery.

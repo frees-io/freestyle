@@ -103,14 +103,14 @@ In order to run programs we need interpreters. We define interpreters providing 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-implicit val validationInterpreter = new Validation.Interpreter[Future] {
-  override def minSizeImpl(s: String, n: Int): Future[Boolean] = Future(s.size >= n)
-  override def hasNumberImpl(s: String): Future[Boolean] = Future(s.exists(c => "0123456789".contains(c)))
+implicit val validationHandler = new Validation.Handler[Future] {
+  override def minSize(s: String, n: Int): Future[Boolean] = Future(s.size >= n)
+  override def hasNumber(s: String): Future[Boolean] = Future(s.exists(c => "0123456789".contains(c)))
 }
 
-implicit val interactionInterpreter = new Interaction.Interpreter[Future] {
-  override def tellImpl(s: String): Future[Unit] = Future.successful(println(s))
-  override def askImpl(s: String): Future[String] = Future.successful { println(s); "This could have been user input 1" }
+implicit val interactionHandler = new Interaction.Handler[Future] {
+  override def tell(s: String): Future[Unit] = Future.successful(println(s))
+  override def ask(s: String): Future[String] = Future.successful { println(s); "This could have been user input 1" }
 }
 ```
 
@@ -123,7 +123,7 @@ import cats.implicits._
 import scala.concurrent.duration.Duration
 import scala.concurrent.Await
 
-val futureValue = program[Application.T].exec[Future]
+val futureValue = program[Application.Op].exec[Future]
 Await.result(futureValue, Duration.Inf) //blocking only for demo purposes. Don't do this at home.
 ```
 
