@@ -48,6 +48,13 @@ object validation {
             case Validated.Valid(_) =>  MS.pure(x)
           }
       }
+
+      implicit class ValidSyntax[A](private val s: A){
+        def valid[F[_] : ValidationM]: FreeS[F, A] = ValidationM[F].valid(s)
+      }
+      implicit class InvalidSyntax[A](private val e: E){
+        def invalid[F[_] : ValidationM]: FreeS[F, Unit] = ValidationM[F].invalid(e)
+      }
     }
   }
 

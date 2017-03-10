@@ -315,6 +315,20 @@ class EffectsTests extends AsyncWordSpec with Matchers {
 
       program[vl.ValidationM.Op].exec[Logger].runEmpty.map { _ shouldBe Tuple2(List(MissingFirstName), Validated.Valid(42)) }
     }
+
+    "syntax" in {
+      import cats.data.{Validated, ValidatedNel, NonEmptyList}
+
+      def program[F[_]: vl.ValidationM] =
+        for {
+          a <- 42.valid
+          b <- MissingFirstName.invalid
+          c <- NotValid("no").invalid
+        } yield a
+
+      val expectedErrors = List(MissingFirstName, NotValid("no"))
+      program[vl.ValidationM.Op].exec[Logger].runEmpty.map { _ shouldBe Tuple2(expectedErrors, 42) }
+    }
   }
 
   "Traverse integration" should {
