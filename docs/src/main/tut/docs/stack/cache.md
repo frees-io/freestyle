@@ -11,7 +11,7 @@ we need to check if the requested amount of apples is in stock and in the end re
 
 We start with the imports of the Freestyle core.
 
-```tut:book
+```tut:silent
 import freestyle._
 import freestyle.implicits._
 ```
@@ -19,7 +19,7 @@ import freestyle.implicits._
 Now we can create some data types for a customer and an order together with a `Config` data type which holds a set of all the apple cultivars the company
 sells.
 
-```tut:book
+```tut:silent
 import java.util.UUID
 
 type CustomerId = UUID
@@ -77,7 +77,11 @@ object modules {
 
 To validate the order we check if the number of crates that is ordered bigger is than zero and that the requested apple cultivar is selled by the company.
 
-For the second part we use the `reader` effect algebra to read the set of apple cultivars from our `Config`.
+For the second part we use the [`reader`](/docs/effects/#error) effect algebra to read the set of apple cultivars from our `Config`.
+
+We are here using [`Validated`](http://typelevel.org/cats/api/cats/data/Validated.html) to combine multiple errors in a [`NonEmptyList`](http://typelevel.org/cats/api/cats/data/NonEmptyList.html) represented by the type alias `cats.data.ValidatedNel`. `Validated` provides an easy way to accumate errors and more info can be found on the [`Cats` website](http://typelevel.org/cats/datatypes/validated.html). `NonEmptyList` is like a `List` with at least one element.
+
+The `|+|` syntax used below is provided by Cats (because `Validated` has a [`Semigroup`](http://typelevel.org/cats/typeclasses/semigroup.html) instance) which makes it possible to combine the error messages of the two checks.
 
 ```tut:book
 import modules._
@@ -96,9 +100,11 @@ def validateOrder[F[_]](order: Order, customer: Customer)(implicit app: App[F]):
   }
 ```
 
-When validating an order we need to get the information of the customer, if a customer places multiple orders we don't want to send a database request every time, so we could use the `freestyle-cache` module.
+When validating an order we need to get the information of the customer, if a customer places multiple orders we don't want to send a database request every time, so we can use the [`freestyle-cache`](/docs/effects/Cache) module to cache customers.
 
-In the `getCustomer` function we try to find the customer in the cache, otherwise falling back to getting the customer from a database (or other persistence store).
+In the `getCustomer` function we try to find the customer in the cache using the cache effect algebra, otherwise falling back to getting the customer from a database (or other persistence store).
+
+We are using the [`OptionT`](http://typelevel.org/cats/datatypes/optiont.html) monad transformer here. With Freestyle you generally don't have to deal with monad transformers in your actual domain code. They are only used in the handlers and when executing your program on the edge. In this case though Freestyle and the `OptionT` monad transformer work flawlessly together. `OptionT` is used a convenient wrapper over a `FreeS[F, Option[A]]` value and the `OptionT#orElseF` method makes it is easy to specify what needs to happen if the inner `Option` is `None`.
 
 ```tut:book
 import cats.data.OptionT
@@ -106,7 +112,7 @@ import cats.data.OptionT
 def getCustomer[F[_]](id: CustomerId)(implicit app: App[F]): FreeS[F, Option[Customer]] =
   // first try to get the customer from the cache
   OptionT(app.cacheM.get(id).freeS).orElseF {
-    // otherwise fallback and get the customer from a persistent store
+    // otherwise fallback and get the customer from a persistent storehttp://typelevel.org/cats/datatypes/optiont.html
     for {
       customer <- app.persistence.customer.getCustomer(id).freeS
       _        <- customer.fold(
@@ -119,7 +125,7 @@ def getCustomer[F[_]](id: CustomerId)(implicit app: App[F]): FreeS[F, Option[Cus
 
 Next we create a couple of domain specific exception case classes.
 
-```tut:book
+```tut:silent
 sealed abstract class AppleException(val message: String) extends Exception(message)
 case class CustomerNotFound(id: CustomerId)               extends AppleException(s"Customer $id can not be found")
 case class QuantityNotAvailable(error: String)            extends AppleException(error)
@@ -129,14 +135,15 @@ case class ValidationFailed(errors: NonEmptyList[String]) extends AppleException
 We can use the `validateOrder` and `getCustomer` methods in combination with our persistence algebras and the `error` effect algebra, to create the `processOrder` method tying everything together.
 
 ```tut:book
-def processOrder[F[_]](order: Order)(implicit app: App[F]): FreeS[F, String] =
+def processOrder[F[_]](order: Order)(implicit app: App[F]): FreeS[F, String] = {
+  import app.persistence._, app.errorM._
   for {
     customerOpt <- getCustomer[F](order.customerId)
-    customer    <- app.errorM.either(customerOpt.toRight(CustomerNotFound(order.customerId)))
+    customer    <- either(customerOpt.toRight(CustomerNotFound(order.customerId)))
     validation  <- validateOrder[F](order, customer)
-    _           <- app.errorM.either(validation.toEither.leftMap(ValidationFailed))
-    nbAvailable <- app.persistence.stock.checkQuantityAvailable(order.cultivar)
-    _           <- app.errorM.either(
+    _           <- either(validation.toEither.leftMap(ValidationFailed))
+    nbAvailable <- stock.checkQuantityAvailable(order.cultivar)
+    _           <- either(
                      Either.cond(
                        order.crates <= nbAvailable,
                        (),
@@ -145,11 +152,19 @@ def processOrder[F[_]](order: Order)(implicit app: App[F]): FreeS[F, String] =
                             |(only $nbAvailable available, while ${order.crates} needed - $order).""".stripMargin)
                      )
                    )
-    _          <- app.persistence.stock.registerOrder(order)
+    _          <- stock.registerOrder(order)
   } yield s"Order registered for customer ${order.customerId}"
+}
 ```
 
 As target type of our computation we choose a combination of `Kleisli` and `fs2.Task`.
+
+
+- [`Kleisli`](http://typelevel.org/cats/datatypes/kleisli.html) or `ReaderT` is like an `A => F[B]` function, where `A` can be seen as an [environment or configuration](http://typelevel.org/cats/datatypes/kleisli.html#configuration) type. In this case `Stack` can be seen as `Config => Task[A]`,
+- [`fs2.Task`](https://oss.sonatype.org/service/local/repositories/releases/archive/co/fs2/fs2-core_2.12/0.9.4/fs2-core_2.12-0.9.4-javadoc.jar/!/fs2/Task.html) is a data type that can be used for potentially lazy computations which can contain asynchronous steps. The `Task` implementation used in this case is from the [FS2 library](https://github.com/functional-streams-for-scala/fs2), similar data types can be found in [Monix](https://github.com/monix/monix) ([`Monix.eval.Task`](https://monix.io/docs/2x/eval/task.html)) and [Scalaz](https://github.com/scalaz/scalaz) ([`scalaz.concurrent.Task`](http://timperrett.com/2014/07/20/scalaz-task-the-missing-documentation/)).
+
+We use `Kleisli` to fullfill the `ReaderM` constraint and `Task` the `ErrorM` constraint.
+
 
 ```tut:book
 import cats.data.Kleisli
@@ -190,7 +205,7 @@ implicit val stockPersistencteHandler: StockPersistence.Handler[Stack] =
   }
 ```
 
-An interpreter which can cache the `Customer`s can be created with a `ConcurrentHashMapWrapper` and natural transformation to our `Stack` type.
+A handler that can cache `Customer`s can be created with a `ConcurrentHashMapWrapper` and a natural transformation to our `Stack` type.
 
 ```tut:book
 import cats.{~>, Id}
@@ -234,8 +249,11 @@ val result: Stack[String] = program.exec[Stack]
 
 We can run our `Stack` by supplying a `Config` value and running the `Task`.
 
+By supplying a `Config` value we can run our `Stack` which results in a `Task[String]`.
+When we want to actually execute the program, we can run the `Task` by using one of the methods on `Task`.
+
 ```tut:book
-val task: Task[String] = program.exec[Stack].run(config)
+val task: Task[String] = result.run(config)
 
 task.unsafeRunSync.fold(println, println)
 ```

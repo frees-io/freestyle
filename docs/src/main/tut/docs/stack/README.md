@@ -11,7 +11,7 @@ we need to check if the requested amount of apples is in stock and in the end re
 
 We start with the imports of the Freestyle core.
 
-```tut:book
+```tut:silent
 import freestyle._
 import freestyle.implicits._
 ```
@@ -19,7 +19,7 @@ import freestyle.implicits._
 Now we can create some data types for a customer and an order together with a `Config` data type which holds a set of all the apple cultivars the company
 sells.
 
-```tut:book
+```tut:silent
 import java.util.UUID
 
 type CustomerId = UUID
@@ -76,7 +76,11 @@ object modules {
 
 To validate the order we check if the number of crates that is ordered bigger is than zero and that the requested apple cultivar is selled by the company.
 
-For the second part we use the `reader` effect algebra to read the set of apple cultivars from our `Config`.
+For the second part we use the [`reader`](/docs/effects/#error) effect algebra to read the set of apple cultivars from our `Config`.
+
+We are here using [`Validated`](http://typelevel.org/cats/api/cats/data/Validated.html) to combine multiple errors in a [`NonEmptyList`](http://typelevel.org/cats/api/cats/data/NonEmptyList.html) represented by the type alias `cats.data.ValidatedNel`. `Validated` provides an easy way to accumate errors and more info can be found on the [`Cats` website](http://typelevel.org/cats/datatypes/validated.html). `NonEmptyList` is like a `List` with at least one element.
+
+The `|+|` syntax used below is provided by Cats (because `Validated` has a [`Semigroup`](http://typelevel.org/cats/typeclasses/semigroup.html) instance) which makes it possible to combine the error messages of the two checks.
 
 ```tut:book
 import cats.implicits._
@@ -96,42 +100,54 @@ def validateOrder[F[_]](order: Order, customer: Customer)(implicit app: App[F]):
   }
 ```
 
-
 We will create a couple of domain specific exception case classes.
 
-```tut:book
+```tut:silent
 sealed abstract class AppleException(val message: String) extends Exception(message)
 case class CustomerNotFound(id: CustomerId)               extends AppleException(s"Customer $id can not be found")
 case class QuantityNotAvailable(error: String)            extends AppleException(error)
 case class ValidationFailed(errors: NonEmptyList[String]) extends AppleException(errors.intercalate("\n"))
 ```
 
-We can use the `validateOrder` method in combination with our persistence algebras and the `error` and `writer` effect algebras, to create the `processOrder` method tying everything together.
+We can use the `validateOrder` method in combination with our persistence algebras and the [`error`](/docs/effects/#error)
+ and [`writer`](/docs/effects/#writer)) effect algebras, to create the `processOrder` method tying everything together.
+
+The `error` effect makes it possible to fail a computation with an error, while the `writer` effect allows us to accumulate log messages in this case.
 
 ```tut:book
-def processOrder[F[_]](order: Order)(implicit app: App[F]): FreeS[F, String] =
+import algebras._
+
+def processOrder[F[_]](order: Order)(implicit app: App[F]): FreeS[F, String] = {
+  import app.persistence._, app.errorM._, app.writerM._
   for {
-    customerOpt <- app.persistence.customer.getCustomer(order.customerId)
-    customer    <- app.errorM.either(customerOpt.toRight(CustomerNotFound(order.customerId)))
-    _           <- app.writerM.tell(Vector(s"customer name is ${customer.name}"))
-    validation  <- validateOrder[F](order, customer)
-    _           <- app.errorM.either(validation.toEither.leftMap(ValidationFailed))
-    nbAvailable <- app.persistence.stock.checkQuantityAvailable(order.cultivar)
-    _           <- app.writerM.tell(Vector(s"availble crates of ${order.cultivar} apples"))
-    _           <- app.errorM.either(
-                     Either.cond(
-                       order.crates <= nbAvailable,
-                       (),
-                       QuantityNotAvailable(
-                         s"""There are not sufficient crates of ${order.cultivar} apples in stock
-                            |(only $nbAvailable available, while ${order.crates} needed).""".stripMargin)
-                     )
-                   )
-    _          <- app.persistence.stock.registerOrder(order)
+   customerOpt <- customer.getCustomer(order.customerId)
+   customer    <- either(customerOpt.toRight(CustomerNotFound(order.customerId)))
+   _           <- tell(Vector(s"customer name is ${customer.name}"))
+   validation  <- validateOrder[F](order, customer)
+   _           <- either(validation.toEither.leftMap(ValidationFailed))
+   nbAvailable <- stock.checkQuantityAvailable(order.cultivar)
+   _           <- tell(Vector(s"availble crates of ${order.cultivar} apples"))
+   _           <- either(
+                    Either.cond(
+                      order.crates <= nbAvailable,
+                      (),
+                      QuantityNotAvailable(
+                        s"""There are not sufficient crates of ${order.cultivar} apples in stock
+                           |(only $nbAvailable available, while ${order.crates} needed).""".stripMargin)
+                    )
+                  )
+   _          <- stock.registerOrder(order)
   } yield s"Order registered for customer ${order.customerId}"
+}
 ```
 
 As target type of our computation we choose a combination of `Kleisli` (also known as `ReaderT`), `WriterT` and `fs2.Task`.
+
+- [`Kleisli`](http://typelevel.org/cats/datatypes/kleisli.html) or `ReaderT` is like an `A => F[B]` function, where `A` can be seen as an [environment or configuration](http://typelevel.org/cats/datatypes/kleisli.html#configuration) type.
+- `WriterT` allows it to accumulate something along with passing on the actual result, in our case logging messages.
+- [`fs2.Task`](https://oss.sonatype.org/service/local/repositories/releases/archive/co/fs2/fs2-core_2.12/0.9.4/fs2-core_2.12-0.9.4-javadoc.jar/!/fs2/Task.html) is a data type that can be used for potentially lazy computations which can contain asynchronous steps. The `Task` implementation used in this case is from the [FS2 library](https://github.com/functional-streams-for-scala/fs2), similar data types can be found in [Monix](https://github.com/monix/monix) ([`Monix.eval.Task`](https://monix.io/docs/2x/eval/task.html)) and [Scalaz](https://github.com/scalaz/scalaz) ([`scalaz.concurrent.Task`](http://timperrett.com/2014/07/20/scalaz-task-the-missing-documentation/)).
+
+We use `Kleisli` to fullfill the `ReaderM` contstraint, `WriterT` for `WriterM` and `Task` for `ErrorM`.
 
 ```tut:book
 import cats.data.{Kleisli, WriterT}
@@ -227,7 +243,6 @@ object KleisliMTL extends KleisliMTL1 {
 }
 ```
 
-
 We can now create a Freestyle program by specifying the type in `processOrder` as `App.Op`.
 
 ```tut:book
@@ -248,6 +263,8 @@ val result: Stack[String] = program.exec[Stack]
 
 We can run our `Stack` by supplying a `Config` value, running the `WriterT` and running the `Task`.
 
+Supplying the `Config` with `result.run(config)` turns our `Stack[String]` in a `WriterT[Task, Vector[String], String]`, which is turned into a `Task[(Vector[String], String)]` with `run`.
+
 ```tut:book
 val cultivars = Set("granny smith", "jonagold", "boskoop")
 val config = Config(cultivars)
@@ -256,5 +273,3 @@ val task: Task[(Vector[String], String)] = result.run(config).run
 
 task.unsafeRunSync.fold(println, println)
 ```
-
-
