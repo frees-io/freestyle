@@ -1,14 +1,17 @@
 package freestyle.effects
 
 import freestyle._
-import cats.{Monad, MonadState, ~>}
-import cats.data.{State, StateT, Validated, ValidatedNel, NonEmptyList}
+import cats.{MonadState}
+import cats.data.{State, Validated, ValidatedNel, NonEmptyList}
 import cats.arrow.{FunctionK}
 
 object validation {
+  /** A validation exception with an explanation. **/
   trait ValidationException {
     def explanation: String
   }
+
+
   case class NotValid(explanation: String) extends ValidationException
 
   object ValidationException {
@@ -17,12 +20,16 @@ object validation {
 
   type Errors = List[ValidationException]
 
+  /** An algebra for introducing validation semantics in a program. **/
   @free sealed trait ValidationM[F[_]] {
     def valid[A](x: A): FreeS.Par[F, A]
+
     def invalid(err: ValidationException): FreeS.Par[F, Unit]
+
     def errors: FreeS.Par[F, Errors]
 
     def fromEither[A](x: Either[ValidationException, A]): FreeS.Par[F, Either[ValidationException, A]]
+
     def fromValidatedNel[A](x: ValidatedNel[ValidationException, A]): FreeS.Par[F, ValidatedNel[ValidationException, A]]
   }
 
