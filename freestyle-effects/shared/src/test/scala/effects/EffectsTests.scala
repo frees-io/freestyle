@@ -245,7 +245,7 @@ class EffectsTests extends AsyncWordSpec with Matchers {
           _ <- Applicative[FreeS[F, ?]].pure(1)
         } yield b
 
-      program[ValidationM.T].exec[Logger].run(List.empty) map {  _ shouldBe Tuple2(List(), 42) }
+      program[ValidationM.Op].exec[Logger].run(List.empty) map {  _ shouldBe Tuple2(List(), 42) }
     }
 
     "invalid" in {
@@ -259,7 +259,7 @@ class EffectsTests extends AsyncWordSpec with Matchers {
         } yield b
 
       val errors = List(NotValid("oh"), ValidationException("no"))
-      program[ValidationM.T].exec[Logger].run(List.empty) map { _  shouldBe Tuple2(errors, 42) }
+      program[ValidationM.Op].exec[Logger].run(List.empty) map { _  shouldBe Tuple2(errors, 42) }
     }
 
     "errors" in {
@@ -274,7 +274,7 @@ class EffectsTests extends AsyncWordSpec with Matchers {
           actualErrors <- ValidationM[F].errors
         } yield actualErrors == expectedErrors
 
-      program[ValidationM.T].exec[Logger].run(List.empty) map { _  shouldBe Tuple2(expectedErrors, true) }
+      program[ValidationM.Op].exec[Logger].run(List.empty) map { _  shouldBe Tuple2(expectedErrors, true) }
     }
 
     "custom errors" in {
@@ -288,7 +288,7 @@ class EffectsTests extends AsyncWordSpec with Matchers {
           actualErrors <- ValidationM[F].errors
         } yield actualErrors == expectedErrors
 
-      program[ValidationM.T].exec[Logger].run(List.empty).map { _ shouldBe Tuple2(expectedErrors, true) }
+      program[ValidationM.Op].exec[Logger].run(List.empty).map { _ shouldBe Tuple2(expectedErrors, true) }
     }
 
     "fromEither" in {
@@ -300,7 +300,7 @@ class EffectsTests extends AsyncWordSpec with Matchers {
           b <- ValidationM[F].fromEither(Left(MissingFirstName): Either[ValidationException, Unit])
         } yield a
 
-      program[ValidationM.T].exec[Logger].run(List.empty).map { _ shouldBe Tuple2(expectedErrors, Right(42)) }
+      program[ValidationM.Op].exec[Logger].run(List.empty).map { _ shouldBe Tuple2(expectedErrors, Right(42)) }
     }
 
     "fromValidatedNel" in {
@@ -314,7 +314,7 @@ class EffectsTests extends AsyncWordSpec with Matchers {
           )
         } yield a
 
-      program[ValidationM.T].exec[Logger].run(List.empty).map { _ shouldBe Tuple2(List(MissingFirstName), Validated.Valid(42)) }
+      program[ValidationM.Op].exec[Logger].run(List.empty).map { _ shouldBe Tuple2(List(MissingFirstName), Validated.Valid(42)) }
     }
   }
 

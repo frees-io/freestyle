@@ -37,20 +37,20 @@ object validation {
     implicit def freeStyleValidationMStateInterpreter[M[_]](
       implicit
         MS: MonadState[M, Errors]
-    ): ValidationM.Interpreter[M] = new ValidationM.Interpreter[M] {
-      def validImpl[A](x: A): M[A] = MS.pure(x)
+    ): ValidationM.Handler[M] = new ValidationM.Handler[M] {
+      def valid[A](x: A): M[A] = MS.pure(x)
 
-      def errorsImpl: M[Errors] = MS.get
+      def errors: M[Errors] = MS.get
 
-      def invalidImpl(err: ValidationException): M[Unit] = MS.modify((s: Errors) => s :+ err)
+      def invalid(err: ValidationException): M[Unit] = MS.modify((s: Errors) => s :+ err)
 
-      def fromEitherImpl[A](x: Either[ValidationException, A]): M[Either[ValidationException, A]] =
+      def fromEither[A](x: Either[ValidationException, A]): M[Either[ValidationException, A]] =
       x match {
-        case Left(err) => MS.flatMap(invalidImpl(err))((unit) => MS.pure(x))
+        case Left(err) => MS.flatMap(invalid(err))((unit) => MS.pure(x))
         case Right(_) => MS.pure(x)
       }
 
-      def fromValidatedNelImpl[A](x: ValidatedNel[ValidationException, A]): M[ValidatedNel[ValidationException, A]] =
+      def fromValidatedNel[A](x: ValidatedNel[ValidationException, A]): M[ValidatedNel[ValidationException, A]] =
         x match {
           case Validated.Invalid(errs: NonEmptyList[ValidationException]) => MS.pure(x)
             MS.flatMap(MS.modify(
