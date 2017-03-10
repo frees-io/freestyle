@@ -28,49 +28,28 @@ object materialize {
       def rawInfo(name: String, obj: Any): Unit = info(name + " = " + showRaw(obj))
     }
 
-    def isFreeStyleModule(cs: Symbol): Boolean = {
-      if (cs.isClass) {
-        cs.asClass.baseClasses.collectFirst {
-          case x: ClassSymbol if x.name == TypeName("Modular") => x
-        }.isDefined
-      } else false
-    }
-
-    def extractCoproductSymbol(s: Symbol, t: Type): List[TermName] = {
-      s match {
-        case c: ClassSymbol =>
-          if (!isFreeStyleModule(c)) {
-            TermName(t.toString) :: Nil
-          } else {
-            c.companion.info.decls.toList.collect {
-              case m: MethodSymbol => m
-            }.flatMap { x =>
-              val companionClass    = x.asMethod.returnType.companion.typeSymbol.asClass
-              val dependentTypeCtor = x.asMethod.returnType.typeConstructor
-              extractCoproductSymbol(companionClass, dependentTypeCtor)
-            }
-          }
-        case m: MethodSymbol =>
-          val companionClass    = m.returnType.companion.typeSymbol.asClass
-          val dependentTypeCtor = m.returnType.typeConstructor
-          extractCoproductSymbol(companionClass, dependentTypeCtor)
-        case _ =>
-          Nil
-      }
-    }
-
     def findAlgebras(s: Type): List[TermName] = {
-      def loop(l: List[Symbol], acc: List[TermName]): List[TermName] = {
-        l match {
-          case Nil => acc
-          case h :: t =>
-            val companionClass    = h.asMethod.returnType.companion.typeSymbol.asClass
-            val dependentTypeCtor = h.asMethod.returnType.typeConstructor
-            val coproducts        = extractCoproductSymbol(companionClass, dependentTypeCtor)
-            loop(t, acc ++ coproducts)
+
+      def isFreeStyleModule(cs: ClassSymbol): Boolean =
+        cs.baseClasses.exists {
+          case x: ClassSymbol => x.name == TypeName("Modular")
         }
+
+      def fromClass(c: ClassSymbol, t: Type) : List[TermName] =
+        if (isFreeStyleModule(c)) {
+          c.companion.info.decls.toList.flatMap {
+            case x: MethodSymbol => fromMethod(x.asMethod)
+            case _ => Nil
+          }
+        } else TermName(t.toString) :: Nil
+
+      def fromMethod(m: MethodSymbol): List[TermName] = {
+        val companionClass    = m.returnType.companion.typeSymbol.asClass
+        val dependentTypeCtor = m.returnType.typeConstructor
+        fromClass(companionClass, dependentTypeCtor)
       }
-      loop(s.decls.toList.filter(_.isAbstract), Nil)
+
+      s.decls.toList.filter(_.isAbstract).flatMap(sym => fromMethod(sym.asMethod))
     }
 
     def cp(n: TermName) =
@@ -136,50 +115,42 @@ object module {
     def fail(msg: String) = c.abort(c.enclosingPosition, msg)
 
     def gen(): Tree = annottees match {
-      case List(Expr(cls: ClassDef)) => genModule(cls)
+      case List(Expr(cls: ClassDef)) =>
+        if (cls.mods.hasFlag(Flag.TRAIT | Flag.ABSTRACT))
+          genModule(cls)
+        else
+          fail(s"@free requires trait or abstract class")
       case _ =>
         fail(
           s"Invalid @module usage, only traits and abstract classes without companions are supported")
     }
 
     def genModule(cls: ClassDef) = {
-      val userTrait @ ClassDef(clsMods, clsName, clsParams, clsTemplate) = cls.duplicate
-      if (!clsMods.hasFlag(Flag.TRAIT | Flag.ABSTRACT))
-        fail(s"@free requires trait or abstract class")
-      mkCompanion(clsName.toTermName, clsTemplate.filter {
+      val userTrait @ ClassDef(clsMods, name, _, clsTemplate) = cls.duplicate
+
+      val valDefs: List[ValDef] = clsTemplate.filter {
         case _: ValDef => true
         case _         => false
-      }, clsParams, userTrait)
-    }
+      }.map(_.asInstanceOf[ValDef])
+      val implicitArgs: List[ValDef] = valDefs.filter(_.mods.hasFlag(Flag.DEFERRED))
 
-    def mkImplicitArgs(clsRestBody: List[Tree]): List[ValDef] =
-      clsRestBody collect { case m @ ValDef(mods, _, _, _) if mods.hasFlag(Flag.DEFERRED) => m }
+      val moduleClass = mkModuleClass(name, implicitArgs)
+      val companion = mkCompanion(name, implicitArgs)
 
-    def mkModuleClassImpls(parentName: TypeName, implicitArgs: List[ValDef]): ClassDef = {
-      val implName = TypeName(parentName.decodedName.toString + "_default_impl")
-      val impl     = q"""
-       class $implName[F[_]](implicit ..$implicitArgs)
-          extends $parentName[F]
+      q"""
+        $userTrait
+        $moduleClass
+        $companion
       """
-      impl
     }
 
-    def mkCompanionApply(
-        userTrait: ClassDef,
-        classImpl: ClassDef,
-        implicitArgs: List[ValDef]): DefDef = {
-      val ev        = freshTermName("instance")
-      val implicits = q"val $ev: ${userTrait.name.toTypeName}[F]"
-      q"def apply[F[_]](implicit ..$implicits): ${userTrait.name.toTypeName}[F] = $ev"
-    }
+    def mkModuleClassName( parentName: TypeName) : TypeName =
+      TypeName(parentName.decodedName.toString + "_default_impl")
 
-    def mkCompanionDefaultInstance(
-        userTrait: ClassDef,
-        classImpl: ClassDef,
-        implicitArgs: List[ValDef]): DefDef = {
-      val instanceName = freshTermName(userTrait.name.decodedName.toString)
-      val implicits    = implicitArgs //  :+ q"val I: Inject[T, F]"
-      q"implicit def $instanceName[F[_]](implicit ..$implicits): ${userTrait.name.toTypeName}[F] = new ${classImpl.name}[F]()"
+    def mkModuleClass(parentName: TypeName, implicits: List[ValDef]): ClassDef = {
+      val className = mkModuleClassName(parentName)
+
+      q"class $className[F[_]](implicit ..$implicits) extends $parentName[F] "
     }
 
     def packageName(sym: Symbol) = {
@@ -204,14 +175,13 @@ object module {
       def loop(remaining: List[TermName], acc: List[TypeName]): List[TypeName] =
         remaining match {
           case Nil => acc
-          case h :: t =>
-            loop(t, acc)
+          case h :: t => loop(t, acc)
         }
       loop(topLevel.map(i => TermName(i.toString)), Nil)
     }
 
-    def mkImplicitsTrait(userTrait: ClassDef, implicitArgs: List[ValDef]): ClassDef = {
-      val instanceName = freshTermName(userTrait.name.decodedName.toString + "DefaultInstance")
+    def mkImplicitsTrait(name: TypeName, implicitArgs: List[ValDef]): ClassDef = {
+      val instanceName = freshTermName(name.decodedName.toString + "DefaultInstance")
       val implicits    = implicitArgs //:+ q"val I: Inject[T, F]"
       val rawTypeDefs  = implicitArgs.flatMap(_.tpt.children.headOption)
       val parents = rawTypeDefs.map { n =>
@@ -219,13 +189,13 @@ object module {
       }
       q"""
         trait Implicits extends ..${parents} {
-           implicit def $instanceName[F[_]](implicit ..$implicits): ${userTrait.name}[F] = defaultInstance[F]
+           implicit def $instanceName[F[_]](implicit ..$implicits): $name[F] = defaultInstance[F]
         }
       """
     }
 
-    def mkModuleCoproduct(implicitArgs: List[ValDef]): List[String] = {
-      val rawTypeDefs = implicitArgs.flatMap(_.tpt.children.headOption)
+    def mkModuleCoproduct(implicits: List[ValDef]): List[String] = {
+      val rawTypeDefs = implicits.flatMap(_.tpt.children.headOption)
       val result = rawTypeDefs match {
         case List(el) =>
           (0, q"type Op[A] = Coproduct[${TermName(el.toString)}.Op, cats.Id, A]") :: Nil
@@ -246,39 +216,36 @@ object module {
               }
               (pos + 1, newTree)
           }
-
       }
+
       result collect {
         case (_, x: TypeDef) => x.toString
       }
     }
 
-    def mkCompanion(
-        name: TermName,
-        clsRestBody: List[Tree],
-        clsParams: List[TypeDef],
-        userTrait: ClassDef
-    ) = {
-      val implicitArgs     = mkImplicitArgs(clsRestBody)
-      val moduleCoproduct  = mkModuleCoproduct(implicitArgs).map(c.parse(_))
-      val moduleClassImpl  = mkModuleClassImpls(name.toTypeName, implicitArgs)
-      val implicitInstance = mkCompanionDefaultInstance(userTrait, moduleClassImpl, implicitArgs)
-      val rawTypeDefs      = implicitArgs.flatMap(_.tpt.children.headOption)
-      val companionApply   = mkCompanionApply(userTrait, moduleClassImpl, implicitArgs)
-      val typeMaterializers = moduleCoproduct match {
+    def mkDefaultInstance( name: TypeName, implicitArgs: List[ValDef]): DefDef = {
+      val className = mkModuleClassName(name)
+      val instanceName = freshTermName(name.decodedName.toString)
+      val implicits    = implicitArgs //  :+ q"val I: Inject[T, F]"
+      q"implicit def $instanceName[F[_]](implicit ..$implicits): $name[F] = new $className[F]()"
+    }
+
+    def mkCompanion( name: TypeName, implicitArgs: List[ValDef] ): ModuleDef = {
+
+      val implicitInstance = mkDefaultInstance(name, implicitArgs)
+      val typeMaterializers = mkModuleCoproduct(implicitArgs).map(c.parse(_)) match {
         case Nil => q"type Op[A] = Nothing" :: Nil
         case _   => q"val X = materialize.apply(this)" :: q"type Op[A] = X.Op[A]" :: Nil
       }
-      val result = q"""
-        $userTrait
-        $moduleClassImpl
-        object $name extends Modular {
-          $implicitInstance
-          $companionApply
+      q"""
+        object ${name.toTermName} extends Modular {
           ..$typeMaterializers
+
+          $implicitInstance
+
+          def apply[F[_]](implicit ev: $name[F]): $name[F] = ev
         }
       """
-      result
     }
 
     gen()
