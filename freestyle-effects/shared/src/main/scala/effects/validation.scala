@@ -3,7 +3,7 @@ package freestyle.effects
 import freestyle._
 import cats.{MonadState}
 import cats.data.{State, Validated, ValidatedNel, NonEmptyList}
-import cats.arrow.{FunctionK}
+
 
 object validation {
   /** A validation exception with an explanation. **/
