@@ -42,7 +42,6 @@ class EffectsTests extends AsyncWordSpec with Matchers {
         } yield a + b + c
       program[OptionM.Op].exec[Option] shouldBe None
     }
-
   }
 
   "Error Freestyle integration" should {
@@ -220,6 +219,115 @@ class EffectsTests extends AsyncWordSpec with Matchers {
           _ <- Applicative[FreeS[F, ?]].pure(1)
         } yield b
       program[wr.WriterM.Op].exec[Logger].run shouldBe Tuple2(List(1, 1), 1)
+    }
+  }
+
+  "Validation integration" should {
+    import freestyle.effects._
+
+    import cats.data.{State, StateT}
+    import cats.instances.future._
+    import cats.instances.list._
+
+    // Custom error types
+
+    sealed trait ValidationException{
+      def explanation: String
+    }
+    case class NotValid(explanation: String) extends ValidationException
+    case object MissingFirstName extends ValidationException {
+      val explanation = "The first name is missing"
+    }
+
+    type Errors = List[ValidationException]
+
+    // Validation for custom errors
+
+    val vl = validation[ValidationException]
+    import vl.implicits._
+
+    // Runtime
+
+    type Logger[A] = StateT[Future, Errors, A]
+
+    "valid" in {
+      def program[F[_]: vl.ValidationM] =
+        for {
+          _ <- Applicative[FreeS[F, ?]].pure(1)
+          b <- vl.ValidationM[F].valid(42)
+          _ <- Applicative[FreeS[F, ?]].pure(1)
+        } yield b
+
+      program[vl.ValidationM.Op].exec[Logger].runEmpty map {  _ shouldBe Tuple2(List(), 42) }
+    }
+
+    "invalid" in {
+      def program[F[_]: vl.ValidationM] =
+        for {
+          _ <- Applicative[FreeS[F, ?]].pure(1)
+          b <- vl.ValidationM[F].valid(42)
+          _ <- vl.ValidationM[F].invalid(NotValid("oh"))
+          _ <- vl.ValidationM[F].invalid(MissingFirstName)
+          _ <- Applicative[FreeS[F, ?]].pure(1)
+        } yield b
+
+      val errors = List(NotValid("oh"), MissingFirstName)
+      program[vl.ValidationM.Op].exec[Logger].runEmpty map { _  shouldBe Tuple2(errors, 42) }
+    }
+
+    "errors" in {
+      val expectedErrors = List(NotValid("oh"), NotValid("no"))
+
+      def program[F[_]: vl.ValidationM] =
+        for {
+          b <- vl.ValidationM[F].valid(42)
+          _ <- vl.ValidationM[F].invalid(NotValid("oh"))
+          _ <- vl.ValidationM[F].invalid(NotValid("no"))
+          _ <- Applicative[FreeS[F, ?]].pure(1)
+          actualErrors <- vl.ValidationM[F].errors
+        } yield actualErrors == expectedErrors
+
+      program[vl.ValidationM.Op].exec[Logger].runEmpty map { _  shouldBe Tuple2(expectedErrors, true) }
+    }
+
+    "fromEither" in {
+      val expectedErrors = List(MissingFirstName)
+
+      def program[F[_]: vl.ValidationM] =
+        for {
+          a <- vl.ValidationM[F].fromEither(Right(42))
+          b <- vl.ValidationM[F].fromEither(Left(MissingFirstName): Either[ValidationException, Unit])
+        } yield a
+
+      program[vl.ValidationM.Op].exec[Logger].runEmpty.map { _ shouldBe Tuple2(expectedErrors, Right(42)) }
+    }
+
+    "fromValidatedNel" in {
+      import cats.data.{Validated, ValidatedNel, NonEmptyList}
+
+      def program[F[_]: vl.ValidationM] =
+        for {
+          a <- vl.ValidationM[F].fromValidatedNel(Validated.Valid(42))
+          b <- vl.ValidationM[F].fromValidatedNel(
+            Validated.invalidNel[ValidationException, Unit](MissingFirstName)
+          )
+        } yield a
+
+      program[vl.ValidationM.Op].exec[Logger].runEmpty.map { _ shouldBe Tuple2(List(MissingFirstName), Validated.Valid(42)) }
+    }
+
+    "syntax" in {
+      import cats.data.{Validated, ValidatedNel, NonEmptyList}
+
+      def program[F[_]: vl.ValidationM] =
+        for {
+          a <- 42.valid
+          b <- MissingFirstName.invalid
+          c <- NotValid("no").invalid
+        } yield a
+
+      val expectedErrors = List(MissingFirstName, NotValid("no"))
+      program[vl.ValidationM.Op].exec[Logger].runEmpty.map { _ shouldBe Tuple2(expectedErrors, 42) }
     }
   }
 
