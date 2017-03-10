@@ -52,7 +52,7 @@ object validation {
 
       def fromValidatedNel[A](x: ValidatedNel[ValidationException, A]): M[ValidatedNel[ValidationException, A]] =
         x match {
-          case Validated.Invalid(errs: NonEmptyList[ValidationException]) => MS.pure(x)
+          case Validated.Invalid(errs: NonEmptyList[ValidationException]) =>
             MS.flatMap(MS.modify(
               (s: Errors) => s ++ errs.toList
             ))((unit) => MS.pure(x))
