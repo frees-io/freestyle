@@ -244,7 +244,7 @@ class EffectsTests extends AsyncWordSpec with Matchers {
     // Validation for custom errors
 
     val vl = validation[ValidationException]
-    import v.implicits._
+    import vl.implicits._
 
     // Runtime
 
