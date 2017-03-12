@@ -151,12 +151,13 @@ in all areas between manually built ADTs and Natural Transformations and the one
 You've heard before that `With great power comes great responsability.`. This is also true for apps based on `Free` structures.
 While reifying your actions allows freedom of interpretation, you should also be aware that interpreting many individual steps in the `Free` monad can become a performance bottleneck if abused or used in hot spots of an application.
 
-This is because apps built with `Free` reify each action in an in memory datastructure prior to being interpreted which then is folded
-into a final result applying the `Handler` natural transformation over each defined action. This process is also trampolined guaranteing stack safety in the programa declaration.
+This is because apps built with `Free` reify each action in an in memory datastructure prior to being interpreted.
+This structure is then is folded into a final result applying the `Handler` natural transformation over each defined action.
+The entired process is also trampolined guaranteing stack safety in the programa declaration.
 
-As a rule of thumb the approach that we've sees working in production is modeling as `Free` actions your key biz logic concepts and leaving the heavy lifting to the interpreters where needed.
+As a rule of thumb the approach that we've seen working in production is modeling as `Free` actions your key biz logic concepts and leaving the heavy lifting to the interpreters where needed.
 
 For most common apps true bottlenecks are IO to Databases, Network or the file system and this is rarely a concern.
 
 
-Now that we've learnt to define our own interpreters let's jump into [Parallelism](/docs/parallelism/) 
+Now that we've learnt to define our own interpreters let's jump into [Parallelism](/docs/parallelism/)
