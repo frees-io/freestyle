@@ -95,9 +95,9 @@ package cache {
           interpret(rawMap.get(key))
         override def put(key: Key, newVal: Val): G[Unit] =
           interpret(rawMap.put(key, newVal))
-        override def putAllImpl(keyValues: Map[Key, Val]):G[Unit] =
+        override def putAll(keyValues: Map[Key, Val]):G[Unit] =
           interpret(rawMap.putAll(keyValues))
-        override def putIfAbsentImpl(key: Key, newVal: Val) : G[Unit]=
+        override def putIfAbsent(key: Key, newVal: Val) : G[Unit]=
           interpret(rawMap.putIfAbsent(key,newVal))
         override def del(key: Key): G[Unit] =
           interpret(rawMap.delete(key))
@@ -107,9 +107,9 @@ package cache {
           interpret(rawMap.keys)
         override def clear: G[Unit] =
           interpret(rawMap.clear)
-        override def replaceImpl(key: Key,newVal: Val): G[Unit] =
+        override def replace(key: Key,newVal: Val): G[Unit] =
           interpret(rawMap.replace(key,newVal))
-        override def isEmptyImpl : G[Boolean] =
+        override def isEmpty: G[Boolean] =
           interpret(rawMap.isEmpty)
       }
 
