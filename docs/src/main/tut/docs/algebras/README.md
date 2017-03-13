@@ -117,7 +117,7 @@ def myService2[F[_]: UserRepository] = ???
 
 ## Convenient type aliases
 
-All companions generated with `@free` define a `sealed trait Op[A]` as the root node of the requests ADT.a
+All companions generated with `@free` define a `sealed trait Op[A]` as the root node of the requests ADT.
 You may use this to manually build `Coproduct` types which will serve in the parameterization of your application and code as in the example below
 
 ```tut:book

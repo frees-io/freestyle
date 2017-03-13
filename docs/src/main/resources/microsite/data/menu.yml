@@ -40,6 +40,9 @@ options:
       - title: Cache
         url: docs/effects/Cache/
 
+  - title: Example Target Stack
+    url: docs/stack/
+
   - title: Patterns
     url: TODO.html
 
