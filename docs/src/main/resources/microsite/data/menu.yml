@@ -43,11 +43,6 @@ options:
   - title: Example Target Stack
     url: docs/stack/
 
-    nested_options:
-
-      - title: Example with cache
-        url: docs/stack/cache
-
   - title: Patterns
     url: TODO.html
 
