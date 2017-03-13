@@ -3,7 +3,7 @@ resolvers += ("snapshots" at
 
 addSbtPlugin("com.fortysevendeg" % "sbt-catalysts-extras" % "0.1.3")
 
-addSbtPlugin("com.fortysevendeg" % "sbt-microsites" % "0.5.0-SNAPSHOT")
+addSbtPlugin("com.fortysevendeg" % "sbt-microsites" % "0.6.0-SNAPSHOT")
 
 addSbtPlugin("com.geirsson" % "sbt-scalafmt" % "0.4.10")
 

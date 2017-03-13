@@ -24,8 +24,9 @@ lazy val micrositeSettings = Seq(
     "gray-lighter"      -> "#F4F5F9",
     "white-color"       -> "#E6E7EC"),
   micrositeKazariCodeMirrorTheme := "dracula",
-  micrositeKazariDependencies := Seq(microsites.KazariDependency("com.fortysevendeg", "freestyle", version.value)),
-  micrositeKazariResolvers := Seq("https://oss.sonatype.org/content/repositories/snapshots")
+  micrositeKazariDependencies := Seq(microsites.KazariDependency("com.fortysevendeg", "freestyle", scalaVersion.value, onlyPrefix = true, version.value),
+    microsites.KazariDependency("org.scalamacros", "paradise", scalaVersion.value, onlyPrefix = false, "2.1.0")),
+  micrositeKazariResolvers := Seq("https://oss.sonatype.org/content/repositories/snapshots", "https://oss.sonatype.org/content/repositories/releases"),
 )
 
 pgpPassphrase := Some(sys.env.getOrElse("PGP_PASSPHRASE", "").toCharArray)
