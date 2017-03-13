@@ -148,12 +148,12 @@ in all areas between manually built ADTs and Natural Transformations and the one
 
 ## A note on performance
 
-You've heard before that `With great power comes great responsability.`. This is also true for apps based on `Free` structures.
+You've heard before that `With great power comes great responsibility.`. This is also true for apps based on `Free` structures.
 While reifying your actions allows freedom of interpretation, you should also be aware that interpreting many individual steps in the `Free` monad can become a performance bottleneck if abused or used in hot spots of an application.
 
 This is because apps built with `Free` reify each action in an in memory datastructure prior to being interpreted.
 This structure is then is folded into a final result applying the `Handler` natural transformation over each defined action.
-The entired process is also trampolined guaranteing stack safety in the programa declaration.
+The entired process is also trampolined guaranteeing stack safety in the program declaration.
 
 As a rule of thumb the approach that we've seen working in production is modeling as `Free` actions your key biz logic concepts and leaving the heavy lifting to the interpreters where needed.
 
