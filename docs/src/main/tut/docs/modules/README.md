@@ -88,10 +88,10 @@ annotations.
 ## Dependency Injection
 
 Freestyle automatically generates implicit default instances and summoners in the '@free' and '@module' annotated companions so that instances can be summoned implicitly at any point in an application.
-Scala uses implicit instances in companion objects as par tof its implicit resolution rules. to learn more about Scala implicits take a look at this great
+Scala uses implicit instances in companion objects as part of its implicit resolution rules. To learn more about Scala implicits take a look at this great
 post by Li Haoyi's [Implicit Design Patterns in Scala](http://www.lihaoyi.com/post/ImplicitDesignPatternsinScala.html).
 
-This gives the caller an opportunity to override at any point the instances generated automatically by Freestyle with explicit ones.
+This gives the caller an opportunity to override the instances generated automatically by Freestyle at any point with explicit ones.
 
 Freestyle also creates an implicit method which requires implicitly all the module dependencies and a convenient `apply` method which allows obtaining
 Module instances in an easy way. As in `@free` this effectively enables implicits based Dependency Injection where you may choose to override implementations
@@ -104,7 +104,7 @@ def doWithApp[F[_]](implicit app: App[F]) = ???
 
 ## Convenient type aliases
 
-All companions generated with `@module` contain a convenient type alias `T` that you can refer to and that points to the root ADT nodes of the most inner `@free` leaves.
+All companions generated with `@module` contain a convenient type alias `Op` that you can refer to and that points to the root ADT nodes of the most inner `@free` leaves.
 Freestyle recursively walks the Module dependencies until it finds the deepest modules that contain `@free` smart constructors generating a properly aligned `Coproduct`
 for all it's contained algebras. This allows contained algebras to be composed.
 

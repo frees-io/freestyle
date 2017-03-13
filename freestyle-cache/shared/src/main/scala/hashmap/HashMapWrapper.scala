@@ -5,7 +5,7 @@ import freestyle.Capture
 import java.util.concurrent.ConcurrentHashMap
 
 /* A _mutable_ Concurrent Hash Map, that contains a _mutable_ set of _immutable_
- * keys linked to _immutable values.
+ * keys linked to _immutable_ values.
  *
  *  Being immutable, the hashCode is attached to each key and
  */

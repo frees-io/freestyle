@@ -9,7 +9,7 @@ permalink: /docs/interpreters/
 Freestyle empowers program whose runtime can be easily overriden via implicit evidences.
 
 As part of its design Freestyle is compatible with `Free` and traditional patterns around it. Apps build with Freestyle give developers the freedom
-to choose Automatic or manual algebras, modules and interpreters and intermix them as you see fit in applications based on the desired encoding.
+to choose automatic or manual algebras, modules and interpreters and intermix them as you see fit in applications based on the desired encoding.
 
 ## Implementation
 
@@ -18,7 +18,7 @@ algebras annotated with `@free`.
 This allow you to build the proper runtime definitions for your algebras by simply extending the `Handler[M[_]]`
 member in your algebras companion.
 
-Consider the following Algebra adapted to Freestyle from the [Typelevel Cats Free monads examples]()
+Consider the following algebra adapted to Freestyle from the [Typelevel Cats Free monads examples](http://typelevel.org/cats/datatypes/freemonad.html)
 
 ```tut:book
 import freestyle._
@@ -59,7 +59,7 @@ This is not an imposition but rather a comvinience as the resulting instances ar
 In the example above `KVStore.Handler[M[_]]` it's actually already a Natural transformation of type `KVStore.Op ~> KVStoreState` in which on its
 `apply` function automatically delegates each step to the abstract method that you are implementing as part of the Handler.
 
-Alternatively if you would rather implement a natural transformation by hand you can still do that by choosing not to implement
+Alternatively if you would rather implement a natural transformation by hand, you can still do that by choosing not to implement
 `KVStore.Handler[M[_]]` and providing one like so:
 
 ```tut:book
@@ -83,7 +83,7 @@ implicit def manualKvStoreHandler: KVStore.Op ~> KVStoreState =
 
 Freestyle performs automatic composition of interpreters by providing the implicit machinery necessary to derive a Module interpreter
 by the evidence of it's algebras's interpreters.
-To ilustrate interpreter composition let's define a new algebra `Log` which we will compose with our `KVStore` operations
+To illustrate interpreter composition let's define a new algebra `Log` which we will compose with our `KVStore` operations.
 
 ```tut:book
 @free trait Log[F[_]] {
@@ -114,7 +114,7 @@ of a module in our application
 }
 ```
 
-When `@module` is materialized it will automatically create the Coproduct that matches interpreters necessary to run the `Free` structure
+When `@module` is materialized it will automatically create the `Coproduct` that matches interpreters necessary to run the `Free` structure
 below.
 
 ```tut:book
@@ -142,7 +142,7 @@ import freestyle.implicits._
 program[Backend.Op].exec[KVStoreState]
 ```
 
-Alternatively you can build your interpreters by hand if you wish not to use Freestyle implicit machinery.
+Alternatively you can build your interpreters by hand if you wish not to use Freestyle's implicit machinery.
 This may quickly grow unwildly as the number of algebras increase in an application but it's also possible in the spirit of providing two way compatibility
 in all areas between manually built ADTs and Natural Transformations and the ones automatically derived by Freestyle.
 

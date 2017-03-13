@@ -14,12 +14,11 @@ object reader {
 
     object implicits {
 
-      implicit def interpreter[M[_]](implicit MR: MonadReader[M, R]): ReaderM.Handler[M] =
+      implicit def freestyleReaderMHandler[M[_]](implicit MR: MonadReader[M, R]): ReaderM.Handler[M] =
         new ReaderM.Handler[M] {
           def ask: M[R]                  = MR.ask
           def reader[B](f: R => B): M[B] = MR.reader(f)
         }
-
     }
 
   }
