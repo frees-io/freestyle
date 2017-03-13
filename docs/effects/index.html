@@ -229,7 +229,7 @@ for any runtime <code class="highlighter-rouge">M[_]</code> used in its interpre
 <span class="c1">// defined type alias ConfigEnv
 </span>
 <span class="k">val</span> <span class="n">rd</span> <span class="k">=</span> <span class="n">reader</span><span class="o">[</span><span class="kt">Config</span><span class="o">]</span>
-<span class="c1">// rd: freestyle.effects.reader.EnvironmentProvider[Config] = freestyle.effects.reader$EnvironmentProvider@11f38530
+<span class="c1">// rd: freestyle.effects.reader.EnvironmentProvider[Config] = freestyle.effects.reader$EnvironmentProvider@68f80055
 </span>
 <span class="k">import</span> <span class="nn">rd.implicits._</span>
 <span class="c1">// import rd.implicits._
@@ -286,7 +286,7 @@ for any runtime <code class="highlighter-rouge">M[_]</code> used in its interpre
 <span class="c1">// import cats.data.Writer
 </span>
 <span class="k">val</span> <span class="n">wr</span> <span class="k">=</span> <span class="n">writer</span><span class="o">[</span><span class="kt">List</span><span class="o">[</span><span class="kt">Int</span><span class="o">]]</span>
-<span class="c1">// wr: freestyle.effects.writer.AccumulatorProvider[List[Int]] = freestyle.effects.writer$AccumulatorProvider@79e7db28
+<span class="c1">// wr: freestyle.effects.writer.AccumulatorProvider[List[Int]] = freestyle.effects.writer$AccumulatorProvider@3745e6b2
 </span>
 <span class="k">import</span> <span class="nn">wr.implicits._</span>
 <span class="c1">// import wr.implicits._
@@ -347,7 +347,7 @@ for any runtime <code class="highlighter-rouge">M[_]</code> where <code class="h
 <span class="c1">// import cats.data.State
 </span>
 <span class="k">val</span> <span class="n">st</span> <span class="k">=</span> <span class="n">state</span><span class="o">[</span><span class="kt">Int</span><span class="o">]</span>
-<span class="c1">// st: freestyle.effects.state.StateSeedProvider[Int] = freestyle.effects.state$StateSeedProvider@1ea5520a
+<span class="c1">// st: freestyle.effects.state.StateSeedProvider[Int] = freestyle.effects.state$StateSeedProvider@d1576b8
 </span>
 <span class="k">type</span> <span class="kt">TargetState</span><span class="o">[</span><span class="kt">A</span><span class="o">]</span> <span class="k">=</span> <span class="nc">State</span><span class="o">[</span><span class="kt">Int</span>, <span class="kt">A</span><span class="o">]</span>
 <span class="c1">// defined type alias TargetState
@@ -432,7 +432,7 @@ The target runtime <code class="highlighter-rouge">M[_]</code> requires a <code 
 <span class="c1">// import freestyle.effects._
 </span>
 <span class="k">val</span> <span class="n">list</span> <span class="k">=</span> <span class="n">traverse</span><span class="o">[</span><span class="kt">List</span><span class="o">]</span>
-<span class="c1">// list: freestyle.effects.traverse.TraverseProvider[List] = freestyle.effects.traverse$TraverseProvider@25990004
+<span class="c1">// list: freestyle.effects.traverse.TraverseProvider[List] = freestyle.effects.traverse$TraverseProvider@5b004faa
 </span>
 <span class="k">import</span> <span class="nn">list._</span><span class="o">,</span> <span class="n">list</span><span class="o">.</span><span class="n">implicits</span><span class="o">.</span><span class="k">_</span>
 <span class="c1">// import list._
@@ -467,6 +467,142 @@ is implemented.</p>
 </span>
 <span class="n">programEmpty</span><span class="o">[</span><span class="kt">TraverseM.Op</span><span class="o">].</span><span class="n">exec</span><span class="o">[</span><span class="kt">List</span><span class="o">]</span>
 <span class="c1">// res16: List[Int] = List()
+</span></code></pre>
+</div>
+
+<h2 id="validation">Validation</h2>
+
+<p>The validation effect allows for the distinction between valid and invalid values in a program, accumulating the validation errors when executing it.</p>
+
+<p>The <code class="highlighter-rouge">validation</code> effect, like <a href="#state">state</a>, supports parametrization to any type remaining type safe throughout the program declaration.</p>
+
+<p>The constrains placed by this effect is that there needs to be an implicit evidence of <code class="highlighter-rouge">MonadState[M[_], List[E]]</code>
+for any runtime <code class="highlighter-rouge">M[_]</code> where <code class="highlighter-rouge">E</code> is the type of the validation error.</p>
+
+<p>The validation effect comes with three basic operations <code class="highlighter-rouge">valid</code>, <code class="highlighter-rouge">invalid</code>, and <code class="highlighter-rouge">errors</code>. Apart from that, it includes a couple of combinators for accumulating errors: <code class="highlighter-rouge">fromEither</code> and <code class="highlighter-rouge">fromValidatedNel</code>.</p>
+
+<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">freestyle.effects.validation</span>
+
+<span class="k">sealed</span> <span class="k">trait</span> <span class="nc">ValidationError</span>
+<span class="k">case</span> <span class="k">class</span> <span class="nc">NotValid</span><span class="o">(</span><span class="n">explanation</span><span class="k">:</span> <span class="kt">String</span><span class="o">)</span> <span class="k">extends</span> <span class="nc">ValidationError</span>
+
+<span class="k">val</span> <span class="n">vl</span> <span class="k">=</span> <span class="n">validation</span><span class="o">[</span><span class="kt">ValidationError</span><span class="o">]</span>
+<span class="k">import</span> <span class="nn">vl.implicits._</span>
+
+<span class="k">type</span> <span class="kt">ValidationResult</span><span class="o">[</span><span class="kt">A</span><span class="o">]</span> <span class="k">=</span> <span class="nc">State</span><span class="o">[</span><span class="kt">List</span><span class="o">[</span><span class="kt">ValidationError</span><span class="o">]</span>, <span class="kt">A</span><span class="o">]</span>
+</code></pre>
+</div>
+
+<h3 id="valid">valid</h3>
+
+<p><code class="highlighter-rouge">valid</code> lifts a valid value to the program without accumulating any errors.</p>
+
+<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">cats.instances.list._</span>
+<span class="c1">// import cats.instances.list._
+</span>
+<span class="k">def</span> <span class="n">programValid</span><span class="o">[</span><span class="kt">F</span><span class="o">[</span><span class="k">_</span><span class="o">]</span><span class="kt">:</span> <span class="kt">vl.ValidationM</span><span class="o">]</span> <span class="k">=</span>
+  <span class="k">for</span> <span class="o">{</span>
+    <span class="n">a</span> <span class="k">&lt;-</span> <span class="mf">1.</span><span class="n">pure</span><span class="o">[</span><span class="kt">FreeS</span><span class="o">[</span><span class="kt">F</span>, <span class="kt">?</span><span class="o">]]</span>
+    <span class="n">b</span> <span class="k">&lt;-</span> <span class="n">vl</span><span class="o">.</span><span class="nc">ValidationM</span><span class="o">[</span><span class="kt">F</span><span class="o">].</span><span class="n">valid</span><span class="o">(</span><span class="mi">1</span><span class="o">)</span>
+    <span class="n">c</span> <span class="k">&lt;-</span> <span class="mf">1.</span><span class="n">pure</span><span class="o">[</span><span class="kt">FreeS</span><span class="o">[</span><span class="kt">F</span>, <span class="kt">?</span><span class="o">]]</span>
+  <span class="o">}</span> <span class="k">yield</span> <span class="n">a</span> <span class="o">+</span> <span class="n">b</span> <span class="o">+</span> <span class="n">c</span>
+<span class="c1">// programValid: [F[_]](implicit evidence$1: vl.ValidationM[F])cats.free.Free[[β$0$]cats.free.FreeApplicative[F,β$0$],Int]
+</span>
+<span class="n">programValid</span><span class="o">[</span><span class="kt">vl.ValidationM.Op</span><span class="o">].</span><span class="n">exec</span><span class="o">[</span><span class="kt">ValidationResult</span><span class="o">].</span><span class="n">runEmpty</span>
+<span class="c1">// res20: cats.Eval[(List[ValidationError], Int)] = cats.Eval$$anon$8@7666faec
+</span></code></pre>
+</div>
+
+<h3 id="invalid">invalid</h3>
+
+<p><code class="highlighter-rouge">invalid</code> accumulates a validation error.</p>
+
+<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">def</span> <span class="n">programInvalid</span><span class="o">[</span><span class="kt">F</span><span class="o">[</span><span class="k">_</span><span class="o">]</span><span class="kt">:</span> <span class="kt">vl.ValidationM</span><span class="o">]</span> <span class="k">=</span>
+  <span class="k">for</span> <span class="o">{</span>
+    <span class="n">a</span> <span class="k">&lt;-</span> <span class="mf">1.</span><span class="n">pure</span><span class="o">[</span><span class="kt">FreeS</span><span class="o">[</span><span class="kt">F</span>, <span class="kt">?</span><span class="o">]]</span>
+    <span class="k">_</span> <span class="k">&lt;-</span> <span class="n">vl</span><span class="o">.</span><span class="nc">ValidationM</span><span class="o">[</span><span class="kt">F</span><span class="o">].</span><span class="n">invalid</span><span class="o">(</span><span class="nc">NotValid</span><span class="o">(</span><span class="s">"oh no"</span><span class="o">))</span>
+    <span class="n">b</span> <span class="k">&lt;-</span> <span class="mf">1.</span><span class="n">pure</span><span class="o">[</span><span class="kt">FreeS</span><span class="o">[</span><span class="kt">F</span>, <span class="kt">?</span><span class="o">]]</span>
+  <span class="o">}</span> <span class="k">yield</span> <span class="n">a</span> <span class="o">+</span> <span class="n">b</span>
+<span class="c1">// programInvalid: [F[_]](implicit evidence$1: vl.ValidationM[F])cats.free.Free[[β$0$]cats.free.FreeApplicative[F,β$0$],Int]
+</span>
+<span class="n">programInvalid</span><span class="o">[</span><span class="kt">vl.ValidationM.Op</span><span class="o">].</span><span class="n">exec</span><span class="o">[</span><span class="kt">ValidationResult</span><span class="o">].</span><span class="n">runEmpty</span>
+<span class="c1">// res21: cats.Eval[(List[ValidationError], Int)] = cats.Eval$$anon$8@266b0797
+</span></code></pre>
+</div>
+
+<h3 id="errors">errors</h3>
+
+<p><code class="highlighter-rouge">errors</code> allows you to inspect the accumulated errors so far.</p>
+
+<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">def</span> <span class="n">programErrors</span><span class="o">[</span><span class="kt">F</span><span class="o">[</span><span class="k">_</span><span class="o">]</span><span class="kt">:</span> <span class="kt">vl.ValidationM</span><span class="o">]</span> <span class="k">=</span>
+  <span class="k">for</span> <span class="o">{</span>
+    <span class="k">_</span> <span class="k">&lt;-</span> <span class="n">vl</span><span class="o">.</span><span class="nc">ValidationM</span><span class="o">[</span><span class="kt">F</span><span class="o">].</span><span class="n">invalid</span><span class="o">(</span><span class="nc">NotValid</span><span class="o">(</span><span class="s">"oh no"</span><span class="o">))</span>
+    <span class="n">errs</span> <span class="k">&lt;-</span> <span class="n">vl</span><span class="o">.</span><span class="nc">ValidationM</span><span class="o">[</span><span class="kt">F</span><span class="o">].</span><span class="n">errors</span>
+    <span class="k">_</span> <span class="k">&lt;-</span> <span class="n">vl</span><span class="o">.</span><span class="nc">ValidationM</span><span class="o">[</span><span class="kt">F</span><span class="o">].</span><span class="n">invalid</span><span class="o">(</span><span class="nc">NotValid</span><span class="o">(</span><span class="s">"this won't be in errs"</span><span class="o">))</span>
+  <span class="o">}</span> <span class="k">yield</span> <span class="n">errs</span>
+<span class="c1">// programErrors: [F[_]](implicit evidence$1: vl.ValidationM[F])cats.free.Free[[β$0$]cats.free.FreeApplicative[F,β$0$],vl.Errors]
+</span>
+<span class="n">programErrors</span><span class="o">[</span><span class="kt">vl.ValidationM.Op</span><span class="o">].</span><span class="n">exec</span><span class="o">[</span><span class="kt">ValidationResult</span><span class="o">].</span><span class="n">runEmpty</span>
+<span class="c1">// res22: cats.Eval[(List[ValidationError], vl.Errors)] = cats.Eval$$anon$8@a1a01cd
+</span></code></pre>
+</div>
+
+<h3 id="fromeither">fromEither</h3>
+
+<p>We can interleave <code class="highlighter-rouge">Either[ValidationError, ?]</code> values in the program, and if they have errors in the left side they will be accumulated.</p>
+
+<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">def</span> <span class="n">programFromEither</span><span class="o">[</span><span class="kt">F</span><span class="o">[</span><span class="k">_</span><span class="o">]</span><span class="kt">:</span> <span class="kt">vl.ValidationM</span><span class="o">]</span> <span class="k">=</span>
+  <span class="k">for</span> <span class="o">{</span>
+    <span class="k">_</span> <span class="k">&lt;-</span> <span class="n">vl</span><span class="o">.</span><span class="nc">ValidationM</span><span class="o">[</span><span class="kt">F</span><span class="o">].</span><span class="n">fromEither</span><span class="o">(</span><span class="nc">Left</span><span class="o">(</span><span class="nc">NotValid</span><span class="o">(</span><span class="s">"oh no"</span><span class="o">))</span> <span class="k">:</span> <span class="kt">Either</span><span class="o">[</span><span class="kt">ValidationError</span>, <span class="kt">Int</span><span class="o">])</span>
+	<span class="n">a</span> <span class="k">&lt;-</span> <span class="n">vl</span><span class="o">.</span><span class="nc">ValidationM</span><span class="o">[</span><span class="kt">F</span><span class="o">].</span><span class="n">fromEither</span><span class="o">(</span><span class="nc">Right</span><span class="o">(</span><span class="mi">42</span><span class="o">)</span> <span class="k">:</span> <span class="kt">Either</span><span class="o">[</span><span class="kt">ValidationError</span>, <span class="kt">Int</span><span class="o">])</span>
+  <span class="o">}</span> <span class="k">yield</span> <span class="n">a</span>
+<span class="c1">// programFromEither: [F[_]](implicit evidence$1: vl.ValidationM[F])cats.free.Free[[β$0$]cats.free.FreeApplicative[F,β$0$],Either[ValidationError,Int]]
+</span>
+<span class="n">programFromEither</span><span class="o">[</span><span class="kt">vl.ValidationM.Op</span><span class="o">].</span><span class="n">exec</span><span class="o">[</span><span class="kt">ValidationResult</span><span class="o">].</span><span class="n">runEmpty</span>
+<span class="c1">// res23: cats.Eval[(List[ValidationError], Either[ValidationError,Int])] = cats.Eval$$anon$8@7e5bd97b
+</span></code></pre>
+</div>
+
+<h3 id="fromvalidatednel">fromValidatedNel</h3>
+
+<p>We can interleave <code class="highlighter-rouge">ValidatedNel[ValidationError, ?]</code> values in the program, and if they have errors in the invalid case they will be accumulated.</p>
+
+<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">cats.data.</span><span class="o">{</span><span class="nc">Validated</span><span class="o">,</span> <span class="nc">ValidatedNel</span><span class="o">,</span> <span class="nc">NonEmptyList</span><span class="o">}</span>
+<span class="c1">// import cats.data.{Validated, ValidatedNel, NonEmptyList}
+</span>
+<span class="k">def</span> <span class="n">programFromValidatedNel</span><span class="o">[</span><span class="kt">F</span><span class="o">[</span><span class="k">_</span><span class="o">]</span><span class="kt">:</span> <span class="kt">vl.ValidationM</span><span class="o">]</span> <span class="k">=</span>
+  <span class="k">for</span> <span class="o">{</span>
+    <span class="n">a</span> <span class="k">&lt;-</span> <span class="n">vl</span><span class="o">.</span><span class="nc">ValidationM</span><span class="o">[</span><span class="kt">F</span><span class="o">].</span><span class="n">fromValidatedNel</span><span class="o">(</span>
+	   <span class="nc">Validated</span><span class="o">.</span><span class="nc">Valid</span><span class="o">(</span><span class="mi">42</span><span class="o">)</span>
+	<span class="o">)</span>
+	<span class="k">_</span> <span class="k">&lt;-</span> <span class="n">vl</span><span class="o">.</span><span class="nc">ValidationM</span><span class="o">[</span><span class="kt">F</span><span class="o">].</span><span class="n">fromValidatedNel</span><span class="o">(</span>
+	    <span class="nc">Validated</span><span class="o">.</span><span class="n">invalidNel</span><span class="o">[</span><span class="kt">ValidationError</span>, <span class="kt">Unit</span><span class="o">](</span><span class="nc">NotValid</span><span class="o">(</span><span class="s">"oh no"</span><span class="o">))</span>
+    <span class="o">)</span>
+	<span class="k">_</span> <span class="k">&lt;-</span> <span class="n">vl</span><span class="o">.</span><span class="nc">ValidationM</span><span class="o">[</span><span class="kt">F</span><span class="o">].</span><span class="n">fromValidatedNel</span><span class="o">(</span>
+	    <span class="nc">Validated</span><span class="o">.</span><span class="n">invalidNel</span><span class="o">[</span><span class="kt">ValidationError</span>, <span class="kt">Unit</span><span class="o">](</span><span class="nc">NotValid</span><span class="o">(</span><span class="s">"another error!"</span><span class="o">))</span>
+    <span class="o">)</span>
+  <span class="o">}</span> <span class="k">yield</span> <span class="n">a</span>
+<span class="c1">// programFromValidatedNel: [F[_]](implicit evidence$1: vl.ValidationM[F])cats.free.Free[[β$0$]cats.free.FreeApplicative[F,β$0$],cats.data.ValidatedNel[ValidationError,Int]]
+</span>
+<span class="n">programFromValidatedNel</span><span class="o">[</span><span class="kt">vl.ValidationM.Op</span><span class="o">].</span><span class="n">exec</span><span class="o">[</span><span class="kt">ValidationResult</span><span class="o">].</span><span class="n">runEmpty</span>
+<span class="c1">// res24: cats.Eval[(List[ValidationError], cats.data.ValidatedNel[ValidationError,Int])] = cats.Eval$$anon$8@128fba8f
+</span></code></pre>
+</div>
+
+<h3 id="syntax">Syntax</h3>
+
+<p>By importing the validation effect implicits, a couple methods are available for lifting valid and invalid values to our program: <code class="highlighter-rouge">liftValid</code> and <code class="highlighter-rouge">liftInvalid</code>.</p>
+
+<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">def</span> <span class="n">programSyntax</span><span class="o">[</span><span class="kt">F</span><span class="o">[</span><span class="k">_</span><span class="o">]</span><span class="kt">:</span> <span class="kt">vl.ValidationM</span><span class="o">]</span> <span class="k">=</span>
+  <span class="k">for</span> <span class="o">{</span>
+    <span class="n">a</span> <span class="k">&lt;-</span> <span class="mf">42.</span><span class="n">liftValid</span>
+	<span class="k">_</span> <span class="k">&lt;-</span> <span class="nc">NotValid</span><span class="o">(</span><span class="s">"oh no"</span><span class="o">).</span><span class="n">liftInvalid</span>
+	<span class="k">_</span> <span class="k">&lt;-</span> <span class="nc">NotValid</span><span class="o">(</span><span class="s">"another error!"</span><span class="o">).</span><span class="n">liftInvalid</span>
+  <span class="o">}</span> <span class="k">yield</span> <span class="n">a</span>
+<span class="c1">// programSyntax: [F[_]](implicit evidence$1: vl.ValidationM[F])cats.free.Free[[β$0$]cats.free.FreeApplicative[F,β$0$],Int]
+</span>
+<span class="n">programSyntax</span><span class="o">[</span><span class="kt">vl.ValidationM.Op</span><span class="o">].</span><span class="n">exec</span><span class="o">[</span><span class="kt">ValidationResult</span><span class="o">].</span><span class="n">runEmpty</span>
+<span class="c1">// res25: cats.Eval[(List[ValidationError], Int)] = cats.Eval$$anon$8@5e764c08
 </span></code></pre>
 </div>
 </section></div></div></div></div><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script><script src="/highlight/highlight.pack.js"></script><script>hljs.configure({
