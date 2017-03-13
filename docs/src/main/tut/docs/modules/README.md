@@ -113,7 +113,7 @@ If you were to create this by hand in the case of the example above it will look
 ```tut:book
 import cats.data.Coproduct
 
-type C01[A] = Coproduct[Database.Op, Cache.Op, A]
+type C01[A] = Coproduct[Cache.Op, Database.Op, A]
 type C02[A] = Coproduct[Presenter.Op, C01, A]
 type ManualAppCoproduct[A] = Coproduct[IdValidation.Op, C02, A]
 ```

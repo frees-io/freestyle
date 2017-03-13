@@ -52,42 +52,35 @@ object materialize {
       s.decls.toList.filter(_.isAbstract).flatMap(sym => fromMethod(sym.asMethod))
     }
 
-    def cp(n: TermName) =
-      Select(Ident(n), TypeName("Op"))
 
-    def mkModuleCoproduct(algebras: List[TermName]): List[String] = { //ugly hack because as String it does not typecheck early which we need for types to be in scope
-      val result = algebras match {
-        case List(el) =>
-          (0, q"type Op[A] = cats.data.Coproduct[$el.Op, Nothing, A]") :: Nil //TODO this won't work but we need a solution to single service modules
-        case l @ _ :: _ =>
-          l.scanLeft[(Int, AnyRef), List[(Int, AnyRef)]]((0, q"")) {
-            case ((pos, acc), el) =>
-              val cpName = if (pos + 1 != l.size) TypeName(s"C$pos") else TypeName("Op")
-              val newTree = (acc, el) match {
-                case (q"", r: TermName) => r
-                case (l: TermName, r: TermName) =>
-                  q"type $cpName[A] = cats.data.Coproduct[${cp(l)}, ${cp(r)}, A]"
-                case (l: TypeDef, r: TermName) =>
-                  q"type $cpName[A] = cats.data.Coproduct[${cp(r)}, ${l.name}, A]"
-                case x =>
-                  fail(
-                    s"found unexpected case building Coproduct: $x with types ${x.map(_.getClass)}")
-              }
-              (pos + 1, newTree)
-          }
+    def mkCoproduct(algebras: List[TermName]): List[TypeDef] =
+      algebras match {
+        case Nil => fail("Asked to build coproduct of non-empty list")
 
+        case alg :: Nil  => //TODO this won't work but we need a solution to single service modules
+          q"type Op[A] = cats.data.Coproduct[$alg.Op, Nothing, A]" :: Nil
+
+        case alg0 :: alg1 :: algs =>
+          val num = algebras.length
+
+          def cp(pos: Int): TypeName = TypeName( if (pos + 1 != num) s"C$pos" else "Op" )
+
+          val tdef1 = q"type ${cp(1)}[A] = cats.data.Coproduct[$alg1.Op, $alg0.Op, A]"
+
+          def op(alg: TermName, pos: Int ) : TypeDef =
+            q"type ${cp(pos)}[A] = cats.data.Coproduct[$alg.Op, ${cp(pos-1)}, A]"
+
+          val tdefs = algebras.zipWithIndex.drop(2).map { case (alg, pos) => op(alg, pos) }
+          tdef1 :: tdefs
       }
-      result collect {
-        case (_, x: TypeDef) => x.toString
-      }
-    }
 
     def run = {
-      val root             = weakTypeOf[A].typeSymbol.asClass.companion.info
-      val algebras         = findAlgebras(root)
-      val moduleCoproducts = mkModuleCoproduct(algebras)
-      val parsed           = moduleCoproducts.map(c.parse(_))
-      val tree             = q"""
+      val root       = weakTypeOf[A].typeSymbol.asClass.companion.info
+      val algebras   = findAlgebras(root)
+      val coproducts = mkCoproduct(algebras)
+      //ugly hack because as String it does not typecheck early which we need for types to be in scope
+      val parsed     = coproducts.map( cop => c.parse(cop.toString))
+      val tree       = q"""
       new {
          ..$parsed
       }
@@ -126,7 +119,7 @@ object module {
     }
 
     def genModule(cls: ClassDef) = {
-      val userTrait @ ClassDef(clsMods, name, _, clsTemplate) = cls.duplicate
+      val userTrait @ ClassDef(_, name, _, clsTemplate) = cls.duplicate
 
       val valDefs: List[ValDef] = clsTemplate.filter {
         case _: ValDef => true
@@ -171,15 +164,6 @@ object module {
       def rawInfo(name: String, obj: Any): Unit = info(name + " = " + showRaw(obj))
     }
 
-    def extractCoproductTypes(topLevel: List[Tree]): List[TypeName] = {
-      def loop(remaining: List[TermName], acc: List[TypeName]): List[TypeName] =
-        remaining match {
-          case Nil => acc
-          case h :: t => loop(t, acc)
-        }
-      loop(topLevel.map(i => TermName(i.toString)), Nil)
-    }
-
     def mkImplicitsTrait(name: TypeName, implicitArgs: List[ValDef]): ClassDef = {
       val instanceName = freshTermName(name.decodedName.toString + "DefaultInstance")
       val implicits    = implicitArgs //:+ q"val I: Inject[T, F]"
@@ -194,34 +178,25 @@ object module {
       """
     }
 
-    def mkModuleCoproduct(implicits: List[ValDef]): List[String] = {
-      val rawTypeDefs = implicits.flatMap(_.tpt.children.headOption)
-      val result = rawTypeDefs match {
-        case List(el) =>
-          (0, q"type Op[A] = Coproduct[${TermName(el.toString)}.Op, cats.Id, A]") :: Nil
-        case _ =>
-          rawTypeDefs.scanLeft[(Int, AnyRef), List[(Int, AnyRef)]]((0, q"")) {
-            case ((pos, acc), el) =>
-              val z      = TermName(el.toString)
-              val cpName = if (pos + 1 != rawTypeDefs.size) TypeName(s"C$pos") else TypeName("Op")
-              val newTree = (acc, z) match {
-                case (q"", r: TermName) => r
-                case (l: TermName, r: TermName) =>
-                  q"type $cpName[A] = cats.data.Coproduct[$l.Op, $r.Op, A]"
-                case (l: TypeDef, r: TermName) =>
-                  q"type $cpName[A] = cats.data.Coproduct[$r.Op, ${l.name}, A]"
-                case x =>
-                  fail(
-                    s"found unexpected case building Coproduct: $x with types ${x.map(_.getClass)}")
-              }
-              (pos + 1, newTree)
-          }
-      }
+    def mkCoproduct(algebras: List[TermName]): List[TypeDef] =
+      algebras match {
+        case Nil => Nil //fail("Asked to build coproduct of non-empty list")
 
-      result collect {
-        case (_, x: TypeDef) => x.toString
+        case List(alg) => q"type Op[A] = Coproduct[$alg.Op, cats.Id, A]" :: Nil
+
+        case alg0 :: alg1 :: algs =>
+          val num = algebras.length
+
+          def cp(pos: Int): TypeName = TypeName( if (pos + 1 != num) s"C$pos" else "Op" )
+
+          val tdef1 = q"type ${cp(1)}[A] = cats.data.Coproduct[$alg1.Op, $alg0.Op, A]"
+
+          def op(alg: TermName, pos: Int) : TypeDef =
+            q"type ${cp(pos)}[A] = cats.data.Coproduct[$alg.Op, ${cp(pos-1)}, A]"
+
+          val tdefs = algebras.zipWithIndex.drop(2).map { case (alg, pos) => op(alg, pos) }
+          tdef1 :: tdefs
       }
-    }
 
     def mkDefaultInstance( name: TypeName, implicitArgs: List[ValDef]): DefDef = {
       val className = mkModuleClassName(name)
@@ -233,7 +208,10 @@ object module {
     def mkCompanion( name: TypeName, implicitArgs: List[ValDef] ): ModuleDef = {
 
       val implicitInstance = mkDefaultInstance(name, implicitArgs)
-      val typeMaterializers = mkModuleCoproduct(implicitArgs).map(c.parse(_)) match {
+      val rawTypeDefs: List[TermName] = implicitArgs
+        .flatMap(_.tpt.children.headOption)
+        .map( x => TermName(x.toString) )
+      val typeMaterializers = mkCoproduct(rawTypeDefs).map(cop => c.parse(cop.toString)) match {
         case Nil => q"type Op[A] = Nothing" :: Nil
         case _   => q"val X = materialize.apply(this)" :: q"type Op[A] = X.Op[A]" :: Nil
       }
