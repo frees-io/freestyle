@@ -43,8 +43,7 @@ final class ConcurrentHashMapWrapper[F[_], Key, Value](
   }
 
   override def putAll(keyValues: Map[Key, Value]): F[Unit] = C.capture {
-    keyValues.map { case (k, v) => table.put(hkey(k), v) }
-    ()
+    keyValues.foreach{ case (k, v) => table.put(hkey(k), v) }
   }
 
   override def putIfAbsent(key: Key, newVal: Value): F[Unit] = C.capture {

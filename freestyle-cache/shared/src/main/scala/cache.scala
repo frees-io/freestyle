@@ -20,7 +20,7 @@ package cache {
       // Sets the value of a key to a newValue.
       def put(key: Key, newVal: Val): FreeS.Par[F, Unit]
 
-      // Copy all of the mappings from the specified map to this map
+      // Copy all of the mappings from the specified map to this cache
       def putAll(keyValues: Map[Key, Val]): FreeS.Par[F, Unit]
 
       //If the specified key is not already associated with a value, associate it with the given value.
@@ -41,7 +41,7 @@ package cache {
       //Replaces the entry for a key only if currently mapped to some value
       def replace(key: Key, newVal: Val): FreeS.Par[F, Unit]
 
-      //Returns true if this map contains no key-value mappings.
+      //Returns true if this cache contains no key-value mappings.
       def isEmpty: FreeS.Par[F, Boolean]
 
     }
