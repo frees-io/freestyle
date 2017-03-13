@@ -376,6 +376,40 @@ class EffectsTests extends AsyncWordSpec with Matchers {
 
   }
 
+  "Uber implicits import" should {
+    import freestyle.effects.option._
+    import freestyle.effects.error._
+    import freestyle.effects.implicits._
+
+    "import option implicits" in {
+      import cats.implicits._
+
+      def program[F[_]: OptionM] =
+        for {
+          a <- Applicative[FreeS[F, ?]].pure(1)
+          b <- OptionM[F].none[Int]
+          c <- Applicative[FreeS[F, ?]].pure(1)
+        } yield a + b + c
+
+      program[OptionM.Op].exec[Option] shouldBe None
+    }
+
+    "import error implicits" in {
+      import cats.implicits._
+
+      val ex = new RuntimeException("BOOM")
+
+      def program[F[_]: ErrorM] =
+        for {
+          a <- Applicative[FreeS[F, ?]].pure(1)
+          b <- ErrorM[F].error[Int](ex)
+          c <- Applicative[FreeS[F, ?]].pure(1)
+        } yield a + b + c
+
+      program[ErrorM.Op].exec[Either[Throwable, ?]] shouldBe Left(ex)
+    }
+  }
+
 }
 
 object collision {

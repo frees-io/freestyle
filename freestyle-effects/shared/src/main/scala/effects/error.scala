@@ -11,7 +11,7 @@ object error {
     def catchNonFatal[A](a: Eval[A]): FreeS.Par[F, A]
   }
 
-  object implicits {
+  trait ErrorImplicits {
 
     implicit def freeStyleErrorMHandler[M[_]](
         implicit ME: MonadError[M, Throwable]): ErrorM.Handler[M] = new ErrorM.Handler[M] {
@@ -29,4 +29,5 @@ object error {
 
   }
 
+  object implicits extends ErrorImplicits
 }
