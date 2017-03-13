@@ -9,7 +9,7 @@ permalink: /docs/interpreters/
 Freestyle empowers program whose runtime can be easily overriden via implicit evidences.
 
 As part of its design Freestyle is compatible with `Free` and traditional patterns around it. Apps build with Freestyle give developers the freedom
-to choose Automatic or manual algebras, modules and interpreters and intremix them as you see fit in applications based on the desired encoding.
+to choose Automatic or manual algebras, modules and interpreters and intermix them as you see fit in applications based on the desired encoding.
 
 ## Implementation
 
@@ -53,7 +53,7 @@ implicit val kvStoreHandler: KVStore.Handler[KVStoreState] = new KVStore.Handler
 }
 ```
 
-As you may have noticed in Freestyle instead of implementing a Natural transformation `F ~> M` weimplement methods that closely resemble each one of the smart constructors in our @free algebras.
+As you may have noticed in Freestyle instead of implementing a Natural transformation `F ~> M` we implement methods that closely resemble each one of the smart constructors in our `@free` algebras.
 This is not an imposition but rather a comvinience as the resulting instances are still Natural Transformations.
 
 In the example above `KVStore.Handler[M[_]]` it's actually already a Natural transformation of type `KVStore.Op ~> KVStoreState` in which on its
@@ -146,4 +146,18 @@ Alternatively you can build your interpreters by hand if you wish not to use Fre
 This may quickly grow unwildly as the number of algebras increase in an application but it's also possible in the spirit of providing two way compatibility
 in all areas between manually built ADTs and Natural Transformations and the ones automatically derived by Freestyle.
 
-Now that we've learnt to define our own interpreters let's jump into [Parallelism](/docs/parallelism/) 
+## A note on performance
+
+You've heard before that `With great power comes great responsibility.`. This is also true for apps based on `Free` structures.
+While reifying your actions allows freedom of interpretation, you should also be aware that interpreting many individual steps in the `Free` monad can become a performance bottleneck if abused or used in hot spots of an application.
+
+This is because apps built with `Free` reify each action in an in memory datastructure prior to being interpreted.
+This structure is then is folded into a final result applying the `Handler` natural transformation over each defined action.
+The entired process is also trampolined guaranteeing stack safety in the program declaration.
+
+As a rule of thumb the approach that we've seen working in production is modeling as `Free` actions your key biz logic concepts and leaving the heavy lifting to the interpreters where needed.
+
+For most common apps true bottlenecks are IO to Databases, Network or the file system and this is rarely a concern.
+
+
+Now that we've learnt to define our own interpreters let's jump into [Parallelism](/docs/parallelism/)
