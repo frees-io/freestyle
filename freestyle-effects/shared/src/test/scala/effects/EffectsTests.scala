@@ -321,9 +321,9 @@ class EffectsTests extends AsyncWordSpec with Matchers {
 
       def program[F[_]: vl.ValidationM] =
         for {
-          a <- 42.valid
-          b <- MissingFirstName.invalid
-          c <- NotValid("no").invalid
+          a <- 42.liftValid
+          b <- MissingFirstName.liftInvalid
+          c <- NotValid("no").liftInvalid
         } yield a
 
       val expectedErrors = List(MissingFirstName, NotValid("no"))

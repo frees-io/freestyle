@@ -508,3 +508,18 @@ def programFromValidatedNel[F[_]: vl.ValidationM] =
 
 programFromValidatedNel[vl.ValidationM.Op].exec[ValidationResult].runEmpty
 ```
+
+### Syntax
+
+By importing the validation effect implicits, a couple methods are available for lifting valid and invalid values to our program: `liftValid` and `liftInvalid`.
+
+```tut:book
+def programSyntax[F[_]: vl.ValidationM] =
+  for {
+    a <- 42.liftValid
+	_ <- NotValid("oh no").liftInvalid
+	_ <- NotValid("another error!").liftInvalid
+  } yield a
+
+programSyntax[vl.ValidationM.Op].exec[ValidationResult].runEmpty
+```
