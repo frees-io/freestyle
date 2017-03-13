@@ -406,7 +406,7 @@ programEmpty[TraverseM.Op].exec[List]
 
 The validation effect allows for the distinction between valid and invalid values in a program, accumulating the validation errors when executing it.
 
-The `validation` effect, like `state`, supports parametrization to any type remaining type safe throughout the program declaration.
+The `validation` effect, like [state](#state), supports parametrization to any type remaining type safe throughout the program declaration.
 
 The constrains placed by this effect is that there needs to be an implicit evidence of `MonadState[M[_], List[E]]`
 for any runtime `M[_]` where `E` is the type of the validation error.
