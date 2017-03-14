@@ -42,6 +42,17 @@ class EffectsTests extends AsyncWordSpec with Matchers {
         } yield a + b + c
       program[OptionM.Op].exec[Option] shouldBe None
     }
+
+    "allow an Option to be interleaved inside a program monadic flow using syntax" in {
+      import cats.implicits._
+      def program[F[_]: OptionM] =
+        for {
+          a <- Applicative[FreeS[F, ?]].pure(1)
+          b <- Option(1).liftFS
+          c <- Applicative[FreeS[F, ?]].pure(1)
+        } yield a + b + c
+      program[OptionM.Op].exec[Option] shouldBe Some(3)
+    }
   }
 
   "Error Freestyle integration" should {
@@ -90,6 +101,28 @@ class EffectsTests extends AsyncWordSpec with Matchers {
         for {
           a <- Applicative[FreeS[F, ?]].pure(1)
           b <- ErrorM[F].either[Int](Left(ex))
+          c <- Applicative[FreeS[F, ?]].pure(1)
+        } yield a + b + c
+      program[ErrorM.Op].exec[Either[Throwable, ?]] shouldBe Left(ex)
+    }
+
+    "allow an Either to propagate right biased using syntax" in {
+      import cats.implicits._
+      def program[F[_]: ErrorM] =
+        for {
+          a <- Applicative[FreeS[F, ?]].pure(1)
+          b <- Either.right[Throwable, Int](1).liftFS
+          c <- Applicative[FreeS[F, ?]].pure(1)
+        } yield a + b + c
+      program[ErrorM.Op].exec[Either[Throwable, ?]] shouldBe Right(3)
+    }
+
+    "allow an Either to short circuit using syntax" in {
+      import cats.implicits._
+      def program[F[_]: ErrorM] =
+        for {
+          a <- Applicative[FreeS[F, ?]].pure(1)
+          b <- Either.left[Throwable, Int](ex).liftFS
           c <- Applicative[FreeS[F, ?]].pure(1)
         } yield a + b + c
       program[ErrorM.Op].exec[Either[Throwable, ?]] shouldBe Left(ex)
