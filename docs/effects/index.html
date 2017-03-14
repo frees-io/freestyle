@@ -229,7 +229,7 @@ for any runtime <code class="highlighter-rouge">M[_]</code> used in its interpre
 <span class="c1">// defined type alias ConfigEnv
 </span>
 <span class="k">val</span> <span class="n">rd</span> <span class="k">=</span> <span class="n">reader</span><span class="o">[</span><span class="kt">Config</span><span class="o">]</span>
-<span class="c1">// rd: freestyle.effects.reader.EnvironmentProvider[Config] = freestyle.effects.reader$EnvironmentProvider@55fa288
+<span class="c1">// rd: freestyle.effects.reader.EnvironmentProvider[Config] = freestyle.effects.reader$EnvironmentProvider@613a0f8f
 </span>
 <span class="k">import</span> <span class="nn">rd.implicits._</span>
 <span class="c1">// import rd.implicits._
@@ -286,7 +286,7 @@ for any runtime <code class="highlighter-rouge">M[_]</code> used in its interpre
 <span class="c1">// import cats.data.Writer
 </span>
 <span class="k">val</span> <span class="n">wr</span> <span class="k">=</span> <span class="n">writer</span><span class="o">[</span><span class="kt">List</span><span class="o">[</span><span class="kt">Int</span><span class="o">]]</span>
-<span class="c1">// wr: freestyle.effects.writer.AccumulatorProvider[List[Int]] = freestyle.effects.writer$AccumulatorProvider@eb1fafe
+<span class="c1">// wr: freestyle.effects.writer.AccumulatorProvider[List[Int]] = freestyle.effects.writer$AccumulatorProvider@569bd0af
 </span>
 <span class="k">import</span> <span class="nn">wr.implicits._</span>
 <span class="c1">// import wr.implicits._
@@ -347,7 +347,7 @@ for any runtime <code class="highlighter-rouge">M[_]</code> where <code class="h
 <span class="c1">// import cats.data.State
 </span>
 <span class="k">val</span> <span class="n">st</span> <span class="k">=</span> <span class="n">state</span><span class="o">[</span><span class="kt">Int</span><span class="o">]</span>
-<span class="c1">// st: freestyle.effects.state.StateSeedProvider[Int] = freestyle.effects.state$StateSeedProvider@3a5e284
+<span class="c1">// st: freestyle.effects.state.StateSeedProvider[Int] = freestyle.effects.state$StateSeedProvider@1a1b42e7
 </span>
 <span class="k">type</span> <span class="kt">TargetState</span><span class="o">[</span><span class="kt">A</span><span class="o">]</span> <span class="k">=</span> <span class="nc">State</span><span class="o">[</span><span class="kt">Int</span>, <span class="kt">A</span><span class="o">]</span>
 <span class="c1">// defined type alias TargetState
@@ -432,7 +432,7 @@ The target runtime <code class="highlighter-rouge">M[_]</code> requires a <code 
 <span class="c1">// import freestyle.effects._
 </span>
 <span class="k">val</span> <span class="n">list</span> <span class="k">=</span> <span class="n">traverse</span><span class="o">[</span><span class="kt">List</span><span class="o">]</span>
-<span class="c1">// list: freestyle.effects.traverse.TraverseProvider[List] = freestyle.effects.traverse$TraverseProvider@18fa45d4
+<span class="c1">// list: freestyle.effects.traverse.TraverseProvider[List] = freestyle.effects.traverse$TraverseProvider@56905552
 </span>
 <span class="k">import</span> <span class="nn">list._</span><span class="o">,</span> <span class="n">list</span><span class="o">.</span><span class="n">implicits</span><span class="o">.</span><span class="k">_</span>
 <span class="c1">// import list._
@@ -509,7 +509,7 @@ for any runtime <code class="highlighter-rouge">M[_]</code> where <code class="h
 <span class="c1">// programValid: [F[_]](implicit evidence$1: vl.ValidationM[F])cats.free.Free[[β$0$]cats.free.FreeApplicative[F,β$0$],Int]
 </span>
 <span class="n">programValid</span><span class="o">[</span><span class="kt">vl.ValidationM.Op</span><span class="o">].</span><span class="n">exec</span><span class="o">[</span><span class="kt">ValidationResult</span><span class="o">].</span><span class="n">runEmpty</span>
-<span class="c1">// res20: cats.Eval[(List[ValidationError], Int)] = cats.Eval$$anon$8@6c896938
+<span class="c1">// res20: cats.Eval[(List[ValidationError], Int)] = cats.Eval$$anon$8@de4633a
 </span></code></pre>
 </div>
 
@@ -526,7 +526,7 @@ for any runtime <code class="highlighter-rouge">M[_]</code> where <code class="h
 <span class="c1">// programInvalid: [F[_]](implicit evidence$1: vl.ValidationM[F])cats.free.Free[[β$0$]cats.free.FreeApplicative[F,β$0$],Int]
 </span>
 <span class="n">programInvalid</span><span class="o">[</span><span class="kt">vl.ValidationM.Op</span><span class="o">].</span><span class="n">exec</span><span class="o">[</span><span class="kt">ValidationResult</span><span class="o">].</span><span class="n">runEmpty</span>
-<span class="c1">// res21: cats.Eval[(List[ValidationError], Int)] = cats.Eval$$anon$8@27558c77
+<span class="c1">// res21: cats.Eval[(List[ValidationError], Int)] = cats.Eval$$anon$8@253527d7
 </span></code></pre>
 </div>
 
@@ -543,7 +543,7 @@ for any runtime <code class="highlighter-rouge">M[_]</code> where <code class="h
 <span class="c1">// programErrors: [F[_]](implicit evidence$1: vl.ValidationM[F])cats.free.Free[[β$0$]cats.free.FreeApplicative[F,β$0$],vl.Errors]
 </span>
 <span class="n">programErrors</span><span class="o">[</span><span class="kt">vl.ValidationM.Op</span><span class="o">].</span><span class="n">exec</span><span class="o">[</span><span class="kt">ValidationResult</span><span class="o">].</span><span class="n">runEmpty</span>
-<span class="c1">// res22: cats.Eval[(List[ValidationError], vl.Errors)] = cats.Eval$$anon$8@52b9031d
+<span class="c1">// res22: cats.Eval[(List[ValidationError], vl.Errors)] = cats.Eval$$anon$8@6f159a84
 </span></code></pre>
 </div>
 
@@ -559,7 +559,7 @@ for any runtime <code class="highlighter-rouge">M[_]</code> where <code class="h
 <span class="c1">// programFromEither: [F[_]](implicit evidence$1: vl.ValidationM[F])cats.free.Free[[β$0$]cats.free.FreeApplicative[F,β$0$],Either[ValidationError,Int]]
 </span>
 <span class="n">programFromEither</span><span class="o">[</span><span class="kt">vl.ValidationM.Op</span><span class="o">].</span><span class="n">exec</span><span class="o">[</span><span class="kt">ValidationResult</span><span class="o">].</span><span class="n">runEmpty</span>
-<span class="c1">// res23: cats.Eval[(List[ValidationError], Either[ValidationError,Int])] = cats.Eval$$anon$8@3e6609a8
+<span class="c1">// res23: cats.Eval[(List[ValidationError], Either[ValidationError,Int])] = cats.Eval$$anon$8@4787d18a
 </span></code></pre>
 </div>
 
@@ -585,7 +585,7 @@ for any runtime <code class="highlighter-rouge">M[_]</code> where <code class="h
 <span class="c1">// programFromValidatedNel: [F[_]](implicit evidence$1: vl.ValidationM[F])cats.free.Free[[β$0$]cats.free.FreeApplicative[F,β$0$],cats.data.ValidatedNel[ValidationError,Int]]
 </span>
 <span class="n">programFromValidatedNel</span><span class="o">[</span><span class="kt">vl.ValidationM.Op</span><span class="o">].</span><span class="n">exec</span><span class="o">[</span><span class="kt">ValidationResult</span><span class="o">].</span><span class="n">runEmpty</span>
-<span class="c1">// res24: cats.Eval[(List[ValidationError], cats.data.ValidatedNel[ValidationError,Int])] = cats.Eval$$anon$8@38c6471e
+<span class="c1">// res24: cats.Eval[(List[ValidationError], cats.data.ValidatedNel[ValidationError,Int])] = cats.Eval$$anon$8@453cb383
 </span></code></pre>
 </div>
 
@@ -602,7 +602,7 @@ for any runtime <code class="highlighter-rouge">M[_]</code> where <code class="h
 <span class="c1">// programSyntax: [F[_]](implicit evidence$1: vl.ValidationM[F])cats.free.Free[[β$0$]cats.free.FreeApplicative[F,β$0$],Int]
 </span>
 <span class="n">programSyntax</span><span class="o">[</span><span class="kt">vl.ValidationM.Op</span><span class="o">].</span><span class="n">exec</span><span class="o">[</span><span class="kt">ValidationResult</span><span class="o">].</span><span class="n">runEmpty</span>
-<span class="c1">// res25: cats.Eval[(List[ValidationError], Int)] = cats.Eval$$anon$8@57ab18e7
+<span class="c1">// res25: cats.Eval[(List[ValidationError], Int)] = cats.Eval$$anon$8@42589fe5
 </span></code></pre>
 </div>
 </section></div></div></div></div><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script><script src="/highlight/highlight.pack.js"></script><script>hljs.configure({
