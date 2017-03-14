@@ -53,13 +53,10 @@ object materialize {
 
 
     def mkCoproduct(algebras: List[Type]): List[TypeDef] =
-      algebras match {
-        case Nil => //fail("Asked to build coproduct of non-empty list")
-          List( q"type Op[A] = Nothing")
+      algebras.map(x => TermName(x.toString) ) match {
+        case Nil => List( q"type Op[A] = Nothing")
 
-        case algx :: Nil  => //TODO this won't work but we need a solution to single service modules
-          val alg = TermName(algx.toString)
-          q"type Op[A] = cats.data.Coproduct[$alg.Op, Nothing, A]" :: Nil
+        case List(alg) => List(q"type Op[A] = $alg.Op[A]")
 
         case alg0 :: alg1 :: algs =>
           val num = algebras.length
@@ -68,10 +65,8 @@ object materialize {
 
           val copDef1 = q"type ${copName(1)}[A] = cats.data.Coproduct[$alg1.Op, $alg0.Op, A]"
 
-          def copDef(algx: Type, pos: Int ) : TypeDef = {
-            val alg = TermName(algx.toString)
+          def copDef(alg: Type, pos: Int ) : TypeDef =
             q"type ${copName(pos)}[A] = cats.data.Coproduct[$alg.Op, ${copName(pos-1)}, A]"
-          }
 
           val copDefs = algebras.zipWithIndex.drop(2).map { case (alg, pos) => copDef(alg, pos) }
           copDef1 :: copDefs
@@ -88,7 +83,6 @@ object materialize {
       }
       """
     }
-
     c.Expr[Any](run)
   }
 
