@@ -20,6 +20,12 @@ package cache {
       // Sets the value of a key to a newValue.
       def put(key: Key, newVal: Val): FreeS.Par[F, Unit]
 
+      // Copy all of the mappings from the specified map to this cache
+      def putAll(keyValues: Map[Key, Val]): FreeS.Par[F, Unit]
+
+      //If the specified key is not already associated with a value, associate it with the given value.
+      def putIfAbsent(key: Key, newVal: Val): FreeS.Par[F, Unit]
+
       // Removes the entry for the key if one exists
       def del(key: Key): FreeS.Par[F, Unit]
 
@@ -31,6 +37,13 @@ package cache {
 
       // Removes all entries
       def clear: FreeS.Par[F, Unit]
+
+      //Replaces the entry for a key only if currently mapped to some value
+      def replace(key: Key, newVal: Val): FreeS.Par[F, Unit]
+
+      //Returns true if this cache contains no key-value mappings.
+      def isEmpty: FreeS.Par[F, Boolean]
+
     }
 
     /*
@@ -82,6 +95,10 @@ package cache {
           interpret(rawMap.get(key))
         override def put(key: Key, newVal: Val): G[Unit] =
           interpret(rawMap.put(key, newVal))
+        override def putAll(keyValues: Map[Key, Val]):G[Unit] =
+          interpret(rawMap.putAll(keyValues))
+        override def putIfAbsent(key: Key, newVal: Val) : G[Unit]=
+          interpret(rawMap.putIfAbsent(key,newVal))
         override def del(key: Key): G[Unit] =
           interpret(rawMap.delete(key))
         override def has(key: Key): G[Boolean] =
@@ -90,6 +107,10 @@ package cache {
           interpret(rawMap.keys)
         override def clear: G[Unit] =
           interpret(rawMap.clear)
+        override def replace(key: Key,newVal: Val): G[Unit] =
+          interpret(rawMap.replace(key,newVal))
+        override def isEmpty: G[Boolean] =
+          interpret(rawMap.isEmpty)
       }
 
     }
@@ -101,6 +122,10 @@ package cache {
 
     def put(key: Key, newVal: Val): F[Unit]
 
+    def putAll(keyValues: Map[Key, Val]) : F[Unit]
+
+    def putIfAbsent(key: Key, newVal: Val) : F[Unit]
+
     def delete(key: Key): F[Unit]
 
     def hasKey(key: Key): F[Boolean]
@@ -108,6 +133,10 @@ package cache {
     def keys: F[List[Key]]
 
     def clear: F[Unit]
+
+    def replace(key: Key, newVal: Val) : F[Unit]
+
+    def isEmpty: F[Boolean]
   }
 
 }

@@ -10,12 +10,13 @@ import java.util.concurrent.ConcurrentHashMap
  *  Being immutable, the hashCode is attached to each key and
  */
 final class ConcurrentHashMapWrapper[F[_], Key, Value](
-    implicit hasher: Hasher[Key],
-    C: Capture[F]
+  implicit hasher: Hasher[Key],
+  C: Capture[F]
 ) extends KeyValueMap[F, Key, Value] {
 
   private[this] final case class HKey(key: Key, hash: Int) {
     override def hashCode() = hash
+
     override def equals(other: Any): Boolean =
       if (other.isInstanceOf[HKey]) {
         this.key == other.asInstanceOf[HKey].key
@@ -29,15 +30,24 @@ final class ConcurrentHashMapWrapper[F[_], Key, Value](
   private[this] val table = new ConcurrentHashMap[this.HKey, Value]()
 
   /**
-   * @returns Some(v) if v is the value to which the specified key is mapped, or
-   *   None if this map contains no mapping for the key
-   */
+    * @returns Some(v) if v is the value to which the specified key is mapped, or
+    *          None if this map contains no mapping for the key
+    */
   override def get(key: Key): F[Option[Value]] = C.capture {
     Option(table.get(hkey(key))) // Option.apply handles null
   }
 
   override def put(key: Key, value: Value): F[Unit] = C.capture {
     table.put(hkey(key), value) // Option.apply handles null
+    ()
+  }
+
+  override def putAll(keyValues: Map[Key, Value]): F[Unit] = C.capture {
+    keyValues.foreach{ case (k, v) => table.put(hkey(k), v) }
+  }
+
+  override def putIfAbsent(key: Key, newVal: Value): F[Unit] = C.capture {
+    table.putIfAbsent(hkey(key), newVal)
     ()
   }
 
@@ -56,13 +66,22 @@ final class ConcurrentHashMapWrapper[F[_], Key, Value](
 
   override def clear: F[Unit] = C.capture(table.clear)
 
+  override def replace(key: Key, newVal: Value): F[Unit] = C.capture {
+    table.replace(hkey(key), newVal)
+    ()
+  }
+
+  override def isEmpty: F[Boolean] = C.capture{
+    table.isEmpty
+  }
+
 }
 
 object implicits {
 
   implicit def concurrentHashMapWrapper[F[_], Key, Value](
-      implicit hasher: Hasher[Key],
-      C: Capture[F]
+    implicit hasher: Hasher[Key],
+    C: Capture[F]
   ): KeyValueMap[F, Key, Value] =
     new ConcurrentHashMapWrapper[F, Key, Value]()
 
