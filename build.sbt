@@ -27,7 +27,7 @@ lazy val micrositeSettings = Seq(
   micrositeKazariCodeMirrorTheme := "dracula",
   micrositeKazariDependencies := Seq(microsites.KazariDependency("com.fortysevendeg", "freestyle", buildWithoutSuffix(scalaVersion.value), version.value),
     microsites.KazariDependency("org.scalamacros", "paradise", scalaVersion.value, "2.1.0")),
-  micrositeKazariResolvers := Seq("https://oss.sonatype.org/content/repositories/snapshots", "https://oss.sonatype.org/content/repositories/releases"),
+  micrositeKazariResolvers := Seq("https://oss.sonatype.org/content/repositories/snapshots", "https://oss.sonatype.org/content/repositories/releases")
 )
 
 pgpPassphrase := Some(sys.env.getOrElse("PGP_PASSPHRASE", "").toCharArray)
