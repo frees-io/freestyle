@@ -51,7 +51,7 @@ member in your algebras companion.</p>
   <span class="k">def</span> <span class="n">delete</span><span class="o">(</span><span class="n">key</span><span class="k">:</span> <span class="kt">String</span><span class="o">)</span><span class="k">:</span> <span class="kt">KVStoreState</span><span class="o">[</span><span class="kt">Unit</span><span class="o">]</span> <span class="k">=</span>
     <span class="nc">State</span><span class="o">.</span><span class="n">modify</span><span class="o">(</span><span class="k">_</span> <span class="o">-</span> <span class="n">key</span><span class="o">)</span>
 <span class="o">}</span>
-<span class="c1">// kvStoreHandler: KVStore.Handler[KVStoreState] = $anon$1@5d8ddcd3
+<span class="c1">// kvStoreHandler: KVStore.Handler[KVStoreState] = $anon$1@ef09d91
 </span></code></pre>
 </div>
 
@@ -120,7 +120,6 @@ of a module in our application</p>
   <span class="k">val</span> <span class="n">log</span><span class="k">:</span> <span class="kt">Log</span><span class="o">[</span><span class="kt">F</span><span class="o">]</span>
 <span class="o">}</span>
 <span class="c1">// defined trait Backend
-// defined class Backend_default_impl
 // defined object Backend
 </span></code></pre>
 </div>
@@ -153,7 +152,7 @@ implicit evidences of each one of the individual algebra’s interpreters.</p>
 <span class="c1">// import freestyle.implicits._
 </span>
 <span class="n">program</span><span class="o">[</span><span class="kt">Backend.Op</span><span class="o">].</span><span class="n">exec</span><span class="o">[</span><span class="kt">KVStoreState</span><span class="o">]</span>
-<span class="c1">// res0: KVStoreState[Option[Int]] = cats.data.StateT@7f5ca90c
+<span class="c1">// res0: KVStoreState[Option[Int]] = cats.data.StateT@785d1329
 </span></code></pre>
 </div>
 

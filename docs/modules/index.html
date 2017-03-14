@@ -113,7 +113,7 @@ for all it’s contained algebras. This allows contained algebras to be composed
 <div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">cats.data.Coproduct</span>
 <span class="c1">// import cats.data.Coproduct
 </span>
-<span class="k">type</span> <span class="kt">C01</span><span class="o">[</span><span class="kt">A</span><span class="o">]</span> <span class="k">=</span> <span class="nc">Coproduct</span><span class="o">[</span><span class="kt">Database.Op</span>, <span class="kt">Cache.Op</span>, <span class="kt">A</span><span class="o">]</span>
+<span class="k">type</span> <span class="kt">C01</span><span class="o">[</span><span class="kt">A</span><span class="o">]</span> <span class="k">=</span> <span class="nc">Coproduct</span><span class="o">[</span><span class="kt">Cache.Op</span>, <span class="kt">Database.Op</span>, <span class="kt">A</span><span class="o">]</span>
 <span class="c1">// defined type alias C01
 </span>
 <span class="k">type</span> <span class="kt">C02</span><span class="o">[</span><span class="kt">A</span><span class="o">]</span> <span class="k">=</span> <span class="nc">Coproduct</span><span class="o">[</span><span class="kt">Presenter.Op</span>, <span class="kt">C01</span>, <span class="kt">A</span><span class="o">]</span>
