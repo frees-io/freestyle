@@ -2,11 +2,11 @@ package freestyle
 
 import cats.Monad
 
+import scala.concurrent.{ExecutionContext, Future}
+
 object nondeterminism extends NonDeterminismInstances
 
 trait NonDeterminismInstances {
-
-  import scala.concurrent.{ExecutionContext, Future}
 
   implicit def freestyleParallelFutureMonad(implicit ec: ExecutionContext): Monad[Future] =
     new Monad[Future] {

@@ -3,6 +3,7 @@ package freestyle
 import cats.Id
 import simulacrum.typeclass
 
+import scala.concurrent.{ExecutionContext, Future}
 import scala.util.Try
 
 /*
@@ -20,8 +21,6 @@ trait Capture[F[_]] {
 object Capture extends CaptureInstances
 
 trait CaptureInstances {
-
-  import scala.concurrent.{ExecutionContext, Future}
 
   implicit def freeStyleFutureCaptureInstance(implicit ec: ExecutionContext): Capture[Future] =
     new Capture[Future] {
