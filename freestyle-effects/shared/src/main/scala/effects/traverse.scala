@@ -1,8 +1,7 @@
-package freestyle.effects
+package freestyle
+package effects
 
-import freestyle._
 import cats.{~>, Foldable, MonadCombine}
-import cats.implicits._
 
 object traverse {
 
@@ -24,7 +23,7 @@ object traverse {
           FT: Foldable[G]): TraverseM.Handler[M] =
         new TraverseM.Handler[M] {
           def empty[A]: M[A]                     = MC.empty[A]
-          def fromTraversable[A](ta: G[A]): M[A] = ta.foldMap(MC.pure)(MC.algebra[A])
+          def fromTraversable[A](ta: G[A]): M[A] = FT.foldMap(ta)(MC.pure)(MC.algebra[A])
         }
     }
 
