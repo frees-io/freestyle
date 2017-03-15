@@ -4,6 +4,10 @@ import scala.annotation.{compileTimeOnly, StaticAnnotation}
 import scala.language.experimental.macros
 import scala.reflect.macros.blackbox
 
+trait FreeModuleLike {
+  type Op[A]
+}
+
 @compileTimeOnly("enable macro paradise to expand @free macro annotations")
 class free extends StaticAnnotation {
   def macroTransform(annottees: Any*): Any = macro free.impl
@@ -110,31 +114,6 @@ object free {
       }
     }
 
-    def mkRaiseTo( effectName: TypeName, effTTs: List[TypeDef], requests: List[Request] ): ClassDef = {
-      q"""
-       class RaiseTo[$LL[_], ..$effTTs](implicit I: Inject[$OP, $LL])
-          extends $effectName[$LL, ..${effTTs.map(_.name)}] {
-            ..${requests.map(_.raiser )}
-          }
-      """
-    }
-
-    def mkRaiseMethod( eff: TypeName, effTTs: List[TypeDef]): DefDef =
-      q"""
-        implicit def raiseTo[$LL[_], ..$effTTs](implicit I: Inject[$OP, $LL]):
-            $eff[$LL, ..${effTTs.map(_.name)}] = new RaiseTo[$LL, ..$effTTs]
-      """
-
-    def mkHandler( effTTs: List[TypeDef], requests: List[Request]): ClassDef =
-      q"""
-        trait Handler[$MM[_], ..$effTTs] extends FunctionK[$OP, $MM] {
-          ..${requests.map( _.handlerDef )}
-          override def apply[A](fa: $OP[A]): $MM[A] = fa match { 
-            case ..${requests.map(_.handlerCase )}
-          }
-        }
-      """
-
     def getRequestDefs(effectTrait: ClassDef): List[DefDef] =
       effectTrait.impl.filter {
         case q"$mods def $name[..$tparams](...$paramss): FreeS[..$args]"     => true
@@ -145,25 +124,41 @@ object free {
     def mkEffectObject(effectTrait: ClassDef) : ModuleDef= {
 
       val effectName: TypeName = effectTrait.name
-      val requests       : List[Request]  = getRequestDefs(effectTrait).map( p => new Request(p))
-      val effectTyParams : List[TypeDef] = effectTrait.tparams
-      val requestClasses : List[ClassDef] = requests.map( _.mkRequestClass(effectTyParams.tail))
-      val raiseToClass = mkRaiseTo(effectName, effectTyParams.tail, requests)
-      val raiseToMethod = mkRaiseMethod(effectName, effectTyParams.tail)
-      val effectHandler = mkHandler(effectTyParams.tail, requests)
+      val requests: List[Request]  = getRequestDefs(effectTrait).map( p => new Request(p))
+
+      val Eff = effectTrait.name
+      val TTs = effectTrait.tparams.tail
 
       q"""
         object ${effectName.toTermName} {
+
           import cats.arrow.FunctionK
           import cats.free.Inject
           import freestyle.FreeS
+
           sealed trait $OP[A] extends Product with Serializable
-          ..$requestClasses
-          $raiseToClass
-          $raiseToMethod
-          def apply[..$effectTyParams](implicit c: $effectName[..${effectTyParams.map(_.name)}]):
-              $effectName[..${effectTyParams.map(_.name)}] = c
-          $effectHandler
+          ..${requests.map( _.mkRequestClass(TTs))}
+
+          class To[$LL[_], ..$TTs](implicit I: Inject[$OP, $LL])
+            extends $Eff[$LL, ..${TTs.map(_.name)}] {
+              ..${requests.map(_.raiser )}
+          }
+
+          implicit def to[$LL[_], ..$TTs](implicit I: Inject[$OP, $LL]):
+              To[$LL, ..${TTs.map(_.name)}] = new To[$LL, ..$TTs]
+
+          def apply[$LL[_], ..$TTs](implicit ev: $Eff[$LL, ..${TTs.map(_.name)}]):
+              $Eff[$LL, ..${TTs.map(_.name)}] = ev
+
+          trait Handler[$MM[_], ..$TTs] extends FunctionK[$OP, $MM] {
+            ..${requests.map( _.handlerDef )}
+
+            override def apply[A](fa: $OP[A]): $MM[A] = fa match { 
+              case ..${requests.map(_.handlerCase )}
+            }
+
+          }
+
         }
       """
     }

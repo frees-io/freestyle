@@ -5,9 +5,7 @@ import scala.language.experimental.macros
 import scala.reflect.macros.whitebox
 import scala.reflect.runtime.universe._
 
-trait Modular
-
-object materialize {
+object coproductcollect {
 
   def apply[A](a: A): Any = macro materializeImpl[A]
 
@@ -17,40 +15,32 @@ object materialize {
 
     def fail(msg: String) = c.abort(c.enclosingPosition, msg)
 
-    object log {
-      def err(msg: String): Unit                = c.error(c.enclosingPosition, msg)
-      def warn(msg: String): Unit               = c.warning(c.enclosingPosition, msg)
-      def info(msg: String): Unit               = c.info(c.enclosingPosition, msg, force = true)
-      def rawInfo(name: String, obj: Any): Unit = info(name + " = " + showRaw(obj))
-    }
-
+    // s: the companion object of the `@module`-trait
     def findAlgebras(s: ClassSymbol): List[Type] = {
 
-      def isFreeStyleModule(cs: ClassSymbol): Boolean =
-        cs.baseClasses.exists {
-          case x: ClassSymbol => x.name == TypeName("Modular")
+      // cs: the trait annotated as `@module`
+      def methodsOf(cs: ClassSymbol): List[MethodSymbol] =
+        cs.info.decls.toList.collect { case met: MethodSymbol if met.isAbstract => met }
+
+      // cs: the trait annotated as `@module`
+      def isModuleFS(cs: ClassSymbol): Boolean =
+        cs.companion.asModule.moduleClass.asClass.baseClasses.exists {
+          case x: ClassSymbol => x.name == TypeName("FreeModuleLike")
         }
 
-      def fromClass(c: ClassSymbol) : List[Type] =
-        c.companion.info.decls.toList.flatMap {
-          case x: MethodSymbol => fromMethod(x.asMethod)
+      // cs: the trait annotated as `@module`
+      def fromClass(cs: ClassSymbol): List[Type] =
+        methodsOf(cs).flatMap(x => fromMethod(x.returnType))
+
+      def fromMethod(meth: Type): List[Type] =
+        meth.typeSymbol match {
+          case cs: ClassSymbol =>
+            if (isModuleFS(cs)) fromClass(cs) else List(meth.typeConstructor)
           case _ => Nil
         }
 
-      def fromMethod(meth: MethodSymbol): List[Type] = {
-        val companionClass    = meth.returnType.companion.typeSymbol.asClass
-        if (isFreeStyleModule(companionClass))
-          fromClass(companionClass)
-        else
-          List( meth.returnType.typeConstructor)
-      }
-
-      s.companion.info.decls.toList.flatMap {
-        case x: MethodSymbol if x.isAbstract => fromMethod(x.asMethod)
-        case _ => Nil
-      }
+      fromClass(s)
     }
-
 
     def mkCoproduct(algebras: List[Type]): List[TypeDef] =
       algebras.map(x => TermName(x.toString) ) match {
@@ -72,18 +62,13 @@ object materialize {
           copDef1 :: copDefs
       }
 
-    def run = {
-      val algebras   = findAlgebras(weakTypeOf[A].typeSymbol.asClass)
-      val coproducts = mkCoproduct(algebras)
-      //ugly hack because as String it does not typecheck early which we need for types to be in scope
-      val parsed     = coproducts.map( cop => c.parse(cop.toString))
-      q"""
-      new {
-         ..$parsed
-      }
-      """
-    }
-    c.Expr[Any](run)
+    // The Main Part
+    val algebras   = findAlgebras(weakTypeOf[A].typeSymbol.companion.asClass)
+    val coproducts = mkCoproduct(algebras)
+    //ugly hack because as String it does not typecheck early which we need for types to be in scope
+    val parsed     = coproducts.map( cop => c.parse(cop.toString))
+
+    c.Expr[Any]( q"new { ..$parsed }" )
   }
 
 }
@@ -102,7 +87,26 @@ object module {
 
     def fail(msg: String) = c.abort(c.enclosingPosition, msg)
 
-    def gen(): Tree = annottees match {
+    def filterImplicitVars( trees: Template): List[ValDef]  =
+      trees.collect { case v: ValDef if v.mods.hasFlag(Flag.DEFERRED) => v }
+
+    def mkCompanion( name: TypeName, implicits: List[ValDef] ): ModuleDef = {
+      q"""
+        object ${name.toTermName} extends FreeModuleLike {
+          val X = coproductcollect.apply(this)
+          type Op[A] = X.Op[A]
+
+          class To[F[_]](implicit ..$implicits) extends $name[F]
+
+          implicit def to[F[_]](implicit ..$implicits): To[F] = new To[F]()
+
+          def apply[F[_]](implicit ev: $name[F]): $name[F] = ev
+        }
+      """
+    }
+
+    // The main part
+    annottees match {
       case List(Expr(cls: ClassDef)) =>
         if (cls.mods.hasFlag(Flag.TRAIT | Flag.ABSTRACT)) {
           val userTrait @ ClassDef(_, name, _, clsTemplate) = cls.duplicate
@@ -118,33 +122,5 @@ object module {
         fail(
           s"Invalid @module usage, only traits and abstract classes without companions are supported")
     }
-
-
-    def filterImplicitVars( trees: Template): List[ValDef]  =
-      trees.collect { case v: ValDef if v.mods.hasFlag(Flag.DEFERRED) => v }
-
-    object log {
-      def err(msg: String): Unit                = c.error(c.enclosingPosition, msg)
-      def warn(msg: String): Unit               = c.warning(c.enclosingPosition, msg)
-      def info(msg: String): Unit               = c.info(c.enclosingPosition, msg, force = true)
-      def rawInfo(name: String, obj: Any): Unit = info(name + " = " + showRaw(obj))
-    }
-
-    def mkCompanion( name: TypeName, implicits: List[ValDef] ): ModuleDef = {
-      q"""
-        object ${name.toTermName} extends Modular {
-          val X = materialize.apply(this)
-          type Op[A] = X.Op[A]
-
-          class Impl[F[_]](implicit ..$implicits) extends $name[F]
-
-          implicit def instance[F[_]](implicit ..$implicits): $name[F] = new Impl[F]()
-
-          def apply[F[_]](implicit ev: $name[F]): $name[F] = ev
-        }
-      """
-    }
-
-    gen()
   }
 }
