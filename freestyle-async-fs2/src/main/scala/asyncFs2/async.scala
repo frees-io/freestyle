@@ -1,10 +1,7 @@
 package freestyle.asyncFs2
 
-import cats.{Eval, MonadError}
-
 import freestyle.async._
 
-import scala.concurrent._
 import fs2.{Strategy, Task}
 
 object implicits {
