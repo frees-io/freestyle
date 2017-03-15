@@ -30,6 +30,7 @@ so it can be considered in future releases.
 - [writer](#writer)
 - [state](#state)
 - [traverse](#traverse)
+- [validation](#validation)
 
 ## Error
 
