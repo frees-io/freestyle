@@ -91,16 +91,21 @@ object module {
       trees.collect { case v: ValDef if v.mods.hasFlag(Flag.DEFERRED) => v }
 
     def mkCompanion( name: TypeName, implicits: List[ValDef] ): ModuleDef = {
+      val injs: List[ValDef] = implicits.map {
+        case q"$mods val $name: $algM[..$args]" =>
+          q"val $name: ${TermName(algM.toString)}.To[F,..$args]"
+      }
+
       q"""
         object ${name.toTermName} extends FreeModuleLike {
           val X = coproductcollect.apply(this)
           type Op[A] = X.Op[A]
 
-          class To[F[_]](implicit ..$implicits) extends $name[F]
+          class To[F[_]](implicit ..$injs)
 
-          implicit def to[F[_]](implicit ..$implicits): To[F] = new To[F]()
+          implicit def to[F[_]](implicit ..$injs): To[F] = new To[F]
 
-          def apply[F[_]](implicit ev: $name[F]): $name[F] = ev
+          def apply[F[_]](implicit ev: To[F]): To[F] = ev
         }
       """
     }

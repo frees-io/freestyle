@@ -56,6 +56,12 @@ package object freestyle {
 
   }
 
+  // Operation Types, used only in the @free macro annotation
+  object Oper {
+    type Par[T]
+    type Seq[T]
+  }
+
   /**
    * Syntax functions for FreeS.Par
    */
