@@ -37,8 +37,8 @@ options:
       - title: Traverse
         url: docs/effects/#Traverse
 
-      - title: Cache
-        url: docs/effects/Cache/
+      - title: Validation
+        url: docs/effects/#Validation
 
   - title: Example Target Stack
     url: docs/stack/
@@ -47,6 +47,9 @@ options:
     url: TODO.html
 
     nested_options:
+
+      - title: Cache
+        url: docs/effects/Cache/
 
       - title: Dependency Injection
         url: TODO.html
