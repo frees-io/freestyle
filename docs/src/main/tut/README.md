@@ -15,17 +15,17 @@ Applications built with Freestyle can be interpreted to any runtime semantics su
 ```scala
 import freestyle._
 
-@free trait Database[F[_]] {
+@free trait Database {
   def get(id: UserId): Oper.Seq[User]
 }
 
-@free trait Cache[F[_]] {
+@free trait Cache {
   def get(id: UserId): Oper.Seq[User]
 }
 
-@module trait Persistence[F[_]] {
-  val database: Database[F]
-  val cache: Cache[F]
+@module trait Persistence {
+  val database: Database
+  val cache: Cache
 }
 ```
 </div>

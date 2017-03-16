@@ -13,17 +13,17 @@ Applications built with Freestyle can be interpreted to any runtime semantics su
 ```scala
 import freestyle._
 
-@free trait Database[F[_]] {
-  def get(id: UserId): FreeS[F, User]
+@free trait Database {
+  def get(id: UserId): Oper.Seq[User]
 }
 
-@free trait Cache[F[_]] {
-  def get(id: UserId): FreeS[F, User]
+@free trait Cache {
+  def get(id: UserId): Oper.Seq[User]
 }
 
-@module trait Persistence[F[_]] {
-  val database: Database[F]
-  val cache: Cache[F]
+@module trait Persistence {
+  val database: Database
+  val cache: Cache
 }
 ```
 
@@ -35,7 +35,7 @@ Simply require any of your `@free` or `@module` trait as implicits where needed.
 ```scala
 def storedUsers[F[_]]
     (userId: UserId)
-    (implicit persistence: Persistence[F]): FreeS[F, (User, User)] = {
+    (implicit persistence: Persistence.To[F]): FreeS[F, (User, User)] = {
   import persistence._
   for {
     cachedUser <- cache.get(userId)
@@ -53,7 +53,7 @@ the target runtime interpreters.
 def loadUser[F[_]]
   (userId: UserId)
   (implicit 
-    doobie: DoobieM[F], 
+    doobie: DoobieM.To[F], 
     logging: LoggingM[F]): FreeS[F, User] = {
     import doobie.implicits._
     for {

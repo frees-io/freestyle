@@ -24,11 +24,11 @@ Consider the following algebra adapted to Freestyle from the [Typelevel Cats Fre
 import freestyle._
 import cats.implicits._
 
-@free trait KVStore[F[_]] {
+@free trait KVStore {
   def put[A](key: String, value: A): Oper.Seq[Unit]
   def get[A](key: String): Oper.Seq[Option[A]]
   def delete(key: String): Oper.Seq[Unit]
-  def update[A](key: String, f: A => A): Oper[Unit] = 
+  def update[A](key: String, f: A => A): Oper[Unit] =
     get[A](key) flatMap {
       case Some(a) => put[A](key, f(a))
       case None => ().pure[FreeS[F, ?]]
@@ -86,7 +86,7 @@ by the evidence of it's algebras's interpreters.
 To illustrate interpreter composition let's define a new algebra `Log` which we will compose with our `KVStore` operations.
 
 ```tut:book
-@free trait Log[F[_]] {
+@free trait Log {
   def info(msg: String): Oper.Seq[Unit]
   def warn(msg: String): Oper.Seq[Unit]
 }
@@ -108,9 +108,9 @@ Before we create a program where we combine all operations let's consider both `
 of a module in our application
 
 ```tut:book
-@module trait Backend[F[_]] {
-  val store: KVStore[F]
-  val log: Log[F]
+@module trait Backend {
+  val store: KVStore
+  val log: Log
 }
 ```
 

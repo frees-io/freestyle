@@ -50,7 +50,7 @@ object UserRepository {
   final case class Save(user: User) extends Op[User]
   final case class GetAll(filter: String) extends Op[List[User]]
 
-  class To[L[_]](implicit I: Inject[Op, L]) extends UserRepository[L] {
+  class To[L[_]](implicit I: Inject[Op, L]) {
 
     def get(id: Long): FreeS[L, User] =
         FreeS.liftPar( FreeS.inject[Op, L]( Get(id)) )
@@ -62,10 +62,10 @@ object UserRepository {
         FreeS.liftPar( FreeS.inject[Op, L]( GetAll(filter)) )
   }
 
-  implicit def to[L[_]](implicit I: Inject[Op, L]): UserRepository[L] =
+  implicit def to[L[_]](implicit I: Inject[Op, L]): UserRepository.To[L] =
     new To[L]
 
-  def apply[L[_]](implicit c: UserRepository[L]): UserRepository[L] = c
+  def apply[L[_]](implicit c: UserRepository.To[L]): UserRepository.To[L] = c
 
   trait Handler[M[_]] extends FunctionK[Op, M] {
 
@@ -108,11 +108,11 @@ val userRepository = UserRepository[UserRepository.Op]
 ```
 
 ```tut:book
-def myService[F[_]](implicit userRepository: UserRepository[F]) = ???
+def myService[F[_]](implicit userRepository: UserRepository.To[F]) = ???
 ```
 
 ```tut:book
-def myService2[F[_]: UserRepository] = ???
+def myService2[F[_]: UserRepository.To] = ???
 ```
 
 ## Convenient type aliases
@@ -123,13 +123,13 @@ You may use this to manually build `Coproduct` types which will serve in the par
 ```tut:book
 import cats.data.Coproduct
 
-@free trait Service1[F[_]]{
+@free trait Service1 {
   def x(n: Int): Oper.Seq[Int]
 }
-@free trait Service2[F[_]]{
+@free trait Service2 {
   def y(n: Int): Oper.Seq[Int]
 }
-@free trait Service3[F[_]]{
+@free trait Service3 {
   def z(n: Int): Oper.Seq[Int]
 }
 type C1[A] = Coproduct[Service1.Op, Service2.Op, A]

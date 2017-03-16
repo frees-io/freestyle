@@ -29,7 +29,7 @@ Independent operations that can be executed potentially in parallel may be place
 ```tut:book
 import freestyle._
 
-@free trait Validation[F[_]] {
+@free trait Validation {
   def minSize(n: Int): Oper.Par[Boolean]
   def hasNumber: Oper.Par[Boolean]
 }
@@ -82,7 +82,7 @@ val validator = parValidation.exec[ParValidator]
 Sequential and parallel actions can be easily intermixed in `@free` algebras.
 
 ```tut:book
-@free trait MixedFreeS[F[_]] {
+@free trait MixedFreeS {
   def x: Oper.Par[Int]
   def y: Oper.Par[Int]
   def z: Oper.Seq[Int]
@@ -95,7 +95,7 @@ Using the [cats cartesian builder operator \|@\|](http://eed3si9n.com/herding-ca
 import freestyle.implicits._
 import cats.implicits._
 
-def program[F[_]](implicit M: MixedFreeS[F]) = {
+def program[F[_]](implicit M: MixedFreeS.To[F]) = {
   import M._
   for {
     a <- z //3

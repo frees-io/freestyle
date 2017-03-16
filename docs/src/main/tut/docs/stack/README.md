@@ -37,11 +37,11 @@ We will represent these capabilities using two algebras: `CustomerPersistence` a
 
 ```tut:book
 object algebras {
-  @free trait CustomerPersistence[F[_]] {
+  @free trait CustomerPersistence {
     def getCustomer(id: CustomerId): Oper.Par[Option[Customer]]
   }
 
-  @free trait StockPersistence[F[_]] {
+  @free trait StockPersistence {
     def checkQuantityAvailable(cultivar: String): Oper.Par[Int]
     def registerOrder(order: Order): Oper.Par[Unit]
   }
@@ -60,17 +60,17 @@ object modules {
   val rd = reader[Config]
   val cacheP = new KeyValueProvider[CustomerId, Customer]
 
-  @module trait Persistence[F[_]] {
-    val customer: algebras.CustomerPersistence[F]
-    val stock: algebras.StockPersistence[F]
+  @module trait Persistence {
+    val customer: algebras.CustomerPersistence
+    val stock: algebras.StockPersistence
   }
 
-  @module trait App[F[_]] {
-    val persistence: Persistence[F]
+  @module trait App {
+    val persistence: Persistence
 
-    val errorM: ErrorM[F]
-    val cacheM: cacheP.CacheM[F]
-    val readerM: rd.ReaderM[F]
+    val errorM: ErrorM
+    val cacheM: cacheP.CacheM
+    val readerM: rd.ReaderM
   }
 }
 ```
@@ -88,7 +88,7 @@ import modules._
 import cats.data.{NonEmptyList, ValidatedNel}
 import cats.implicits._
 
-def validateOrder[F[_]](order: Order, customer: Customer)(implicit app: App[F]): FreeS.Par[F, ValidatedNel[String, Unit]] =
+def validateOrder[F[_]](order: Order, customer: Customer)(implicit app: App.To[F]): FreeS.Par[F, ValidatedNel[String, Unit]] =
   app.readerM.reader { config =>
     val v = ().validNel[String]
     v.ensure(NonEmptyList.of(
@@ -135,7 +135,7 @@ case class ValidationFailed(errors: NonEmptyList[String]) extends AppleException
 We can use the `validateOrder` and `getCustomer` methods in combination with our persistence algebras and the `error` effect algebra, to create the `processOrder` method tying everything together.
 
 ```tut:book
-def processOrder[F[_]](order: Order)(implicit app: App[F]): FreeS[F, String] = {
+def processOrder[F[_]](order: Order)(implicit app: App.To[F]): FreeS[F, String] = {
   import app.persistence._, app.errorM._
   for {
     customerOpt <- getCustomer[F](order.customerId)

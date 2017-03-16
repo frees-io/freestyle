@@ -58,7 +58,7 @@ val boom = new RuntimeException("BOOM")
 
 type Target[A] = Either[Throwable, A]
 
-def shortCircuit[F[_]: ErrorM] =
+def shortCircuit[F[_]: ErrorM.To] =
   for {
     a <- 1.pure[FreeS[F, ?]]
     b <- ErrorM[F].either[Int](Left(boom))
@@ -70,7 +70,7 @@ shortCircuit[ErrorM.Op].exec[Target]
 
 ```tut:book
 
-def continueWithRightValue[F[_]: ErrorM] =
+def continueWithRightValue[F[_]: ErrorM.To] =
   for {
     a <- 1.pure[FreeS[F, ?]]
     b <- ErrorM[F].either[Int](Right(1))
@@ -86,7 +86,7 @@ If you want so simply raise an error without throwing an exception you may use t
 the program. 
 
 ```tut:book
-def shortCircuitWithError[F[_]: ErrorM] =
+def shortCircuitWithError[F[_]: ErrorM.To] =
   for {
     a <- 1.pure[FreeS[F, ?]]
     b <- ErrorM[F].error[Int](boom)
@@ -108,7 +108,7 @@ in `scala.util.control.NonFatal`.
 ```tut:book
 import cats.Eval
 
-def catchingExceptions[F[_]: ErrorM] =
+def catchingExceptions[F[_]: ErrorM.To] =
   for {
     a <- 1.pure[FreeS[F, ?]]
     b <- ErrorM[F].catchNonFatal[Int](Eval.later(throw new RuntimeException))
@@ -137,7 +137,7 @@ will short circuit.
 import freestyle.effects.option._
 import freestyle.effects.option.implicits._
 
-def programNone[F[_]: OptionM] =
+def programNone[F[_]: OptionM.To] =
   for {
     a <- 1.pure[FreeS[F, ?]]
     b <- OptionM[F].option[Int](None)
@@ -151,7 +151,7 @@ If a `Some(_)` is found the value is extracted and lifted into the context and t
 normally.
 
 ```tut:book
-def programSome[F[_]: OptionM] =
+def programSome[F[_]: OptionM.To] =
   for {
     a <- 1.pure[FreeS[F, ?]]
     b <- OptionM[F].option(Some(1))
@@ -167,7 +167,7 @@ programSome[OptionM.Op].exec[Option]
 care. 
 
 ```tut:book
-def programNone2[F[_]: OptionM] =
+def programNone2[F[_]: OptionM.To] =
   for {
     a <- 1.pure[FreeS[F, ?]]
     b <- OptionM[F].none[Int]
@@ -205,7 +205,7 @@ val rd = reader[Config]
 
 import rd.implicits._
 
-def programAsk[F[_]: rd.ReaderM] =
+def programAsk[F[_]: rd.ReaderM.To] =
   for {
     _ <- 1.pure[FreeS[F, ?]]
     c <- rd.ReaderM[F].ask
@@ -220,7 +220,7 @@ programAsk[rd.ReaderM.Op].exec[ConfigEnv].run(Config(n = 10))
 `reader` allows extracting values of the environment and lifting them into the context of `FreeS`
 
 ```tut:book
-def programReader[F[_]: rd.ReaderM] =
+def programReader[F[_]: rd.ReaderM.To] =
   for {
     a <- 1.pure[FreeS[F, ?]]
     b <- rd.ReaderM[F].reader(_.n)
@@ -255,7 +255,7 @@ import wr.implicits._
 
 type Logger[A] = Writer[List[Int], A]
 
-def programWriter[F[_]: wr.WriterM] =
+def programWriter[F[_]: wr.WriterM.To] =
   for {
     _ <- 1.pure[FreeS[F, ?]]
     b <- wr.WriterM[F].writer((Nil, 1))
@@ -270,7 +270,7 @@ programWriter[wr.WriterM.Op].exec[Logger].run
 `tell` appends a value for monoidal accumulation
 
 ```tut:book
-def programTell[F[_]: wr.WriterM] =
+def programTell[F[_]: wr.WriterM.To] =
   for {
     _ <- 1.pure[FreeS[F, ?]]
     b <- wr.WriterM[F].writer((List(1), 1))
@@ -306,7 +306,7 @@ type TargetState[A] = State[Int, A]
 
 import st.implicits._
 
-def programGet[F[_]: st.StateM] =
+def programGet[F[_]: st.StateM.To] =
   for {
     a <- 1.pure[FreeS[F, ?]]
     b <- st.StateM[F].get
@@ -321,7 +321,7 @@ programGet[st.StateM.Op].exec[TargetState].run(1).value
 `set` replaces the current state
 
 ```tut:book
-def programSet[F[_]: st.StateM] =
+def programSet[F[_]: st.StateM.To] =
   for {
     _ <- st.StateM[F].set(1)
     a <- st.StateM[F].get
@@ -335,7 +335,7 @@ programSet[st.StateM.Op].exec[TargetState].run(0).value
 `modify` modifies the current state
 
 ```tut:book
-def programModify[F[_]: st.StateM] =
+def programModify[F[_]: st.StateM.To] =
   for {
     a <- st.StateM[F].get
     _ <- st.StateM[F].modify(_ + a)
@@ -350,7 +350,7 @@ programModify[st.StateM.Op].exec[TargetState].run(1).value
 `inspect` runs a function over the current state and returns the resulting value
 
 ```tut:book
-def programInspect[F[_]: st.StateM] =
+def programInspect[F[_]: st.StateM.To] =
   for {
     a <- st.StateM[F].get
     b <- st.StateM[F].inspect(_ + a)
@@ -392,7 +392,7 @@ In the same way as `OptionM#none`, the empty value is determined by how the `Mon
 is implemented.
 
 ```tut:book
-def programEmpty[F[_]: TraverseM] =
+def programEmpty[F[_]: TraverseM.To] =
   for {
     _ <- TraverseM[F].empty[Int]
     a <- TraverseM[F].fromTraversable(1 :: 2 :: 3 :: Nil)
@@ -433,7 +433,7 @@ type ValidationResult[A] = State[List[ValidationError], A]
 ```tut:book
 import cats.instances.list._
 
-def programValid[F[_]: vl.ValidationM] =
+def programValid[F[_]: vl.ValidationM.To] =
   for {
     a <- 1.pure[FreeS[F, ?]]
     b <- vl.ValidationM[F].valid(1)
@@ -448,7 +448,7 @@ programValid[vl.ValidationM.Op].exec[ValidationResult].runEmpty
 `invalid` accumulates a validation error.
 
 ```tut:book
-def programInvalid[F[_]: vl.ValidationM] =
+def programInvalid[F[_]: vl.ValidationM.To] =
   for {
     a <- 1.pure[FreeS[F, ?]]
     _ <- vl.ValidationM[F].invalid(NotValid("oh no"))
@@ -463,7 +463,7 @@ programInvalid[vl.ValidationM.Op].exec[ValidationResult].runEmpty
 `errors` allows you to inspect the accumulated errors so far.
 
 ```tut:book
-def programErrors[F[_]: vl.ValidationM] =
+def programErrors[F[_]: vl.ValidationM.To] =
   for {
     _ <- vl.ValidationM[F].invalid(NotValid("oh no"))
     errs <- vl.ValidationM[F].errors
@@ -478,7 +478,7 @@ programErrors[vl.ValidationM.Op].exec[ValidationResult].runEmpty
 We can interleave `Either[ValidationError, ?]` values in the program, and if they have errors in the left side they will be accumulated.
 
 ```tut:book
-def programFromEither[F[_]: vl.ValidationM] =
+def programFromEither[F[_]: vl.ValidationM.To] =
   for {
     _ <- vl.ValidationM[F].fromEither(Left(NotValid("oh no")) : Either[ValidationError, Int])
 	a <- vl.ValidationM[F].fromEither(Right(42) : Either[ValidationError, Int])
@@ -494,7 +494,7 @@ We can interleave `ValidatedNel[ValidationError, ?]` values in the program, and 
 ```tut:book
 import cats.data.{Validated, ValidatedNel, NonEmptyList}
 
-def programFromValidatedNel[F[_]: vl.ValidationM] =
+def programFromValidatedNel[F[_]: vl.ValidationM.To] =
   for {
     a <- vl.ValidationM[F].fromValidatedNel(
 	   Validated.Valid(42)
@@ -515,7 +515,7 @@ programFromValidatedNel[vl.ValidationM.Op].exec[ValidationResult].runEmpty
 By importing the validation effect implicits, a couple methods are available for lifting valid and invalid values to our program: `liftValid` and `liftInvalid`.
 
 ```tut:book
-def programSyntax[F[_]: vl.ValidationM] =
+def programSyntax[F[_]: vl.ValidationM.To] =
   for {
     a <- 42.liftValid
 	_ <- NotValid("oh no").liftInvalid
