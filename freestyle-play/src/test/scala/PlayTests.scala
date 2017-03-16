@@ -22,9 +22,9 @@ class PlayTests extends AsyncWordSpec with Matchers {
 
   implicit override def executionContext = ExecutionContext.Implicits.global
 
-  def program[F[_] : Noop]: FreeS[F, Unit] = for {
+  def program[F[_] : Noop]: FreeS[F, Result] = for {
     x <- Noop[F].noop
-  } yield x
+  } yield Results.Ok(x)
 
 
   implicit def unitWr(implicit C: Codec): Writeable[Unit] = {
@@ -35,7 +35,7 @@ class PlayTests extends AsyncWordSpec with Matchers {
 
   "Play integration" should {
     "FreeSAction creates an action" in {
-      FreeSAction { program[Noop.Op] }.isInstanceOf[Action[_]] shouldBe true
+      FreeSAction { program[Noop.Op] }.isInstanceOf[Action[Result]] shouldBe true
     }
   }
 }

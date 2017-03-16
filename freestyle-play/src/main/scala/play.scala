@@ -12,15 +12,14 @@ import _root_.play.api.http._
 
 object play {
   object FreeSAction {
-    def apply[A, F[_]](prog: FreeS[F, A])(
+    def apply[A, F[_]](prog: FreeS[F, Result])(
       implicit
         MF: Monad[Future],
-        WA: Writeable[A],
         I: ParInterpreter[F, Future],
         EC: ExecutionContext
     ): Action[AnyContent] = {
       Action.async {
-        prog.exec[Future].map (Results.Ok(_) : Result)
+        prog.exec[Future]
       }
     }
   }
