@@ -50,7 +50,7 @@ object UserRepository {
   final case class Save(user: User) extends Op[User]
   final case class GetAll(filter: String) extends Op[List[User]]
 
-  class RaiseTo[L[_]](implicit I: Inject[Op, L]) extends UserRepository[L] {
+  class To[L[_]](implicit I: Inject[Op, L]) extends UserRepository[L] {
 
     def get(id: Long): FreeS[L, User] =
         FreeS.liftPar( FreeS.inject[Op, L]( Get(id)) )
@@ -62,10 +62,10 @@ object UserRepository {
         FreeS.liftPar( FreeS.inject[Op, L]( GetAll(filter)) )
   }
 
-  implicit def raiseTo[L[_]](implicit I: Inject[Op, L]): UserRepository[L] =
-    new RaiseTo[L]
+  implicit def to[L[_]](implicit I: Inject[Op, L]): UserRepository[L] =
+    new To[L]
 
-  def apply[F[_]](implicit c: UserRepository[F]): UserRepository[F] = c
+  def apply[L[_]](implicit c: UserRepository[L]): UserRepository[L] = c
 
   trait Handler[M[_]] extends FunctionK[Op, M] {
 
