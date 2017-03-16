@@ -40,6 +40,9 @@ lazy val freestyle = (crossProject in file("freestyle")).
     libraryDependencies ++= Seq(
       "org.typelevel" %%% "cats-free" % "0.9.0",
       "org.scala-lang" % "scala-reflect" % scalaVersion.value,
+      "io.monix" %%% "monix-eval" % "2.2.1" % "test",
+      "io.monix" %%% "monix-cats" % "2.2.1" % "test",
+      "org.scalatest" %% "scalatest" % "3.0.1" % "test",
       "com.chuusai" %%% "shapeless" % "2.3.2"
     )
   ).
@@ -232,8 +235,6 @@ lazy val freestyleFs2JS  = freestyleFs2.js
 
 lazy val tests = (project in file("tests")).
   dependsOn(freestyleJVM).
-  dependsOn(freestyleMonixJVM).
-  dependsOn(freestyleFs2JVM).
   settings(noPublishSettings: _*).
   settings(
     libraryDependencies ++= Seq(
