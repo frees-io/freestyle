@@ -9,7 +9,7 @@ object writer {
 
     @free sealed abstract class WriterM[F[_]] {
       def writer[A](aw: (W, A)): FreeS.Par[F, A]
-      def tell(w: W): FreeS.Par[F, Unit] = writer((w, ()))
+      def tell(w: W): FreeS.Par[F, Unit]
     }
 
     object implicits {
