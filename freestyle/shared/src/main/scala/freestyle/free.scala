@@ -104,20 +104,20 @@ object free {
 
         val tpt = reqDef.tpt.asInstanceOf[AppliedTypeTree]
         val (liftType, impl) = tpt match {
-          case tq"FreeS    [$ff, $aa]" => ( tq"FreeS    [$LL, $aa]", q"FreeS.liftPar($injected)" )
-          case tq"FreeS.Par[$ff, $aa]" => ( tq"FreeS.Par[$LL, $aa]",                  injected   )
+          case tq"Oper.Seq[$aa]" => ( tq"FreeS    [$LL, $aa]", q"FreeS.liftPar($injected)" )
+          case tq"Oper.Par[$aa]" => ( tq"FreeS.Par[$LL, $aa]",                  injected   )
           case _ => // Note: due to filter in getRequestDefs, this case is unreachable.
             fail(s"unknown abstract type found in @free container: $tpt : raw: ${showRaw(tpt)}")
         }
 
-        q"override def ${reqDef.name}[..$tparams](...${reqDef.vparamss}): $liftType = $impl"
+        q"def ${reqDef.name}[..$tparams](...${reqDef.vparamss}): $liftType = $impl"
       }
     }
 
     def getRequestDefs(effectTrait: ClassDef): List[DefDef] =
       effectTrait.impl.filter {
-        case q"$mods def $name[..$tparams](...$paramss): FreeS[..$args]"     => true
-        case q"$mods def $name[..$tparams](...$paramss): FreeS.Par[..$args]" => true
+        case q"$mods def $name[..$tparams](...$paramss): Oper.Seq[..$args]" => true
+        case q"$mods def $name[..$tparams](...$paramss): Oper.Par[..$args]" => true
         case _ => false
       }.map(_.asInstanceOf[DefDef])
 
@@ -127,7 +127,7 @@ object free {
       val requests: List[Request]  = getRequestDefs(effectTrait).map( p => new Request(p))
 
       val Eff = effectTrait.name
-      val TTs = effectTrait.tparams.tail
+      val TTs = effectTrait.tparams
 
       q"""
         object ${effectName.toTermName} {
@@ -140,15 +140,15 @@ object free {
           ..${requests.map( _.mkRequestClass(TTs))}
 
           class To[$LL[_], ..$TTs](implicit I: Inject[$OP, $LL])
-            extends $Eff[$LL, ..${TTs.map(_.name)}] {
+          {
               ..${requests.map(_.raiser )}
           }
 
           implicit def to[$LL[_], ..$TTs](implicit I: Inject[$OP, $LL]):
               To[$LL, ..${TTs.map(_.name)}] = new To[$LL, ..$TTs]
 
-          def apply[$LL[_], ..$TTs](implicit ev: $Eff[$LL, ..${TTs.map(_.name)}]):
-              $Eff[$LL, ..${TTs.map(_.name)}] = ev
+          def apply[$LL[_], ..$TTs](implicit ev: To[$LL, ..${TTs.map(_.name)}]):
+              To[$LL, ..${TTs.map(_.name)}] = ev
 
           trait Handler[$MM[_], ..$TTs] extends FunctionK[$OP, $MM] {
             ..${requests.map( _.handlerDef )}
