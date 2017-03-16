@@ -72,5 +72,5 @@ object algebras {
     val doobieM: DoobieM
   }
 
-  val app = App.to[App.Op]
+  val app = App[App.Op]
 }

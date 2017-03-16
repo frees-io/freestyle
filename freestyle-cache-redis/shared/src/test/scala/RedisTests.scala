@@ -25,7 +25,7 @@ class RedisTests extends AsyncWordSpec with Matchers with RedisTestContext {
   "Redis integration into Freestyle" should {
 
     "allow to interleave one CacheM within the programs monadic flow" in {
-      def program[F[_]: CacheM]: FreeS[F, Int] =
+      def program[F[_]: CacheM.To]: FreeS[F, Int] =
         for {
           a <- Applicative[FreeS[F, ?]].pure(Some(1))
           b <- CacheM[F].put("Joe", 13) *> CacheM[F].get("Joe")
@@ -38,21 +38,21 @@ class RedisTests extends AsyncWordSpec with Matchers with RedisTestContext {
   "GET" should {
 
     "result in None if the datastore is empty" in {
-      def program[F[_] : CacheM]: FreeS[F, Option[Int]] =
+      def program[F[_] : CacheM.To]: FreeS[F, Option[Int]] =
         CacheM[F].get("a")
 
       program[CacheM.Op].exec[Future] map { _ shouldBe None }
     }
 
     "result in None if a different key is set" in {
-      def program[F[_] : CacheM]: FreeS[F, Option[Int]] =
+      def program[F[_]: CacheM.To]: FreeS[F, Option[Int]] =
         CacheM[F].put("a", 0) *> CacheM[F].get("b")
 
       program[CacheM.Op].exec[Future] map { _ shouldBe None }
     }
 
     "result in Some(v) if v is the only set value" in {
-      def program[F[_] : CacheM]: FreeS[F, Option[Int]] =
+      def program[F[_] : CacheM.To]: FreeS[F, Option[Int]] =
         CacheM[F].put("a", 0) *> CacheM[F].get("a")
 
       program[CacheM.Op].exec[Future] map { _ shouldBe Some(0)}
@@ -62,7 +62,7 @@ class RedisTests extends AsyncWordSpec with Matchers with RedisTestContext {
   "PUT" should {
 
     "reduce consecutive PUT on the same key down to last SET" in {
-      def program[F[_] : CacheM]: FreeS[F, (Option[Int], Int)] =
+      def program[F[_] : CacheM.To]: FreeS[F, (Option[Int], Int)] =
         for {
           _ <- (CacheM[F].put("a", 0) *> CacheM[F].put("a", 1))
           a <- CacheM[F].get("a")
@@ -73,7 +73,7 @@ class RedisTests extends AsyncWordSpec with Matchers with RedisTestContext {
     }
 
     "ignore succeeding PUT to other Keys" in {
-      def program[F[_] : CacheM]: FreeS[F, (Option[Int], Int)] =
+      def program[F[_] : CacheM.To]: FreeS[F, (Option[Int], Int)] =
         for {
           _ <- CacheM[F].put("a", 0) *> CacheM[F].put("b", 1)
           a <- CacheM[F].get("a")
@@ -84,7 +84,7 @@ class RedisTests extends AsyncWordSpec with Matchers with RedisTestContext {
     }
 
     "ignore preceding PUT to other Keys" in {
-      def program[F[_] : CacheM]: FreeS[F, (Option[Int], Int)] =
+      def program[F[_] : CacheM.To]: FreeS[F, (Option[Int], Int)] =
         for {
           _ <- CacheM[F].put("b", 1) *> CacheM[F].put("a", 0)
           a <- CacheM[F].get("a")
@@ -98,7 +98,7 @@ class RedisTests extends AsyncWordSpec with Matchers with RedisTestContext {
   "PUTALL" should {
 
       "ignore succeeding PUT to other Keys" in {
-        def program[F[_]: CacheM]: FreeS[F, (Option[Int], Int)] =
+        def program[F[_]: CacheM.To]: FreeS[F, (Option[Int], Int)] =
           for {
             _ <- CacheM[F].putAll(Map("a"-> 0,"b"-> 1)) *> CacheM[F].put("c", 2)
             a <- CacheM[F].get("a")
@@ -109,7 +109,7 @@ class RedisTests extends AsyncWordSpec with Matchers with RedisTestContext {
     }
 
     "ignore a preceding PUT on same key" in {
-      def program[F[_]: CacheM]: FreeS[F, (Option[Int], Int)] =
+      def program[F[_]: CacheM.To]: FreeS[F, (Option[Int], Int)] =
         for {
           _ <- CacheM[F].put("a", 0) *> CacheM[F].putAll(Map("a"-> 1,"b"-> 1))
           a <- CacheM[F].get("a")
@@ -123,7 +123,7 @@ class RedisTests extends AsyncWordSpec with Matchers with RedisTestContext {
   "PUTIFABSENT" should {
 
     "ignore a PUTIFABSENT because the key is already associated with a value" in {
-      def program[F[_]: CacheM]: FreeS[F, (Option[Int], Int)] =
+      def program[F[_]: CacheM.To]: FreeS[F, (Option[Int], Int)] =
         for {
           _ <- CacheM[F].put("a", 0) *> CacheM[F].putIfAbsent("a", 1)
           a <- CacheM[F].get("a")
@@ -134,7 +134,7 @@ class RedisTests extends AsyncWordSpec with Matchers with RedisTestContext {
     }
 
     "ignore a succeeding PUT on different key" in {
-      def program[F[_]: CacheM]: FreeS[F, (Option[Int], Int)] =
+      def program[F[_]: CacheM.To]: FreeS[F, (Option[Int], Int)] =
         for {
           _ <- CacheM[F].put("b", 1) *> CacheM[F].putIfAbsent("a", 0)
           a <- CacheM[F].get("a")
@@ -145,7 +145,7 @@ class RedisTests extends AsyncWordSpec with Matchers with RedisTestContext {
     }
 
     "ignore preceding PUTIFABSENT to other Keys" in {
-      def program[F[_]: CacheM]: FreeS[F, (Option[Int], Int)] =
+      def program[F[_]: CacheM.To]: FreeS[F, (Option[Int], Int)] =
         for {
           _ <- CacheM[F].putIfAbsent("b", 1) *> CacheM[F].putIfAbsent("a", 0)
           a <- CacheM[F].get("a")
@@ -159,7 +159,7 @@ class RedisTests extends AsyncWordSpec with Matchers with RedisTestContext {
   "DELETE" should {
 
     "nullify a preceeding PUT on same key" in {
-      def program[F[_] : CacheM]: FreeS[F, (Option[Int], Int)] =
+      def program[F[_] : CacheM.To]: FreeS[F, (Option[Int], Int)] =
         for {
           _ <- CacheM[F].put("a", 0) *> CacheM[F].del("a")
           a <- CacheM[F].get("a")
@@ -170,7 +170,7 @@ class RedisTests extends AsyncWordSpec with Matchers with RedisTestContext {
     }
 
     "be overridden by succeeding PUT on same Key" in {
-      def program[F[_] : CacheM]: FreeS[F, (Option[Int], Int)] =
+      def program[F[_] : CacheM.To]: FreeS[F, (Option[Int], Int)] =
         for {
           _ <- CacheM[F].del("a") *> CacheM[F].put("a", 0)
           a <- CacheM[F].get("a")
@@ -181,14 +181,14 @@ class RedisTests extends AsyncWordSpec with Matchers with RedisTestContext {
     }
 
     "ignore a preceeding PUT on different key" in {
-      def program[F[_] : CacheM]: FreeS[F, Option[Int]] =
+      def program[F[_] : CacheM.To]: FreeS[F, Option[Int]] =
         CacheM[F].put("a", 0) *> CacheM[F].del("b") *> CacheM[F].get("a")
 
       program[CacheM.Op].exec[Future] map { _  shouldBe Some(0) }
     }
 
     "ignore a succeeding PUT on different key" in {
-      def program[F[_] : CacheM]: FreeS[F, Option[Int]] =
+      def program[F[_] : CacheM.To]: FreeS[F, Option[Int]] =
         CacheM[F].del("b") *> CacheM[F].put("a", 0) *> CacheM[F].get("a")
 
       program[CacheM.Op].exec[Future] map { _  shouldBe Some(0) }
@@ -197,7 +197,7 @@ class RedisTests extends AsyncWordSpec with Matchers with RedisTestContext {
 
   "CLEAR" should {
     "remove all the keys" in {
-      def program[F[_] : CacheM] =
+      def program[F[_] : CacheM.To] =
         for {
           k1 <- CacheM[F].put("a", 0) *> CacheM[F].put("b", 1) *> CacheM[F].keys
           k2 <- CacheM[F].clear *> CacheM[F].keys
@@ -209,14 +209,14 @@ class RedisTests extends AsyncWordSpec with Matchers with RedisTestContext {
 
   "REPLACE" should {
     "replace the entry for a key" in {
-      def program[F[_] : CacheM] =
+      def program[F[_] : CacheM.To] =
         CacheM[F].put("a", 0) *> CacheM[F].put("b", 1) *> CacheM[F].replace("a", 1) *> CacheM[F].get("a")
 
       program[CacheM.Op].exec[Future] map { _  shouldBe Some(1) }
     }
 
     "ignore replace the entry because a key not exist" in {
-      def program[F[_] : CacheM] =
+      def program[F[_] : CacheM.To] =
         CacheM[F].put("a", 0) *> CacheM[F].put("b", 1) *> CacheM[F].replace("c", 1) *> CacheM[F].get("c")
 
       program[CacheM.Op].exec[Future] map { _  shouldBe None }
@@ -225,14 +225,14 @@ class RedisTests extends AsyncWordSpec with Matchers with RedisTestContext {
 
   "ISEMPTY" should {
     "isn't empty" in {
-      def program[F[_] : CacheM] =
+      def program[F[_] : CacheM.To] =
         CacheM[F].put("a", 0) *> CacheM[F].isEmpty
 
       program[CacheM.Op].exec[Future] map { _  shouldBe false }
     }
 
     "is empty" in {
-      def program[F[_] : CacheM] =
+      def program[F[_] : CacheM.To] =
         CacheM[F].put("a", 0) *> CacheM[F].clear *> CacheM[F].isEmpty
 
       program[CacheM.Op].exec[Future] map { _  shouldBe true }

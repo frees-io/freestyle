@@ -376,7 +376,7 @@ import freestyle.effects._
 val list = traverse[List]
 import list._, list.implicits._
 
-def programTraverse[F[_]: TraverseM] =
+def programTraverse[F[_]: TraverseM.To] =
   for {
     a <- TraverseM[F].fromTraversable(1 :: 2 :: 3 :: Nil)
     b <- (a + 1).pure[FreeS[F, ?]]

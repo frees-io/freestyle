@@ -20,10 +20,10 @@ import freestyle._
 
 case class User(id: Long, name: String)
 
-@free trait UserRepository[F[_]] {
-  def get(id: Long): FreeS[F, User]
-  def save(user: User): FreeS[F, User]
-  def list: FreeS[F, List[User]]
+@free trait UserRepository {
+  def get(id: Long): Oper.Seq[User]
+  def save(user: User): Oper.Seq[User]
+  def list: Oper.Seq[List[User]]
 }
 ```
 
@@ -34,10 +34,10 @@ import freestyle.FreeS
 
 case class User(id: Long, name: String)
 
-trait UserRepository[F[_]] {
-  def get(id: Long): FreeS[F, User]
-  def save(user: User): FreeS[F, User]
-  def getAll(filter: String): FreeS[F, List[User]]
+trait UserRepository {
+  def get(id: Long): Oper.Seq[User]
+  def save(user: User): Oper.Seq[User]
+  def getAll(filter: String): Oper.Seq[List[User]]
 }
 
 object UserRepository {
@@ -124,13 +124,13 @@ You may use this to manually build `Coproduct` types which will serve in the par
 import cats.data.Coproduct
 
 @free trait Service1[F[_]]{
-  def x(n: Int): FreeS[F, Int]
+  def x(n: Int): Oper.Seq[Int]
 }
 @free trait Service2[F[_]]{
-  def y(n: Int): FreeS[F, Int]
+  def y(n: Int): Oper.Seq[Int]
 }
 @free trait Service3[F[_]]{
-  def z(n: Int): FreeS[F, Int]
+  def z(n: Int): Oper.Seq[Int]
 }
 type C1[A] = Coproduct[Service1.Op, Service2.Op, A]
 type Module[A] = Coproduct[Service3.Op, C1, A]

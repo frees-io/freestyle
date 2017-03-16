@@ -78,8 +78,8 @@ object free {
 
       /* A Request declaration in an Effect Trait, such as
        *
-       * @free trait UserRepository[F[_]] {
-       *     def get(id: Long): FreeS[F, User]
+       * @free trait UserRepository {
+       *     def get(id: Long): FreeS[User]
        *
        * gets translated to a Request class such as
        *

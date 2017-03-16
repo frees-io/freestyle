@@ -43,13 +43,13 @@ import freestyle._
 import freestyle.implicits._
 
 @free trait Validation[F[_]] {
-  def minSize(s: String, n: Int): FreeS.Par[F, Boolean]
-  def hasNumber(s: String): FreeS.Par[F, Boolean]
+  def minSize(s: String, n: Int): Oper.Par[Boolean]
+  def hasNumber(s: String): Oper.Par[Boolean]
 }
 
 @free trait Interaction[F[_]] {
-  def tell(msg: String): FreeS[F, Unit]
-  def ask(prompt: String): FreeS[F, String]
+  def tell(msg: String): Oper.Seq[Unit]
+  def ask(prompt: String): Oper.Seq[String]
 }
 ```
 

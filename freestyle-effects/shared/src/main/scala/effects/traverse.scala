@@ -9,9 +9,9 @@ object traverse {
 
     /** Acts as a generator providing traversable semantics to programs
      */
-    @free sealed abstract class TraverseM[F[_]] {
-      def empty[A]: FreeS.Par[F, A]
-      def fromTraversable[A](ta: G[A]): FreeS.Par[F, A]
+    @free sealed abstract class TraverseM {
+      def empty[A]: Oper.Par[A]
+      def fromTraversable[A](ta: G[A]): Oper.Par[A]
     }
 
     /** Interpretable as long as Foldable instance for G[_] and a MonadCombine for M[_] exists
@@ -27,11 +27,11 @@ object traverse {
         }
     }
 
-    class TraverseFreeSLift[F[_]: TraverseM] extends FreeSLift[F, G] {
+    class TraverseFreeSLift[F[_]: TraverseM.To] extends FreeSLift[F, G] {
       def liftFSPar[A](fa: G[A]): FreeS.Par[F, A] = TraverseM[F].fromTraversable(fa)
     }
 
-    implicit def freeSLiftTraverse[F[_]: TraverseM]: FreeSLift[F, G] =
+    implicit def freeSLiftTraverse[F[_]: TraverseM.To]: FreeSLift[F, G] =
       new TraverseFreeSLift[F]
 
   }

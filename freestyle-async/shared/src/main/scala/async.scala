@@ -13,8 +13,8 @@ object async {
   }
 
   /** Async computation algebra. **/
-  @free sealed trait AsyncM[F[_]] {
-    def async[A](fa: Proc[A]): FreeS.Par[F, A]
+  @free sealed trait AsyncM {
+    def async[A](fa: Proc[A]): Oper.Par[A]
   }
 
   object implicits {

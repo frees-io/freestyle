@@ -5,10 +5,10 @@ import cats.{Eval, MonadError}
 
 object error {
 
-  @free sealed trait ErrorM[F[_]] {
-    def either[A](fa: Either[Throwable, A]): FreeS.Par[F, A]
-    def error[A](e: Throwable): FreeS.Par[F, A]
-    def catchNonFatal[A](a: Eval[A]): FreeS.Par[F, A]
+  @free sealed trait ErrorM {
+    def either[A](fa: Either[Throwable, A]): Oper.Par[A]
+    def error[A](e: Throwable): Oper.Par[A]
+    def catchNonFatal[A](a: Eval[A]): Oper.Par[A]
   }
 
   trait ErrorImplicits {
@@ -20,11 +20,11 @@ object error {
       def catchNonFatal[A](a: Eval[A]): M[A]        = ME.catchNonFatal[A](a.value)
     }
 
-    class ErrorFreeSLift[F[_]: ErrorM] extends FreeSLift[F, Either[Throwable, ?]] {
+    class ErrorFreeSLift[F[_]: ErrorM.To] extends FreeSLift[F, Either[Throwable, ?]] {
       def liftFSPar[A](fa: Either[Throwable, A]): FreeS.Par[F, A] = ErrorM[F].either(fa)
     }
 
-    implicit def freeSLiftError[F[_]: ErrorM]: FreeSLift[F, Either[Throwable, ?]] =
+    implicit def freeSLiftError[F[_]: ErrorM.To]: FreeSLift[F, Either[Throwable, ?]] =
       new ErrorFreeSLift[F]
 
   }

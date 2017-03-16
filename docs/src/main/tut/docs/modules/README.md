@@ -20,16 +20,16 @@ import freestyle._
 
 object algebras {
     @free trait Database[F[_]] {
-      def get(id: Int): FreeS[F, Int]
+      def get(id: Int): Oper.Seq[Int]
     }
     @free trait Cache[F[_]] {
-      def get(id: Int): FreeS[F, Option[Int]]
+      def get(id: Int): Oper.Seq[Option[Int]]
     }
     @free trait Presenter[F[_]] {
-      def show(id: Int): FreeS[F, Int]
+      def show(id: Int): Oper.Seq[Int]
     }
     @free trait IdValidation[F[_]] {
-      def validate(id: Option[Int]): FreeS[F, Int]
+      def validate(id: Option[Int]): Oper.Seq[Int]
     }
 }
 ```

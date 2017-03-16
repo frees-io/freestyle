@@ -10,16 +10,16 @@ object validation {
     type Errors = List[E]
 
     /** An algebra for introducing validation semantics in a program. **/
-    @free sealed trait ValidationM[F[_]] {
-      def valid[A](x: A): FreeS.Par[F, A]
+    @free sealed trait ValidationM {
+      def valid[A](x: A): Oper.Par[A]
 
-      def invalid(err: E): FreeS.Par[F, Unit]
+      def invalid(err: E): Oper.Par[Unit]
 
-      def errors: FreeS.Par[F, Errors]
+      def errors: Oper.Par[Errors]
 
-      def fromEither[A](x: Either[E, A]): FreeS.Par[F, Either[E, A]]
+      def fromEither[A](x: Either[E, A]): Oper.Par[Either[E, A]]
 
-      def fromValidatedNel[A](x: ValidatedNel[E, A]): FreeS.Par[F, ValidatedNel[E, A]]
+      def fromValidatedNel[A](x: ValidatedNel[E, A]): Oper.Par[ValidatedNel[E, A]]
     }
 
     object implicits {
@@ -50,11 +50,15 @@ object validation {
       }
 
       implicit class ValidSyntax[A](private val s: A){
-        def liftValid[F[_] : ValidationM]: FreeS[F, A] = ValidationM[F].valid(s)
+        def liftValid[F[_] : ValidationM.To]: FreeS[F, A] =
+          implicitly[ValidationM.To[F]].valid(s)
       }
+
       implicit class InvalidSyntax[A](private val e: E){
-        def liftInvalid[F[_] : ValidationM]: FreeS[F, Unit] = ValidationM[F].invalid(e)
+        def liftInvalid[F[_] : ValidationM.To]: FreeS[F, Unit] =
+          implicitly[ValidationM.To[F]].invalid(e)
       }
+
     }
   }
 

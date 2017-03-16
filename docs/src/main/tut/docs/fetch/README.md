@@ -35,7 +35,7 @@ import freestyle._
 import freestyle.implicits._
 
 @free trait Interact[F[_]] {
-  def tell(msg: String): FreeS[F, Unit]
+  def tell(msg: String): Oper.Seq[Unit]
 }
 ```
 

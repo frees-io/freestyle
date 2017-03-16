@@ -16,21 +16,21 @@ class CacheTests extends WordSpec with Matchers with CacheTestContext {
 
   "GET" should {
     "result in None if the datastore is empty" in {
-      def program[F[_] : CacheM]: FreeS[F, Option[Int]] =
+      def program[F[_] : CacheM.To]: FreeS[F, Option[Int]] =
         CacheM[F].get("a")
 
       program[CacheM.Op].exec[Id] shouldBe None
     }
 
     "result in None if a different key is set" in {
-      def program[F[_] : CacheM]: FreeS[F, Option[Int]] =
+      def program[F[_] : CacheM.To]: FreeS[F, Option[Int]] =
         CacheM[F].put("a", 0) *> CacheM[F].get("b")
 
       program[CacheM.Op].exec[Id] shouldBe None
     }
 
     "result in Some(v) if v is the only set value" in {
-      def program[F[_] : CacheM]: FreeS[F, Option[Int]] =
+      def program[F[_] : CacheM.To]: FreeS[F, Option[Int]] =
         CacheM[F].put("a", 0) *> CacheM[F].get("a")
 
       program[CacheM.Op].exec[Id] shouldBe Some(0)
@@ -40,7 +40,7 @@ class CacheTests extends WordSpec with Matchers with CacheTestContext {
   "PUT" should {
 
     "reduce consecutive PUT on the same key down to last SET" in {
-      def program[F[_] : CacheM]: FreeS[F, (Option[Int], Int)] =
+      def program[F[_] : CacheM.To]: FreeS[F, (Option[Int], Int)] =
         for {
           _ <- (CacheM[F].put("a", 0) *> CacheM[F].put("a", 1))
           a <- CacheM[F].get("a")
@@ -51,7 +51,7 @@ class CacheTests extends WordSpec with Matchers with CacheTestContext {
     }
 
     "ignore succeeding PUT to other Keys" in {
-      def program[F[_] : CacheM]: FreeS[F, (Option[Int], Int)] =
+      def program[F[_] : CacheM.To]: FreeS[F, (Option[Int], Int)] =
         for {
           _ <- CacheM[F].put("a", 0) *> CacheM[F].put("b", 1)
           a <- CacheM[F].get("a")
@@ -62,7 +62,7 @@ class CacheTests extends WordSpec with Matchers with CacheTestContext {
     }
 
     "ignore preceding PUT to other Keys" in {
-      def program[F[_] : CacheM]: FreeS[F, (Option[Int], Int)] =
+      def program[F[_] : CacheM.To]: FreeS[F, (Option[Int], Int)] =
         for {
           _ <- CacheM[F].put("b", 1) *> CacheM[F].put("a", 0)
           a <- CacheM[F].get("a")
@@ -76,7 +76,7 @@ class CacheTests extends WordSpec with Matchers with CacheTestContext {
   "PUTALL" should {
 
     "ignore succeeding PUT to other Keys" in {
-      def program[F[_]: CacheM]: FreeS[F, (Option[Int], Int)] =
+      def program[F[_]: CacheM.To]: FreeS[F, (Option[Int], Int)] =
         for {
           _ <- CacheM[F].putAll(Map("a"-> 0,"b"-> 1)) *> CacheM[F].put("c", 2)
           a <- CacheM[F].get("a")
@@ -87,7 +87,7 @@ class CacheTests extends WordSpec with Matchers with CacheTestContext {
     }
 
     "ignore a preceding PUT on same key" in {
-      def program[F[_]: CacheM]: FreeS[F, (Option[Int], Int)] =
+      def program[F[_]: CacheM.To]: FreeS[F, (Option[Int], Int)] =
         for {
           _ <- CacheM[F].put("a", 0) *> CacheM[F].putAll(Map("a"-> 1,"b"-> 1))
           a <- CacheM[F].get("a")
@@ -102,7 +102,7 @@ class CacheTests extends WordSpec with Matchers with CacheTestContext {
   "PUTIFABSENT" should {
 
     "ignore a PUTIFABSENT because the key is already associated with a value" in {
-      def program[F[_]: CacheM]: FreeS[F, (Option[Int], Int)] =
+      def program[F[_]: CacheM.To]: FreeS[F, (Option[Int], Int)] =
         for {
           _ <- CacheM[F].put("a", 0) *> CacheM[F].putIfAbsent("a", 1)
           a <- CacheM[F].get("a")
@@ -113,7 +113,7 @@ class CacheTests extends WordSpec with Matchers with CacheTestContext {
     }
 
     "ignore a succeeding PUT on different key" in {
-      def program[F[_]: CacheM]: FreeS[F, (Option[Int], Int)] =
+      def program[F[_]: CacheM.To]: FreeS[F, (Option[Int], Int)] =
         for {
           _ <- CacheM[F].put("b", 1) *> CacheM[F].putIfAbsent("a", 0)
           a <- CacheM[F].get("a")
@@ -124,7 +124,7 @@ class CacheTests extends WordSpec with Matchers with CacheTestContext {
     }
 
     "ignore preceding PUTIFABSENT to other Keys" in {
-      def program[F[_]: CacheM]: FreeS[F, (Option[Int], Int)] =
+      def program[F[_]: CacheM.To]: FreeS[F, (Option[Int], Int)] =
         for {
           _ <- CacheM[F].putIfAbsent("b", 1) *> CacheM[F].putIfAbsent("a", 0)
           a <- CacheM[F].get("a")
@@ -140,7 +140,7 @@ class CacheTests extends WordSpec with Matchers with CacheTestContext {
   "DELETE" should {
 
     "nullify a preceeding PUT on same key" in {
-      def program[F[_] : CacheM]: FreeS[F, (Option[Int], Int)] =
+      def program[F[_] : CacheM.To]: FreeS[F, (Option[Int], Int)] =
         for {
           _ <- CacheM[F].put("a", 0) *> CacheM[F].del("a")
           a <- CacheM[F].get("a")
@@ -151,7 +151,7 @@ class CacheTests extends WordSpec with Matchers with CacheTestContext {
     }
 
     "be overridden by succeeding PUT on same Key" in {
-      def program[F[_] : CacheM]: FreeS[F, (Option[Int], Int)] =
+      def program[F[_] : CacheM.To]: FreeS[F, (Option[Int], Int)] =
         for {
           _ <- CacheM[F].del("a") *> CacheM[F].put("a", 0)
           a <- CacheM[F].get("a")
@@ -162,14 +162,14 @@ class CacheTests extends WordSpec with Matchers with CacheTestContext {
     }
 
     "ignore a preceeding PUT on different key" in {
-      def program[F[_] : CacheM]: FreeS[F, Option[Int]] =
+      def program[F[_] : CacheM.To]: FreeS[F, Option[Int]] =
         CacheM[F].put("a", 0) *> CacheM[F].del("b") *> CacheM[F].get("a")
 
       program[CacheM.Op].exec[Id] shouldBe Some(0)
     }
 
     "ignore a succeeding PUT on different key" in {
-      def program[F[_] : CacheM]: FreeS[F, Option[Int]] =
+      def program[F[_] : CacheM.To]: FreeS[F, Option[Int]] =
         CacheM[F].del("b") *> CacheM[F].put("a", 0) *> CacheM[F].get("a")
 
       program[CacheM.Op].exec[Id] shouldBe Some(0)
@@ -178,7 +178,7 @@ class CacheTests extends WordSpec with Matchers with CacheTestContext {
 
   "CLEAR" should {
     "remove all the keys" in {
-      def program[F[_] : CacheM] =
+      def program[F[_] : CacheM.To] =
         for {
           k1 <- CacheM[F].put("a", 0) *> CacheM[F].put("b", 1) *> CacheM[F].keys
           k2 <- CacheM[F].clear *> CacheM[F].keys
@@ -190,14 +190,14 @@ class CacheTests extends WordSpec with Matchers with CacheTestContext {
 
   "REPLACE" should {
     "replace the entry for a key" in {
-      def program[F[_] : CacheM] =
+      def program[F[_] : CacheM.To] =
         CacheM[F].put("a", 0) *> CacheM[F].put("b", 1) *> CacheM[F].replace("a", 1) *> CacheM[F].get("a")
 
       program[CacheM.Op].exec[Id] shouldBe Some(1)
     }
 
     "ignore replace the entry because a key not exist" in {
-      def program[F[_] : CacheM] =
+      def program[F[_] : CacheM.To] =
         CacheM[F].put("a", 0) *> CacheM[F].put("b", 1) *> CacheM[F].replace("c", 1) *> CacheM[F].get("c")
 
       program[CacheM.Op].exec[Id] shouldBe None
@@ -206,14 +206,14 @@ class CacheTests extends WordSpec with Matchers with CacheTestContext {
 
   "ISEMPTY" should {
     "isn't empty" in {
-      def program[F[_] : CacheM] =
+      def program[F[_] : CacheM.To] =
         CacheM[F].put("a", 0) *> CacheM[F].isEmpty
 
       program[CacheM.Op].exec[Id] shouldBe false
     }
 
     "is empty" in {
-      def program[F[_] : CacheM] =
+      def program[F[_] : CacheM.To] =
         CacheM[F].put("a", 0) *> CacheM[F].clear *> CacheM[F].isEmpty
 
       program[CacheM.Op].exec[Id] shouldBe true

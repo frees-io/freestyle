@@ -30,8 +30,8 @@ Independent operations that can be executed potentially in parallel may be place
 import freestyle._
 
 @free trait Validation[F[_]] {
-  def minSize(n: Int): FreeS.Par[F, Boolean]
-  def hasNumber: FreeS.Par[F, Boolean]
+  def minSize(n: Int): Oper.Par[Boolean]
+  def hasNumber: Oper.Par[Boolean]
 }
 ```
 
@@ -83,9 +83,9 @@ Sequential and parallel actions can be easily intermixed in `@free` algebras.
 
 ```tut:book
 @free trait MixedFreeS[F[_]] {
-  def x: FreeS.Par[F, Int]
-  def y: FreeS.Par[F, Int]
-  def z: FreeS[F, Int]
+  def x: Oper.Par[Int]
+  def y: Oper.Par[Int]
+  def z: Oper.Seq[Int]
 }
 ```
 

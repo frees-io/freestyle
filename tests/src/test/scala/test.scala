@@ -17,11 +17,11 @@ class tests extends WordSpec with Matchers {
     }
 
     "provide instances through it's companion `apply`" in {
-      SCtors1[SCtors1.Op].isInstanceOf[SCtors1[SCtors1.Op]] shouldBe true
+      SCtors1[SCtors1.Op].isInstanceOf[SCtors1.To[SCtors1.Op]] shouldBe true
     }
 
     "allow implicit sumoning" in {
-      implicitly[SCtors1[SCtors1.Op]].isInstanceOf[SCtors1[SCtors1.Op]] shouldBe true
+      implicitly[SCtors1.To[SCtors1.Op]].isInstanceOf[SCtors1.To[SCtors1.Op]] shouldBe true
     }
 
     "provide automatic implementations for smart constructors" in {
@@ -59,23 +59,23 @@ class tests extends WordSpec with Matchers {
 
     "allow multiple args in smart constructors" in {
       @free
-      trait MultiArgs[F[_]] {
-        def x(a: Int, b: Int, c: Int): FreeS[F, Int]
+      trait MultiArgs {
+        def x(a: Int, b: Int, c: Int): Oper.Seq[Int]
       }
     }
 
     "allow smart constructors with no args" in {
       @free
-      trait NoArgs[F[_]] {
-        def x: FreeS[F, Int]
+      trait NoArgs {
+        def x: Oper.Seq[Int]
       }
     }
 
     "generate ADTs with friendly names and expose them as dependent types" in {
       @free
-      trait FriendlyFreeS[F[_]] {
-        def sc1(a: Int, b: Int, c: Int): FreeS[F, Int]
-        def sc2(a: Int, b: Int, c: Int): FreeS[F, Int]
+      trait FriendlyFreeS {
+        def sc1(a: Int, b: Int, c: Int): Oper.Seq[Int]
+        def sc2(a: Int, b: Int, c: Int): Oper.Seq[Int]
       }
       implicitly[FriendlyFreeS.Op[_] =:= FriendlyFreeS.Op[_]]
       implicitly[FriendlyFreeS.Sc1OP <:< FriendlyFreeS.Op[Int]]
@@ -85,10 +85,10 @@ class tests extends WordSpec with Matchers {
 
     "allow smart constructors with type arguments" in {
       @free
-      trait KVStore[F[_]] {
-        def put[A](key: String, value: A): FreeS[F, Unit]
-        def get[A](key: String): FreeS[F, Option[A]]
-        def delete(key: String): FreeS[F, Unit]
+      trait KVStore {
+        def put[A](key: String, value: A): Oper.Seq[Unit]
+        def get[A](key: String): Oper.Seq[Option[A]]
+        def delete(key: String): Oper.Seq[Unit]
       }
       val interpreter = new KVStore.Handler[List] {
         def put[A](key: String, value: A): List[Unit] = Nil
@@ -99,10 +99,10 @@ class tests extends WordSpec with Matchers {
 
     "allow evaluation of abstract members that return FreeS.Pars" in {
       @free
-      trait ApplicativesServ[F[_]] {
-        def x(key: String): FreeS.Par[F, String]
-        def y(key: String): FreeS.Par[F, String]
-        def z(key: String): FreeS.Par[F, String]
+      trait ApplicativesServ {
+        def x(key: String): Oper.Par[String]
+        def y(key: String): Oper.Par[String]
+        def z(key: String): Oper.Par[String]
       }
       implicit val interpreter = new ApplicativesServ.Handler[Option] {
         override def x(key: String): Option[String] = Some(key)
@@ -118,10 +118,10 @@ class tests extends WordSpec with Matchers {
 
     "allow sequential evaluation of combined FreeS & FreeS.Par" in {
       @free
-      trait MixedFreeS[F[_]] {
-        def x(key: String): FreeS.Par[F, String]
-        def y(key: String): FreeS.Par[F, String]
-        def z(key: String): FreeS[F, String]
+      trait MixedFreeS {
+        def x(key: String): Oper.Par[String]
+        def y(key: String): Oper.Par[String]
+        def z(key: String): Oper.Seq[String]
       }
       implicit val interpreter = new MixedFreeS.Handler[Option] {
         override def x(key: String): Option[String] = Some(key)
@@ -154,33 +154,33 @@ class tests extends WordSpec with Matchers {
     }
 
     "[simple] provide instances through it's companion `apply`" in {
-      M1[M1.Op].isInstanceOf[M1[M1.Op]] shouldBe true
+      M1[M1.Op].isInstanceOf[M1.To[M1.Op]] shouldBe true
     }
 
     "[onion] provide instances through it's companion `apply`" in {
-      O1[O1.Op].isInstanceOf[O1[O1.Op]] shouldBe true
+      O1[O1.Op].isInstanceOf[O1.To[O1.Op]] shouldBe true
     }
 
     "[simple] implicit sumoning" in {
-      implicitly[M1[M1.Op]].isInstanceOf[M1[M1.Op]] shouldBe true
+      implicitly[M1.To[M1.Op]].isInstanceOf[M1.To[M1.Op]] shouldBe true
     }
 
     "[onion] allow implicit sumoning" in {
-      implicitly[O1[O1.Op]].isInstanceOf[O1[O1.Op]] shouldBe true
+      implicitly[O1.To[O1.Op]].isInstanceOf[O1.To[O1.Op]] shouldBe true
     }
 
     "[simple] autowire implementations of it's contained smart constructors" in {
       val m1 = M1[M1.Op]
-      m1.sctors1.isInstanceOf[SCtors1[M1.Op]] shouldBe true
-      m1.sctors2.isInstanceOf[SCtors2[M1.Op]] shouldBe true
+      m1.sctors1.isInstanceOf[SCtors1.To[M1.Op]] shouldBe true
+      m1.sctors2.isInstanceOf[SCtors2.To[M1.Op]] shouldBe true
     }
 
     "[onion] autowire implementations of it's contained smart constructors" in {
       val o1 = O1[O1.Op]
-      o1.m1.sctors1.isInstanceOf[SCtors1[O1.Op]] shouldBe true
-      o1.m1.sctors2.isInstanceOf[SCtors2[O1.Op]] shouldBe true
-      o1.m2.sctors3.isInstanceOf[SCtors3[O1.Op]] shouldBe true
-      o1.m2.sctors4.isInstanceOf[SCtors4[O1.Op]] shouldBe true
+      o1.m1.sctors1.isInstanceOf[SCtors1.To[O1.Op]] shouldBe true
+      o1.m1.sctors2.isInstanceOf[SCtors2.To[O1.Op]] shouldBe true
+      o1.m2.sctors3.isInstanceOf[SCtors3.To[O1.Op]] shouldBe true
+      o1.m2.sctors4.isInstanceOf[SCtors4.To[O1.Op]] shouldBe true
     }
 
     "[simple] allow composition of it's contained algebras" in {
@@ -290,7 +290,7 @@ class tests extends WordSpec with Matchers {
       import cats.Eval
       import cats.implicits._
 
-      def program[F[_]] =
+      def program =
         for {
           a <- Eval.now(1).freeS
           b <- 2.pure[Eval].freeS
@@ -409,9 +409,9 @@ class tests extends WordSpec with Matchers {
       type ParValidator[A] = Kleisli[Future, String, A]
 
       @free
-      trait Validation[F[_]] {
-        def minSize(n: Int): FreeS.Par[F, Boolean]
-        def hasNumber: FreeS.Par[F, Boolean]
+      trait Validation {
+        def minSize(n: Int): Oper.Par[Boolean]
+        def hasNumber: Oper.Par[ Boolean]
       }
 
       implicit val interpreter = new Validation.Handler[ParValidator] {
@@ -450,44 +450,44 @@ class tests extends WordSpec with Matchers {
 object algebras {
 
   @free
-  trait SCtors1[F[_]] {
-    def x(a: Int): FreeS[F, Int]
-    def y(a: Int): FreeS[F, Int]
+  trait SCtors1 {
+    def x(a: Int): Oper.Seq[Int]
+    def y(a: Int): Oper.Seq[Int]
   }
 
   @free
-  trait SCtors2[F[_]] {
-    def i(a: Int): FreeS[F, Int]
-    def j(a: Int): FreeS[F, Int]
+  trait SCtors2 {
+    def i(a: Int): Oper.Seq[Int]
+    def j(a: Int): Oper.Seq[Int]
   }
 
   @free
-  trait SCtors3[F[_]] {
-    def o(a: Int): FreeS[F, Int]
-    def p(a: Int): FreeS[F, Int]
+  trait SCtors3 {
+    def o(a: Int): Oper.Seq[Int]
+    def p(a: Int): Oper.Seq[Int]
   }
 
   @free
-  trait SCtors4[F[_]] {
-    def k(a: Int): FreeS[F, Int]
-    def m(a: Int): FreeS[F, Int]
+  trait SCtors4 {
+    def k(a: Int): Oper.Seq[Int]
+    def m(a: Int): Oper.Seq[Int]
   }
 
   @free
-  trait MixedFreeS[F[_]] {
-    def x: FreeS.Par[F, Int]
-    def y: FreeS.Par[F, Int]
-    def z: FreeS[F, Int]
+  trait MixedFreeS {
+    def x: Oper.Par[Int]
+    def y: Oper.Par[Int]
+    def z: Oper.Seq[Int]
   }
 
   @free
-  trait S1[F[_]] {
-    def x(n: Int): FreeS[F, Int]
+  trait S1 {
+    def x(n: Int): Oper.Seq[Int]
   }
 
   @free
-  trait S2[F[_]] {
-    def y(n: Int): FreeS[F, Int]
+  trait S2 {
+    def y(n: Int): Oper.Seq[Int]
   }
 
 }
@@ -497,40 +497,40 @@ object modules {
   import algebras._
 
   @module
-  trait M1[F[_]] {
-    val sctors1: SCtors1[F]
-    val sctors2: SCtors2[F]
+  trait M1 {
+    val sctors1: SCtors1
+    val sctors2: SCtors2
   }
 
   @module
-  trait M2[F[_]] {
-    val sctors3: SCtors3[F]
-    val sctors4: SCtors4[F]
+  trait M2 {
+    val sctors3: SCtors3
+    val sctors4: SCtors4
   }
 
   @module
-  trait O1[F[_]] {
-    val m1: M1[F]
-    val m2: M2[F]
+  trait O1 {
+    val m1: M1
+    val m2: M2
   }
 
   @module
-  trait O2[F[_]] {
-    val o1: O1[F]
+  trait O2 {
+    val o1: O1
     val x = 1
     def y = 2
   }
 
   @module
-  trait O3[F[_]] {
+  trait O3 {
     def x = 1
     def y = 2
   }
 
   @module
-  trait StateProp[F[_]] {
-    val s1: S1[F]
-    val s2: S2[F]
+  trait StateProp {
+    val s1: S1
+    val s2: S2
   }
 
 }

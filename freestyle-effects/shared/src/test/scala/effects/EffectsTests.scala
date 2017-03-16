@@ -23,7 +23,7 @@ class EffectsTests extends AsyncWordSpec with Matchers {
     import cats.instances.option._
 
     "allow an Option to be interleaved inside a program monadic flow" in {
-      def program[F[_]: OptionM] =
+      def program[F[_]: OptionM.To] =
         for {
           a <- FreeS.pure(1)
           b <- OptionM[F].option(Option(1))
@@ -33,7 +33,7 @@ class EffectsTests extends AsyncWordSpec with Matchers {
     }
 
     "allow an Option to shortcircuit inside a program monadic flow" in {
-      def program[F[_]: OptionM] =
+      def program[F[_]: OptionM.To] =
         for {
           a <- FreeS.pure(1)
           b <- OptionM[F].none[Int]
@@ -43,7 +43,7 @@ class EffectsTests extends AsyncWordSpec with Matchers {
     }
 
     "allow an Option to be interleaved inside a program monadic flow using syntax" in {
-      def program[F[_]: OptionM] =
+      def program[F[_]: OptionM.To] =
         for {
           a <- FreeS.pure(1)
           b <- Option(1).liftFS
@@ -64,7 +64,7 @@ class EffectsTests extends AsyncWordSpec with Matchers {
     import cats.syntax.either._
 
     "allow an Error to be interleaved inside a program monadic flow" in {
-      def program[F[_]: ErrorM] =
+      def program[F[_]: ErrorM.To] =
         for {
           a <- FreeS.pure(1)
           b <- ErrorM[F].error[Int](ex)
@@ -74,7 +74,7 @@ class EffectsTests extends AsyncWordSpec with Matchers {
     }
 
     "allow an Exception to be captured inside a program monadic flow" in {
-      def program[F[_]: ErrorM] =
+      def program[F[_]: ErrorM.To] =
         for {
           a <- FreeS.pure(1)
           b <- ErrorM[F].catchNonFatal[Int](Eval.later(throw ex))
@@ -84,7 +84,7 @@ class EffectsTests extends AsyncWordSpec with Matchers {
     }
 
     "allow an Either to propagate right biased" in {
-      def program[F[_]: ErrorM] =
+      def program[F[_]: ErrorM.To] =
         for {
           a <- FreeS.pure(1)
           b <- ErrorM[F].either[Int](Right(1))
@@ -94,7 +94,7 @@ class EffectsTests extends AsyncWordSpec with Matchers {
     }
 
     "allow an Either to short circuit" in {
-      def program[F[_]: ErrorM] =
+      def program[F[_]: ErrorM.To] =
         for {
           a <- FreeS.pure(1)
           b <- ErrorM[F].either[Int](Left(ex))
@@ -104,7 +104,7 @@ class EffectsTests extends AsyncWordSpec with Matchers {
     }
 
     "allow an Either to propagate right biased using syntax" in {
-      def program[F[_]: ErrorM] =
+      def program[F[_]: ErrorM.To] =
         for {
           a <- FreeS.pure(1)
           b <- Either.right[Throwable, Int](1).liftFS
@@ -114,7 +114,7 @@ class EffectsTests extends AsyncWordSpec with Matchers {
     }
 
     "allow an Either to short circuit using syntax" in {
-      def program[F[_]: ErrorM] =
+      def program[F[_]: ErrorM.To] =
         for {
           a <- FreeS.pure(1)
           b <- Either.left[Throwable, Int](ex).liftFS
@@ -133,7 +133,7 @@ class EffectsTests extends AsyncWordSpec with Matchers {
     import rd.implicits._
 
     "allow retrieving an environment for a user defined type" in {
-      def program[F[_]: rd.ReaderM] =
+      def program[F[_]: rd.ReaderM.To] =
         for {
           _ <- FreeS.pure(1)
           c <- rd.ReaderM[F].ask
@@ -143,7 +143,7 @@ class EffectsTests extends AsyncWordSpec with Matchers {
     }
 
     "allow maping over the environment for a user defined type" in {
-      def program[F[_]: rd.ReaderM] =
+      def program[F[_]: rd.ReaderM.To] =
         for {
           _ <- FreeS.pure(1)
           c <- rd.ReaderM[F].reader(_.n)
@@ -162,7 +162,7 @@ class EffectsTests extends AsyncWordSpec with Matchers {
     import st.implicits._
 
     "get" in {
-      def program[F[_]: st.StateM] =
+      def program[F[_]: st.StateM.To] =
         for {
           a <- FreeS.pure(1)
           b <- st.StateM[F].get
@@ -172,7 +172,7 @@ class EffectsTests extends AsyncWordSpec with Matchers {
     }
 
     "set" in {
-      def program[F[_]: st.StateM] =
+      def program[F[_]: st.StateM.To] =
         for {
           _ <- st.StateM[F].set(1)
           a <- st.StateM[F].get
@@ -181,7 +181,7 @@ class EffectsTests extends AsyncWordSpec with Matchers {
     }
 
     "modify" in {
-      def program[F[_]: st.StateM] =
+      def program[F[_]: st.StateM.To] =
         for {
           a <- st.StateM[F].get
           _ <- st.StateM[F].modify(_ + a)
@@ -191,7 +191,7 @@ class EffectsTests extends AsyncWordSpec with Matchers {
     }
 
     "inspect" in {
-      def program[F[_]: st.StateM] =
+      def program[F[_]: st.StateM.To] =
         for {
           a <- st.StateM[F].get
           b <- st.StateM[F].inspect(_ + a)
@@ -200,7 +200,7 @@ class EffectsTests extends AsyncWordSpec with Matchers {
     }
 
     "syntax" in {
-      def program[F[_]: st.StateM] =
+      def program[F[_]: st.StateM.To] =
         for {
           a <- st.StateM[F].get
           b <- ((x: Int) => x + a).liftFS
@@ -221,7 +221,7 @@ class EffectsTests extends AsyncWordSpec with Matchers {
     type Logger[A] = Writer[List[Int], A]
 
     "writer" in {
-      def program[F[_]: wr.WriterM] =
+      def program[F[_]: wr.WriterM.To] =
         for {
           _ <- FreeS.pure(1)
           b <- wr.WriterM[F].writer((Nil, 1))
@@ -231,7 +231,7 @@ class EffectsTests extends AsyncWordSpec with Matchers {
     }
 
     "tell" in {
-      def program[F[_]: wr.WriterM] =
+      def program[F[_]: wr.WriterM.To] =
         for {
           _ <- FreeS.pure(1)
           b <- wr.WriterM[F].writer((List(1), 1))
@@ -271,7 +271,7 @@ class EffectsTests extends AsyncWordSpec with Matchers {
     type Logger[A] = StateT[Future, Errors, A]
 
     "valid" in {
-      def program[F[_]: vl.ValidationM] =
+      def program[F[_]: vl.ValidationM.To] =
         for {
           _ <- FreeS.pure(1)
           b <- vl.ValidationM[F].valid(42)
@@ -282,7 +282,7 @@ class EffectsTests extends AsyncWordSpec with Matchers {
     }
 
     "invalid" in {
-      def program[F[_]: vl.ValidationM] =
+      def program[F[_]: vl.ValidationM.To] =
         for {
           _ <- FreeS.pure(1)
           b <- vl.ValidationM[F].valid(42)
@@ -298,7 +298,7 @@ class EffectsTests extends AsyncWordSpec with Matchers {
     "errors" in {
       val expectedErrors = List(NotValid("oh"), NotValid("no"))
 
-      def program[F[_]: vl.ValidationM] =
+      def program[F[_]: vl.ValidationM.To] =
         for {
           b <- vl.ValidationM[F].valid(42)
           _ <- vl.ValidationM[F].invalid(NotValid("oh"))
@@ -315,7 +315,7 @@ class EffectsTests extends AsyncWordSpec with Matchers {
 
       val expectedErrors = List(MissingFirstName)
 
-      def program[F[_]: vl.ValidationM] =
+      def program[F[_]: vl.ValidationM.To] =
         for {
           a <- vl.ValidationM[F].fromEither(Right(42))
           b <- vl.ValidationM[F].fromEither(Either.left[ValidationException, Unit](MissingFirstName))
@@ -327,7 +327,7 @@ class EffectsTests extends AsyncWordSpec with Matchers {
     "fromValidatedNel" in {
       import cats.data.Validated
 
-      def program[F[_]: vl.ValidationM] =
+      def program[F[_]: vl.ValidationM.To] =
         for {
           a <- vl.ValidationM[F].fromValidatedNel(Validated.valid(42))
           b <- vl.ValidationM[F].fromValidatedNel(
@@ -339,7 +339,7 @@ class EffectsTests extends AsyncWordSpec with Matchers {
     }
 
     "syntax" in {
-      def program[F[_]: vl.ValidationM] =
+      def program[F[_]: vl.ValidationM.To] =
         for {
           a <- 42.liftValid
           b <- MissingFirstName.liftInvalid
@@ -360,7 +360,7 @@ class EffectsTests extends AsyncWordSpec with Matchers {
     import list._, list.implicits._
 
     "fromTraversable" in {
-      def program[F[_]: TraverseM] =
+      def program[F[_]: TraverseM.To] =
         for {
           a <- TraverseM[F].fromTraversable(1 :: 2 :: 3 :: Nil)
           b <- FreeS.pure(a + 1)
@@ -369,7 +369,7 @@ class EffectsTests extends AsyncWordSpec with Matchers {
     }
 
     "empty" in {
-      def program[F[_]: TraverseM] =
+      def program[F[_]: TraverseM.To] =
         for {
           _ <- TraverseM[F].empty[Int]
           a <- TraverseM[F].fromTraversable(1 :: 2 :: 3 :: Nil)
@@ -380,7 +380,7 @@ class EffectsTests extends AsyncWordSpec with Matchers {
     }
 
     "syntax" in {
-      def program[F[_]: TraverseM] =
+      def program[F[_]: TraverseM.To] =
         for {
           a <- (1 :: 2 :: 3 :: Nil).liftFS
           b <- FreeS.pure(a + 1)
@@ -399,7 +399,7 @@ class EffectsTests extends AsyncWordSpec with Matchers {
     "import option implicits" in {
       import cats.instances.option._
 
-      def program[F[_]: OptionM] =
+      def program[F[_]: OptionM.To] =
         for {
           a <- FreeS.pure(1)
           b <- OptionM[F].none[Int]
@@ -414,7 +414,7 @@ class EffectsTests extends AsyncWordSpec with Matchers {
 
       val ex = new RuntimeException("BOOM")
 
-      def program[F[_]: ErrorM] =
+      def program[F[_]: ErrorM.To] =
         for {
           a <- FreeS.pure(1)
           b <- ErrorM[F].error[Int](ex)
@@ -438,47 +438,47 @@ object collision {
   val rd = reader[Config]
 
   @module
-  trait AppX[F[_]] {
-    val stateM: st.StateM[F]
-    val readerM: rd.ReaderM[F]
+  trait AppX {
+    val stateM: st.StateM
+    val readerM: rd.ReaderM
   }
 
   @free
-  trait B[F[_]] {
-    def x: FreeS[F, Int]
+  trait B {
+    def x: Oper.Seq[Int]
   }
 
   @free
-  trait C[F[_]] {
-    def x: FreeS[F, Int]
+  trait C {
+    def x: Oper.Seq[Int]
   }
 
   @free
-  trait D[F[_]] {
-    def x: FreeS[F, Int]
+  trait D {
+    def x: Oper.Seq[Int]
   }
 
   @free
-  trait E[F[_]] {
-    def x: FreeS[F, Int]
+  trait E {
+    def x: Oper.Seq[Int]
   }
 
   @module
-  trait X[F[_]] {
-    val a: B[F]
-    val b: C[F]
+  trait X {
+    val a: B
+    val b: C
   }
 
   @module
-  trait Y[F[_]] {
-    val c: C[F]
-    val d: D[F]
+  trait Y {
+    val c: C
+    val d: D
   }
 
   @module
-  trait Z[F[_]] {
-    val x: X[F]
-    val y: Y[F]
+  trait Z {
+    val x: X
+    val y: Y
   }
 
 }
