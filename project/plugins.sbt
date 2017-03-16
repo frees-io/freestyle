@@ -1,5 +1,6 @@
 resolvers += ("snapshots" at
-    "https://oss.sonatype.org/content/repositories/snapshots")
+  "https://oss.sonatype.org/content/repositories/snapshots")
+resolvers += Resolver.typesafeRepo("releases")
 
 addSbtPlugin("com.fortysevendeg" % "sbt-catalysts-extras" % "0.1.3")
 
