@@ -67,10 +67,10 @@ object algebras {
     }
 
   @module
-  trait App[F[_]] {
+  trait App {
     val nonDoobie: NonDoobie
     val doobieM: DoobieM
   }
 
-  val app = App[App.Op]
+  val app = App.to[App.Op]
 }
