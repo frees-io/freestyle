@@ -1,18 +1,15 @@
 package freestyle
 
 import _root_.fs2._
-import _root_.fs2.util.{Attempt, Catchable, Suspendable, Free}
+import _root_.fs2.util.{Attempt, Catchable, Suspendable, Monad, Free}
 
-import cats._
+import cats.{MonadError, Monoid, ~>}
 import cats.free.{Free => CFree}
-import cats.arrow.FunctionK
-
-import scala.concurrent._
 
 object fs2 {
   type Eff[A] = Free[CFree[Attempt, ?], A]
 
-  implicit val catsFreeC: Catchable[CFree[Attempt, ?]] = new Catchable[CFree[Attempt, ?]] {
+  implicit val catsFreeAttemptCatchable: Catchable[CFree[Attempt, ?]] = new Catchable[CFree[Attempt, ?]] {
     def pure[A](a: A): CFree[Attempt, A]                              = CFree.pure(a)
     def attempt[A](fa: CFree[Attempt, A]): CFree[Attempt, Attempt[A]] = fa.map(Attempt(_))
     def fail[A](err: Throwable): CFree[Attempt, A]                    = CFree.liftF(Left(err))
@@ -20,16 +17,17 @@ object fs2 {
       a.flatMap(f)
   }
 
-  implicit val effCatchable: Catchable[Eff] = new Catchable[Eff] {
+  private[fs2] sealed class EffMonad extends Monad[Eff] {
     def pure[A](a: A): Eff[A]                            = Free.pure(a)
-    def attempt[A](fa: Eff[A]): Eff[Attempt[A]]          = fa.attempt
-    def fail[A](err: Throwable): Eff[A]                  = Free.fail(err)
     def flatMap[A, B](a: Eff[A])(f: A => Eff[B]): Eff[B] = a.flatMap(f)
   }
 
-  implicit val effSuspendable: Suspendable[Eff] = new Suspendable[Eff] {
-    def pure[A](a: A): Eff[A]                            = Free.pure(a)
-    def flatMap[A, B](a: Eff[A])(f: A => Eff[B]): Eff[B] = a.flatMap(f)
+  implicit val effCatchable: Catchable[Eff] = new EffMonad with Catchable[Eff] {
+    def attempt[A](fa: Eff[A]): Eff[Attempt[A]] = fa.attempt
+    def fail[A](err: Throwable): Eff[A]         = Free.fail(err)
+  }
+
+  implicit val effSuspendable: Suspendable[Eff] = new EffMonad with Suspendable[Eff] {
     def suspend[A](fa: => Eff[A]): Eff[A] = fa
   }
 
@@ -44,12 +42,7 @@ object fs2 {
     implicit def freeStyleFs2StreamHandler[F[_]](
         implicit ME: MonadError[F, Throwable]
     ): StreamM.Handler[F] = {
-      val attemptF = new FunctionK[Attempt, F] {
-        def apply[A](fa: Attempt[A]): F[A] = fa match {
-          case Left(err) => ME.raiseError(err)
-          case Right(v)  => ME.pure(v)
-        }
-      }
+      val attemptF = λ[Attempt ~> F](_.fold(ME.raiseError, ME.pure))
 
       new StreamM.Handler[F] {
         def run[A](s: Stream[Eff, A]): F[Unit] =

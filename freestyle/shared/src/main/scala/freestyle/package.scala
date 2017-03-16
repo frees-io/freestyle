@@ -48,6 +48,12 @@ package object freestyle {
         FreeApplicative.lift(I.inj(fa))
     }
 
+    /**
+     * Lift a pure `A` value `FreeS[F, A]`.
+     */
+    def pure[F[_], A](a: A): FreeS[F, A] =
+      liftPar(FreeApplicative.pure(a))
+
   }
 
   /**

@@ -3,13 +3,11 @@ package freestyle
 import org.scalatest._
 import _root_.fetch._
 import _root_.fetch.implicits._
-import cats.Applicative
 
 import freestyle.fetch._
 import freestyle.implicits._
 import freestyle.fetch.implicits._
-import scala.concurrent._
-import scala.concurrent.duration._
+import scala.concurrent.{ExecutionContext, Future}
 
 class FetchTests extends AsyncWordSpec with Matchers {
 
@@ -24,7 +22,7 @@ class FetchTests extends AsyncWordSpec with Matchers {
       val program = for {
         a <- app.nonFetch.x
         b <- app.fetchM.runA(fetchString(a)).freeS
-        c <- Applicative[FreeS[App.Op, ?]].pure(1)
+        c <- FreeS.pure(1)
       } yield a + b + c
       program.exec[Future] map { _ shouldBe "111" }
     }
@@ -79,7 +77,7 @@ object datasources {
   implicit object ToStringSource extends DataSource[Int, String] {
     override def name = "ToString"
     override def fetchOne(id: Int): Query[Option[String]] =
-      Query.sync(Option(id.toString))
+      Query.sync(Some(id.toString))
     override def fetchMany(ids: NonEmptyList[Int]): Query[Map[Int, String]] =
       Query.sync(ids.toList.map(i => (i, i.toString)).toMap)
   }

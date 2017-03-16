@@ -1,6 +1,5 @@
 package freestyle
 
-import cats.Applicative
 import cats.syntax.either._
 import fs2.Task
 import fs2.interop.cats._
@@ -30,7 +29,7 @@ class DoobieTests extends AsyncWordSpec with Matchers {
       val program = for {
         a <- app.nonDoobie.x
         b <- app.doobieM.transact(query).freeS
-        c <- Applicative[FreeS[App.Op, ?]].pure(1)
+        c <- FreeS.pure(1)
       } yield a + b + c
       program.exec[Task] map { _ shouldBe 4 } unsafeRunAsyncFuture
     }

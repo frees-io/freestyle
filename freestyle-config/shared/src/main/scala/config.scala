@@ -1,6 +1,10 @@
 package freestyle
 
+import scala.collection.JavaConverters._
 import scala.concurrent.duration._
+
+import cats.MonadError
+import com.typesafe.config.ConfigFactory
 
 object config {
 
@@ -25,10 +29,6 @@ object config {
   }
 
   object implicits {
-
-    import com.typesafe.config.ConfigFactory
-    import cats.MonadError
-    import collection.JavaConverters._
 
     private[config] def loadConfig(shoconC: com.typesafe.config.Config): Config = new Config {
 
