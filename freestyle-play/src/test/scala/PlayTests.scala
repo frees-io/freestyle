@@ -11,7 +11,6 @@ import freestyle._
 import freestyle.implicits._
 
 import freestyle.http.play._
-import freestyle.http.play.implicits._
 
 import _root_.play.api.mvc._
 import _root_.play.api.http._
@@ -46,11 +45,17 @@ class PlayTests extends AsyncWordSpec with Matchers {
       x <- Noop[F].noop
     } yield Results.Ok(x)
 
-    "FreeSAction creates an action" in {
+    "FreeSAction creates an action from a program" in {
       FreeSAction { program[Noop.Op] }.isInstanceOf[Action[Result]] shouldBe true
     }
 
-    "The action writes the result in the response" in {
+    "FreeSAction creates an action from a function that returns a program given a request" in {
+      FreeSAction { request =>
+        program[Noop.Op]
+      }.isInstanceOf[Action[Result]] shouldBe true
+    }
+
+    "The resulting action writes the result in the response" in {
       import Helpers._
 
       val action: EssentialAction = FreeSAction { program[Noop.Op] }

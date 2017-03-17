@@ -12,7 +12,7 @@ import _root_.play.api.http._
 
 object play {
   object FreeSAction {
-    def apply[A, F[_]](prog: FreeS[F, Result])(
+    def apply[F[_]](prog: FreeS[F, Result])(
       implicit
         MF: Monad[Future],
         I: ParInterpreter[F, Future],
@@ -22,9 +22,17 @@ object play {
         prog.exec[Future]
       }
     }
-  }
 
-  object implicits {
-
+    def apply[A, F[_]](fn: Request[AnyContent] => FreeS[F, Result])(
+      implicit
+        MF: Monad[Future],
+        I: ParInterpreter[F, Future],
+        EC: ExecutionContext
+    ): Action[AnyContent] = {
+      Action.async { request =>
+        val prog = fn(request)
+        prog.exec[Future]
+      }
+    }
   }
 }
