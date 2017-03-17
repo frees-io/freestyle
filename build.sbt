@@ -163,7 +163,8 @@ lazy val freestyleTwitterFuture = (project in file("freestyle-twitter-future")).
   settings(name := "freestyle-twitter-future").
   settings(
     libraryDependencies ++= Seq(
-      "com.twitter" %% "util-core" % "6.42.0"
+      "com.twitter" %% "util-core" % "6.42.0",
+      "org.scalatest" %% "scalatest"        % "3.0.1" % "test"
     )
   )
 
