@@ -158,6 +158,15 @@ lazy val freestyleDoobie = (project in file("freestyle-doobie")).
     )
   )
 
+lazy val freestyleTwitterFuture = (project in file("freestyle-twitter-future")).
+  dependsOn(freestyleJVM).
+  settings(name := "freestyle-twitter-future").
+  settings(
+    libraryDependencies ++= Seq(
+      "com.twitter" %% "util-core" % "6.42.0"
+    )
+  )
+
 lazy val fixResources = taskKey[Unit](
     "Fix application.conf presence on first clean build.")
 
