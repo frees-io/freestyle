@@ -9,7 +9,7 @@ import freestyle.implicits._
 
 class TwitterFutureTests extends WordSpec with Matchers {
 
-  "Applicative Parallel Support" should {
+  "Twitter Future interpretation" should {
 
     import algebras._
 
