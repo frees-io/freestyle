@@ -1,6 +1,7 @@
 package freestyle
 
 import cats.implicits._
+import cats.Id
 import org.scalatest.{Matchers, WordSpec}
 
 class freeTests extends WordSpec with Matchers {
@@ -131,6 +132,34 @@ class freeTests extends WordSpec with Matchers {
         m <- apProgram.freeS
       } yield n + m
       program.exec[Option] shouldBe Some("1ab")
+    }
+
+    "allow non-FreeS concrete definitions in the trait" in {
+      @free trait WithExtra[F[_]] {
+        def x(a: Int): FreeS.Par[F, String]
+        def y: Int = 5
+        val z: Int = 6
+      }
+      val v = WithExtra[WithExtra.Op]
+      v.y shouldBe 5
+      v.z shouldBe 6
+
+      implicit val interpreter = new WithExtra.Handler[Id]{
+        override def x(a: Int): String = a.toString
+      }
+      v.x(v.z).exec[Id] shouldBe "6"
+    }
+
+    "allow `FreeS` operations that use other abstractoperations" in {
+      @free trait Combine[F[_]] {
+        def x(a: Int): FreeS[F, Int]
+        def y(a: Int): FreeS[F, Boolean] = x(a).map { _ >= 0 }
+      }
+      val v = Combine[Combine.Op]
+      implicit val interpreter = new Combine.Handler[Id]{
+        override def x(a: Int): Int = 4
+      }
+      v.y(5).exec[Id] shouldBe(true)
     }
 
   }
