@@ -20,6 +20,12 @@ class FreestyleTwitterMonad extends MonadError[Future, Throwable] with Capture[F
 
   override def map[A, B](fa: Future[A])(f: A => B): Future[B] = fa.map(f)
 
+  override final def ap[A, B](f: Future[A => B])(fa: Future[A]): Future[B] = f.join(fa).map {
+    case (ab, a) => ab(a)
+  }
+
+  override final def product[A, B](fa: Future[A], fb: Future[B]): Future[(A, B)] = fa.join(fb)
+
   def handleErrorWith[A](fa: Future[A])(f: Throwable => Future[A]): Future[A] = fa.rescue({case e => f(e)})
 
   def raiseError[A](e: Throwable): Future[A] = Future.exception(e)
