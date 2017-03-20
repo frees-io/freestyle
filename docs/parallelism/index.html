@@ -74,10 +74,10 @@ Freestyle ships with ready to use instances for <code class="highlighter-rouge">
   <span class="k">override</span> <span class="k">def</span> <span class="n">hasNumber</span><span class="k">:</span> <span class="kt">ParValidator</span><span class="o">[</span><span class="kt">Boolean</span><span class="o">]</span> <span class="k">=</span>
     <span class="nc">Kleisli</span><span class="o">(</span><span class="n">s</span> <span class="k">=&gt;</span> <span class="nc">Future</span><span class="o">(</span><span class="n">s</span><span class="o">.</span><span class="n">exists</span><span class="o">(</span><span class="n">c</span> <span class="k">=&gt;</span> <span class="s">"0123456789"</span><span class="o">.</span><span class="n">contains</span><span class="o">(</span><span class="n">c</span><span class="o">))))</span>
 <span class="o">}</span>
-<span class="c1">// interpreter: Validation.Handler[ParValidator] = $anon$1@52ce1a85
+<span class="c1">// interpreter: Validation.Handler[ParValidator] = $anon$1@58c4f559
 </span>
 <span class="k">val</span> <span class="n">validation</span> <span class="k">=</span> <span class="nc">Validation</span><span class="o">[</span><span class="kt">Validation.Op</span><span class="o">]</span>
-<span class="c1">// validation: Validation[Validation.Op] = Validation$To@17f47548
+<span class="c1">// validation: Validation[Validation.Op] = Validation$To@12d62d2
 </span>
 <span class="k">import</span> <span class="nn">validation._</span>
 <span class="c1">// import validation._
@@ -86,7 +86,7 @@ Freestyle ships with ready to use instances for <code class="highlighter-rouge">
 <span class="c1">// parValidation: freestyle.FreeS.Par[Validation.Op,List[Boolean]] = FreeApplicative(...)
 </span>
 <span class="k">val</span> <span class="n">validator</span> <span class="k">=</span> <span class="n">parValidation</span><span class="o">.</span><span class="n">exec</span><span class="o">[</span><span class="kt">ParValidator</span><span class="o">]</span>
-<span class="c1">// validator: ParValidator[List[Boolean]] = Kleisli(cats.data.Kleisli$$Lambda$4561/1933355570@53becc29)
+<span class="c1">// validator: ParValidator[List[Boolean]] = Kleisli(cats.data.Kleisli$$Lambda$4540/1469488966@5820136b)
 </span>
 <span class="c1">//validator.run("abc1") runs each op in parallel and returns the result in a Future
 </span></code></pre>
