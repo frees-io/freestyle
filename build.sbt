@@ -272,3 +272,16 @@ lazy val docs = (project in file("docs")).
     )
   )
   .enablePlugins(MicrositesPlugin)
+
+
+lazy val freestyleHttpHttp4s = (project in file("freestyle-http-http4s")).
+  dependsOn(freestyleJVM).
+  settings(name := "freestyle-http-http4s").
+  settings(
+    resolvers += "Sonatype OSS Snapshots" at "https://oss.sonatype.org/content/repositories/snapshots",
+    libraryDependencies ++= Seq(
+      "org.scalatest" %%% "scalatest" % "3.0.1" % "test",
+      "org.http4s" %%% "http4s-core" % "0.16.0-cats-SNAPSHOT",
+      "org.http4s" %%% "http4s-dsl" % "0.16.0-cats-SNAPSHOT" % "test"
+     )
+  )
