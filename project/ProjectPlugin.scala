@@ -18,7 +18,7 @@ object ProjectPlugin extends AutoPlugin {
 
   override def buildSettings = Seq(
     crossScalaVersions := Seq("2.11.8", "2.12.1"),
-    scalaVersion := crossScalaVersions.value.head,
+    scalaVersion := crossScalaVersions.value.last,
     scalaOrganization := "org.typelevel",
     organization  := gh.org,
     organizationName  := gh.publishOrg
