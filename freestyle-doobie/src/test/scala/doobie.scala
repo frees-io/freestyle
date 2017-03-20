@@ -4,8 +4,8 @@ import cats.syntax.either._
 import fs2.Task
 import fs2.interop.cats._
 import org.scalatest._
-import _root_.doobie.imports._
-import _root_.doobie.h2.h2transactor._
+import _root_.doobie.imports.{toSqlInterpolator, ConnectionIO, Transactor}
+import _root_.doobie.h2.h2transactor.H2Transactor
 
 import freestyle.implicits._
 import freestyle.doobie._

@@ -5,6 +5,10 @@ import scala.language.experimental.macros
 import scala.reflect.macros.whitebox
 import scala.reflect.runtime.universe._
 
+trait FreeModuleLike {
+  type Op[A]
+}
+
 object coproductcollect {
 
   def apply[A](a: A): Any = macro materializeImpl[A]
