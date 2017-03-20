@@ -13,32 +13,31 @@ import freestyle.implicits._
 
 object finch extends FinchMapperFrees
 
-
-trait FinchMapperFrees extends FinchMapperFreeS1 {
+private[http] trait FinchMapperFrees extends FinchMapperFreeS1 {
 
   implicit def mapperFromFreeSOutputHFunction[Op[_], A, B, F, FOB](f: F)(implicit
     ftp: FnToProduct.Aux[F, (A) => FOB],
     ev: FOB <:< FreeS[Op, Output[B]],
     I: Op ~> Future
-  ): Mapper.Aux[A, B] = Mapper.mapperFromFutureOutputFunction(a => ev(ftp(f)(a)).exec[Future])
+  ): Mapper.Aux[A, B] = mapperFromFreeSOutputFunction(a => ev(ftp(f)(a)))
 
   implicit def mapperFromFreeSOutputHFunctionId[Op[_], A, B, F, FOB](f: F)(implicit
     ftp: FnToProduct.Aux[F, (A) => FOB],
     ev: FOB <:< FreeS[Op, Output[B]],
     I: Op ~> Id
-  ): Mapper.Aux[A, B] = Mapper.mapperFromOutputFunction(a => ev(ftp(f)(a)).exec[Id])
+  ): Mapper.Aux[A, B] = mapperFromFreeSOutputFunctionId(a => ev(ftp(f)(a)))
 
   implicit def mapperFromFreeSParOutputHFunction[Op[_], A, B, F, FPOB](f: F)(implicit
     ftp: FnToProduct.Aux[F, (A) => FPOB],
     ev: FPOB <:< FreeS.Par[Op, Output[B]],
     I: Op ~> Future
-  ): Mapper.Aux[A, B] = Mapper.mapperFromFutureOutputFunction(a => ev(ftp(f)(a)).freeS.exec[Future])
+  ): Mapper.Aux[A, B] = mapperFromFreeSOutputFunction(a => ev(ftp(f)(a)).freeS)
 
   implicit def mapperFromFreeSParOutputHFunctionId[Op[_], A, B, F, FPOB](f: F)(implicit
     ftp: FnToProduct.Aux[F, (A) => FPOB],
     ev: FPOB <:< FreeS.Par[Op, Output[B]],
     I: Op ~> Id
-  ): Mapper.Aux[A, B] = Mapper.mapperFromOutputFunction(a => ev(ftp(f)(a)).freeS.exec[Id])
+  ): Mapper.Aux[A, B] = mapperFromFreeSOutputFunctionId(a => ev(ftp(f)(a)).freeS)
 
   implicit def mapperFromFreeSOutputValue[Op[_], A](fo: FreeS[Op, Output[A]])(implicit I: Op ~> Future): Mapper.Aux[HNil, A] =
     Mapper.mapperFromFutureOutputValue(fo.exec[Future])
@@ -54,7 +53,7 @@ trait FinchMapperFrees extends FinchMapperFreeS1 {
 
 }
 
-trait FinchMapperFreeS1 {
+private[http] trait FinchMapperFreeS1 {
 
   implicit def mapperFromFreeSOutputFunction[Op[_], A, B](f: A => FreeS[Op, Output[B]])(implicit I: Op ~> Future): Mapper.Aux[A, B] =
     Mapper.mapperFromFutureOutputFunction(a => f(a).exec[Future])

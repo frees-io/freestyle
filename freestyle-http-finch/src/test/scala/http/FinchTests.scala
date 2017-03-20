@@ -5,14 +5,12 @@ import org.scalatest.{AsyncWordSpec, Matchers}
 import cats.Id
 import com.twitter.util.Future
 import io.catbird.util._
-// import io.finch._
 import io.finch.{stringToMatcher => _, _}
 import shapeless.::
 
 import freestyle._
 import freestyle.implicits._
 import freestyle.http.finch._
-
 
 class FinchTests extends AsyncWordSpec with Matchers {
 
