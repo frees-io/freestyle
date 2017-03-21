@@ -26,7 +26,7 @@ lazy val micrositeSettings = Seq(
     "white-color"       -> "#E6E7EC"),
   micrositeKazariCodeMirrorTheme := "dracula",
   micrositeKazariDependencies := Seq(microsites.KazariDependency("com.fortysevendeg", "freestyle", buildWithoutSuffix(scalaVersion.value), version.value),
-    microsites.KazariDependency("org.scalamacros", "paradise", scalaVersion.value, "2.1.0")),
+  microsites.KazariDependency("org.scalamacros", "paradise", scalaVersion.value, "2.1.0")),
   micrositeKazariResolvers := Seq("https://oss.sonatype.org/content/repositories/snapshots", "https://oss.sonatype.org/content/repositories/releases")
 )
 
@@ -232,6 +232,18 @@ lazy val freestyleFs2 = (crossProject in file("freestyle-fs2")).
 
 lazy val freestyleFs2JVM = freestyleFs2.jvm
 lazy val freestyleFs2JS  = freestyleFs2.js
+
+lazy val freestylePlay = (project in file("freestyle-play")).
+  dependsOn(freestyleJVM).
+  settings(name := "freestyle-play").
+  settings(
+    parallelExecution in Test := false,
+    libraryDependencies ++= Seq(
+      "com.typesafe.play" %% "play" % "2.6.0-M2",
+      "com.typesafe.play" %% "play-test" % "2.6.0-M2" % "test",
+      "org.scalatest" %% "scalatest" % "3.0.1" % "test"
+    )
+  )
 
 lazy val tests = (project in file("tests")).
   dependsOn(freestyleJVM).
