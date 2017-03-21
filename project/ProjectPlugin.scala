@@ -40,7 +40,7 @@ object ProjectPlugin extends AutoPlugin {
   override def projectSettings = Seq(
     description := "A Cohesive & Pragmatic Framework of FP centric Scala libraries",
     onLoad := (Command.process("project freestyle", _: State)) compose (onLoad in Global).value,
-    scalacOptions ++= scalacAdvancedOptions
+    scalacOptions ++= scalacAdvancedOptions,
     libraryDependencies += %%("scalatest") % "test"
   ) ++ scalaMacroDependencies
 }
