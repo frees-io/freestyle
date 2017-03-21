@@ -25,3 +25,7 @@ matrix:
      script:
       - sbt ++$TRAVIS_SCALA_VERSION clean coverage test coverageReport
       - sbt ++$TRAVIS_SCALA_VERSION "docs/tut"
+   - scala: 2.12.1
+     jdk: oraclejdk8
+     script:
+      - sbt ++$TRAVIS_SCALA_VERSION clean tests/test
