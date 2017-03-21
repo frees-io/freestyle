@@ -5,8 +5,6 @@ addCommandAlias("debug", "; clean ; test")
 
 addCommandAlias("validate", "; +clean ; +test; makeMicrosite")
 
-addCommandAlias("test-exclude", "; test-only * -- -l Scala212NonCompatibleTests")
-
 lazy val micrositeSettings = Seq(
   micrositeName := "Freestyle",
   micrositeDescription := "A Cohesive & Pragmatic Framework of FP centric Scala libraries",
@@ -239,12 +237,10 @@ lazy val freestylePlay = (project in file("freestyle-play")).
   dependsOn(freestyleJVM).
   settings(name := "freestyle-play").
   settings(
-    scalaVersion := "2.11.8",
-    crossScalaVersions := Seq("2.11.8"),
     parallelExecution in Test := false,
     libraryDependencies ++= Seq(
-      "com.typesafe.play" % "play_2.11" % "2.5.13",
-      "com.typesafe.play" % "play-test_2.11" % "2.5.13" % "test",
+      "com.typesafe.play" %% "play" % "2.6.0-M2",
+      "com.typesafe.play" %% "play-test" % "2.6.0-M2" % "test",
       "org.scalatest" %% "scalatest" % "3.0.1" % "test"
     )
   )

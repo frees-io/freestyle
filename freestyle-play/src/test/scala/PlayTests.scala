@@ -19,10 +19,6 @@ import _root_.play.api.test._
 import akka.actor.ActorSystem
 import akka.stream.{ActorMaterializer, Materializer}
 
-import org.scalatest.Tag
-
-object Scala212NonCompatible extends Tag("Scala212NonCompatibleTests")
-
 class PlayTests extends AsyncWordSpec with Matchers {
   implicit override def executionContext = ExecutionContext.Implicits.global
 
@@ -49,17 +45,17 @@ class PlayTests extends AsyncWordSpec with Matchers {
       x <- Noop[F].noop
     } yield Results.Ok(x)
 
-    "FreeSAction creates an action from a program" taggedAs(Scala212NonCompatible) in {
+    "FreeSAction creates an action from a program" in {
       FreeSAction { program[Noop.Op] }.isInstanceOf[Action[Result]] shouldBe true
     }
 
-    "FreeSAction creates an action from a function that returns a program given a request" taggedAs(Scala212NonCompatible) in {
+    "FreeSAction creates an action from a function that returns a program given a request" in {
       FreeSAction { request =>
         program[Noop.Op]
       }.isInstanceOf[Action[Result]] shouldBe true
     }
 
-    "The resulting action writes the result in the response" taggedAs(Scala212NonCompatible) in {
+    "The resulting action writes the result in the response" in {
       import Helpers._
 
       val action: EssentialAction = FreeSAction { program[Noop.Op] }
