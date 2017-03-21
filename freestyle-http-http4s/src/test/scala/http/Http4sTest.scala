@@ -35,7 +35,7 @@ class Http4sTests extends AsyncWordSpec with Matchers {
         case GET -> Root / "users" =>
           Ok(getUsers[App.Op].map(_.mkString("\n")))
       }
-  
+
       val reqUser1 = Request(Method.GET, uri("/user/1"))
 
       (for {
@@ -43,7 +43,7 @@ class Http4sTests extends AsyncWordSpec with Matchers {
         body <- EntityDecoder.decodeString(resp)
       } yield {
         resp.status shouldBe (Status.Ok)
-        body should startWith ("User")
+        body should startWith("User")
       }).unsafeRunAsyncFuture
 
       val reqUsers = Request(Method.GET, uri("/users"))
@@ -53,7 +53,7 @@ class Http4sTests extends AsyncWordSpec with Matchers {
         body <- EntityDecoder.decodeString(resp)
       } yield {
         resp.status shouldBe (Status.Ok)
-        all (body.split("\n")) should startWith ("User")
+        all(body.split("\n")) should startWith("User")
       }).unsafeRunAsyncFuture
     }
   }
@@ -62,12 +62,14 @@ class Http4sTests extends AsyncWordSpec with Matchers {
 object algebras {
   case class User(name: String)
 
-  @free trait UserRepository[F[_]] {
+  @free
+  trait UserRepository[F[_]] {
     def get(id: Long): FreeS.Par[F, User]
     def list: FreeS.Par[F, List[User]]
   }
 
-  @module trait App[F[_]] {
+  @module
+  trait App[F[_]] {
     val userRepo: UserRepository[F]
   }
 }
@@ -80,7 +82,7 @@ object handlers {
     2L -> User("bar")
   )
 
-  implicit val userRepoHandler: UserRepository.Handler[Task] = 
+  implicit val userRepoHandler: UserRepository.Handler[Task] =
     new UserRepository.Handler[Task] {
       def get(id: Long): Task[User] =
         Task.now(users.get(id).getOrElse(User("default")))

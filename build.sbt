@@ -1,146 +1,101 @@
-import catext.Dependencies._
-import microsites.util.BuildHelper._
-
 addCommandAlias("debug", "; clean ; test")
 
 addCommandAlias("validate", "; +clean ; +test; makeMicrosite")
 
-lazy val micrositeSettings = Seq(
-  micrositeName := "Freestyle",
-  micrositeDescription := "A Cohesive & Pragmatic Framework of FP centric Scala libraries",
-  micrositeDocumentationUrl := "/docs/",
-  micrositeGithubOwner := "47deg",
-  micrositeGithubRepo := "freestyle",
-  micrositeHighlightTheme := "dracula",
-  micrositeExternalLayoutsDirectory := (resourceDirectory in Compile).value / "microsite" / "layouts",
-  micrositeExternalIncludesDirectory := (resourceDirectory in Compile).value / "microsite" / "includes",
-  includeFilter in Jekyll := ("*.html" | "*.css" | "*.png" | "*.jpg" | "*.gif" | "*.js" | "*.swf" | "*.md" | "CNAME"),
-  micrositePalette := Map(
-    "brand-primary"     -> "#01C2C2",
-    "brand-secondary"   -> "#142236",
-    "brand-tertiary"    -> "#202D40",
-    "gray-dark"         -> "#383D44",
-    "gray"              -> "#646D7B",
-    "gray-light"        -> "#E6E7EC",
-    "gray-lighter"      -> "#F4F5F9",
-    "white-color"       -> "#E6E7EC"),
-  micrositeKazariCodeMirrorTheme := "dracula",
-  micrositeKazariDependencies := Seq(microsites.KazariDependency("com.fortysevendeg", "freestyle", buildWithoutSuffix(scalaVersion.value), version.value),
-  microsites.KazariDependency("org.scalamacros", "paradise", scalaVersion.value, "2.1.0")),
-  micrositeKazariResolvers := Seq("https://oss.sonatype.org/content/repositories/snapshots", "https://oss.sonatype.org/content/repositories/releases")
-)
-
-pgpPassphrase := Some(sys.env.getOrElse("PGP_PASSPHRASE", "").toCharArray)
-pgpPublicRing := file(s"${sys.env.getOrElse("PGP_FOLDER", ".")}/pubring.gpg")
-pgpSecretRing := file(s"${sys.env.getOrElse("PGP_FOLDER", ".")}/secring.gpg")
+pgpSettings
 
 lazy val freestyle = (crossProject in file("freestyle")).
   settings(name := "freestyle").
   settings(
     libraryDependencies ++= Seq(
-      "org.typelevel" %%% "cats-free" % "0.9.0",
-      "org.scala-lang" % "scala-reflect" % scalaVersion.value,
-      "io.monix" %%% "monix-eval" % "2.2.1" % "test",
-      "io.monix" %%% "monix-cats" % "2.2.1" % "test",
-      "org.scalatest" %% "scalatest" % "3.0.1" % "test",
-      "com.chuusai" %%% "shapeless" % "2.3.2"
+      %("scala-reflect", scalaVersion.value),
+      %%%("cats-free"),
+      %%%("shapeless"),
+      %%("monix-eval") % "test",
+      %%("monix-cats") % "test"
     )
   ).
   jsSettings(sharedJsSettings: _*)
 
 lazy val freestyleJVM = freestyle.jvm
-lazy val freestyleJS  = freestyle.js
+lazy val freestyleJS = freestyle.js
 
 lazy val freestyleMonix = (crossProject in file("freestyle-monix")).
   settings(name := "freestyle-monix").
   settings(
     libraryDependencies ++= Seq(
-      "io.monix" %%% "monix-eval" % "2.2.1",
-      "io.monix" %%% "monix-cats" % "2.2.1"
+      %%%("monix-eval"),
+      %%%("monix-cats")
     )
   ).
   jsSettings(sharedJsSettings: _*)
 
 lazy val freestyleMonixJVM = freestyleMonix.jvm
-lazy val freestyleMonixJS  = freestyleMonix.js
+lazy val freestyleMonixJS = freestyleMonix.js
 
 lazy val freestyleEffects = (crossProject in file("freestyle-effects")).
   dependsOn(freestyle).
   settings(name := "freestyle-effects").
-  settings(
-    libraryDependencies ++= Seq(
-      "org.scalatest" %% "scalatest" % "3.0.1"      % "test"
-    )
-  ).
   jsSettings(sharedJsSettings: _*)
 
 lazy val freestyleEffectsJVM = freestyleEffects.jvm
-lazy val freestyleEffectsJS  = freestyleEffects.js
+lazy val freestyleEffectsJS = freestyleEffects.js
 
 lazy val freestyleAsync = (crossProject in file("freestyle-async")).
   dependsOn(freestyle).
   settings(name := "freestyle-async").
-  settings(
-    libraryDependencies ++= Seq(
-      "org.scalatest" %% "scalatest" % "3.0.1"      % "test"
-    )
-  ).
   jsSettings(sharedJsSettings: _*)
 
 lazy val freestyleAsyncJVM = freestyleAsync.jvm
-lazy val freestyleAsyncJS  = freestyleAsync.js
+lazy val freestyleAsyncJS = freestyleAsync.js
 
 lazy val freestyleAsyncMonix = (crossProject in file("freestyle-async-monix")).
   dependsOn(freestyle, freestyleAsync).
   settings(name := "freestyle-async-monix").
   settings(
     libraryDependencies ++= Seq(
-      "org.scalatest" %% "scalatest" % "3.0.1" % "test",
-      "io.monix" %%% "monix-eval" % "2.2.1",
-      "io.monix" %%% "monix-cats" % "2.2.1"
+      %%("monix-eval"),
+      %%("monix-cats")
     )
   ).
   jsSettings(sharedJsSettings: _*)
 
 lazy val freestyleAsyncMonixJVM = freestyleAsyncMonix.jvm
-lazy val freestyleAsyncMonixJS  = freestyleAsyncMonix.js
+lazy val freestyleAsyncMonixJS = freestyleAsyncMonix.js
 
 lazy val freestyleAsyncFs = (crossProject in file("freestyle-async-fs2")).
   dependsOn(freestyle, freestyleAsync).
   settings(name := "freestyle-async-fs2").
   settings(
     libraryDependencies ++= Seq(
-      "org.scalatest" %% "scalatest" % "3.0.1" % "test",
-      "co.fs2" %%% "fs2-core" % "0.9.2",
-      "co.fs2" %% "fs2-cats" % "0.3.0"
+      %%%("fs2-core"),
+      %%%("fs2-cats")
     )
   )
 
 lazy val freestyleAsyncFsJVM = freestyleAsyncFs.jvm
-lazy val freestyleAsyncFsJS  = freestyleAsyncFs.js
+lazy val freestyleAsyncFsJS = freestyleAsyncFs.js
 
 lazy val freestyleCache = (crossProject in file("freestyle-cache")).
   dependsOn(freestyle).
   settings(
-    name := "freestyle-cache",
-    libraryDependencies += "org.scalatest" %% "scalatest" % "3.0.1" % "test"
+    name := "freestyle-cache"
   ).
   jsSettings(sharedJsSettings: _*)
 
 lazy val freestyleCacheJVM = freestyleCache.jvm
-lazy val freestyleCacheJS  = freestyleCache.js
+lazy val freestyleCacheJS = freestyleCache.js
 
 lazy val freestyleCacheRedis = (crossProject in file("freestyle-cache-redis")).
   dependsOn(freestyle, freestyleCache).
   settings(
     name := "freestyle-cache-redis",
-    resolvers += "Sonatype OSS Releases" at "https://oss.sonatype.org/content/repositories/releases/" ,
+    resolvers += "Sonatype OSS Releases" at "https://oss.sonatype.org/content/repositories/releases/",
     resolvers += Resolver.mavenLocal,
     libraryDependencies ++= Seq(
-      "com.github.etaty" %% "rediscala" % "1.8.0",
-      "org.scalatest" %% "scalatest" % "3.0.1" % "test",
-      "com.typesafe.akka" %% "akka-actor" % "2.4.17" % "test",
-      "com.orange.redis-embedded" % "embedded-redis" % "0.6" % "test"
+      %%("rediscala"),
+      %%("akka-actor") % "test",
+      %("embedded-redis") % "test"
     )
   ).
   jsSettings(sharedJsSettings: _*)
@@ -152,14 +107,13 @@ lazy val freestyleDoobie = (project in file("freestyle-doobie")).
   settings(name := "freestyle-doobie").
   settings(
     libraryDependencies ++= Seq(
-      "org.tpolecat"  %% "doobie-core-cats" % "0.4.1",
-      "org.tpolecat"  %% "doobie-h2-cats"   % "0.4.1" % "test",
-      "org.scalatest" %% "scalatest"        % "3.0.1" % "test"
+      %%("doobie-core-cats"),
+      %%("doobie-h2-cats") % "test"
     )
   )
 
 lazy val fixResources = taskKey[Unit](
-    "Fix application.conf presence on first clean build.")
+  "Fix application.conf presence on first clean build.")
 
 lazy val freestyleConfig = (crossProject in file("freestyle-config")).
   dependsOn(freestyle).
@@ -178,13 +132,12 @@ lazy val freestyleConfig = (crossProject in file("freestyle-config")).
   ).
   settings(
     libraryDependencies ++= Seq(
-      "eu.unicredit" %%% "shocon" % "0.1.7",
-      "org.scalatest" %%% "scalatest" % "3.0.1" % "test"
+      %%%("shocon")
     )
   )
 
 lazy val freestyleConfigJVM = freestyleConfig.jvm
-lazy val freestyleConfigJS  = freestyleConfig.js
+lazy val freestyleConfigJS = freestyleConfig.js
 
 
 lazy val freestyleFetch = (crossProject in file("freestyle-fetch")).
@@ -192,46 +145,42 @@ lazy val freestyleFetch = (crossProject in file("freestyle-fetch")).
   settings(name := "freestyle-fetch").
   settings(
     libraryDependencies ++= Seq(
-      "com.fortysevendeg" %%% "fetch" % "0.5.0",
-      "org.scalatest" %%% "scalatest" % "3.0.1" % "test",
-      "com.fortysevendeg" %%% "fetch-monix" % "0.5.0"
-     )
+      %%%("fetch"),
+      %%%("fetch-monix")
+    )
   ).
   jsSettings(sharedJsSettings: _*)
 
 lazy val freestyleFetchJVM = freestyleFetch.jvm
-lazy val freestyleFetchJS  = freestyleFetch.js
+lazy val freestyleFetchJS = freestyleFetch.js
 
 lazy val freestyleLogging = (crossProject in file("freestyle-logging")).
   dependsOn(freestyle).
   settings(name := "freestyle-logging").
-  settings(
-    libraryDependencies += "org.scalatest" %%% "scalatest" % "3.0.1" % "test"
-  ).
   jvmSettings(
-    libraryDependencies += "io.verizon.journal" %% "core" % "3.0.18"
+    libraryDependencies += %%("journal-core")
   ).
   jsSettings(
-    libraryDependencies += "biz.enef" %%% "slogging" % "0.5.2"
+    libraryDependencies += %%%("slogging")
   ).
   jsSettings(sharedJsSettings: _*)
 
 lazy val freestyleLoggingJVM = freestyleLogging.jvm
-lazy val freestyleLoggingJS  = freestyleLogging.js
+lazy val freestyleLoggingJS = freestyleLogging.js
 
 lazy val freestyleFs2 = (crossProject in file("freestyle-fs2")).
   dependsOn(freestyle).
   settings(name := "freestyle-fs2").
   settings(
     libraryDependencies ++= Seq(
-      "org.scalatest" %%% "scalatest" % "3.0.1" % "test",
-      "co.fs2" %%% "fs2-core" % "0.9.2"
-     )
+
+      %%%("fs2-core")
+    )
   ).
   jsSettings(sharedJsSettings: _*)
 
 lazy val freestyleFs2JVM = freestyleFs2.jvm
-lazy val freestyleFs2JS  = freestyleFs2.js
+lazy val freestyleFs2JS = freestyleFs2.js
 
 lazy val freestylePlay = (project in file("freestyle-play")).
   dependsOn(freestyleJVM).
@@ -240,8 +189,7 @@ lazy val freestylePlay = (project in file("freestyle-play")).
     parallelExecution in Test := false,
     libraryDependencies ++= Seq(
       "com.typesafe.play" %% "play" % "2.6.0-M2",
-      "com.typesafe.play" %% "play-test" % "2.6.0-M2" % "test",
-      "org.scalatest" %% "scalatest" % "3.0.1" % "test"
+      "com.typesafe.play" %% "play-test" % "2.6.0-M2" % "test"
     )
   )
 
@@ -250,20 +198,20 @@ lazy val tests = (project in file("tests")).
   settings(noPublishSettings: _*).
   settings(
     libraryDependencies ++= Seq(
-      "org.scala-lang" % "scala-reflect" % scalaVersion.value,
-      "org.scalatest" %%% "scalatest" % "3.0.1" % "test",
-      "org.ensime" %% "pcplod" % "1.2.0" % "test"
+      %("scala-reflect", scalaVersion.value),
+      %%("pcplod") % "test"
     ),
     fork in Test := true,
     javaOptions in Test ++= {
-      val options = (scalacOptions in Test).value.distinct.mkString(",")
+      val excludedScalacOptions: List[String] = List("-Yliteral-types", "-Ypartial-unification")
+      val options = (scalacOptions in Test).value.distinct.filterNot(excludedScalacOptions.contains).mkString(",")
       val cp = (fullClasspath in Test).value.map(_.data).filter(_.exists()).distinct.mkString(",")
       Seq(
         s"""-Dpcplod.settings=$options""",
         s"""-Dpcplod.classpath=$cp"""
       )
     }
-   )
+  )
 
 lazy val docs = (project in file("docs")).
   dependsOn(freestyleJVM).
@@ -279,8 +227,8 @@ lazy val docs = (project in file("docs")).
   ).
   settings(
     libraryDependencies ++= Seq(
-      "co.fs2" %% "fs2-io"   % "0.9.2",
-      "co.fs2" %% "fs2-cats" % "0.3.0"
+      %%("fs2-io"),
+      %%("fs2-cats")
     )
   )
   .enablePlugins(MicrositesPlugin)
@@ -291,10 +239,9 @@ lazy val freestyleHttpHttp4s = (project in file("freestyle-http-http4s")).
   settings(
     resolvers += "Sonatype OSS Snapshots" at "https://oss.sonatype.org/content/repositories/snapshots",
     libraryDependencies ++= Seq(
-      "org.scalatest" %%% "scalatest" % "3.0.1" % "test",
-      "org.http4s" %%% "http4s-core" % "0.16.0-cats-SNAPSHOT",
-      "org.http4s" %%% "http4s-dsl" % "0.16.0-cats-SNAPSHOT" % "test"
-     )
+      %%("http4s-core"),
+      %%("http4s-dsl") % "test"
+    )
   )
 
 lazy val freestyleHttpFinch = (project in file("freestyle-http-finch")).
@@ -302,7 +249,6 @@ lazy val freestyleHttpFinch = (project in file("freestyle-http-finch")).
   settings(name := "freestyle-http-finch").
   settings(
     libraryDependencies ++= Seq(
-      "org.scalatest" %%% "scalatest" % "3.0.1" % "test",
       "com.github.finagle" %% "finch-core" % "0.13.0"
      )
   )
