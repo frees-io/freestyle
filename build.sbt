@@ -273,7 +273,6 @@ lazy val docs = (project in file("docs")).
   )
   .enablePlugins(MicrositesPlugin)
 
-
 lazy val freestyleHttpHttp4s = (project in file("freestyle-http-http4s")).
   dependsOn(freestyleJVM).
   settings(name := "freestyle-http-http4s").
@@ -283,5 +282,15 @@ lazy val freestyleHttpHttp4s = (project in file("freestyle-http-http4s")).
       "org.scalatest" %%% "scalatest" % "3.0.1" % "test",
       "org.http4s" %%% "http4s-core" % "0.16.0-cats-SNAPSHOT",
       "org.http4s" %%% "http4s-dsl" % "0.16.0-cats-SNAPSHOT" % "test"
+     )
+  )
+
+lazy val freestyleHttpFinch = (project in file("freestyle-http-finch")).
+  dependsOn(freestyleJVM).
+  settings(name := "freestyle-http-finch").
+  settings(
+    libraryDependencies ++= Seq(
+      "org.scalatest" %%% "scalatest" % "3.0.1" % "test",
+      "com.github.finagle" %% "finch-core" % "0.13.0"
      )
   )
