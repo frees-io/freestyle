@@ -29,3 +29,4 @@ matrix:
      jdk: oraclejdk8
      script:
       - sbt ++$TRAVIS_SCALA_VERSION clean tests/test
+      - sbt ++$TRAVIS_SCALA_VERSION "docs/tut"      
