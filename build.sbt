@@ -239,6 +239,7 @@ lazy val freestylePlay = (project in file("freestyle-play")).
   settings(
     scalaVersion := "2.11.8",
     crossScalaVersions := Seq("2.11.8"),
+    parallelExecution in Test := false,
     libraryDependencies ++= Seq(
       "org.scalatest" %% "scalatest" % "3.0.1" % "test",
       "com.typesafe.play" %% "play" % "2.5.13",
