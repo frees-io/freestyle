@@ -24,15 +24,14 @@ class PlayTests extends AsyncWordSpec with Matchers {
 
   // play
 
-  implicit def unitWr(implicit C: Codec): Writeable[Unit] = {
+  implicit def unitWr(implicit C: Codec): Writeable[Unit] =
     Writeable(data => C.encode(data.toString))
-  }
 
   implicit val unitCT: ContentTypeOf[Unit] = new ContentTypeOf(Option("text/plain"))
 
   // akka
 
-  implicit val actorSys: ActorSystem = ActorSystem("test")
+  implicit val actorSys: ActorSystem      = ActorSystem("test")
   implicit val materializer: Materializer = ActorMaterializer()
 
   "Play integration" should {
@@ -41,9 +40,10 @@ class PlayTests extends AsyncWordSpec with Matchers {
     import algebras._
     import handlers._
 
-    def program[F[_] : Noop]: FreeS[F, Result] = for {
-      x <- Noop[F].noop
-    } yield Results.Ok(x)
+    def program[F[_]: Noop]: FreeS[F, Result] =
+      for {
+        x <- Noop[F].noop
+      } yield Results.Ok(x)
 
     "FreeSAction creates an action from a program" in {
       FreeSAction { program[Noop.Op] }.isInstanceOf[Action[Result]] shouldBe true
@@ -58,8 +58,8 @@ class PlayTests extends AsyncWordSpec with Matchers {
     "The resulting action writes the result in the response" in {
       import Helpers._
 
-      val action: EssentialAction = FreeSAction { program[Noop.Op] }
-      val request = FakeRequest()
+      val action: EssentialAction  = FreeSAction { program[Noop.Op] }
+      val request                  = FakeRequest()
       val response: Future[Result] = Helpers.call(action, request)
 
       status(response) shouldBe 200
@@ -79,8 +79,7 @@ object handlers {
   import algebras._
 
   implicit def noopHandler[M[_]](
-    implicit
-      MM: Monad[M]
+      implicit MM: Monad[M]
   ): Noop.Handler[M] = new Noop.Handler[M] {
     def noop: M[Unit] = MM.pure(())
   }

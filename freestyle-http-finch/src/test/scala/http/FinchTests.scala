@@ -27,8 +27,12 @@ class FinchTests extends AsyncWordSpec with Matchers {
       import futureHandlers._
 
       val endpoint0 = get(/) { sumOk(1, 2) }
-      val endpoint1 = post(int) { i: Int => sumOk(1, i) }
-      val endpoint2 = post(int :: int) { (a: Int, b: Int) => sumOk(a, b) }
+      val endpoint1 = post(int) { i: Int =>
+        sumOk(1, i)
+      }
+      val endpoint2 = post(int :: int) { (a: Int, b: Int) =>
+        sumOk(a, b)
+      }
 
       endpoint0(Input.get("/")).awaitValueUnsafe() shouldBe Some(3)
       endpoint1(Input.post("/2")).awaitValueUnsafe() shouldBe Some(3)
@@ -39,8 +43,12 @@ class FinchTests extends AsyncWordSpec with Matchers {
       import futureHandlers._
 
       val endpoint0 = get(/) { sumParOk(1, 2) }
-      val endpoint1 = post(int) { i: Int => sumParOk(1, i) }
-      val endpoint2 = post(int :: int) { (a: Int, b: Int) => sumParOk(a, b) }
+      val endpoint1 = post(int) { i: Int =>
+        sumParOk(1, i)
+      }
+      val endpoint2 = post(int :: int) { (a: Int, b: Int) =>
+        sumParOk(a, b)
+      }
 
       endpoint0(Input.get("/")).awaitValueUnsafe() shouldBe Some(3)
       endpoint1(Input.post("/2")).awaitValueUnsafe() shouldBe Some(3)
@@ -51,8 +59,12 @@ class FinchTests extends AsyncWordSpec with Matchers {
       import idHandlers._
 
       val endpoint0 = get(/) { sumOk(1, 2) }
-      val endpoint1 = post(int) { i: Int => sumOk(1, i) }
-      val endpoint2 = post(int :: int) { (a: Int, b: Int) => sumOk(a, b) }
+      val endpoint1 = post(int) { i: Int =>
+        sumOk(1, i)
+      }
+      val endpoint2 = post(int :: int) { (a: Int, b: Int) =>
+        sumOk(a, b)
+      }
 
       endpoint0(Input.get("/")).awaitValueUnsafe() shouldBe Some(3)
       endpoint1(Input.post("/2")).awaitValueUnsafe() shouldBe Some(3)
@@ -63,8 +75,12 @@ class FinchTests extends AsyncWordSpec with Matchers {
       import idHandlers._
 
       val endpoint0 = get(/) { sumParOk(1, 2) }
-      val endpoint1 = post(int) { i: Int => sumParOk(1, i) }
-      val endpoint2 = post(int :: int) { (a: Int, b: Int) => sumParOk(a, b) }
+      val endpoint1 = post(int) { i: Int =>
+        sumParOk(1, i)
+      }
+      val endpoint2 = post(int :: int) { (a: Int, b: Int) =>
+        sumParOk(a, b)
+      }
 
       endpoint0(Input.get("/")).awaitValueUnsafe() shouldBe Some(3)
       endpoint1(Input.post("/2")).awaitValueUnsafe() shouldBe Some(3)
@@ -75,7 +91,8 @@ class FinchTests extends AsyncWordSpec with Matchers {
 }
 
 object algebra {
-  @free trait Calc[F[_]] {
+  @free
+  trait Calc[F[_]] {
     def sum(a: Int, b: Int): FreeS.Par[F, Int]
   }
 }
