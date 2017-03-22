@@ -24,9 +24,9 @@ trait Interpreters {
     Inject.catsFreeRightInjectInstance(I.value)
 }
 
-trait Monads {
-  implicit def catsFreeMonadForFreeS[F[_]]: Monad[FreeS[F, ?]] =
+trait FreeSInstances {
+  implicit def freestyleMonadForFreeS[F[_]]: Monad[FreeS[F, ?]] =
     Free.catsFreeMonadForFree[FreeApplicative[F, ?]]
 }
 
-object implicits extends Interpreters with Monads
+object implicits extends Interpreters with FreeSInstances
