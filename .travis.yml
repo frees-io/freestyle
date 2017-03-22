@@ -19,7 +19,7 @@ script:
 
 after_success:
 - if [ "$TRAVIS_BRANCH" = "master" -a "$TRAVIS_PULL_REQUEST" = "false" ]; then
-    sbt ++$TRAVIS_SCALA_VERSION publishSnapshot;
+    sbt ++$TRAVIS_SCALA_VERSION publishSigned;
     bash scripts/publishMicrosite.sh;
   fi
 - bash <(curl -s https://codecov.io/bash)
