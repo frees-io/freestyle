@@ -29,9 +29,9 @@ Independent operations that can be executed potentially in parallel may be place
 ```tut:book
 import freestyle._
 
-@free trait Validation[F[_]] {
-  def minSize(n: Int): FreeS.Par[F, Boolean]
-  def hasNumber: FreeS.Par[F, Boolean]
+@free trait Validation {
+  def minSize(n: Int): OpPar[Boolean]
+  def hasNumber: OpPar[Boolean]
 }
 ```
 
@@ -67,7 +67,7 @@ implicit val interpreter = new Validation.Handler[ParValidator] {
     Kleisli(s => Future(s.exists(c => "0123456789".contains(c))))
 }
 
-val validation = Validation[Validation.Op]
+val validation = Validation.to[Validation.Op]
 import validation._
 
 val parValidation = (minSize(3) |@| hasNumber).map(_ :: _ :: Nil)
@@ -82,10 +82,10 @@ val validator = parValidation.exec[ParValidator]
 Sequential and parallel actions can be easily intermixed in `@free` algebras.
 
 ```tut:book
-@free trait MixedFreeS[F[_]] {
-  def x: FreeS.Par[F, Int]
-  def y: FreeS.Par[F, Int]
-  def z: FreeS[F, Int]
+@free trait MixedFreeS {
+  def x: OpPar[Int]
+  def y: OpPar[Int]
+  def z: OpSeq[Int]
 }
 ```
 
@@ -95,7 +95,7 @@ Using the [cats cartesian builder operator \|@\|](http://eed3si9n.com/herding-ca
 import freestyle.implicits._
 import cats.implicits._
 
-def program[F[_]](implicit M: MixedFreeS[F]) = {
+def program[F[_]](implicit M: MixedFreeS.To[F]) = {
   import M._
   for {
     a <- z //3

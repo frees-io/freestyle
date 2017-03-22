@@ -21,13 +21,13 @@ The set of abstract operations of the `Cache` algebra are specified as follows.
 
 ```Scala
 class KeyValueProvider[Key, Value] {
-    @free sealed trait CacheM[F[_]] {
-      def get(key: Key):              FreeS.Par[F, Option[Val]]
-      def put(key: Key, newVal: Val): FreeS.Par[F, Unit]
-      def del(key: Key):              FreeS.Par[F, Unit]
-      def has(key: Key):              FreeS.Par[F, Boolean]
-      def keys:                       FreeS.Par[F, List[Key]]
-      def clear:                      FreeS.Par[F, Unit]
+    @free sealed trait CacheM {
+      def get(key: Key):              OpPar[Option[Val]]
+      def put(key: Key, newVal: Val): OpPar[Unit]
+      def del(key: Key):              OpPar[Unit]
+      def has(key: Key):              OpPar[Boolean]
+      def keys:                       OpPar[List[Key]]
+      def clear:                      OpPar[Unit]
     }
 }
 ```
@@ -43,11 +43,11 @@ To make the algebra parametric on the types of `Key` and `Value`, we wrap the de
 #### Laws
 
 In this section we describe some laws that specify the intended semantics of the `CacheM` effect algebra, which any handler or interpreter for it should hold.
-These laws are applicable to any group of independent operations within the `FreeS.Par[F, ?]` type, which is the `Applicable` fragment.
-However, the laws may not hold in the general `Free[FreeS.Par[F, ?], ?]` case, of a _sequential_ group of independent operations.
+These laws are applicable to any group of independent operations within the `OpPar[?]` type, which is the `Applicable` fragment.
+However, the laws may not hold in the general `Free[OpPar[?], ?]` case, of a _sequential_ group of independent operations.
 Intuitively, a group `FreeS.Par` of operations is run atomically on the data store, without interleaving any other operations, and every command's effect should be immediately visible on succeeding operations.
 
-Each law is an _equality_ between two programs of type `FreeS.Par[F, A]`, where equality means that:
+Each law is an _equality_ between two programs of type `OpPar[A]`, where equality means that:
 
 * The results of type `A` from interpreting both programs should be equal; and
 * their side-effects on the data store are not distinguishable: there is no sequence `FreeS.Par` of `CacheM` foperations that,

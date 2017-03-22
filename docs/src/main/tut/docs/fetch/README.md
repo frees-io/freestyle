@@ -34,8 +34,8 @@ Let's start by creating a simple algebra for our application for printing messag
 import freestyle._
 import freestyle.implicits._
 
-@free trait Interact[F[_]] {
-  def tell(msg: String): FreeS[F, Unit]
+@free trait Interact {
+  def tell(msg: String): OpSeq[Unit]
 }
 ```
 
@@ -45,9 +45,9 @@ Then, make sure to include the fetch algebra `FetchM` in your application:
 import freestyle.fetch._
 import freestyle.fetch.implicits._
 
-@module trait App[F[_]] {
-  val interact: Interact[F]
-  val fetches: FetchM[F]
+@module trait App {
+  val interact: Interact
+  val fetches: FetchM
 }
 ```
 
@@ -55,7 +55,7 @@ Now that we've got our `Interact` algebra and `FetchM` in our app, we're ready t
 
 ```tut:book
 def program[F[_]](
-  implicit app: App[F]
+  implicit app: App.To[F]
 ): FreeS[F, Int] =  for {
     _ <- app.interact.tell("Hello")
     x <- app.fetches.runA(fetchOne(1))
@@ -98,7 +98,7 @@ We've already seen `FetchM#runA`, which runs a fetch returning the final result.
 
 ```tut:book
 def program[F[_]](
-  implicit app: App[F]
+  implicit app: App.To[F]
 ): FreeS[F, Int] =  for {
     _ <- app.interact.tell("Hello")
     x <- app.fetches.runA(fetchOne(1))
@@ -112,7 +112,7 @@ There is a variant of `runA` where a cache can be specified: `FetchM#runAWithCac
 
 ```tut:book
 def program[F[_]](
-  implicit app: App[F]
+  implicit app: App.To[F]
 ): FreeS[F, Int] =  for {
     _ <- app.interact.tell("Hello")
     x <- app.fetches.runAWithCache(fetchOne(1), InMemoryCache.empty)
@@ -128,7 +128,7 @@ Fetch tracks its internal state with an environment of type `FetchEnv`. The `Fet
 
 ```tut:book
 def program[F[_]](
-  implicit app: App[F]
+  implicit app: App.To[F]
 ): FreeS[F, FetchEnv] =  for {
     _ <- app.interact.tell("Hello")
     env <- app.fetches.runE(fetchOne(1))
@@ -142,7 +142,7 @@ There is a variant of `runE` where a cache can be specified: `FetchM#runEWithCac
 
 ```tut:book
 def program[F[_]](
-  implicit app: App[F]
+  implicit app: App.To[F]
 ): FreeS[F, FetchEnv] =  for {
     _ <- app.interact.tell("Hello")
     env <- app.fetches.runEWithCache(fetchOne(1), InMemoryCache.empty)
@@ -158,7 +158,7 @@ If we are intested in both the final environment and the fetch result, we can us
 
 ```tut:book
 def program[F[_]](
-  implicit app: App[F]
+  implicit app: App.To[F]
 ): FreeS[F, FetchEnv] =  for {
     _ <- app.interact.tell("Hello")
     r <- app.fetches.runF(fetchOne(1))
@@ -173,7 +173,7 @@ There is a variant of `runF` where a cache can be specified: `FetchM#runFWithCac
 
 ```tut:book
 def program[F[_]](
-  implicit app: App[F]
+  implicit app: App.To[F]
 ): FreeS[F, FetchEnv] =  for {
     _ <- app.interact.tell("Hello")
 	r <- app.fetches.runFWithCache(fetchOne(1), InMemoryCache.empty)
@@ -192,7 +192,7 @@ One of the things to consider when interleaving fetches in free programs is that
 
 ```tut:book
 def program[F[_]](
-  implicit app: App[F]
+  implicit app: App.To[F]
 ): FreeS[F, Int] =  for {
     _ <- app.interact.tell("Hello")
 	x <- app.fetches.runA(fetchOne(1))
@@ -207,7 +207,7 @@ However, we can run a fetch getting both the environment and result with `runF`,
 
 ```tut:book
 def program[F[_]](
-  implicit app: App[F]
+  implicit app: App.To[F]
 ): FreeS[F, Int] =  for {
     _ <- app.interact.tell("Hello")
     r <- app.fetches.runF(fetchOne(1))
