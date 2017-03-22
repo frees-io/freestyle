@@ -94,17 +94,27 @@ object module {
     def filterImplicitVars( trees: Template): List[ValDef]  =
       trees.collect { case v: ValDef if v.mods.hasFlag(Flag.DEFERRED) => v }
 
-    def mkCompanion( name: TypeName, implicits: List[ValDef] ): ModuleDef = {
+    def mkCompanion( moduleTrait: ClassDef): ModuleDef = {
+      val name = moduleTrait.name
+      val implicits: List[ValDef] = filterImplicitVars(moduleTrait.impl)
+
+      val injs: List[ValDef] = implicits.map {
+        case q"$mods val $vname: $algM[..$args]" =>
+          q"val $vname: ${TermName(algM.toString)}.To[F,..$args]"
+      }
+
+      val tns = moduleTrait.tparams.map(_.name)
+
       q"""
         object ${name.toTermName} extends FreeModuleLike {
           val X = coproductcollect.apply(this)
           type Op[A] = X.Op[A]
 
-          class To[F[_]](implicit ..$implicits) extends $name[F]
+          class To[F[_]](implicit ..$injs) extends $name[..$tns]
 
-          implicit def to[F[_]](implicit ..$implicits): To[F] = new To[F]()
+          implicit def to[F[_]](implicit ..$injs): To[F] = new To[F]()
 
-          def apply[F[_]](implicit ev: $name[F]): $name[F] = ev
+          def apply[F[_]](implicit ev: To[F]): To[F] = ev
         }
       """
     }
@@ -113,12 +123,11 @@ object module {
     annottees match {
       case List(Expr(cls: ClassDef)) =>
         if (cls.mods.hasFlag(Flag.TRAIT | Flag.ABSTRACT)) {
-          val userTrait @ ClassDef(_, name, _, clsTemplate) = cls.duplicate
-          val implicits: List[ValDef] = filterImplicitVars(clsTemplate)
+          val userTrait = cls.duplicate
           //  :+ q"val I: Inject[T, F]"
           q"""
             $userTrait
-            ${mkCompanion(name, implicits)}
+            ${mkCompanion(userTrait)}
           """
         } else
           fail(s"@free requires trait or abstract class")

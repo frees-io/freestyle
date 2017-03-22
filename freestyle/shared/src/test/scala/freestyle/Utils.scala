@@ -5,44 +5,44 @@ import cats.arrow.FunctionK
 object algebras {
 
   @free
-  trait SCtors1[F[_]] {
-    def x(a: Int): FreeS[F, Int]
-    def y(a: Int): FreeS[F, Int]
+  trait SCtors1 {
+    def x(a: Int): OpSeq[Int]
+    def y(a: Int): OpSeq[Int]
   }
 
   @free
-  trait SCtors2[F[_]] {
-    def i(a: Int): FreeS[F, Int]
-    def j(a: Int): FreeS[F, Int]
+  trait SCtors2 {
+    def i(a: Int): OpSeq[Int]
+    def j(a: Int): OpSeq[Int]
   }
 
   @free
-  trait SCtors3[F[_]] {
-    def o(a: Int): FreeS[F, Int]
-    def p(a: Int): FreeS[F, Int]
+  trait SCtors3 {
+    def o(a: Int): OpSeq[Int]
+    def p(a: Int): OpSeq[Int]
   }
 
   @free
-  trait SCtors4[F[_]] {
-    def k(a: Int): FreeS[F, Int]
-    def m(a: Int): FreeS[F, Int]
+  trait SCtors4 {
+    def k(a: Int): OpSeq[Int]
+    def m(a: Int): OpSeq[Int]
   }
 
   @free
-  trait MixedFreeS[F[_]] {
-    def x: FreeS.Par[F, Int]
-    def y: FreeS.Par[F, Int]
-    def z: FreeS[F, Int]
+  trait MixedFreeS {
+    def x: OpPar[Int]
+    def y: OpPar[Int]
+    def z: OpSeq[Int]
   }
 
   @free
-  trait S1[F[_]] {
-    def x(n: Int): FreeS[F, Int]
+  trait S1 {
+    def x(n: Int): OpSeq[Int]
   }
 
   @free
-  trait S2[F[_]] {
-    def y(n: Int): FreeS[F, Int]
+  trait S2 {
+    def y(n: Int): OpSeq[Int]
   }
 
 }
@@ -52,40 +52,40 @@ object modules {
   import algebras._
 
   @module
-  trait M1[F[_]] {
-    val sctors1: SCtors1[F]
-    val sctors2: SCtors2[F]
+  trait M1 {
+    val sctors1: SCtors1
+    val sctors2: SCtors2
   }
 
   @module
-  trait M2[F[_]] {
-    val sctors3: SCtors3[F]
-    val sctors4: SCtors4[F]
+  trait M2 {
+    val sctors3: SCtors3
+    val sctors4: SCtors4
   }
 
   @module
-  trait O1[F[_]] {
-    val m1: M1[F]
-    val m2: M2[F]
+  trait O1 {
+    val m1: M1
+    val m2: M2
   }
 
   @module
-  trait O2[F[_]] {
-    val o1: O1[F]
+  trait O2 {
+    val o1: O1
     val x = 1
     def y = 2
   }
 
   @module
-  trait O3[F[_]] {
+  trait O3 {
     def x = 1
     def y = 2
   }
 
   @module
-  trait StateProp[F[_]] {
-    val s1: S1[F]
-    val s2: S2[F]
+  trait StateProp {
+    val s1: S1
+    val s2: S2
   }
 
 }

@@ -23,37 +23,37 @@ class moduleTests extends WordSpec with Matchers {
     }
 
     "[simple] provide instances through it's companion `apply`" in {
-      M1[M1.Op].isInstanceOf[M1[M1.Op]] shouldBe true
+      M1.to[M1.Op].isInstanceOf[M1.To[M1.Op]] shouldBe true
     }
 
     "[onion] provide instances through it's companion `apply`" in {
-      O1[O1.Op].isInstanceOf[O1[O1.Op]] shouldBe true
+      O1.to[O1.Op].isInstanceOf[O1.To[O1.Op]] shouldBe true
     }
 
     "[simple] implicit sumoning" in {
-      implicitly[M1[M1.Op]].isInstanceOf[M1[M1.Op]] shouldBe true
+      implicitly[M1.To[M1.Op]].isInstanceOf[M1.To[M1.Op]] shouldBe true
     }
 
     "[onion] allow implicit sumoning" in {
-      implicitly[O1[O1.Op]].isInstanceOf[O1[O1.Op]] shouldBe true
+      implicitly[O1.To[O1.Op]].isInstanceOf[O1.To[O1.Op]] shouldBe true
     }
 
     "[simple] autowire implementations of it's contained smart constructors" in {
-      val m1 = M1[M1.Op]
-      m1.sctors1.isInstanceOf[SCtors1[M1.Op]] shouldBe true
-      m1.sctors2.isInstanceOf[SCtors2[M1.Op]] shouldBe true
+      val m1 = M1.to[M1.Op]
+      m1.sctors1.isInstanceOf[SCtors1.To[M1.Op]] shouldBe true
+      m1.sctors2.isInstanceOf[SCtors2.To[M1.Op]] shouldBe true
     }
 
     "[onion] autowire implementations of it's contained smart constructors" in {
-      val o1 = O1[O1.Op]
-      o1.m1.sctors1.isInstanceOf[SCtors1[O1.Op]] shouldBe true
-      o1.m1.sctors2.isInstanceOf[SCtors2[O1.Op]] shouldBe true
-      o1.m2.sctors3.isInstanceOf[SCtors3[O1.Op]] shouldBe true
-      o1.m2.sctors4.isInstanceOf[SCtors4[O1.Op]] shouldBe true
+      val o1 = O1.to[O1.Op]
+      o1.m1.sctors1.isInstanceOf[SCtors1.To[O1.Op]] shouldBe true
+      o1.m1.sctors2.isInstanceOf[SCtors2.To[O1.Op]] shouldBe true
+      o1.m2.sctors3.isInstanceOf[SCtors3.To[O1.Op]] shouldBe true
+      o1.m2.sctors4.isInstanceOf[SCtors4.To[O1.Op]] shouldBe true
     }
 
     "[simple] allow composition of it's contained algebras" in {
-      val m1 = M1[M1.Op]
+      val m1 = M1.to[M1.Op]
       val result = for {
         a <- m1.sctors1.x(1)
         b <- m1.sctors1.y(1)
@@ -64,7 +64,7 @@ class moduleTests extends WordSpec with Matchers {
     }
 
     "[onion] allow composition of it's contained algebras" in {
-      val o1 = O1[O1.Op]
+      val o1 = O1.to[O1.Op]
       val result = for {
         a <- o1.m1.sctors1.x(1)
         b <- o1.m1.sctors1.y(1)
@@ -89,7 +89,7 @@ class moduleTests extends WordSpec with Matchers {
     }
 
     "[simple] reuse program interpretation in diferent runtimes" in {
-      val m1 = M1[M1.Op]
+      val m1 = M1.to[M1.Op]
       val program = for {
         a <- m1.sctors1.x(1)
         b <- m1.sctors1.y(1)
@@ -101,7 +101,7 @@ class moduleTests extends WordSpec with Matchers {
     }
 
     "[onion] reuse program interpretation in diferent runtimes" in {
-      val o1 = O1[O1.Op]
+      val o1 = O1.to[O1.Op]
       val program = for {
         a <- o1.m1.sctors1.x(1)
         b <- o1.m1.sctors1.y(1)
@@ -118,13 +118,13 @@ class moduleTests extends WordSpec with Matchers {
     }
 
     "Pass through concrete members to implementations" in {
-      val o2 = O2[O2.Op]
+      val o2 = O2.to[O2.Op]
       o2.x shouldBe 1
       o2.y shouldBe 2
     }
 
     "Allow modules with just concrete members unrelated to freestyle's concerns" in {
-      val o3 = O3[O3.Op]
+      val o3 = O3.to[O3.Op]
       o3.x shouldBe 1
       o3.y shouldBe 2
     }

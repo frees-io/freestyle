@@ -16,15 +16,16 @@ class freeTests extends WordSpec with Matchers {
     }
 
     "provide instances through it's companion `apply`" in {
-      SCtors1[SCtors1.Op].isInstanceOf[SCtors1[SCtors1.Op]] shouldBe true
+      SCtors1.to[SCtors1.Op].isInstanceOf[SCtors1.To[SCtors1.Op]] shouldBe true
     }
 
     "allow implicit sumoning" in {
-      implicitly[SCtors1[SCtors1.Op]].isInstanceOf[SCtors1[SCtors1.Op]] shouldBe true
+      implicitly[SCtors1.To[SCtors1.Op]].isInstanceOf[SCtors1.To[SCtors1.Op]] shouldBe true
     }
 
     "provide automatic implementations for smart constructors" in {
-      val s = SCtors1[SCtors1.Op]
+      val s = SCtors1.to[SCtors1.Op]
+      import s._
       val program = for {
         a <- s.x(1)
         b <- s.y(1)
@@ -34,7 +35,8 @@ class freeTests extends WordSpec with Matchers {
 
     "respond to implicit evidences with compilable runtimes" in {
       implicit val optionHandler = interps.optionHandler1
-      val s                          = SCtors1[SCtors1.Op]
+      val s = SCtors1.to[SCtors1.Op]
+      import s._
       val program = for {
         a <- s.x(1)
         b <- s.y(1)
@@ -45,7 +47,7 @@ class freeTests extends WordSpec with Matchers {
     "reuse program interpretation in diferent runtimes" in {
       implicit val optionHandler = interps.optionHandler1
       implicit val listHandler   = interps.listHandler1
-      val s                          = SCtors1[SCtors1.Op]
+      val s = SCtors1.to[SCtors1.Op]
       val program = for {
         a <- s.x(1)
         b <- s.y(1)
@@ -56,23 +58,23 @@ class freeTests extends WordSpec with Matchers {
 
     "allow multiple args in smart constructors" in {
       @free
-      trait MultiArgs[F[_]] {
-        def x(a: Int, b: Int, c: Int): FreeS[F, Int]
+      trait MultiArgs {
+        def x(a: Int, b: Int, c: Int): OpSeq[Int]
       }
     }
 
     "allow smart constructors with no args" in {
       @free
-      trait NoArgs[F[_]] {
-        def x: FreeS[F, Int]
+      trait NoArgs {
+        def x: OpSeq[Int]
       }
     }
 
     "generate ADTs with friendly names and expose them as dependent types" in {
       @free
-      trait FriendlyFreeS[F[_]] {
-        def sc1(a: Int, b: Int, c: Int): FreeS[F, Int]
-        def sc2(a: Int, b: Int, c: Int): FreeS[F, Int]
+      trait FriendlyFreeS {
+        def sc1(a: Int, b: Int, c: Int): OpSeq[Int]
+        def sc2(a: Int, b: Int, c: Int): OpSeq[Int]
       }
       implicitly[FriendlyFreeS.Op[_] =:= FriendlyFreeS.Op[_]]
       implicitly[FriendlyFreeS.Sc1OP <:< FriendlyFreeS.Op[Int]]
@@ -82,10 +84,10 @@ class freeTests extends WordSpec with Matchers {
 
     "allow smart constructors with type arguments" in {
       @free
-      trait KVStore[F[_]] {
-        def put[A](key: String, value: A): FreeS[F, Unit]
-        def get[A](key: String): FreeS[F, Option[A]]
-        def delete(key: String): FreeS[F, Unit]
+      trait KVStore {
+        def put[A](key: String, value: A): OpSeq[Unit]
+        def get[A](key: String): OpSeq[Option[A]]
+        def delete(key: String): OpSeq[Unit]
       }
       val interpreter = new KVStore.Handler[List] {
         def put[A](key: String, value: A): List[Unit] = Nil
@@ -96,17 +98,17 @@ class freeTests extends WordSpec with Matchers {
 
     "allow evaluation of abstract members that return FreeS.Pars" in {
       @free
-      trait ApplicativesServ[F[_]] {
-        def x(key: String): FreeS.Par[F, String]
-        def y(key: String): FreeS.Par[F, String]
-        def z(key: String): FreeS.Par[F, String]
+      trait ApplicativesServ {
+        def x(key: String): OpPar[String]
+        def y(key: String): OpPar[String]
+        def z(key: String): OpPar[String]
       }
       implicit val interpreter = new ApplicativesServ.Handler[Option] {
         override def x(key: String): Option[String] = Some(key)
         override def y(key: String): Option[String] = Some(key)
         override def z(key: String): Option[String] = Some(key)
       }
-      val v = ApplicativesServ[ApplicativesServ.Op]
+      val v = ApplicativesServ.to[ApplicativesServ.Op]
       import v._
       val program = (x("a") |@| y("b") |@| z("c")).map { _ + _ + _ }.freeS
       program.exec[Option] shouldBe Some("abc")
@@ -114,17 +116,17 @@ class freeTests extends WordSpec with Matchers {
 
     "allow sequential evaluation of combined FreeS & FreeS.Par" in {
       @free
-      trait MixedFreeS[F[_]] {
-        def x(key: String): FreeS.Par[F, String]
-        def y(key: String): FreeS.Par[F, String]
-        def z(key: String): FreeS[F, String]
+      trait MixedFreeS {
+        def x(key: String): OpPar[String]
+        def y(key: String): OpPar[String]
+        def z(key: String): OpSeq[String]
       }
       implicit val interpreter = new MixedFreeS.Handler[Option] {
         override def x(key: String): Option[String] = Some(key)
         override def y(key: String): Option[String] = Some(key)
         override def z(key: String): Option[String] = Some(key)
       }
-      val v = MixedFreeS[MixedFreeS.Op]
+      val v = MixedFreeS.to[MixedFreeS.Op]
       import v._
       val apProgram = (x("a") |@| y("b")).map { _ + _ }
       val program = for {
@@ -135,12 +137,12 @@ class freeTests extends WordSpec with Matchers {
     }
 
     "allow non-FreeS concrete definitions in the trait" in {
-      @free trait WithExtra[F[_]] {
-        def x(a: Int): FreeS.Par[F, String]
+      @free trait WithExtra {
+        def x(a: Int): OpPar[String]
         def y: Int = 5
         val z: Int = 6
       }
-      val v = WithExtra[WithExtra.Op]
+      val v = WithExtra.to[WithExtra.Op]
       v.y shouldBe 5
       v.z shouldBe 6
 
@@ -151,11 +153,11 @@ class freeTests extends WordSpec with Matchers {
     }
 
     "allow `FreeS` operations that use other abstractoperations" in {
-      @free trait Combine[F[_]] {
-        def x(a: Int): FreeS[F, Int]
-        def y(a: Int): FreeS[F, Boolean] = x(a).map { _ >= 0 }
+      @free trait Combine {
+        def x(a: Int): OpSeq[Int]
+        def y(a: Int): OpSeq[Boolean] = x(a).map { _ >= 0 }
       }
-      val v = Combine[Combine.Op]
+      val v = Combine.to[Combine.Op]
       implicit val interpreter = new Combine.Handler[Id]{
         override def x(a: Int): Int = 4
       }
