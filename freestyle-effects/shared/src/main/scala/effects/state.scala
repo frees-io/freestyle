@@ -7,11 +7,11 @@ object state {
 
   final class StateSeedProvider[S] {
 
-    @free sealed abstract class StateM[F[_]] {
-      def get: FreeS.Par[F, S]
-      def set(s: S): FreeS.Par[F, Unit]
-      def modify(f: S => S): FreeS.Par[F, Unit]
-      def inspect[A](f: S => A): FreeS.Par[F, A]
+    @free sealed abstract class StateM {
+      def get: OpPar[S]
+      def set(s: S): OpPar[Unit]
+      def modify(f: S => S): OpPar[Unit]
+      def inspect[A](f: S => A): OpPar[A]
     }
 
     object implicits {
@@ -24,11 +24,11 @@ object state {
         def inspect[A](f: S => A): M[A] = MS.inspect(f)
       }
 
-      class StateInspectFreeSLift[F[_]: StateM] extends FreeSLift[F, Function1[S, ?]] {
+      class StateInspectFreeSLift[F[_]: StateM.To] extends FreeSLift[F, Function1[S, ?]] {
         def liftFSPar[A](fa: S => A): FreeS.Par[F, A] = StateM[F].inspect(fa)
       }
 
-      implicit def freeSLiftStateInspect[F[_]: StateM]: FreeSLift[F, Function1[S, ?]] =
+      implicit def freeSLiftStateInspect[F[_]: StateM.To]: FreeSLift[F, Function1[S, ?]] =
         new StateInspectFreeSLift[F]
 
     }

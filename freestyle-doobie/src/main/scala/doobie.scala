@@ -6,8 +6,8 @@ import fs2.util.{Catchable, Suspendable}
 
 object doobie {
 
-  @free sealed trait DoobieM[F[_]] {
-    def transact[A](f: ConnectionIO[A]): FreeS.Par[F, A]
+  @free sealed trait DoobieM {
+    def transact[A](f: ConnectionIO[A]): OpPar[A]
   }
 
   object implicits {
@@ -17,9 +17,9 @@ object doobie {
         def transact[A](fa: ConnectionIO[A]): M[A] = xa.trans(fa)
       }
 
-    implicit def freeSLiftDoobie[F[_]: DoobieM]: FreeSLift[F, ConnectionIO] =
+    implicit def freeSLiftDoobie[F[_]](implicit TO: DoobieM.To[F]): FreeSLift[F, ConnectionIO] =
       new FreeSLift[F, ConnectionIO] {
-        def liftFSPar[A](cio: ConnectionIO[A]): FreeS.Par[F, A] = DoobieM[F].transact(cio)
+        def liftFSPar[A](cio: ConnectionIO[A]): FreeS.Par[F, A] = TO.transact(cio)
       }
   }
 

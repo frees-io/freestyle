@@ -40,8 +40,8 @@ class ConfigTests extends AsyncWordSpec with Matchers {
 
 object algebras {
   @free
-  trait NonConfig[F[_]] {
-    def x: FreeS[F, Int]
+  trait NonConfig {
+    def x: OpSeq[Int]
   }
 
   implicit def nonConfigHandler: NonConfig.Handler[Future] =
@@ -50,9 +50,9 @@ object algebras {
     }
 
   @module
-  trait App[F[_]] {
-    val nonConfig: NonConfig[F]
-    val configM: ConfigM[F]
+  trait App {
+    val nonConfig: NonConfig
+    val configM: ConfigM
   }
 
   val app = App[App.Op]

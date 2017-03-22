@@ -7,9 +7,9 @@ object reader {
 
   final class EnvironmentProvider[R] {
 
-    @free sealed abstract class ReaderM[F[_]] {
-      def ask: FreeS.Par[F, R]
-      def reader[B](f: R => B): FreeS.Par[F, B]
+    @free sealed abstract class ReaderM {
+      def ask: OpPar[R]
+      def reader[B](f: R => B): OpPar[B]
     }
 
     object implicits {
