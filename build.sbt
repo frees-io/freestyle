@@ -158,12 +158,12 @@ lazy val freestyleDoobie = (project in file("freestyle-doobie")).
     )
   )
 
-lazy val freestyleTwitterFuture = (project in file("freestyle-twitter-future")).
+lazy val freestyleTwitterUtil = (project in file("freestyle-twitter-util")).
   dependsOn(freestyleJVM).
-  settings(name := "freestyle-twitter-future").
+  settings(name := "freestyle-twitter-util").
   settings(
     libraryDependencies ++= Seq(
-      "com.twitter" %% "util-core" % "6.42.0",
+      "io.catbird" %% "catbird-util" % "0.13.0",
       "org.scalatest" %% "scalatest"        % "3.0.1" % "test"
     )
   )

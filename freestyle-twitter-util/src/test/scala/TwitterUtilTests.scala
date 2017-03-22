@@ -4,12 +4,12 @@ package twitter
 import cats.implicits._
 import org.scalatest.{Matchers, WordSpec}
 
-import com.twitter.util.{Future, Await, Duration, FuturePool}
+import com.twitter.util._
 import freestyle.implicits._
 
-class TwitterFutureTests extends WordSpec with Matchers {
+class TwitterUtilTests extends WordSpec with Matchers {
 
-  "Twitter Future interpretation" should {
+  "Twitter util interpretation" should {
 
     import algebras._
 
@@ -36,7 +36,7 @@ class TwitterFutureTests extends WordSpec with Matchers {
     }
 
     "allow non deterministic execution when interpreting to twitter.util.Future" in {
-      import freestyle.twitter.future.implicits._
+      import freestyle.twitter.util.implicits._
 
       val test = new NonDeterminismTestShared
       import test._
@@ -54,19 +54,34 @@ class TwitterFutureTests extends WordSpec with Matchers {
     }
 
     "allow deterministic execution when interpreting to twitter.util.Future" in {
-      import freestyle.twitter.future.implicits._
+      import freestyle.twitter.util.implicits._
+      import captureInterpreters._
 
       val test = new NonDeterminismTestShared
       import test._
 
-      implicit val interpreter = new MixedFreeS.Handler[Future] {
-        override def x: Future[Int] = Future(blocker(1, 1000L))
-        override def y: Future[Int] = Future(blocker(2, 0L))
-        override def z: Future[Int] = Future(blocker(3, 2000L))
-      }
-
       Await.result(program.exec[Future], Duration.Top) shouldBe List(3, 1, 2, 3)
-      buf.toArray shouldBe Array(3, 1, 2, 3)
+    }
+
+    "allow execution when interpreting to twitter.util.Try" in {
+      import freestyle.twitter.util.implicits._
+      import captureInterpreters._
+
+      val test = new NonDeterminismTestShared
+      import test._
+
+      program.exec[Try] shouldBe Return(List(3, 1, 2, 3))
+    }
+
+    "allow execution when interpreting to twitter.util.Var" in {
+      import freestyle.twitter.util.implicits._
+      import captureInterpreters._
+
+      val test = new NonDeterminismTestShared
+      import test._
+
+      val x = program.exec[Var]
+      x.sample() shouldBe List(3, 1, 2, 3)
     }
 
   }
@@ -80,6 +95,18 @@ object algebras {
     def x: FreeS.Par[F, Int]
     def y: FreeS.Par[F, Int]
     def z: FreeS[F, Int]
+  }
+
+}
+
+object captureInterpreters {
+
+  import algebras._
+
+  implicit def interpreter[M[_]](implicit C: Capture[M]): MixedFreeS.Handler[M] = new MixedFreeS.Handler[M] {
+    override def x: M[Int] = C.capture(1)
+    override def y: M[Int] = C.capture(2)
+    override def z: M[Int] = C.capture(3)
   }
 
 }
