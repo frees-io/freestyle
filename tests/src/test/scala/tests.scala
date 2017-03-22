@@ -5,7 +5,7 @@ import cats.implicits._
 
 class tests extends WordSpec with Matchers {
 
-  "Applicative Parallel Support" should {
+  "Presentation Compiler Support" should {
 
     "generate code that works in the presentation compiler" in {
       import org.ensime.pcplod._
