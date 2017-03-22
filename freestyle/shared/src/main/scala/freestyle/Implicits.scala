@@ -25,7 +25,7 @@ trait Interpreters {
 }
 
 trait Monads {
-  implicit def catsFreeMonadForFreeS[F[_]]: Monad[λ[a => Free[FreeApplicative[F, ?], a]]] =
+  implicit def catsFreeMonadForFreeS[F[_]]: Monad[FreeS[F, ?]] =
     Free.catsFreeMonadForFree[FreeApplicative[F, ?]]
 }
 

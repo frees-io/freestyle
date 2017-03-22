@@ -1,7 +1,7 @@
 package freestyle
 
 import cats.implicits._
-import cats.Id
+import cats.Monad
 import org.scalatest.{Matchers, WordSpec}
 
 class implicitsTests extends WordSpec with Matchers {
@@ -11,25 +11,23 @@ class implicitsTests extends WordSpec with Matchers {
     import algebras._
     import freestyle.implicits._
 
-    "make monad implicitly available" in {
+    "provide a Monad for FreeS" in {
       type G[A] = FreeS[SCtors1.Op, A]
-      implicitly[cats.Monad[G]].isInstanceOf[cats.Monad[G]]
+      "Monad[G]" should compile
     }
 
-    "enable sequenceU" in {
+    "enable traverseU" in {
+      implicit val optionHandler = interps.optionHandler1
       val s = SCtors1[SCtors1.Op]
-      val program = for {
-        a <- List(s.x(1), s.x(2)).sequenceU
-      } yield a
-      program.isInstanceOf[FreeS[SCtors1.Op, List[Int]]] shouldBe true
+      val program = List(1, 2).traverseU(s.x)
+      program.exec[Option] shouldBe (Some(List(1, 2)))
     }
 
     "enable sequence" in {
+      implicit val optionHandler = interps.optionHandler1
       val s = SCtors1[SCtors1.Op]
-      val program = for {
-        a <- List(s.x(1), s.x(2)).sequence[λ[a => FreeS[SCtors1.Op, a]], Int]
-      } yield a
-      program.isInstanceOf[FreeS[SCtors1.Op, List[Int]]] shouldBe true
+      val program = List(s.x(1), s.x(2)).sequence[FreeS[SCtors1.Op, ?], Int]
+      program.exec[Option] shouldBe (Some(List(1, 2)))
     }
   }
 }
