@@ -3,7 +3,7 @@ package freestyle
 import cats.Monad
 import cats.arrow.FunctionK
 import cats.data.Coproduct
-import cats.free.{FreeApplicative, Inject}
+import cats.free.{Free, FreeApplicative, Inject}
 import shapeless.Lazy
 
 
@@ -24,4 +24,9 @@ trait Interpreters {
     Inject.catsFreeRightInjectInstance(I.value)
 }
 
-object implicits extends Interpreters
+trait FreeSInstances {
+  implicit def freestyleMonadForFreeS[F[_]]: Monad[FreeS[F, ?]] =
+    Free.catsFreeMonadForFree[FreeApplicative[F, ?]]
+}
+
+object implicits extends Interpreters with FreeSInstances
