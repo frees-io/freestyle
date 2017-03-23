@@ -27,8 +27,8 @@ import scala.concurrent.ExecutionContext.Implicits.global
 
 object slick {
 
-  @free sealed trait SlickM[F[_]] {
-    def run[A](f: DBIO[A]): FreeS.Par[F, A]
+  @free sealed trait SlickM {
+    def run[A](f: DBIO[A]): OpPar[A]
   }
 
   object implicits {

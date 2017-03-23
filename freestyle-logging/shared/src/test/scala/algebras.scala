@@ -23,8 +23,8 @@ import scala.concurrent.Future
 object algebras {
 
   @free
-  trait NonLogging[F[_]] {
-    def x: FreeS[F, Int]
+  trait NonLogging {
+    def x: OpSeq[Int]
   }
 
   implicit def nonLoggingHandler: NonLogging.Handler[Future] =

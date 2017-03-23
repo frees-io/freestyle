@@ -73,8 +73,8 @@ class SlickTests extends AsyncWordSpec with Matchers {
 
 object algebras {
   @free
-  trait NonSlick[F[_]] {
-    def x: FreeS[F, Int]
+  trait NonSlick {
+    def x: OpSeq[Int]
   }
 
   implicit def nonSlickHandler: NonSlick.Handler[Future] =

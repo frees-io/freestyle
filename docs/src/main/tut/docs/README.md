@@ -44,14 +44,14 @@ import freestyle.implicits._
 
 object algebras {
 
-    @free trait Validation[F[_]] {
-      def minSize(s: String, n: Int): FreeS.Par[F, Boolean]
-      def hasNumber(s: String): FreeS.Par[F, Boolean]
+    @free trait Validation {
+      def minSize(s: String, n: Int): OpPar[Boolean]
+      def hasNumber(s: String): OpPar[Boolean]
     }
 
-    @free trait Interaction[F[_]] {
-      def tell(msg: String): FreeS[F, Unit]
-      def ask(prompt: String): FreeS[F, String]
+    @free trait Interaction {
+      def tell(msg: String): OpSeq[Unit]
+      def ask(prompt: String): OpSeq[String]
     }
 }
 ```

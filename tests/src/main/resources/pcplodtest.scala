@@ -19,8 +19,8 @@ import freestyle.implicits._
 import cats.implicits._
 
 object pcplodtest {
-  @free trait PcplodTestAlgebra[F[_]] {
-    def test(n: Int): FreeS[F, Int]
+  @free trait PcplodTestAlgebra {
+    def test(n: Int): OpSeq[Int]
   }
   implicit val impl = new PcplodTestAlgebra.H@handler@andler[Option] {
     override def test(n:Int): Option[Int] = Some(1)

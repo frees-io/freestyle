@@ -79,9 +79,9 @@ object algebras {
   case class User(name: String)
 
   @free
-  trait UserRepository[F[_]] {
-    def get(id: Long): FreeS.Par[F, User]
-    def list: FreeS.Par[F, List[User]]
+  trait UserRepository {
+    def get(id: Long): OpPar[User]
+    def list: OpPar[List[User]]
   }
 
   @module

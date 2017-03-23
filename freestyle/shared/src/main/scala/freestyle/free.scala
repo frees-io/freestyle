@@ -18,6 +18,11 @@ package freestyle
 
 import scala.reflect.macros.blackbox.Context
 
+trait EffectLike[F[_]] {
+  final type OpSeq[A] = FreeS[F, A]
+  final type OpPar[A] = FreeS.Par[F, A]
+}
+
 object freeImpl {
 
   def free(c: Context)(annottees: c.Expr[Any]*): c.universe.Tree = {
@@ -42,8 +47,8 @@ object freeImpl {
         if (cls.mods.hasFlag(Flag.TRAIT | Flag.ABSTRACT)) {
           val effectTrait = cls.duplicate
           q"""
-            $effectTrait
-            ${mkEffectObject(effectTrait)}
+            ${mkEffectTrait(effectTrait.duplicate)}
+            ${mkEffectObject(effectTrait.duplicate)}
           """
         } else fail(s"$invalid in ${cls.name}. $abstractOnly")
 
@@ -53,9 +58,24 @@ object freeImpl {
     }
 
     def isRequestDef(tree: Tree): Boolean = tree match {
-      case q"$mods def $name[..$tparams](...$paramss): FreeS[..$args]" => true
-      case q"$mods def $name[..$tparams](...$paramss): FreeS.Par[..$args]" => true
+      case q"$mods def $name[..$tparams](...$paramss): OpSeq[..$args]" => true
+      case q"$mods def $name[..$tparams](...$paramss): OpPar[..$args]" => true
       case _ => false
+    }
+
+    def mkEffectTrait(cls: ClassDef): ClassDef = {
+      val FF = freshTypeName("FF$")
+
+      val ffTParam: TypeDef = {
+        val wildcard = TypeDef(Modifiers(Flag.PARAM), typeNames.WILDCARD, List(), TypeBoundsTree(EmptyTree, EmptyTree))
+        TypeDef(Modifiers(Flag.PARAM), FF, List(wildcard), TypeBoundsTree(EmptyTree, EmptyTree))
+      }
+      val ClassDef(mods, name, tparams, Template(parents, self, body)) = cls
+
+      val ntparams = ffTParam :: tparams
+      val nparents = parents :+ tq"freestyle.EffectLike[$FF]"
+
+      ClassDef(mods, name, ntparams, Template(nparents, self, body))
     }
 
     class Request(reqDef: DefDef) {
@@ -106,8 +126,8 @@ object freeImpl {
 
         val tpt = reqDef.tpt.asInstanceOf[AppliedTypeTree]
         val (liftType, impl) = tpt match {
-          case tq"FreeS    [$ff, $aa]" => ( tq"FreeS    [$LL, $aa]", q"FreeS.liftPar($injected)" )
-          case tq"FreeS.Par[$ff, $aa]" => ( tq"FreeS.Par[$LL, $aa]",                  injected   )
+          case tq"OpSeq[$aa]" => (tpt, q"FreeS.liftPar($injected)" )
+          case tq"OpPar[$aa]" => (tpt, injected )
           case _ => // Note: due to filter in getRequestDefs, this case is unreachable.
             fail(s"unknown abstract type found in @free container: $tpt : raw: ${showRaw(tpt)}")
         }
@@ -120,10 +140,10 @@ object freeImpl {
 
       val requests: List[Request] = effectTrait.impl.collect {
         case dd:DefDef if isRequestDef(dd) => new Request(dd.asInstanceOf[DefDef])
-     }
+      }
 
       val Eff = effectTrait.name
-      val TTs = effectTrait.tparams.tail
+      val TTs = effectTrait.tparams
       val tns = TTs.map(_.name)
       val ev =  freshTermName("ev$")
       val ii =  freshTermName("ii$")

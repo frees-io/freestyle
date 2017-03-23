@@ -63,9 +63,9 @@ case class User(name: String)
 object userrepo {
 
   @free
-  trait UserApp[F[_]] {
-    def get(id: Int): FreeS.Par[F, User]
-    def list: FreeS[F, List[User]]
+  trait UserApp {
+    def get(id: Int): OpPar[User]
+    def list: OpSeq[List[User]]
   }
 
   implicit val handler: UserApp.Handler[Id] = new UserApp.Handler[Id] {

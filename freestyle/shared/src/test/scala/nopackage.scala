@@ -18,14 +18,14 @@
 
 import freestyle._
 
-@free trait Logitech[F[_]] {
-  def eyes(s: String): FreeS.Par[F, Boolean]
-  def skills(s: String): FreeS.Par[F, Boolean]
+@free trait Logitech {
+  def eyes(s: String): OpPar[Boolean]
+  def skills(s: String): OpPar[Boolean]
 }
 
-@free trait Asia[F[_]] {
-  def recycled(msg: String): FreeS[F, Unit]
-  def rhino(prompt: String): FreeS[F, String]
+@free trait Asia {
+  def recycled(msg: String): OpSeq[Unit]
+  def rhino(prompt: String): OpSeq[String]
 }
 
 @module trait Age[F[_]] {

@@ -96,10 +96,10 @@ class TwitterUtilTests extends WordSpec with Matchers {
 object algebras {
 
   @free
-  trait MixedFreeS[F[_]] {
-    def x: FreeS.Par[F, Int]
-    def y: FreeS.Par[F, Int]
-    def z: FreeS[F, Int]
+  trait MixedFreeS {
+    def x: OpPar[Int]
+    def y: OpPar[Int]
+    def z: OpSeq[Int]
   }
 
 }

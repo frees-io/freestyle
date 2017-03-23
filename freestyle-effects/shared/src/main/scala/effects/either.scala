@@ -24,10 +24,10 @@ object either {
 
   final class ErrorProvider[E] {
 
-    @free sealed trait EitherM[F[_]] {
-      def either[A](fa: Either[E, A]): FreeS.Par[F, A]
-      def error[A](e: E): FreeS.Par[F, A]
-      def catchNonFatal[A](a: Eval[A], f: Throwable => E): FreeS.Par[F, A]
+    @free sealed trait EitherM {
+      def either[A](fa: Either[E, A]): OpPar[A]
+      def error[A](e: E): OpPar[A]
+      def catchNonFatal[A](a: Eval[A], f: Throwable => E): OpPar[A]
     }
 
     object implicits {
