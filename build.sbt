@@ -114,6 +114,16 @@ lazy val freestyleDoobie = (project in file("freestyle-doobie"))
     )
   )
 
+lazy val freestyleTwitterUtil = (project in file("freestyle-twitter-util")).
+  dependsOn(freestyleJVM).
+  settings(name := "freestyle-twitter-util").
+  settings(
+    libraryDependencies ++= Seq(
+      "io.catbird" %% "catbird-util" % "0.13.0",
+      "org.scalatest" %% "scalatest" % "3.0.1" % "test"
+    )
+  )
+
 lazy val fixResources = taskKey[Unit]("Fix application.conf presence on first clean build.")
 
 lazy val freestyleConfig = (crossProject in file("freestyle-config"))
