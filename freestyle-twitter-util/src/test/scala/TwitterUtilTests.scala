@@ -73,17 +73,6 @@ class TwitterUtilTests extends WordSpec with Matchers {
       program.exec[Try] shouldBe Return(List(3, 1, 2, 3))
     }
 
-    "allow execution when interpreting to twitter.util.Var" in {
-      import freestyle.twitter.util.implicits._
-      import captureInterpreters._
-
-      val test = new NonDeterminismTestShared
-      import test._
-
-      val x = program.exec[Var]
-      x.sample() shouldBe List(3, 1, 2, 3)
-    }
-
   }
 
 }
@@ -103,10 +92,11 @@ object captureInterpreters {
 
   import algebras._
 
-  implicit def interpreter[M[_]](implicit C: Capture[M]): MixedFreeS.Handler[M] = new MixedFreeS.Handler[M] {
-    override def x: M[Int] = C.capture(1)
-    override def y: M[Int] = C.capture(2)
-    override def z: M[Int] = C.capture(3)
-  }
+  implicit def interpreter[M[_]](implicit C: Capture[M]): MixedFreeS.Handler[M] =
+    new MixedFreeS.Handler[M] {
+      override def x: M[Int] = C.capture(1)
+      override def y: M[Int] = C.capture(2)
+      override def z: M[Int] = C.capture(3)
+    }
 
 }
