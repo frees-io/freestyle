@@ -49,8 +49,12 @@ object ProjectPlugin extends AutoPlugin {
     )
   }
 
+  import scoverage.ScoverageSbtPlugin.autoImport._
+
   override def projectSettings =
     Seq(
+      coverageMinimum := 80,
+      coverageFailOnMinimum := false,
       description := "A Cohesive & Pragmatic Framework of FP centric Scala libraries",
       onLoad := (Command.process("project freestyle", _: State)) compose (onLoad in Global).value,
       scalacOptions ++= scalacAdvancedOptions,
