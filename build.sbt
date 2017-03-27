@@ -119,8 +119,7 @@ lazy val freestyleTwitterUtil = (project in file("freestyle-twitter-util")).
   settings(name := "freestyle-twitter-util").
   settings(
     libraryDependencies ++= Seq(
-      "io.catbird" %% "catbird-util" % "0.13.0",
-      "org.scalatest" %% "scalatest" % "3.0.1" % "test"
+      %%("catbird-util")
     )
   )
 
@@ -197,8 +196,8 @@ lazy val freestylePlay = (project in file("freestyle-play"))
   .settings(
     parallelExecution in Test := false,
     libraryDependencies ++= Seq(
-      "com.typesafe.play" %% "play"      % "2.6.0-M2",
-      "com.typesafe.play" %% "play-test" % "2.6.0-M2" % "test"
+      %%("play"),
+      %%("play-test") % "test"
     )
   )
 
@@ -260,6 +259,6 @@ lazy val freestyleHttpFinch = (project in file("freestyle-http-finch"))
   .settings(name := "freestyle-http-finch")
   .settings(
     libraryDependencies ++= Seq(
-      "com.github.finagle" %% "finch-core" % "0.13.0"
+      %%("finch-core")
     )
   )
