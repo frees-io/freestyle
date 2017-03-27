@@ -16,12 +16,18 @@
 
 package freestyle
 
+import cats.{ Applicative, Monad }
 import scala.annotation.{compileTimeOnly, StaticAnnotation}
 import scala.language.experimental.macros
 import scala.reflect.macros.blackbox
 
-trait FreeModuleLike {
-  type Op[A]
+trait EffectLike {
+  type OpSeq[A]
+  type OpPar[A]
+
+  implicit def parComb: Applicative[OpPar]
+  implicit def seqComb: Monad[OpSeq]
+
 }
 
 @compileTimeOnly("enable macro paradise to expand @free macro annotations")
@@ -30,6 +36,9 @@ class free extends StaticAnnotation {
 }
 
 object free {
+
+  private[this] val onlyTraitMessage =
+    "The `@free` macro annotation can only be applied to either a trait or an abstract class that has no companion"
 
   def impl(c: blackbox.Context)(annottees: c.Expr[Any]*): c.universe.Tree = {
     import c.universe._
@@ -41,16 +50,12 @@ object free {
       case List(Expr(cls: ClassDef)) =>
         val effectTrait @ ClassDef(clsMods, _, _, _) = cls.duplicate
         if (clsMods.hasFlag(Flag.TRAIT | Flag.ABSTRACT)) {
-          val effectObject = mkEffectObject(effectTrait)
           q"""
-            $effectTrait
-            $effectObject
+            ${mkEffectTrait(effectTrait)}
+            ${mkEffectObject(effectTrait)}
           """
-        } else
-          fail(s"@free requires trait or abstract class")
-      case _ =>
-        fail(
-          s"Invalid @free usage, only traits and abstract classes without companions are supported")
+        } else fail(s"Invaled @free usage. $onlyTraitMessage")
+      case _ => fail(s"Invalid @free usage. $onlyTraitMessage")
     }
 
     // OP is the name of the Root trait of the Effect ADT
@@ -59,6 +64,12 @@ object free {
     lazy val MM = TypeName("MM")
     // LL is the target of the Lifter's Injection
     lazy val LL = TypeName("LL")
+
+    def mkEffectTrait(cls: ClassDef): ClassDef = cls match {
+      case ClassDef( mods, name, tparams, Template(parents, self, body)) =>
+        val nparents = parents :+ tq"freestyle.EffectLike"
+        ClassDef(mods, name, tparams, Template(nparents, self, body))
+    }
 
     class Request(reqDef: DefDef) {
 
@@ -120,8 +131,8 @@ object free {
 
         val tpt = reqDef.tpt.asInstanceOf[AppliedTypeTree]
         val (liftType, impl) = tpt match {
-          case tq"FreeS    [$ff, $aa]" => ( tq"FreeS    [$LL, $aa]", q"FreeS.liftPar($injected)" )
-          case tq"FreeS.Par[$ff, $aa]" => ( tq"FreeS.Par[$LL, $aa]",                  injected   )
+          case tq"OpSeq[$aa]" => (tpt, q"FreeS.liftPar($injected)" )
+          case tq"OpPar[$aa]" => (tpt, injected )
           case _ => // Note: due to filter in getRequestDefs, this case is unreachable.
             fail(s"unknown abstract type found in @free container: $tpt : raw: ${showRaw(tpt)}")
         }
@@ -132,21 +143,20 @@ object free {
 
     def getRequestDefs(effectTrait: ClassDef): List[DefDef] =
       effectTrait.impl.filter {
-        case q"$mods def $name[..$tparams](...$paramss): FreeS[..$args]"     => true
-        case q"$mods def $name[..$tparams](...$paramss): FreeS.Par[..$args]" => true
+        case q"$mods def $name[..$tparams](...$paramss): OpSeq[..$args]" => true
+        case q"$mods def $name[..$tparams](...$paramss): OpPar[..$args]" => true
         case _ => false
       }.map(_.asInstanceOf[DefDef])
 
     def mkEffectObject(effectTrait: ClassDef) : ModuleDef= {
 
-      val effectName: TypeName = effectTrait.name
       val requests: List[Request]  = getRequestDefs(effectTrait).map( p => new Request(p))
-
-      val Eff = effectTrait.name
-      val TTs = effectTrait.tparams.tail
+      val Eff: TypeName = effectTrait.name
+      val TTs = effectTrait.tparams
+      val tns = TTs.map(_.name)
 
       q"""
-        object ${effectName.toTermName} {
+        object ${Eff.toTermName} {
 
           import cats.arrow.FunctionK
           import cats.free.Inject
@@ -156,15 +166,21 @@ object free {
           ..${requests.map( _.mkRequestClass(TTs))}
 
           class To[$LL[_], ..$TTs](implicit I: Inject[$OP, $LL])
-            extends $Eff[$LL, ..${TTs.map(_.name)}] {
-              ..${requests.map(_.raiser )}
+            extends $Eff[..$tns] {
+              ..${requests.map(_.raiser)}
+
+              import cats.{ Applicative, Monad }
+              override type OpSeq[A] = FreeS[$LL,A]
+              override type OpPar[A] = FreeS.Par[$LL,A]
+              implicit override def parComb: Applicative[OpPar] = implicitly[Applicative[OpPar]]
+              implicit override def seqComb: Monad[OpSeq] = implicitly[Monad[OpSeq]]
+
           }
 
           implicit def to[$LL[_], ..$TTs](implicit I: Inject[$OP, $LL]):
-              To[$LL, ..${TTs.map(_.name)}] = new To[$LL, ..$TTs]
+              To[$LL, ..$tns] = new To[$LL, ..$tns]
 
-          def apply[$LL[_], ..$TTs](implicit ev: $Eff[$LL, ..${TTs.map(_.name)}]):
-              $Eff[$LL, ..${TTs.map(_.name)}] = ev
+          def apply[$LL[_], ..$TTs](implicit ev: To[$LL,..$tns]): To[$LL,..$tns] = ev
 
           trait Handler[$MM[_], ..$TTs] extends FunctionK[$OP, $MM] {
             ..${requests.map( _.handlerDef )}

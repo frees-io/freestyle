@@ -15,8 +15,8 @@ We'll start by creating a simple algebra for our application for printing messag
 ```tut:book
 import freestyle._
 
-@free trait Interact[F[_]] {
-  def tell(msg: String): FreeS[F, Unit]
+@free trait Interact {
+  def tell(msg: String): OpSeq[Unit]
 }
 ```
 
@@ -28,9 +28,9 @@ import freestyle.implicits._
 import freestyle.fs2._
 import freestyle.fs2.implicits._
 
-@module trait App[F[_]] {
-  val interact: Interact[F]
-  val streams: StreamM[F]
+@module trait App {
+  val interact: Interact
+  val streams: StreamM
 }
 ```
 
@@ -40,7 +40,7 @@ Now that we've got our `Interact` algebra and `StreamM` in our app, we're ready 
 import _root_.fs2.Stream
 
 def program[F[_]](
-  implicit app: App[F]
+  implicit app: App.To[F]
   ): FreeS[F, Vector[Int]] =  for {
     _ <- app.interact.tell("Hello")
 	x <- app.streams.runLog(Stream.emits(List(1, 2, 3)))
@@ -85,7 +85,7 @@ We've already seen `StreamM#runLog`, that runs a stream accumulating its result 
 
 ```tut:book
 def program[F[_]](
-  implicit app: App[F]
+  implicit app: App.To[F]
 ): FreeS[F, Vector[Int]] = app.streams.runLog(Stream.emit(42))
 
 Await.result(program[App.Op].exec[Future], Duration.Inf)
@@ -103,7 +103,7 @@ Now we can fold over the above stream by adding all its numbers:
 
 ```tut:book
 def program[F[_]](
-  implicit app: App[F]
+  implicit app: App.To[F]
 ): FreeS[F, Int] = app.streams.runFold(0, (x: Int, y: Int) => x + y)(aStream)
 
 Await.result(program[App.Op].exec[Future], Duration.Inf)
@@ -115,7 +115,7 @@ Another option is to run a stream discarding all the results but the last one. S
 
 ```tut:book
 def program[F[_]](
-  implicit app: App[F]
+  implicit app: App.To[F]
 ): FreeS[F, Option[Int]] = app.streams.runLast(aStream)
 
 Await.result(program[App.Op].exec[Future], Duration.Inf)
@@ -150,7 +150,7 @@ We now can interleave this stream inside our free programs, choosing the streams
 
 ```tut:book
 def program[F[_]](
-  implicit app: App[F]
+  implicit app: App.To[F]
 ): FreeS[F, Unit] = for {
  _ <- app.interact.tell("Converting from farenheit to celsius")
  _ <- app.streams.run(converter)

@@ -21,9 +21,9 @@ import cats.MonadFilter
 
 object option {
 
-  @free sealed trait OptionM[F[_]] {
-    def option[A](fa: Option[A]): FreeS.Par[F, A]
-    def none[A]: FreeS.Par[F, A]
+  @free sealed trait OptionM {
+    def option[A](fa: Option[A]): OpPar[A]
+    def none[A]: OpPar[A]
   }
 
   trait OptionImplicits {
@@ -33,11 +33,11 @@ object option {
       def none[A]: M[A]                  = MF.empty[A]
     }
 
-    class OptionFreeSLift[F[_]: OptionM] extends FreeSLift[F, Option] {
+    class OptionFreeSLift[F[_]: OptionM.To] extends FreeSLift[F, Option] {
       def liftFSPar[A](fa: Option[A]): FreeS.Par[F, A] = OptionM[F].option(fa)
     }
 
-    implicit def freeSLiftOption[F[_]: OptionM]: FreeSLift[F, Option] = new OptionFreeSLift[F]
+    implicit def freeSLiftOption[F[_]: OptionM.To]: FreeSLift[F, Option] = new OptionFreeSLift[F]
   }
 
   object implicits extends OptionImplicits

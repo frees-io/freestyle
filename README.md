@@ -13,17 +13,17 @@ Applications built with Freestyle can be interpreted to any runtime semantics su
 ```scala
 import freestyle._
 
-@free trait Database[F[_]] {
-  def get(id: UserId): FreeS[F, User]
+@free trait Database {
+  def get(id: UserId): OpSeq[User]
 }
 
-@free trait Cache[F[_]] {
-  def get(id: UserId): FreeS[F, User]
+@free trait Cache {
+  def get(id: UserId): OpSeq[User]
 }
 
-@module trait Persistence[F[_]] {
-  val database: Database[F]
-  val cache: Cache[F]
+@module trait Persistence] {
+  val database: Database
+  val cache: Cache
 }
 ```
 
@@ -53,8 +53,8 @@ the target runtime interpreters.
 def loadUser[F[_]]
   (userId: UserId)
   (implicit 
-    doobie: DoobieM[F], 
-    logging: LoggingM[F]): FreeS[F, User] = {
+    doobie: DoobieM.To[F], 
+    logging: LoggingM.To[F]): FreeS[F, User] = {
     import doobie.implicits._
     for {
       user <- (sql"SELECT * FROM User WHERE userId = $userId"

@@ -56,7 +56,7 @@ class PlayTests extends AsyncWordSpec with Matchers {
     import algebras._
     import handlers._
 
-    def program[F[_]: Noop]: FreeS[F, Result] =
+    def program[F[_]: Noop.To]: FreeS[F, Result] =
       for {
         x <- Noop[F].noop
       } yield Results.Ok(x)
@@ -86,8 +86,8 @@ class PlayTests extends AsyncWordSpec with Matchers {
 
 object algebras {
   @free
-  trait Noop[F[_]] {
-    def noop: FreeS[F, Unit]
+  trait Noop {
+    def noop: OpSeq[Unit]
   }
 }
 

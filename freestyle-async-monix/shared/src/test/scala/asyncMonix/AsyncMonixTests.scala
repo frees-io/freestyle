@@ -33,7 +33,7 @@ class AsyncMonixTests extends AsyncWordSpec with Matchers {
 
   "Async Monix Freestyle integration" should {
     "support Task as the target runtime" in {
-      def program[F[_]: AsyncM] =
+      def program[F[_]: AsyncM.To] =
         for {
           a <- FreeS.pure(1)
           b <- AsyncM[F].async[Int]((cb) => cb(Right(42)))

@@ -20,13 +20,13 @@ import _root_.fetch._
 
 object fetch {
 
-  @free sealed trait FetchM[F[_]] {
-    def runA[A](f: Fetch[A]): FreeS.Par[F, A]
-    def runF[A](f: Fetch[A]): FreeS.Par[F, (FetchEnv, A)]
-    def runE[A](f: Fetch[A]): FreeS.Par[F, FetchEnv]
-    def runAWithCache[A](f: Fetch[A], cache: DataSourceCache): FreeS.Par[F, A]
-    def runFWithCache[A](f: Fetch[A], cache: DataSourceCache): FreeS.Par[F, (FetchEnv, A)]
-    def runEWithCache[A](f: Fetch[A], cache: DataSourceCache): FreeS.Par[F, FetchEnv]
+  @free sealed trait FetchM {
+    def runA[A](f: Fetch[A]): OpPar[A]
+    def runF[A](f: Fetch[A]): OpPar[(FetchEnv, A)]
+    def runE[A](f: Fetch[A]): OpPar[FetchEnv]
+    def runAWithCache[A](f: Fetch[A], cache: DataSourceCache): OpPar[A]
+    def runFWithCache[A](f: Fetch[A], cache: DataSourceCache): OpPar[(FetchEnv, A)]
+    def runEWithCache[A](f: Fetch[A], cache: DataSourceCache): OpPar[FetchEnv]
   }
 
   object implicits {
@@ -44,11 +44,11 @@ object fetch {
           fa.runE[M](cache)
       }
 
-    class FetchFreeSLift[F[_]: FetchM] extends FreeSLift[F, Fetch] {
+    class FetchFreeSLift[F[_]: FetchM.To] extends FreeSLift[F, Fetch] {
       def liftFSPar[A](fetch: Fetch[A]): FreeS.Par[F, A] = FetchM[F].runA(fetch)
     }
 
-    implicit def freeSLiftFetch[F[_]: FetchM]: FreeSLift[F, Fetch] = new FetchFreeSLift[F]
+    implicit def freeSLiftFetch[F[_]: FetchM.To]: FreeSLift[F, Fetch] = new FetchFreeSLift[F]
 
   }
 

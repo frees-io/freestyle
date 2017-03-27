@@ -33,10 +33,10 @@ class Http4sTests extends AsyncWordSpec with Matchers {
 
   "Http4s Freestyle integration" should {
 
-    def getUser[F[_]: App](id: Long): FreeS[F, User] =
+    def getUser[F[_]: App.To](id: Long): FreeS[F, User] =
       App[F].userRepo.get(id)
 
-    def getUsers[F[_]: App]: FreeS[F, List[User]] =
+    def getUsers[F[_]: App.To]: FreeS[F, List[User]] =
       App[F].userRepo.list
 
     "provide a EntityEncoder for FreeS types" in {
@@ -79,14 +79,14 @@ object algebras {
   case class User(name: String)
 
   @free
-  trait UserRepository[F[_]] {
-    def get(id: Long): FreeS.Par[F, User]
-    def list: FreeS.Par[F, List[User]]
+  trait UserRepository {
+    def get(id: Long): OpPar[User]
+    def list: OpPar[List[User]]
   }
 
   @module
-  trait App[F[_]] {
-    val userRepo: UserRepository[F]
+  trait App {
+    val userRepo: UserRepository
   }
 }
 

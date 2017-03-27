@@ -38,10 +38,10 @@ object config {
     def millisDuration(path: String): Option[Duration]
   }
 
-  @free sealed trait ConfigM[F[_]] {
-    def load: FreeS[F, Config]
-    def empty: FreeS[F, Config]
-    def parseString(s: String): FreeS[F, Config]
+  @free sealed trait ConfigM {
+    def load: OpSeq[Config]
+    def empty: OpSeq[Config]
+    def parseString(s: String): OpSeq[Config]
   }
 
   object implicits {

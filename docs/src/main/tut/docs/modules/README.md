@@ -19,17 +19,17 @@ In the presentation side an application may display or perform some input valida
 import freestyle._
 
 object algebras {
-    @free trait Database[F[_]] {
-      def get(id: Int): FreeS[F, Int]
+    @free trait Database {
+      def get(id: Int): OpSeq[Int]
     }
-    @free trait Cache[F[_]] {
-      def get(id: Int): FreeS[F, Option[Int]]
+    @free trait Cache {
+      def get(id: Int): OpSeq[Option[Int]]
     }
-    @free trait Presenter[F[_]] {
-      def show(id: Int): FreeS[F, Int]
+    @free trait Presenter {
+      def show(id: Int): OpSeq[Int]
     }
-    @free trait IdValidation[F[_]] {
-      def validate(id: Option[Int]): FreeS[F, Int]
+    @free trait IdValidation {
+      def validate(id: Option[Int]): OpSeq[Int]
     }
 }
 ```
@@ -42,17 +42,17 @@ Modules can be further nested so they become part of the tree that conforms an a
 import algebras._
 
 object modules {
-    @module trait Persistence[F[_]] {
-      val database: Database[F]
-      val cache: Cache[F]
+    @module trait Persistence {
+      val database: Database
+      val cache: Cache
     }
-    @module trait Display[F[_]] {
-      val presenter: Presenter[F]
-      val validator: IdValidation[F]
+    @module trait Display {
+      val presenter: Presenter
+      val validator: IdValidation
     }
-    @module trait App[F[_]] {
-      val persistence: Persistence[F]
-      val display: Display[F]
+    @module trait App {
+      val persistence: Persistence
+      val display: Display
     }
 }
 ```
@@ -62,9 +62,7 @@ This enables to build programs that are properly typed and parameterized in a mo
 ```tut:book
 import modules._
 
-def program[F[_]](
-	implicit
-	  app: App[F]): FreeS[F, Int] = {
+def program[F[_]]( implicit app: App.To[F]): FreeS[F, Int] = {
   import app.display._, app.persistence._
   for {
     cachedToken <- cache.get(1)
@@ -99,7 +97,7 @@ using the implicits scoping rules to place different implementations where appro
 This also solves all Dependency Injection problems automatically for all modules in applications that model their layers a modules with the `@module` annotation.
 
 ```tut:book
-def doWithApp[F[_]](implicit app: App[F]) = ???
+def doWithApp[F[_]](implicit app: App.To[F]) = ???
 ```
 
 ## Convenient type aliases

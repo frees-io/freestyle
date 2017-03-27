@@ -47,11 +47,11 @@ object fs2 {
     def suspend[A](fa: => Eff[A]): Eff[A] = fa
   }
 
-  @free sealed trait StreamM[F[_]] {
-    def run[A](s: Stream[Eff, A]): FreeS.Par[F, Unit]
-    def runLog[A](s: Stream[Eff, A]): FreeS.Par[F, Vector[A]]
-    def runFold[A, B](z: B, f: (B, A) => B)(s: Stream[Eff, A]): FreeS.Par[F, B]
-    def runLast[A](s: Stream[Eff, A]): FreeS.Par[F, Option[A]]
+  @free sealed trait StreamM {
+    def run[A](s: Stream[Eff, A]): OpPar[Unit]
+    def runLog[A](s: Stream[Eff, A]): OpPar[Vector[A]]
+    def runFold[A, B](z: B, f: (B, A) => B)(s: Stream[Eff, A]): OpPar[B]
+    def runLast[A](s: Stream[Eff, A]): OpPar[Option[A]]
   }
 
   object implicits {
@@ -76,10 +76,10 @@ object fs2 {
     }
 
     implicit class Fs2FreeSyntax[A](private val s: Stream[Eff, A]) extends AnyVal {
-      def liftFS[F[_]](implicit MA: Monoid[A], SF: StreamM[F]): FreeS[F, A] =
+      def liftFS[F[_]](implicit MA: Monoid[A], SF: StreamM.To[F]): FreeS[F, A] =
         liftFSPar.freeS
 
-      def liftFSPar[F[_]](implicit MA: Monoid[A], SF: StreamM[F]): FreeS.Par[F, A] =
+      def liftFSPar[F[_]](implicit MA: Monoid[A], SF: StreamM.To[F]): FreeS.Par[F,A] =
         SF.runFold(MA.empty, MA.combine)(s)
     }
   }

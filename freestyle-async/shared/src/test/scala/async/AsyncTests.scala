@@ -32,10 +32,10 @@ class AsyncTests extends AsyncWordSpec with Matchers {
 
   "Async Freestyle integration" should {
     "allow an Async to be interleaved inside a program monadic flow" in {
-      def program[F[_]: AsyncM] =
+      def program[F[_]](implicit AS: AsyncM.To[F]) =
         for {
           a <- FreeS.pure(1)
-          b <- AsyncM[F].async[Int]((cb) => cb(Right(42)))
+          b <- AS.async[Int]((cb) => cb(Right(42)))
           c <- FreeS.pure(1)
         } yield a + b + c
 
@@ -43,7 +43,7 @@ class AsyncTests extends AsyncWordSpec with Matchers {
     }
 
     "allow multiple Async to be interleaved inside a program monadic flow" in {
-      def program[F[_]: AsyncM] =
+      def program[F[_]: AsyncM.To] =
         for {
           a <- FreeS.pure(1)
           b <- AsyncM[F].async[Int]((cb) => cb(Right(42)))
@@ -60,7 +60,7 @@ class AsyncTests extends AsyncWordSpec with Matchers {
     case class OhNoException() extends Exception
 
     "allow Async errors to short-circuit a program" in {
-      def program[F[_]: AsyncM] =
+      def program[F[_]: AsyncM.To] =
         for {
           a <- FreeS.pure(1)
           b <- AsyncM[F].async[Int]((cb) => cb(Left(OhNoException())))

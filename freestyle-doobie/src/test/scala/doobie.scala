@@ -20,8 +20,8 @@ import cats.syntax.either._
 import fs2.Task
 import fs2.interop.cats._
 import org.scalatest._
-import _root_.doobie.imports._
-import _root_.doobie.h2.h2transactor._
+import _root_.doobie.imports.{toSqlInterpolator, ConnectionIO, Transactor}
+import _root_.doobie.h2.h2transactor.H2Transactor
 
 import freestyle.implicits._
 import freestyle.doobie._
@@ -73,8 +73,8 @@ class DoobieTests extends AsyncWordSpec with Matchers {
 
 object algebras {
   @free
-  trait NonDoobie[F[_]] {
-    def x: FreeS[F, Int]
+  trait NonDoobie {
+    def x: OpSeq[Int]
   }
 
   implicit def nonDoobieHandler: NonDoobie.Handler[Task] =
@@ -83,9 +83,9 @@ object algebras {
     }
 
   @module
-  trait App[F[_]] {
-    val nonDoobie: NonDoobie[F]
-    val doobieM: DoobieM[F]
+  trait App {
+    val nonDoobie: NonDoobie
+    val doobieM: DoobieM
   }
 
   val app = App[App.Op]

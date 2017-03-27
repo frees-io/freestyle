@@ -37,13 +37,13 @@ We will represent these capabilities using two algebras: `CustomerPersistence` a
 
 ```tut:book
 object algebras {
-  @free trait CustomerPersistence[F[_]] {
-    def getCustomer(id: CustomerId): FreeS.Par[F, Option[Customer]]
+  @free trait CustomerPersistence {
+    def getCustomer(id: CustomerId): OpPar[Option[Customer]]
   }
 
-  @free trait StockPersistence[F[_]] {
-    def checkQuantityAvailable(cultivar: String): FreeS.Par[F, Int]
-    def registerOrder(order: Order): FreeS.Par[F, Unit]
+  @free trait StockPersistence {
+    def checkQuantityAvailable(cultivar: String): OpPar[Int]
+    def registerOrder(order: Order): OpPar[Unit]
   }
 }
 ```
@@ -55,22 +55,23 @@ capabilities to fail, to read from our `Config` configuration and to cache `Cust
 import freestyle.effects.error._
 import freestyle.effects.reader
 import freestyle.cache.KeyValueProvider
-
 object modules {
   val rd = reader[Config]
   val cacheP = new KeyValueProvider[CustomerId, Customer]
 
-  @module trait Persistence[F[_]] {
-    val customer: algebras.CustomerPersistence[F]
-    val stock: algebras.StockPersistence[F]
+  import algebras._
+
+  @module trait Persistence {
+    val customer: CustomerPersistence
+    val stock: StockPersistence
   }
 
-  @module trait App[F[_]] {
-    val persistence: Persistence[F]
+  @module trait App {
+    val persistence: Persistence
 
-    val errorM: ErrorM[F]
-    val cacheM: cacheP.CacheM[F]
-    val readerM: rd.ReaderM[F]
+    val errorM: ErrorM
+    val cacheM: cacheP.CacheM
+    val readerM: rd.ReaderM
   }
 }
 ```
@@ -88,7 +89,7 @@ import modules._
 import cats.data.{NonEmptyList, ValidatedNel}
 import cats.implicits._
 
-def validateOrder[F[_]](order: Order, customer: Customer)(implicit app: App[F]): FreeS.Par[F, ValidatedNel[String, Unit]] =
+def validateOrder[F[_]](order: Order, customer: Customer)(implicit app: App.To[F]): OpPar[ValidatedNel[String, Unit]] =
   app.readerM.reader { config =>
     val v = ().validNel[String]
     v.ensure(NonEmptyList.of(
@@ -109,7 +110,7 @@ We are using the [`OptionT`](http://typelevel.org/cats/datatypes/optiont.html) m
 ```tut:book
 import cats.data.OptionT
 
-def getCustomer[F[_]](id: CustomerId)(implicit app: App[F]): FreeS[F, Option[Customer]] =
+def getCustomer[F[_]](id: CustomerId)(implicit app: App.To[F]): FreeS[F, Option[Customer]] =
   // first try to get the customer from the cache
   OptionT(app.cacheM.get(id).freeS).orElseF {
     // otherwise fallback and get the customer from a persistent storehttp://typelevel.org/cats/datatypes/optiont.html
@@ -135,7 +136,7 @@ case class ValidationFailed(errors: NonEmptyList[String]) extends AppleException
 We can use the `validateOrder` and `getCustomer` methods in combination with our persistence algebras and the `error` effect algebra, to create the `processOrder` method tying everything together.
 
 ```tut:book
-def processOrder[F[_]](order: Order)(implicit app: App[F]): FreeS[F, String] = {
+def processOrder[F[_]](order: Order)(implicit app: App.To[F]): FreeS[F, String] = {
   import app.persistence._, app.errorM._
   for {
     customerOpt <- getCustomer[F](order.customerId)
