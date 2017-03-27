@@ -43,7 +43,7 @@ lazy val freestyleEffects = (crossProject in file("freestyle-effects"))
 lazy val freestyleEffectsJVM = freestyleEffects.jvm
 lazy val freestyleEffectsJS  = freestyleEffects.js
 
-lazy val freestyleAsync = (crossProject in file("freestyle-async"))
+lazy val freestyleAsync = (crossProject in file("async/async"))
   .dependsOn(freestyle)
   .settings(name := "freestyle-async")
   .jsSettings(sharedJsSettings: _*)
@@ -51,7 +51,7 @@ lazy val freestyleAsync = (crossProject in file("freestyle-async"))
 lazy val freestyleAsyncJVM = freestyleAsync.jvm
 lazy val freestyleAsyncJS  = freestyleAsync.js
 
-lazy val freestyleAsyncMonix = (crossProject in file("freestyle-async-monix"))
+lazy val freestyleAsyncMonix = (crossProject in file("async/monix"))
   .dependsOn(freestyle, freestyleAsync)
   .settings(name := "freestyle-async-monix")
   .settings(
@@ -65,7 +65,7 @@ lazy val freestyleAsyncMonix = (crossProject in file("freestyle-async-monix"))
 lazy val freestyleAsyncMonixJVM = freestyleAsyncMonix.jvm
 lazy val freestyleAsyncMonixJS  = freestyleAsyncMonix.js
 
-lazy val freestyleAsyncFs = (crossProject in file("freestyle-async-fs2"))
+lazy val freestyleAsyncFs = (crossProject in file("async/fs2"))
   .dependsOn(freestyle, freestyleAsync)
   .settings(name := "freestyle-async-fs2")
   .settings(
@@ -190,7 +190,7 @@ lazy val freestyleFs2 = (crossProject in file("freestyle-fs2"))
 lazy val freestyleFs2JVM = freestyleFs2.jvm
 lazy val freestyleFs2JS  = freestyleFs2.js
 
-lazy val freestylePlay = (project in file("freestyle-play"))
+lazy val freestylePlay = (project in file("http/play"))
   .dependsOn(freestyleJVM)
   .settings(name := "freestyle-play")
   .settings(
@@ -243,7 +243,7 @@ lazy val docs = (project in file("docs"))
   )
   .enablePlugins(MicrositesPlugin)
 
-lazy val freestyleHttpHttp4s = (project in file("freestyle-http-http4s"))
+lazy val freestyleHttpHttp4s = (project in file("http/http4s"))
   .dependsOn(freestyleJVM)
   .settings(name := "freestyle-http-http4s")
   .settings(
@@ -254,7 +254,7 @@ lazy val freestyleHttpHttp4s = (project in file("freestyle-http-http4s"))
     )
   )
 
-lazy val freestyleHttpFinch = (project in file("freestyle-http-finch"))
+lazy val freestyleHttpFinch = (project in file("http/finch"))
   .dependsOn(freestyleJVM)
   .settings(name := "freestyle-http-finch")
   .settings(
