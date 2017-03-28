@@ -37,7 +37,7 @@ class ConfigTests extends AsyncWordSpec with Matchers {
         _      <- app.nonConfig.x
         config <- app.configM.empty
       } yield config
-      program.exec[Future] map { _.isInstanceOf[Config] shouldBe true }
+      program.exec[Future] map { _ shouldBe a[Config] }
     }
 
     "allow configuration to parse strings" in {
