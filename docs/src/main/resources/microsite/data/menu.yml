@@ -78,4 +78,4 @@ options:
         url: docs/fs2
 
       - title: Doobie
-        url: TODO.html
+        url: docs/integrations/doobie/
