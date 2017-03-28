@@ -112,6 +112,15 @@ lazy val freestyleDoobie = (project in file("freestyle-doobie"))
       %%("doobie-core-cats"),
       %%("doobie-h2-cats") % "test"
     )
+)
+
+lazy val freestyleSlick = (project in file("freestyle-slick"))
+  .dependsOn(freestyleJVM, freestyleAsyncJVM)
+  .settings(name := "freestyle-slick")
+  .settings(
+    libraryDependencies ++= Seq(
+      %%("slick")
+    )
   )
 
 lazy val freestyleTwitterUtil = (project in file("freestyle-twitter-util")).
