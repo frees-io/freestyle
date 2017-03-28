@@ -119,7 +119,8 @@ lazy val freestyleSlick = (project in file("freestyle-slick"))
   .settings(name := "freestyle-slick")
   .settings(
     libraryDependencies ++= Seq(
-      %%("slick")
+      %%("slick"),
+      "com.h2database" % "h2" % "1.4.194" % "test"
     )
   )
 
