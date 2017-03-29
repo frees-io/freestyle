@@ -14,7 +14,8 @@
  * limitations under the License.
  */
 
-package freestyle.http
+package freestyle
+package http
 
 import freestyle.{FreeS}
 import _root_.akka.http.scaladsl.marshalling.ToEntityMarshaller
