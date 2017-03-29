@@ -32,11 +32,11 @@ class freeTests extends WordSpec with Matchers {
     }
 
     "provide instances through it's companion `apply`" in {
-      SCtors1[SCtors1.Op].isInstanceOf[SCtors1[SCtors1.Op]] shouldBe true
+      SCtors1[SCtors1.Op] shouldBe an[SCtors1[SCtors1.Op]]
     }
 
     "allow implicit sumoning" in {
-      implicitly[SCtors1[SCtors1.Op]].isInstanceOf[SCtors1[SCtors1.Op]] shouldBe true
+      implicitly[SCtors1[SCtors1.Op]] shouldBe an[SCtors1[SCtors1.Op]]
     }
 
     "provide automatic implementations for smart constructors" in {
@@ -45,12 +45,12 @@ class freeTests extends WordSpec with Matchers {
         a <- s.x(1)
         b <- s.y(1)
       } yield a + b
-      program.isInstanceOf[FreeS[SCtors1.Op, Int]] shouldBe true
+      program shouldBe a[FreeS[SCtors1.Op, Int]]
     }
 
     "respond to implicit evidences with compilable runtimes" in {
       implicit val optionHandler = interps.optionHandler1
-      val s                          = SCtors1[SCtors1.Op]
+      val s                      = SCtors1[SCtors1.Op]
       val program = for {
         a <- s.x(1)
         b <- s.y(1)
@@ -61,7 +61,7 @@ class freeTests extends WordSpec with Matchers {
     "reuse program interpretation in diferent runtimes" in {
       implicit val optionHandler = interps.optionHandler1
       implicit val listHandler   = interps.listHandler1
-      val s                          = SCtors1[SCtors1.Op]
+      val s                      = SCtors1[SCtors1.Op]
       val program = for {
         a <- s.x(1)
         b <- s.y(1)

@@ -239,6 +239,7 @@ lazy val docs = (project in file("docs"))
   .dependsOn(freestyleFs2JVM)
   .dependsOn(freestyleFetchJVM)
   .dependsOn(freestyleCacheJVM)
+  .dependsOn(freestyleDoobie)
   .settings(micrositeSettings: _*)
   .settings(noPublishSettings: _*)
   .settings(
@@ -248,7 +249,8 @@ lazy val docs = (project in file("docs"))
   .settings(
     libraryDependencies ++= Seq(
       %%("fs2-io"),
-      %%("fs2-cats")
+      %%("fs2-cats"),
+      %%("doobie-h2-cats")
     )
   )
   .enablePlugins(MicrositesPlugin)

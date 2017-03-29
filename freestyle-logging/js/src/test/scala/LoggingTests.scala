@@ -16,13 +16,13 @@
 
 package freestyle
 
-import cats.Applicative
 import cats.instances.future._
 import freestyle.implicits._
 import freestyle.loggingJS.implicits._
 import org.scalatest._
 
 import scala.concurrent._
+import scala.util.control.NoStackTrace
 
 class LoggingTests extends AsyncWordSpec with Matchers {
 
@@ -33,10 +33,19 @@ class LoggingTests extends AsyncWordSpec with Matchers {
   "Logging Freestyle integration" should {
 
     "allow a log message to be interleaved inside a program monadic flow" in {
+      case object Cause extends Exception("kaboom") with NoStackTrace
+
       val program = for {
         a <- app.nonLogging.x
-        _ <- app.loggingM.debug("Message")
-        b <- Applicative[FreeS[App.Op, ?]].pure(1)
+        _ <- app.loggingM.debug("Debug Message")
+        _ <- app.loggingM.debugWithCause("Debug Message", Cause)
+        _ <- app.loggingM.error("Error Message")
+        _ <- app.loggingM.errorWithCause("Error Message", Cause)
+        _ <- app.loggingM.info("Info Message")
+        _ <- app.loggingM.infoWithCause("Info Message", Cause)
+        _ <- app.loggingM.warn("Warning Message")
+        _ <- app.loggingM.warnWithCause("Warning Message", Cause)
+        b <- FreeS.pure(1)
       } yield a + b
       program.exec[Future] map { _ shouldBe 2 }
     }

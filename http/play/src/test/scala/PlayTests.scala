@@ -16,12 +16,11 @@
 
 package freestyle.http
 
-import org.scalatest._
+import org.scalatest.{AsyncWordSpec, Matchers}
 
 import scala.concurrent._
-import scala.concurrent.duration._
 
-import cats._
+import cats.Monad
 
 import freestyle._
 import freestyle.implicits._
@@ -62,13 +61,13 @@ class PlayTests extends AsyncWordSpec with Matchers {
       } yield Results.Ok(x)
 
     "FreeSAction creates an action from a program" in {
-      FreeSAction { program[Noop.Op] }.isInstanceOf[Action[Result]] shouldBe true
+      FreeSAction { program[Noop.Op] } shouldBe an[Action[Result]]
     }
 
     "FreeSAction creates an action from a function that returns a program given a request" in {
       FreeSAction { request =>
-        program[Noop.Op]
-      }.isInstanceOf[Action[Result]] shouldBe true
+        Noop[Noop.Op].noop.map(_ => Results.Ok(request.method))
+      } shouldBe an[Action[Result]]
     }
 
     "The resulting action writes the result in the response" in {

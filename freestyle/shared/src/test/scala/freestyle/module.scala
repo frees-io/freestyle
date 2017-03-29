@@ -39,33 +39,33 @@ class moduleTests extends WordSpec with Matchers {
     }
 
     "[simple] provide instances through it's companion `apply`" in {
-      M1[M1.Op].isInstanceOf[M1[M1.Op]] shouldBe true
+      M1[M1.Op] shouldBe an[M1[M1.Op]]
     }
 
     "[onion] provide instances through it's companion `apply`" in {
-      O1[O1.Op].isInstanceOf[O1[O1.Op]] shouldBe true
+      O1[O1.Op] shouldBe an[O1[O1.Op]]
     }
 
     "[simple] implicit sumoning" in {
-      implicitly[M1[M1.Op]].isInstanceOf[M1[M1.Op]] shouldBe true
+      implicitly[M1[M1.Op]] shouldBe an[M1[M1.Op]]
     }
 
     "[onion] allow implicit sumoning" in {
-      implicitly[O1[O1.Op]].isInstanceOf[O1[O1.Op]] shouldBe true
+      implicitly[O1[O1.Op]] shouldBe an[O1[O1.Op]]
     }
 
     "[simple] autowire implementations of it's contained smart constructors" in {
       val m1 = M1[M1.Op]
-      m1.sctors1.isInstanceOf[SCtors1[M1.Op]] shouldBe true
-      m1.sctors2.isInstanceOf[SCtors2[M1.Op]] shouldBe true
+      m1.sctors1 shouldBe an[SCtors1[M1.Op]]
+      m1.sctors2 shouldBe an[SCtors2[M1.Op]]
     }
 
     "[onion] autowire implementations of it's contained smart constructors" in {
       val o1 = O1[O1.Op]
-      o1.m1.sctors1.isInstanceOf[SCtors1[O1.Op]] shouldBe true
-      o1.m1.sctors2.isInstanceOf[SCtors2[O1.Op]] shouldBe true
-      o1.m2.sctors3.isInstanceOf[SCtors3[O1.Op]] shouldBe true
-      o1.m2.sctors4.isInstanceOf[SCtors4[O1.Op]] shouldBe true
+      o1.m1.sctors1 shouldBe an[SCtors1[O1.Op]]
+      o1.m1.sctors2 shouldBe an[SCtors2[O1.Op]]
+      o1.m2.sctors3 shouldBe an[SCtors3[O1.Op]]
+      o1.m2.sctors4 shouldBe an[SCtors4[O1.Op]]
     }
 
     "[simple] allow composition of it's contained algebras" in {
@@ -76,7 +76,7 @@ class moduleTests extends WordSpec with Matchers {
         c <- m1.sctors2.i(1)
         d <- m1.sctors2.j(1)
       } yield a + b + c + d
-      result.isInstanceOf[FreeS[M1.Op, Int]] shouldBe true
+      result shouldBe a[FreeS[M1.Op, Int]]
     }
 
     "[onion] allow composition of it's contained algebras" in {
@@ -91,17 +91,17 @@ class moduleTests extends WordSpec with Matchers {
         g <- o1.m2.sctors4.k(1)
         h <- o1.m2.sctors4.m(1)
       } yield a + b + c + d + e + f + g + h
-      result.isInstanceOf[FreeS[O1.Op, Int]] shouldBe true
+      result shouldBe a[FreeS[O1.Op, Int]]
     }
 
     "[simple] find a FunctionK[Module.Op, ?] providing there is existing ones for it's smart constructors" in {
       import freestyle.implicits._
       import interps.{optionHandler1, optionHandler2}
-      implicitly[FunctionK[M1.Op, Option]].isInstanceOf[FunctionK[M1.Op, Option]] shouldBe true
+      implicitly[FunctionK[M1.Op, Option]] shouldBe a[FunctionK[M1.Op, Option]]
     }
 
     "[onion] find a FunctionK[Module.Op, ?] providing there is existing ones for it's smart constructors" in {
-      implicitly[FunctionK[O1.Op, Option]].isInstanceOf[FunctionK[O1.Op, Option]] shouldBe true
+      implicitly[FunctionK[O1.Op, Option]] shouldBe a[FunctionK[O1.Op, Option]]
     }
 
     "[simple] reuse program interpretation in diferent runtimes" in {
