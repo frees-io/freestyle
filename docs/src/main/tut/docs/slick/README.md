@@ -40,7 +40,7 @@ implicit val getPersonResult = GetResult(r => Person(r.nextString, r.nextInt))
 val getPerson: DBIO[Person] = sql"SELECT 'Alonzo Church', 1903".as[Person].head
 ```
 
-We can embed this doobie `ConnectionIO` program in a freestyle program. We start with the most trivial case by only using the `DoobieM` algebra.
+We can embed this slick `DBIO` program in a freestyle program. We start with the most trivial case by only using the `SlickM` algebra.
 
 ```tut:book
 val slickFrees: FreeS[SlickM.Op, Person] =
@@ -99,7 +99,7 @@ A program using the `Example` module:
 ```tut:book
 def example[F[_]: SlickM](implicit example: Example[F]): FreeS[F, (Person, Int)] =
   for {
-    person <- getPerson.liftFS[F]  // analogous to example.doobieM.transact(getPerson)
+    person <- getPerson.liftFS[F]  // analogous to example.slickM.run(getPerson)
     age    <- example.calc.subtract(2017, person.birthYear)
   } yield (person, age)
 ```
