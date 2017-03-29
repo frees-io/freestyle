@@ -25,7 +25,6 @@ import freestyle.implicits._
 import freestyle.slick._
 import freestyle.slick.implicits._
 import cats.implicits._
-import freestyle.async.implicits._
 
 import _root_.slick.jdbc.H2Profile.api._
 

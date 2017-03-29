@@ -20,6 +20,9 @@ import _root_.slick.dbio.{DBIO, DBIOAction}
 import _root_.slick.jdbc.JdbcBackend
 import freestyle.async._
 
+import scala.util.{Failure, Success}
+
+import scala.concurrent.Future
 import scala.concurrent.ExecutionContext.Implicits.global
 
 object slick {
@@ -34,10 +37,17 @@ object slick {
         db: JdbcBackend#DatabaseDef): SlickM.Handler[M] =
       new SlickM.Handler[M] {
         def run[A](fa: DBIO[A]): M[A] = asyncContext.runAsync { cb =>
-          db.run(fa).onComplete { t =>
-            cb(t.toEither)
+          db.run(fa).onComplete {
+            case Success(x) => cb(Right(x))
+            case Failure(e) => cb(Left(e))
           }
         }
+      }
+
+    implicit def freeStyleSlickFutureHandler(
+        implicit db: JdbcBackend#DatabaseDef): SlickM.Handler[Future] =
+      new SlickM.Handler[Future] {
+        def run[A](fa: DBIO[A]): Future[A] = db.run(fa)
       }
 
     implicit def freeSLiftSlick[F[_]: SlickM]: FreeSLift[F, DBIO] =
