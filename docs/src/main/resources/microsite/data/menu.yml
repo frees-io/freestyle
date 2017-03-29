@@ -78,4 +78,7 @@ options:
         url: docs/fs2
 
       - title: Doobie
-        url: docs/integrations/doobie/
+        url: docs/doobie
+
+      - title: Slick
+        url: docs/slick
