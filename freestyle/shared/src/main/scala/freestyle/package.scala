@@ -126,6 +126,6 @@ package object freestyle {
     def liftFSPar[F[_]](implicit L: FreeSLift[F, G]): FreeS.Par[F, A] = L.liftFSPar(ga)
   }
 
-  implicit def freeSPar2FreeSMonad[F[_], A](fa: FreeS.Par[F, A]): FreeS[F, A] = fa.freeS
+  implicit def freeSPar2Seq[F[_], A](fa: FreeS.Par[F, A]): FreeS[F, A] = fa.freeS
 
 }
