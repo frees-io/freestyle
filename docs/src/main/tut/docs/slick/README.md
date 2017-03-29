@@ -56,7 +56,7 @@ import scala.concurrent.Future
 import scala.concurrent.duration._
 import scala.concurrent.ExecutionContext.Implicits.global
 
-implicit val db = Database.forURL("jdbc:h2:mem:test", driver = "org.h2.Driver")
+implicit val db = Database.forURL("jdbc:h2:mem:docs", driver = "org.h2.Driver")
 
 val future = slickFrees.exec[Future]
 ```
