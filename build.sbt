@@ -112,6 +112,16 @@ lazy val freestyleDoobie = (project in file("freestyle-doobie"))
       %%("doobie-core-cats"),
       %%("doobie-h2-cats") % "test"
     )
+)
+
+lazy val freestyleSlick = (project in file("freestyle-slick"))
+  .dependsOn(freestyleJVM, freestyleAsyncJVM)
+  .settings(name := "freestyle-slick")
+  .settings(
+    libraryDependencies ++= Seq(
+      %%("slick"),
+      "com.h2database" % "h2" % "1.4.194" % "test"
+    )
   )
 
 lazy val freestyleTwitterUtil = (project in file("freestyle-twitter-util")).
@@ -230,6 +240,7 @@ lazy val docs = (project in file("docs"))
   .dependsOn(freestyleFetchJVM)
   .dependsOn(freestyleCacheJVM)
   .dependsOn(freestyleDoobie)
+  .dependsOn(freestyleSlick)
   .settings(micrositeSettings: _*)
   .settings(noPublishSettings: _*)
   .settings(
@@ -240,7 +251,8 @@ lazy val docs = (project in file("docs"))
     libraryDependencies ++= Seq(
       %%("fs2-io"),
       %%("fs2-cats"),
-      %%("doobie-h2-cats")
+      %%("doobie-h2-cats"),
+      "com.h2database" % "h2" % "1.4.194" % "test"
     )
   )
   .enablePlugins(MicrositesPlugin)
