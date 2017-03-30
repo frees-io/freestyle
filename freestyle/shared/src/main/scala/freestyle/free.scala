@@ -152,7 +152,7 @@ object free {
           import cats.free.Inject
           import freestyle.FreeS
 
-          sealed trait $OP[A] extends Product with Serializable
+          sealed trait $OP[A] extends scala.Product with java.io.Serializable
           ..${requests.map( _.mkRequestClass(TTs))}
 
           class To[$LL[_], ..$TTs](implicit I: Inject[$OP, $LL])
