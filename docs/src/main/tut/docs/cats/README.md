@@ -1,3 +1,4 @@
+---
 layout: docs
 title: Cats
 permalink: /docs/cats/
