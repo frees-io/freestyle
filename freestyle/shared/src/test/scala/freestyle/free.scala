@@ -32,11 +32,11 @@ class freeTests extends WordSpec with Matchers {
     }
 
     "provide instances through it's companion `apply`" in {
-      SCtors1[SCtors1.Op] shouldBe an[SCtors1[SCtors1.Op]]
+      "SCtors1[SCtors1.Op]" should compile
     }
 
-    "allow implicit sumoning" in {
-      implicitly[SCtors1[SCtors1.Op]] shouldBe an[SCtors1[SCtors1.Op]]
+    "allow implicit summoning" in {
+      "implicitly[SCtors1[SCtors1.Op]]" should compile 
     }
 
     "provide automatic implementations for smart constructors" in {
@@ -45,7 +45,7 @@ class freeTests extends WordSpec with Matchers {
         a <- s.x(1)
         b <- s.y(1)
       } yield a + b
-      program shouldBe a[FreeS[SCtors1.Op, Int]]
+      "(program: FreeS[SCtors1.Op, Int])" should compile
     }
 
     "respond to implicit evidences with compilable runtimes" in {

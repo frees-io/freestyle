@@ -17,7 +17,6 @@
 package freestyle
 
 import cats.arrow.FunctionK
-import cats.free._
 import cats.implicits._
 import org.scalatest.{Matchers, WordSpec}
 
@@ -39,33 +38,33 @@ class moduleTests extends WordSpec with Matchers {
     }
 
     "[simple] provide instances through it's companion `apply`" in {
-      M1[M1.Op] shouldBe an[M1[M1.Op]]
+      "M1[M1.Op]" should compile
     }
 
     "[onion] provide instances through it's companion `apply`" in {
-      O1[O1.Op] shouldBe an[O1[O1.Op]]
+      "O1[O1.Op]" should compile
     }
 
-    "[simple] implicit sumoning" in {
-      implicitly[M1[M1.Op]] shouldBe an[M1[M1.Op]]
+    "[simple] implicit summoning" in {
+      "implicitly[M1[M1.Op]]" should compile
     }
 
     "[onion] allow implicit sumoning" in {
-      implicitly[O1[O1.Op]] shouldBe an[O1[O1.Op]]
+      "implicitly[O1[O1.Op]]" should compile
     }
 
     "[simple] autowire implementations of it's contained smart constructors" in {
       val m1 = M1[M1.Op]
-      m1.sctors1 shouldBe an[SCtors1[M1.Op]]
-      m1.sctors2 shouldBe an[SCtors2[M1.Op]]
+      "(m1.sctors1: SCtors1[M1.Op])" should compile
+      "(m1.sctors2: SCtors2[M1.Op])" should compile
     }
 
     "[onion] autowire implementations of it's contained smart constructors" in {
       val o1 = O1[O1.Op]
-      o1.m1.sctors1 shouldBe an[SCtors1[O1.Op]]
-      o1.m1.sctors2 shouldBe an[SCtors2[O1.Op]]
-      o1.m2.sctors3 shouldBe an[SCtors3[O1.Op]]
-      o1.m2.sctors4 shouldBe an[SCtors4[O1.Op]]
+      "(o1.m1.sctors1: SCtors1[O1.Op])" should compile
+      "(o1.m1.sctors2: SCtors2[O1.Op])" should compile
+      "(o1.m2.sctors3: SCtors3[O1.Op])" should compile
+      "(o1.m2.sctors4: SCtors4[O1.Op])" should compile
     }
 
     "[simple] allow composition of it's contained algebras" in {
@@ -76,7 +75,7 @@ class moduleTests extends WordSpec with Matchers {
         c <- m1.sctors2.i(1)
         d <- m1.sctors2.j(1)
       } yield a + b + c + d
-      result shouldBe a[FreeS[M1.Op, Int]]
+      "(result: FreeS[M1.Op, Int])" should compile
     }
 
     "[onion] allow composition of it's contained algebras" in {
@@ -91,17 +90,17 @@ class moduleTests extends WordSpec with Matchers {
         g <- o1.m2.sctors4.k(1)
         h <- o1.m2.sctors4.m(1)
       } yield a + b + c + d + e + f + g + h
-      result shouldBe a[FreeS[O1.Op, Int]]
+      "(result: FreeS[O1.Op, Int])" should compile
     }
 
     "[simple] find a FunctionK[Module.Op, ?] providing there is existing ones for it's smart constructors" in {
       import freestyle.implicits._
       import interps.{optionHandler1, optionHandler2}
-      implicitly[FunctionK[M1.Op, Option]] shouldBe a[FunctionK[M1.Op, Option]]
+      "implicitly[FunctionK[M1.Op, Option]]" should compile
     }
 
     "[onion] find a FunctionK[Module.Op, ?] providing there is existing ones for it's smart constructors" in {
-      implicitly[FunctionK[O1.Op, Option]] shouldBe a[FunctionK[O1.Op, Option]]
+      "implicitly[FunctionK[O1.Op, Option]]" should compile
     }
 
     "[simple] reuse program interpretation in diferent runtimes" in {
@@ -133,13 +132,13 @@ class moduleTests extends WordSpec with Matchers {
       program.exec[List] shouldBe List(8)
     }
 
-    "Pass through concrete members to implementations" in {
+    "pass through concrete members to implementations" in {
       val o2 = O2[O2.Op]
       o2.x shouldBe 1
       o2.y shouldBe 2
     }
 
-    "Allow modules with just concrete members unrelated to freestyle's concerns" in {
+    "allow modules with just concrete members unrelated to freestyle's concerns" in {
       val o3 = O3[O3.Op]
       o3.x shouldBe 1
       o3.y shouldBe 2
