@@ -41,7 +41,7 @@ class AkkaHttpTests extends WordSpec with Matchers with ScalatestRouteTest {
       "implicitly[ToEntityMarshaller[FreeS.Par[App.Op, String]]]" should compile
     }
 
-    "allow a FreeS program to be used with akka-http (1) " in {
+    "allow a FreeS.Par program to be used with akka-http (1) " in {
       Get("/user/1") ~> userRoute.route ~> check {
         status shouldBe OK
         responseAs[String] shouldEqual "User(foo)"
@@ -65,7 +65,7 @@ object userrepo {
   @free
   trait UserRepository[F[_]] {
     def get(id: Int): FreeS.Par[F, User]
-    def list: FreeS.Par[F, List[User]]
+    def list: FreeS[F, List[User]]
   }
 
   @module
