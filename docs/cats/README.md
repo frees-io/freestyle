@@ -52,7 +52,7 @@ implicit val idHandler = new Calc.Handler[Id] {
   def sum(a: Int, b: Int) = a + b
   def product(a: Int, b: Int) = a * b
 }
-// idHandler: Calc.Handler[cats.Id] = $anon$1@45ba0488
+// idHandler: Calc.Handler[cats.Id] = $anon$1@6b01d24d
 ```
 
 A handler translating the `Calc` algebra to `Future`, which introduces a little bit of artificial latency.
@@ -70,7 +70,7 @@ implicit val futureHandler = new Calc.Handler[Future] {
   def product(a: Int, b: Int) =
     Future { Thread.sleep(a * 100L); a * b }
 }
-// futureHandler: Calc.Handler[scala.concurrent.Future] = $anon$1@5eb328ae
+// futureHandler: Calc.Handler[scala.concurrent.Future] = $anon$1@636a001d
 ```
 
 We can use `Calc#sum` to create a function which increments an integer.
@@ -80,11 +80,11 @@ We have `incrPar` and `incrSeq`, where multiple `incrPar` calls could potentiall
 ```scala
 val incrPar: Int => FreeS.Par[Calc.Op, Int] =
   Calc[Calc.Op].sum(_, 1)
-// incrPar: Int => freestyle.FreeS.Par[Calc.Op,Int] = $$Lambda$2410/1095849388@5fd2cb2c
+// incrPar: Int => freestyle.FreeS.Par[Calc.Op,Int] = $$Lambda$3689/1836897471@57188bf9
 
 val incrSeq: Int => FreeS[Calc.Op, Int] =
   incrPar.andThen(_.freeS)
-// incrSeq: Int => freestyle.FreeS[Calc.Op,Int] = scala.Function1$$Lambda$2413/884619486@2fe6abca
+// incrSeq: Int => freestyle.FreeS[Calc.Op,Int] = scala.Function1$$Lambda$3692/394666928@d0516e1
 ```
 
 ### Traversing
@@ -147,14 +147,14 @@ val futPar = traversingPar.exec[Future]
 // futPar: scala.concurrent.Future[List[Int]] = Future(<not completed>)
 
 simpleTime(Await.result(futPar, Duration.Inf))
-// time: 687
+// time: 265
 // res3: List[Int] = List(2, 3, 4, 5, 6, 7, 8, 9, 10)
 
 val futSeq = traversingSeq.exec[Future]
 // futSeq: scala.concurrent.Future[List[Int]] = Future(<not completed>)
 
 simpleTime(Await.result(futSeq, Duration.Inf))
-// time: 4289
+// time: 3666
 // res4: List[Int] = List(2, 3, 4, 5, 6, 7, 8, 9, 10)
 ```
 
@@ -198,14 +198,14 @@ val futSeq2 = incrSeqSum.exec[Future]
 // futSeq2: scala.concurrent.Future[Int] = Future(<not completed>)
 
 simpleTime(Await.result(futSeq2, Duration.Inf))
-// time: 387
+// time: 219
 // res6: Int = 5
 
 val futPar2 = incrParSum.exec[Future]
 // futPar2: scala.concurrent.Future[Int] = Future(<not completed>)
 
 simpleTime(Await.result(futPar2, Duration.Inf))
-// time: 294
+// time: 105
 // res7: Int = 5
 ```
 
@@ -238,17 +238,17 @@ implicit val readerHandler =
     def product(a: Int, b: Int) =
       Reader { cfg => cfg.n + a * b }
   }
-// readerHandler: Calc.Handler[WithConfig] = $anon$1@48ff1347
+// readerHandler: Calc.Handler[WithConfig] = $anon$1@13f9bb54
 ```
 
 With this `Reader` handler in place, we can translate some of the previous programs and supply the configuration to get the end result with `Kleisli#run`.
 
 ```scala
 val configTraversing = traversingSeq.exec[WithConfig]
-// configTraversing: WithConfig[List[Int]] = Kleisli(cats.data.KleisliInstances4$$anon$3$$Lambda$2487/580707985@2cd8a608)
+// configTraversing: WithConfig[List[Int]] = Kleisli(cats.data.KleisliInstances4$$anon$3$$Lambda$3737/2083226744@67ff0298)
 
 val configIncrSum    = incrParSum.exec[WithConfig]
-// configIncrSum: WithConfig[Int] = Kleisli(cats.data.KleisliInstances4$$anon$3$$Lambda$2487/580707985@24e5414d)
+// configIncrSum: WithConfig[Int] = Kleisli(cats.data.KleisliInstances4$$anon$3$$Lambda$3737/2083226744@6e81acd2)
 
 val cfg = Config(1000)
 // cfg: Config = Config(1000)
