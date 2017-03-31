@@ -276,3 +276,13 @@ lazy val freestyleHttpFinch = (project in file("http/finch"))
       %%("finch-core")
     )
   )
+
+lazy val freestyleHttpAkka = (project in file("http/akka"))
+  .dependsOn(freestyleJVM)
+  .settings(name := "freestyle-http-akka")
+  .settings(
+    libraryDependencies ++= Seq(
+      "com.typesafe.akka" %% "akka-http" % "10.0.5",
+      "com.typesafe.akka" %% "akka-http-testkit" % "10.0.5" % "test"
+    )
+  )
