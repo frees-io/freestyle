@@ -54,7 +54,7 @@ import _root_.fs2.Task
 implicit val xa: Transactor[Task] =
   H2Transactor[Task]("jdbc:h2:mem:test;DB_CLOSE_DELAY=-1", "sa", "").unsafeRunSync.
     toOption.getOrElse(throw new Exception("Could not create example transactor"))
-// xa: doobie.imports.Transactor[fs2.Task] = doobie.h2.h2transactor$H2Transactor@4eaa85cc
+// xa: doobie.imports.Transactor[fs2.Task] = doobie.h2.h2transactor$H2Transactor@69ea8d26
 ```
 
 By using the _fs2-cats_ interop project, we get the necessary type class instances for `Task`, so we can translate our `FreeS` program into a `Task`.
@@ -101,7 +101,7 @@ implicit val calcHandler: Calc.Handler[Task] =
   new Calc.Handler[Task] {
     def subtract(a: Int, b: Int): Task[Int] = Task.now(a - b)
   }
-// calcHandler: Calc.Handler[fs2.Task] = $anon$1@15e5bd5d
+// calcHandler: Calc.Handler[fs2.Task] = $anon$1@605f84b5
 ```
 
 A program using the `Example` module:
