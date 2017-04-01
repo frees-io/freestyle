@@ -57,7 +57,7 @@ Learn more about [algebras](/docs/algebras/) in the extended documentation.
 
 ## Modules
 
-Freestyle algebras can be combined into `@module` definitions which provide agreggation and unification over the
+Freestyle algebras can be combined into `@module` definitions which provide aggregation and unification over the
 parametrization of Free programs.
 
 ```tut:silent:decorate(.kazari-id-1)
