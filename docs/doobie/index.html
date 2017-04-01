@@ -47,7 +47,7 @@
 <span class="k">implicit</span> <span class="k">val</span> <span class="n">xa</span><span class="k">:</span> <span class="kt">Transactor</span><span class="o">[</span><span class="kt">Task</span><span class="o">]</span> <span class="k">=</span>
   <span class="n">H2Transactor</span><span class="o">[</span><span class="kt">Task</span><span class="o">](</span><span class="s">"jdbc:h2:mem:test;DB_CLOSE_DELAY=-1"</span><span class="o">,</span> <span class="s">"sa"</span><span class="o">,</span> <span class="s">""</span><span class="o">).</span><span class="n">unsafeRunSync</span><span class="o">.</span>
     <span class="n">toOption</span><span class="o">.</span><span class="n">getOrElse</span><span class="o">(</span><span class="k">throw</span> <span class="k">new</span> <span class="nc">Exception</span><span class="o">(</span><span class="s">"Could not create example transactor"</span><span class="o">))</span>
-<span class="c1">// xa: doobie.imports.Transactor[fs2.Task] = doobie.h2.h2transactor$H2Transactor@45a1d311
+<span class="c1">// xa: doobie.imports.Transactor[fs2.Task] = doobie.h2.h2transactor$H2Transactor@5ebd593b
 </span></code></pre>
 </div>
 
@@ -93,7 +93,7 @@
   <span class="k">new</span> <span class="nc">Calc</span><span class="o">.</span><span class="nc">Handler</span><span class="o">[</span><span class="kt">Task</span><span class="o">]</span> <span class="o">{</span>
     <span class="k">def</span> <span class="n">subtract</span><span class="o">(</span><span class="n">a</span><span class="k">:</span> <span class="kt">Int</span><span class="o">,</span> <span class="n">b</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span><span class="k">:</span> <span class="kt">Task</span><span class="o">[</span><span class="kt">Int</span><span class="o">]</span> <span class="k">=</span> <span class="nc">Task</span><span class="o">.</span><span class="n">now</span><span class="o">(</span><span class="n">a</span> <span class="o">-</span> <span class="n">b</span><span class="o">)</span>
   <span class="o">}</span>
-<span class="c1">// calcHandler: Calc.Handler[fs2.Task] = $anon$1@253e1d9e
+<span class="c1">// calcHandler: Calc.Handler[fs2.Task] = $anon$1@765ad646
 </span></code></pre>
 </div>
 
