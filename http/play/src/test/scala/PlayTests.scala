@@ -50,13 +50,13 @@ class PlayTests extends AsyncWordSpec with Matchers {
         x <- Noop[F].noop
       } yield Results.Ok(x)
 
-    "FreeSAction creates an action from a program" in {
+    "FreeS programs can be used as return value in Play actions" in {
       Action.async { _ =>
         program[Noop.Op]
       } shouldBe an[Action[Result]]
     }
 
-    "FreeSAction creates an action from a function that returns a program given a request" in {
+    "FreeS programs can iinteract with a given request and used as returned values in Play actions" in {
       Action.async { request =>
         Noop[Noop.Op].noop.map(_ => Results.Ok(request.method))
       } shouldBe an[Action[Result]]
