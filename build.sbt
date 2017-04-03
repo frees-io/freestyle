@@ -241,6 +241,7 @@ lazy val docs = (project in file("docs"))
   .dependsOn(freestyleCacheJVM)
   .dependsOn(freestyleDoobie)
   .dependsOn(freestyleSlick)
+  .dependsOn(freestylePlay)
   .settings(micrositeSettings: _*)
   .settings(noPublishSettings: _*)
   .settings(
@@ -252,6 +253,7 @@ lazy val docs = (project in file("docs"))
       %%("fs2-io"),
       %%("fs2-cats"),
       %%("doobie-h2-cats"),
+      %%("play-test"),
       "com.h2database" % "h2" % "1.4.194" % "test"
     )
   )

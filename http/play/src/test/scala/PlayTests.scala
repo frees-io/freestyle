@@ -25,7 +25,7 @@ import cats.Monad
 import freestyle._
 import freestyle.implicits._
 
-import freestyle.http.play._
+import freestyle.http.play.implicits._
 
 import _root_.play.api.mvc._
 import _root_.play.api.http._
@@ -61,11 +61,13 @@ class PlayTests extends AsyncWordSpec with Matchers {
       } yield Results.Ok(x)
 
     "FreeSAction creates an action from a program" in {
-      FreeSAction { program[Noop.Op] } shouldBe an[Action[Result]]
+      Action.async { _ =>
+        program[Noop.Op]
+      } shouldBe an[Action[Result]]
     }
 
     "FreeSAction creates an action from a function that returns a program given a request" in {
-      FreeSAction { request =>
+      Action.async { request =>
         Noop[Noop.Op].noop.map(_ => Results.Ok(request.method))
       } shouldBe an[Action[Result]]
     }
@@ -73,7 +75,9 @@ class PlayTests extends AsyncWordSpec with Matchers {
     "The resulting action writes the result in the response" in {
       import Helpers._
 
-      val action: EssentialAction  = FreeSAction { program[Noop.Op] }
+      val action: EssentialAction = Action.async { _ =>
+        program[Noop.Op]
+      }
       val request                  = FakeRequest()
       val response: Future[Result] = Helpers.call(action, request)
 
