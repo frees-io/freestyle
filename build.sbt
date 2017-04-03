@@ -253,7 +253,6 @@ lazy val docs = (project in file("docs"))
       %%("fs2-io"),
       %%("fs2-cats"),
       %%("doobie-h2-cats"),
-      %%("play-test"),
       "com.h2database" % "h2" % "1.4.194" % "test"
     )
   )

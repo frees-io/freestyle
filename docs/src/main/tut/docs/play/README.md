@@ -30,7 +30,6 @@ import freestyle.http.play.implicits._
 
 import play.api.mvc._
 import play.api.http._
-import play.api.test._
 import play.api.libs.concurrent.Execution.Implicits._
 
 import akka.actor.ActorSystem
