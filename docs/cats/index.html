@@ -48,7 +48,7 @@
   <span class="k">def</span> <span class="n">sum</span><span class="o">(</span><span class="n">a</span><span class="k">:</span> <span class="kt">Int</span><span class="o">,</span> <span class="n">b</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span> <span class="k">=</span> <span class="n">a</span> <span class="o">+</span> <span class="n">b</span>
   <span class="k">def</span> <span class="n">product</span><span class="o">(</span><span class="n">a</span><span class="k">:</span> <span class="kt">Int</span><span class="o">,</span> <span class="n">b</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span> <span class="k">=</span> <span class="n">a</span> <span class="o">*</span> <span class="n">b</span>
 <span class="o">}</span>
-<span class="c1">// idHandler: Calc.Handler[cats.Id] = $anon$1@2efd45df
+<span class="c1">// idHandler: Calc.Handler[cats.Id] = $anon$1@620762e1
 </span></code></pre>
 </div>
 
@@ -66,7 +66,7 @@
   <span class="k">def</span> <span class="n">product</span><span class="o">(</span><span class="n">a</span><span class="k">:</span> <span class="kt">Int</span><span class="o">,</span> <span class="n">b</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span> <span class="k">=</span>
     <span class="nc">Future</span> <span class="o">{</span> <span class="nc">Thread</span><span class="o">.</span><span class="n">sleep</span><span class="o">(</span><span class="n">a</span> <span class="o">*</span> <span class="mi">100L</span><span class="o">);</span> <span class="n">a</span> <span class="o">*</span> <span class="n">b</span> <span class="o">}</span>
 <span class="o">}</span>
-<span class="c1">// futureHandler: Calc.Handler[scala.concurrent.Future] = $anon$1@31bb3f44
+<span class="c1">// futureHandler: Calc.Handler[scala.concurrent.Future] = $anon$1@666d8625
 </span></code></pre>
 </div>
 
@@ -76,11 +76,11 @@
 
 <div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">val</span> <span class="n">incrPar</span><span class="k">:</span> <span class="kt">Int</span> <span class="o">=&gt;</span> <span class="nc">FreeS</span><span class="o">.</span><span class="nc">Par</span><span class="o">[</span><span class="kt">Calc.Op</span>, <span class="kt">Int</span><span class="o">]</span> <span class="k">=</span>
   <span class="nc">Calc</span><span class="o">[</span><span class="kt">Calc.Op</span><span class="o">].</span><span class="n">sum</span><span class="o">(</span><span class="k">_</span><span class="o">,</span> <span class="mi">1</span><span class="o">)</span>
-<span class="c1">// incrPar: Int =&gt; freestyle.FreeS.Par[Calc.Op,Int] = $$Lambda$2237/1760469317@676d9d5d
+<span class="c1">// incrPar: Int =&gt; freestyle.FreeS.Par[Calc.Op,Int] = $$Lambda$3555/1097568992@6349cc3b
 </span>
 <span class="k">val</span> <span class="n">incrSeq</span><span class="k">:</span> <span class="kt">Int</span> <span class="o">=&gt;</span> <span class="nc">FreeS</span><span class="o">[</span><span class="kt">Calc.Op</span>, <span class="kt">Int</span><span class="o">]</span> <span class="k">=</span>
   <span class="n">incrPar</span><span class="o">.</span><span class="n">andThen</span><span class="o">(</span><span class="k">_</span><span class="o">.</span><span class="n">freeS</span><span class="o">)</span>
-<span class="c1">// incrSeq: Int =&gt; freestyle.FreeS[Calc.Op,Int] = scala.Function1$$Lambda$2240/526848118@29cbc434
+<span class="c1">// incrSeq: Int =&gt; freestyle.FreeS[Calc.Op,Int] = scala.Function1$$Lambda$3558/1264303859@57e4381e
 </span></code></pre>
 </div>
 
@@ -143,14 +143,14 @@
 <span class="c1">// futPar: scala.concurrent.Future[List[Int]] = Future(&lt;not completed&gt;)
 </span>
 <span class="n">simpleTime</span><span class="o">(</span><span class="nc">Await</span><span class="o">.</span><span class="n">result</span><span class="o">(</span><span class="n">futPar</span><span class="o">,</span> <span class="nc">Duration</span><span class="o">.</span><span class="nc">Inf</span><span class="o">))</span>
-<span class="c1">// time: 616
+<span class="c1">// time: 649
 // res3: List[Int] = List(2, 3, 4, 5, 6, 7, 8, 9, 10)
 </span>
 <span class="k">val</span> <span class="n">futSeq</span> <span class="k">=</span> <span class="n">traversingSeq</span><span class="o">.</span><span class="n">exec</span><span class="o">[</span><span class="kt">Future</span><span class="o">]</span>
 <span class="c1">// futSeq: scala.concurrent.Future[List[Int]] = Future(&lt;not completed&gt;)
 </span>
 <span class="n">simpleTime</span><span class="o">(</span><span class="nc">Await</span><span class="o">.</span><span class="n">result</span><span class="o">(</span><span class="n">futSeq</span><span class="o">,</span> <span class="nc">Duration</span><span class="o">.</span><span class="nc">Inf</span><span class="o">))</span>
-<span class="c1">// time: 4245
+<span class="c1">// time: 4255
 // res4: List[Int] = List(2, 3, 4, 5, 6, 7, 8, 9, 10)
 </span></code></pre>
 </div>
@@ -194,14 +194,14 @@
 <span class="c1">// futSeq2: scala.concurrent.Future[Int] = Future(&lt;not completed&gt;)
 </span>
 <span class="n">simpleTime</span><span class="o">(</span><span class="nc">Await</span><span class="o">.</span><span class="n">result</span><span class="o">(</span><span class="n">futSeq2</span><span class="o">,</span> <span class="nc">Duration</span><span class="o">.</span><span class="nc">Inf</span><span class="o">))</span>
-<span class="c1">// time: 379
+<span class="c1">// time: 371
 // res6: Int = 5
 </span>
 <span class="k">val</span> <span class="n">futPar2</span> <span class="k">=</span> <span class="n">incrParSum</span><span class="o">.</span><span class="n">exec</span><span class="o">[</span><span class="kt">Future</span><span class="o">]</span>
 <span class="c1">// futPar2: scala.concurrent.Future[Int] = Future(&lt;not completed&gt;)
 </span>
 <span class="n">simpleTime</span><span class="o">(</span><span class="nc">Await</span><span class="o">.</span><span class="n">result</span><span class="o">(</span><span class="n">futPar2</span><span class="o">,</span> <span class="nc">Duration</span><span class="o">.</span><span class="nc">Inf</span><span class="o">))</span>
-<span class="c1">// time: 282
+<span class="c1">// time: 284
 // res7: Int = 5
 </span></code></pre>
 </div>
@@ -234,17 +234,17 @@
     <span class="k">def</span> <span class="n">product</span><span class="o">(</span><span class="n">a</span><span class="k">:</span> <span class="kt">Int</span><span class="o">,</span> <span class="n">b</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span> <span class="k">=</span>
       <span class="nc">Reader</span> <span class="o">{</span> <span class="n">cfg</span> <span class="k">=&gt;</span> <span class="n">cfg</span><span class="o">.</span><span class="n">n</span> <span class="o">+</span> <span class="n">a</span> <span class="o">*</span> <span class="n">b</span> <span class="o">}</span>
   <span class="o">}</span>
-<span class="c1">// readerHandler: Calc.Handler[WithConfig] = $anon$1@30ac8260
+<span class="c1">// readerHandler: Calc.Handler[WithConfig] = $anon$1@476d8df6
 </span></code></pre>
 </div>
 
 <p>With this <code class="highlighter-rouge">Reader</code> handler in place, we can translate some of the previous programs and supply the configuration to get the end result with <code class="highlighter-rouge">Kleisli#run</code>.</p>
 
 <div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">val</span> <span class="n">configTraversing</span> <span class="k">=</span> <span class="n">traversingSeq</span><span class="o">.</span><span class="n">exec</span><span class="o">[</span><span class="kt">WithConfig</span><span class="o">]</span>
-<span class="c1">// configTraversing: WithConfig[List[Int]] = Kleisli(cats.data.KleisliInstances4$$anon$3$$Lambda$2314/306989192@66f1de5e)
+<span class="c1">// configTraversing: WithConfig[List[Int]] = Kleisli(cats.data.KleisliInstances4$$anon$3$$Lambda$3603/1111651126@31d04f87)
 </span>
 <span class="k">val</span> <span class="n">configIncrSum</span>    <span class="k">=</span> <span class="n">incrParSum</span><span class="o">.</span><span class="n">exec</span><span class="o">[</span><span class="kt">WithConfig</span><span class="o">]</span>
-<span class="c1">// configIncrSum: WithConfig[Int] = Kleisli(cats.data.KleisliInstances4$$anon$3$$Lambda$2314/306989192@1332261b)
+<span class="c1">// configIncrSum: WithConfig[Int] = Kleisli(cats.data.KleisliInstances4$$anon$3$$Lambda$3603/1111651126@1ff1436a)
 </span>
 <span class="k">val</span> <span class="n">cfg</span> <span class="k">=</span> <span class="nc">Config</span><span class="o">(</span><span class="mi">1000</span><span class="o">)</span>
 <span class="c1">// cfg: Config = Config(1000)
