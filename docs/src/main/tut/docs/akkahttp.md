@@ -1,21 +1,21 @@
 ---
 layout: docs
-title: Akka - Http
+title: Akka HTTP
 permalink: /docs/integrations/akkahttp/
 ---
 
-#### Akka Http
+### Akka HTTP
 
 [Akka HTTP](http://doc.akka.io/docs/akka-http/10.0.5/java/http/introduction.html) (formerly known as `spray`) is an Akka-based library for implementing HTTP services.
-Akka HTTP is frequently used to write server-side (a.k.a back-end) REST APIs; for instance, we (47 Degrees) use it to write the back-ends
+Akka HTTP is frequently used to write server-side (a.k.a back-end) REST APIs; for instance, we (47 Degrees) have used it to write the back-ends
 for the [9Cards](https://github.com/47deg/nine-cards-backend) or the [ScalaDays](http://scaladays.org/) mobile applications.
-Akka HTTP makes writing such APIs easy, thanks to its [routing DSL](http://doc.akka.io/docs/akka-http/10.0.5/java/http/introduction.html).
+Akka HTTP makes it easy to write such APIs, due to its [routing DSL](http://doc.akka.io/docs/akka-http/10.0.5/java/http/introduction.html).
 In this DSL, routes are written using directives, that filter incoming requests, and end in a `complete` directive.
 The `complete` directive can take just a message, or just the status code to give back; but more frequently, it takes as an argument
 an expression, or program call, whose result is the _response body_ that is given back to the client.
 
-The goal of `freestyle` integration with Akka HTTP is to allow programmers to pass an expression of type `fs : FreeS[F, A]`,
-for some kind-1 type `F[_]` and some base type `A`, as the argument of a `complete` directive. With respect to this goal,
+The goal of `freestyle` integration with Akka HTTP is to allow programmers to pass into a `complete` directive an expression of type `fs : FreeS[F, A]`, 
+where `F[_]` is the type constructor, and  `A` is the type of the result. In respect to this goal,
 the [Akka HTTP docs](http://doc.akka.io/docs/akka-http/10.0.5/java/http/introduction.html#routing-dsl-for-http-servers) say that:
 
 > Transforming request [...] bodies between over-the-wire formats and objects to be used in your application
@@ -44,8 +44,8 @@ This is the method we have:
 
 To build such an object `marsh`, our method needs to find in scope :
 
-* A _base_ entity marshaller, `base: ToEntityMarshaller[ G[A]]`, for a kind-1 type `G[_]` which is determined by the application,
-  and for the same result type `A`.
+* A _base_ entity marshaller, `base: ToEntityMarshaller[ G[A]]`, where `G[_]` is a constructor type, which may be different for each application; 
+  and `A` refers to the same type of the result in the response.
 * A way to interpret an expression of type `FreeS[F, A]` into a `G[A]`. This is built by the implicit metods in
   `freestyle.implicits`, from a natural transformation `F ~> G` and an instance of `cats.Monad[G]`.
 
@@ -53,10 +53,18 @@ In essence, the generated marshaller first _interprets_ the value of type `FreeS
 value to the base marshaller. To build an Akka HTTP route using a `FreeS` program, one only needs to bring this method into the implicit context, which can be done using an
 `import freestyle.http.akka._` statement.
 
-##### Small Example
+#### Small Example
 
-As an example, here is a small API program mixing `freestyle` and Akka HTTP. First, we define a domain class `User`, we write
-a `@free` algebra that returns values of a type `FreeS[F, User]`, and then define an interpreter  for
+As an example, here is a small API program mixing `freestyle` and Akka HTTP. The integration is not part of `freestyle` main module.
+You need to import it separately, by adding the following dependency: 
+
+```scala
+libraryDependencies += "io.freestyle" %% "freestyle-http-akka" % "0.1.0"
+```
+
+First, we (1) define a domain class `User`, (2) write
+a `@free` algebra that returns values of a type `FreeS[F, User]`, and then (3) define an interpreter for that algebra to a type for 
+which a `Marshaller` _magnet_ exists. To keep things simple, we just interpret to `Id`.
 
 ```Scala
 import freestyle._
@@ -76,7 +84,7 @@ To use this `@free` algebra in a route, we need (1) an `EntityMarshaller` for ou
 and (2) an interpreter of the algebra to a suitable domain, which for this example will be `Id`.
 
 ```Scala
-import akka.http.scaladsl.marshalling.ToEntityMarshaller
+import _root_.akka.http.scaladsl.marshalling.ToEntityMarshaller
 
 implicit val userMarshaller: ToEntityMarshaller[User] =
   Marshaller.StringMarshaller.compose((user: User) => s"User(${user.name})")
