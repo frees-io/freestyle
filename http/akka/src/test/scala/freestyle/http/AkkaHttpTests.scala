@@ -34,11 +34,11 @@ class AkkaHttpTests extends WordSpec with Matchers with ScalatestRouteTest {
   "Akka Http integration in  Freestyle" should {
 
     "provide a ToEntityMarshaller for FreeS types" in {
-      "implicitly[ToEntityMarshaller[FreeS[App.Op, String]]]" should compile
+      "implicitly[ToEntityMarshaller[FreeS[UserApp.Op, String]]]" should compile
     }
 
     "provide a ToEntityMarshaller for FreeS.Par types" in {
-      "implicitly[ToEntityMarshaller[FreeS.Par[App.Op, String]]]" should compile
+      "implicitly[ToEntityMarshaller[FreeS.Par[UserApp.Op, String]]]" should compile
     }
 
     "allow a FreeS.Par program to be used with akka-http (1) " in {
@@ -63,17 +63,12 @@ case class User(name: String)
 object userrepo {
 
   @free
-  trait UserRepository[F[_]] {
+  trait UserApp[F[_]] {
     def get(id: Int): FreeS.Par[F, User]
     def list: FreeS[F, List[User]]
   }
 
-  @module
-  trait App[F[_]] {
-    val userRepo: UserRepository[F]
-  }
-
-  class SimpleHandler extends UserRepository.Handler[Id] {
+  implicit val handler: UserApp.Handler[Id] = new UserApp.Handler[Id] {
     private[this] val users: Map[Int, User] = Map(
       1 -> User("foo"),
       2 -> User("bar")
@@ -81,12 +76,9 @@ object userrepo {
 
     override def get(id: Int): User = users.get(id).getOrElse(User("default"))
     override def list: List[User]   = users.values.toList
-
   }
 
-  implicit val handler: UserRepository.Handler[Id] = new SimpleHandler()
-
-  val app = App[App.Op]
+  val app = UserApp.to[UserApp.Op]
 }
 
 object userRoute {
@@ -102,10 +94,8 @@ object userRoute {
 
   val route: Route =
     (get & path("user" / IntNumber)) { id =>
-      complete(app.userRepo.get(id))
+      complete(app.get(id))
     } ~
-      (get & path("users")) {
-        complete(app.userRepo.list)
-      }
+      (get & path("users")) { complete(app.list) }
 
 }
