@@ -2,17 +2,21 @@ options:
   - title: Quick Start
     url: docs/
 
-  - title: Algebras
-    url: docs/algebras/
+  - title: Core Concepts
 
-  - title: Modules
-    url: docs/modules/
+    nested_options:
 
-  - title: Handlers
-    url: docs/interpreters/
+     - title: Algebras
+       url: docs/core/algebras/
 
-  - title: Parallelism
-    url: docs/parallelism/
+     - title: Handlers
+       url: docs/core/interpreters/
+
+     - title: Parallelism
+       url: docs/core/parallelism/
+
+     - title: Modules
+       url: docs/core/modules/
 
   - title: Effects
     url: docs/effects/
@@ -82,3 +86,17 @@ options:
 
       - title: Slick
         url: docs/slick
+
+      - title: Akka-Http
+        url: docs/integrations/akkahttp
+
+  - title: Related Work
+    url: docs/related/
+
+    nested_options:
+
+      - title: Bibliography
+        url: docs/related/#Bibliography
+
+      - title: Scala Libraries
+        url: docs/related/#Scala
