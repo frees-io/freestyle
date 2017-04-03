@@ -1,7 +1,7 @@
 ---
 layout: docs
 title: Algebras
-permalink: /docs/algebras/
+permalink: /docs/core/algebras/
 ---
 
 # Algebras

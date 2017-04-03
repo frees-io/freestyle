@@ -1,7 +1,7 @@
 ---
 layout: docs
 title: Parallelism
-permalink: /docs/parallelism/
+permalink: /docs/core/parallelism/
 ---
 
 # Parallelism and non-determinism
