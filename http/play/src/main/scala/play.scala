@@ -19,6 +19,7 @@ package freestyle.http
 import freestyle._
 
 import cats.Monad
+import cats.instances.future._
 
 import scala.concurrent._
 
@@ -30,8 +31,7 @@ object play {
   object implicits {
 
     implicit def freestylePlayFutureConversion[F[_], A](prog: FreeS[F, A])(
-        implicit MF: Monad[Future],
-        I: ParInterpreter[F, Future],
+        implicit I: ParInterpreter[F, Future],
         EC: ExecutionContext
     ): Future[A] = prog.exec[Future]
 
