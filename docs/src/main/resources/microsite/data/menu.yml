@@ -87,8 +87,14 @@ options:
       - title: Slick
         url: docs/slick
 
-      - title: Akka-Http
+      - title: Akka HTTP
         url: docs/integrations/akkahttp
+
+      - title: Finch
+        url: docs/integrations/finch
+
+      - title: http4s
+        url: docs/integrations/http4s
 
   - title: Related Work
     url: docs/related/

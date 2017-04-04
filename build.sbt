@@ -128,9 +128,7 @@ lazy val freestyleTwitterUtil = (project in file("freestyle-twitter-util")).
   dependsOn(freestyleJVM).
   settings(name := "freestyle-twitter-util").
   settings(
-    libraryDependencies ++= Seq(
-      %%("catbird-util")
-    )
+    libraryDependencies += %%("catbird-util")
   )
 
 lazy val fixResources = taskKey[Unit]("Fix application.conf presence on first clean build.")
@@ -151,9 +149,7 @@ lazy val freestyleConfig = (crossProject in file("freestyle-config"))
     compile in Test := ((compile in Test) dependsOn fixResources).value
   )
   .settings(
-    libraryDependencies ++= Seq(
-      %%%("shocon")
-    )
+    libraryDependencies += %%%("shocon")
   )
 
 lazy val freestyleConfigJVM = freestyleConfig.jvm
@@ -191,9 +187,7 @@ lazy val freestyleFs2 = (crossProject in file("freestyle-fs2"))
   .dependsOn(freestyle)
   .settings(name := "freestyle-fs2")
   .settings(
-    libraryDependencies ++= Seq(
-      %%%("fs2-core")
-    )
+    libraryDependencies += %%%("fs2-core")
   )
   .jsSettings(sharedJsSettings: _*)
 
@@ -241,6 +235,8 @@ lazy val docs = (project in file("docs"))
   .dependsOn(freestyleCacheJVM)
   .dependsOn(freestyleDoobie)
   .dependsOn(freestyleSlick)
+  .dependsOn(freestyleHttpHttp4s)
+  .dependsOn(freestyleHttpFinch)
   .settings(micrositeSettings: _*)
   .settings(noPublishSettings: _*)
   .settings(
@@ -248,11 +244,11 @@ lazy val docs = (project in file("docs"))
     description := "freestyle docs"
   )
   .settings(
+    resolvers += "Sonatype OSS Snapshots" at "https://oss.sonatype.org/content/repositories/snapshots",
     libraryDependencies ++= Seq(
-      %%("fs2-io"),
-      %%("fs2-cats"),
       %%("doobie-h2-cats"),
-      "com.h2database" % "h2" % "1.4.194" % "test"
+      "com.h2database" % "h2" % "1.4.194" % "test",
+      "org.http4s" %% "http4s-dsl"  % "0.17.0-SNAPSHOT"
     )
   )
   .enablePlugins(MicrositesPlugin)
@@ -263,8 +259,10 @@ lazy val freestyleHttpHttp4s = (project in file("http/http4s"))
   .settings(
     resolvers += "Sonatype OSS Snapshots" at "https://oss.sonatype.org/content/repositories/snapshots",
     libraryDependencies ++= Seq(
-      %%("http4s-core"),
-      %%("http4s-dsl") % "test"
+      "org.http4s" %% "http4s-core" % "0.17.0-SNAPSHOT",
+      "org.http4s" %% "http4s-dsl"  % "0.17.0-SNAPSHOT" % "test"
+      // %%("http4s-core"),
+      // %%("http4s-dsl") % "test"
     )
   )
 
@@ -272,9 +270,7 @@ lazy val freestyleHttpFinch = (project in file("http/finch"))
   .dependsOn(freestyleJVM)
   .settings(name := "freestyle-http-finch")
   .settings(
-    libraryDependencies ++= Seq(
-      %%("finch-core")
-    )
+    libraryDependencies += %%("finch-core")
   )
 
 lazy val freestyleHttpAkka = (project in file("http/akka"))
