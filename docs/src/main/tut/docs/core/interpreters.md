@@ -160,4 +160,4 @@ As a rule of thumb the approach that we've seen working in production is modelin
 For most common apps true bottlenecks are IO to Databases, Network or the file system and this is rarely a concern.
 
 
-Now that we've learnt to define our own interpreters let's jump into [Parallelism](/docs/parallelism/)
+Now that we've learnt to define our own interpreters let's jump into [Parallelism](/docs/core/parallelism/)
