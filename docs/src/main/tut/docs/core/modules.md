@@ -1,7 +1,7 @@
 ---
 layout: docs
 title: Modules
-permalink: /docs/modules/
+permalink: /docs/core/modules/
 ---
 
 # Modules
@@ -129,4 +129,4 @@ implicitly[App.Op[_] =:= ManualAppCoproduct[_]]
 We've covered so far how Freestyle can help in building and composing module programs based on `Free`, but `Free` programs are
 useless without a runtime interpreter that can evaluate the `Free` structure.
 
-Next we will show you how `Freestyle` helps you simplify the way you define [runtime interpreters](/docs/interpreters/) for `Free` applications.
+Next we will show you how `Freestyle` helps you simplify the way you define [runtime interpreters](/docs/core/interpreters/) for `Free` applications.

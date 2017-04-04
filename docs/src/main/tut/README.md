@@ -8,7 +8,7 @@ permalink: /
 <div class="col-md-6" markdown="1">
 # Build purely functional applications and libraries
 Build stack-safe purely functional applications and libraries that support parallel and sequential computations where declaration is decoupled from interpretation.
-Freestyle encourages programs built atop [Free algebras](/docs/algebras) that are interpreted at the edge of your application ensuring effects are localized and performed in a controlled environment.
+Freestyle encourages programs built atop [Free algebras](/docs/core/algebras) that are interpreted at the edge of your application ensuring effects are localized and performed in a controlled environment.
 Applications built with Freestyle can be interpreted to any runtime semantics supported by the interpreter target type.
 </div>
 <div class="col-md-6" markdown="1">
@@ -37,7 +37,7 @@ import freestyle._
 <div class="row" markdown="1">
 <div class="col-md-6 col-md-push-6" markdown="1">
 # Automatic Dependency Injection
-Freestyle includes all the implicit machinery necessary to achieve seamless dependency injection of [`@free`](/docs/algebras) and [`@module`](/docs/modules) Algebras.
+Freestyle includes all the implicit machinery necessary to achieve seamless dependency injection of [`@free`](/docs/core/algebras) and [`@module`](/docs/core/modules) Algebras.
 Simply require any of your `@free` or `@module` trait as implicits where needed.
 </div>
 <div class="col-md-6 col-md-pull-6" markdown="1">

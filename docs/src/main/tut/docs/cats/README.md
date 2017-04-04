@@ -20,7 +20,7 @@ object aliases {
 }
 ```
 
-A [freestyle module](/docs/modules/) (with `@module`) is an easy way to combine multiple algebras and creates a `Coproduct` of the underlying algebras together with the necessary `Inject` instances.
+A [freestyle module](/docs/core/modules/) (with `@module`) is an easy way to combine multiple algebras and creates a `Coproduct` of the underlying algebras together with the necessary `Inject` instances.
 
 - A `Coproduct` is a combination of data types. An operation of type `type FooBarOp[A] = Coproduct[FooOp, BarOp, A]` can either by a `FooOp` or a `BarOp`.
 - `Inject` is a type class which can inject a data type in a `Coproduct` containing that specific data type. An `Inject[FooOp, FooBarOp]` instance can inject a `FooOp` operation into the `FooBarOp` coproduct.

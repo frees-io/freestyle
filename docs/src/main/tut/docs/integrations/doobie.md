@@ -1,3 +1,4 @@
+---
 layout: docs
 title: Doobie
 permalink: /docs/integrations/doobie/

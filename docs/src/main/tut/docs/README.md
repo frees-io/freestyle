@@ -53,7 +53,7 @@ import freestyle.implicits._
 }
 ```
 
-Learn more about [algebras](/docs/algebras/) in the extended documentation.
+Learn more about [algebras](/docs/core/algebras) in the extended documentation.
 
 ## Modules
 
@@ -71,7 +71,7 @@ Freestyle automatically wires all dependencies through implicit evidences that a
 
 Once you have these abstract definitions you can combine them in whichever way you want. Freestyle supports nested modules enabling onion style architectures of any arbitrary depth.
 
-Learn more about [modules](/docs/modules/) in the extended [documentation]()
+Learn more about [modules](/docs/core/modules) in the extended [documentation]()
 
 ## Building programs
 
@@ -142,5 +142,5 @@ Freestyle includes ready to go Algebras and Integrations for the most common app
 - Ready to use integrations that cover most of the commons applications concerns such as [logging](), [configuration](), [dependency injection](), [persistence](), etc.
 - Traditional effects stacks (reader, writer, state, error, option, either)
 
-Learn more about how Freestyle works behind the scenes in the extended [documentation](/docs/algebras/) and check out a the [reference application](/TODO) with examples
+Learn more about how Freestyle works behind the scenes in the extended [documentation](/docs/core/algebras) and check out a the [reference application](/TODO) with examples
 of multiple algebras in use.
