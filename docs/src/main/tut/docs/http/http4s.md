@@ -16,6 +16,10 @@ libraryDependencies += "com.47deg" %% "freestyle-http-http4s" % "0.1.0"
 
 Note that freestyle only supports the http4s version based on Cats and FS2.
 
+## Integration
+
+The _freestyle-http4s_ module allows you to return a `FreeS[F, A]` value if there is an `F.Handler[G]` in scope and an `EntityEncoder[G[A]]`. Http4s provides `EntityEncoder` instances for `fs2.Task`, `Future`, `Id`, etc out of the box if there is an `EntityEncoder[A]` in scope.
+
 ## Example
 
 First lets import all the regular freestyle imports.

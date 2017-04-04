@@ -14,6 +14,9 @@ You can add the _freestyle-finch_ module as follows:
 libraryDependencies += "com.47deg" %% "freestyle-http-finch" % "0.1.0"
 ```
 
+## Integration
+
+The _freestyle-finch_ module allows you to return a `FreeS[F, io.finch.Output[A]]` value if there is either a `F.Handler[Id]` or `F.Handler[Future]` in scope (where `Future` is Twitter's `Future`) within an `Endpoint#apply` (eg `get(string) { ... }`).
 
 ## Example
 
@@ -24,7 +27,7 @@ import freestyle._
 import freestyle.implicits._
 ```
 
-In this example we will create a Finch `Endpoint` which will be able to calculate the greatest common divisor (GCD)of two natural numbers.
+In this example we will create a Finch `Endpoint` which will be able to calculate the greatest common divisor (GCD) of two natural numbers.
 
 ```tut:book
 @free trait Calc[F[_]] {
@@ -68,7 +71,7 @@ import io.finch._
 import shapeless.::
 ```
 
-We can use a  freestyle program in a `Endpoint#apply`.
+We can use a  freestyle program within `Endpoint#apply`.
 
 ```tut:book
 cats.Monad[Future]
