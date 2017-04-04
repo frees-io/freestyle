@@ -54,7 +54,7 @@ member in your algebras companion.</p>
   <span class="k">def</span> <span class="n">delete</span><span class="o">(</span><span class="n">key</span><span class="k">:</span> <span class="kt">String</span><span class="o">)</span><span class="k">:</span> <span class="kt">KVStoreState</span><span class="o">[</span><span class="kt">Unit</span><span class="o">]</span> <span class="k">=</span>
     <span class="nc">State</span><span class="o">.</span><span class="n">modify</span><span class="o">(</span><span class="k">_</span> <span class="o">-</span> <span class="n">key</span><span class="o">)</span>
 <span class="o">}</span>
-<span class="c1">// kvStoreHandler: KVStore.Handler[KVStoreState] = $anon$1@58a4538d
+<span class="c1">// kvStoreHandler: KVStore.Handler[KVStoreState] = $anon$1@26d82216
 </span></code></pre>
 </div>
 
@@ -161,7 +161,7 @@ implicit evidences of each one of the individual algebra’s interpreters.</p>
 <span class="c1">// import freestyle.implicits._
 </span>
 <span class="n">program</span><span class="o">[</span><span class="kt">Backend.Op</span><span class="o">].</span><span class="n">exec</span><span class="o">[</span><span class="kt">KVStoreState</span><span class="o">]</span>
-<span class="c1">// res0: KVStoreState[Option[Int]] = cats.data.StateT@708fcc2d
+<span class="c1">// res0: KVStoreState[Option[Int]] = cats.data.StateT@2b8b914a
 </span></code></pre>
 </div>
 
@@ -182,7 +182,7 @@ The entired process is also trampolined guaranteeing stack safety in the program
 
 <p>For most common apps true bottlenecks are IO to Databases, Network or the file system and this is rarely a concern.</p>
 
-<p>Now that we’ve learnt to define our own interpreters let’s jump into <a href="/docs/parallelism/">Parallelism</a></p>
+<p>Now that we’ve learnt to define our own interpreters let’s jump into <a href="/docs/core/parallelism/">Parallelism</a></p>
 </section></div></div></div></div><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script><script src="/highlight/highlight.pack.js"></script><script>hljs.configure({
 languages:['scala','java','bash']
 });

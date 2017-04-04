@@ -110,7 +110,7 @@ This effectively enables implicits based Dependency Injection where you may choo
 using the implicits scoping rules to place different implementations where appropriate.</p>
 
 <div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">val</span> <span class="n">userRepository</span> <span class="k">=</span> <span class="nc">UserRepository</span><span class="o">[</span><span class="kt">UserRepository.Op</span><span class="o">]</span>
-<span class="c1">// userRepository: UserRepository[UserRepository.Op] = UserRepository$To@304b6047
+<span class="c1">// userRepository: UserRepository[UserRepository.Op] = UserRepository$To@21c88973
 </span></code></pre>
 </div>
 
@@ -161,10 +161,10 @@ You may use this to manually build <code class="highlighter-rouge">Coproduct</co
 <p>This is obviously far from ideal as building <code class="highlighter-rouge">Coproduct</code> types by hand often times result in bizarre compile errors
 when the types don’t align properly arising from placing them in the wrong order.</p>
 
-<p>Fear not. Freestyle provides a <a href="/docs/modules/">modular system</a> to achieve Onion style architectures
+<p>Fear not. Freestyle provides a <a href="/docs/core/modules/">modular system</a> to achieve Onion style architectures
 and remove all the complexity from building <code class="highlighter-rouge">Coproduct</code> types by hand and compose arbitrarily nested Modules containing Algebras.</p>
 
-<p><a href="/docs/modules">Continue to Modules</a></p>
+<p><a href="/docs/core/modules/">Continue to Modules</a></p>
 </section></div></div></div></div><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script><script src="/highlight/highlight.pack.js"></script><script>hljs.configure({
 languages:['scala','java','bash']
 });
