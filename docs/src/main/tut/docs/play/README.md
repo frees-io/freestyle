@@ -11,7 +11,7 @@ It is easy to use a freestyle program as a result of a Play Framework Action wit
 In order to enable this integration you may depend on _freestyle-play_
 
 ```scala
-libraryDependencies += "com.47deg" %% "freestyle-play" % "0.1.0"
+libraryDependencies += "com.47deg" %% "freestyle-http-play" % "0.1.0"
 ```
 
 The regular imports for working with Freestyle and Cats
