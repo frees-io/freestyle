@@ -57,7 +57,7 @@
   <span class="k">def</span> <span class="n">vat</span><span class="o">(</span><span class="n">price</span><span class="k">:</span> <span class="kt">BigDecimal</span><span class="o">)</span><span class="k">:</span> <span class="kt">Task</span><span class="o">[</span><span class="kt">BigDecimal</span><span class="o">]</span> <span class="k">=</span>
     <span class="nc">Task</span><span class="o">.</span><span class="n">now</span><span class="o">(</span><span class="n">price</span> <span class="o">*</span> <span class="n">rate</span><span class="o">)</span>
 <span class="o">}</span>
-<span class="c1">// taskHandler: CalcVAT.Handler[fs2.Task] = $anon$1@11585515
+<span class="c1">// taskHandler: CalcVAT.Handler[fs2.Task] = $anon$1@4a6c07f2
 </span></code></pre>
 </div>
 
@@ -82,7 +82,7 @@
   <span class="k">case</span> <span class="nc">GET</span> <span class="o">-&gt;</span> <span class="nc">Root</span> <span class="o">/</span> <span class="s">"calc-total"</span> <span class="o">/</span> <span class="nc">Price</span><span class="o">(</span><span class="n">p</span><span class="o">)</span> <span class="k">=&gt;</span>
     <span class="nc">Ok</span><span class="o">(</span><span class="nc">CalcVAT</span><span class="o">[</span><span class="kt">CalcVAT.Op</span><span class="o">].</span><span class="n">withVat</span><span class="o">(</span><span class="n">p</span><span class="o">).</span><span class="n">map</span><span class="o">(</span><span class="n">total</span> <span class="k">=&gt;</span> <span class="n">s</span><span class="s">"The total price including VAT is $total"</span><span class="o">))</span>
 <span class="o">}</span>
-<span class="c1">// userService: org.http4s.HttpService = Kleisli(org.http4s.package$HttpService$$$Lambda$4463/2093674745@2a0af93d)
+<span class="c1">// userService: org.http4s.HttpService = Kleisli(org.http4s.package$HttpService$$$Lambda$5683/1953778358@4978838d)
 </span></code></pre>
 </div>
 
