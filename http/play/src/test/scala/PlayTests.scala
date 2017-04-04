@@ -25,29 +25,19 @@ import cats.Monad
 import freestyle._
 import freestyle.implicits._
 
-import freestyle.http.play._
+import freestyle.http.play.implicits._
 
 import _root_.play.api.mvc._
 import _root_.play.api.http._
 import _root_.play.api.test._
 
-import akka.actor.ActorSystem
-import akka.stream.{ActorMaterializer, Materializer}
-
 class PlayTests extends AsyncWordSpec with Matchers {
   implicit override def executionContext = ExecutionContext.Implicits.global
-
-  // play
 
   implicit def unitWr(implicit C: Codec): Writeable[Unit] =
     Writeable(data => C.encode(data.toString))
 
   implicit val unitCT: ContentTypeOf[Unit] = new ContentTypeOf(Option("text/plain"))
-
-  // akka
-
-  implicit val actorSys: ActorSystem      = ActorSystem("test")
-  implicit val materializer: Materializer = ActorMaterializer()
 
   "Play integration" should {
     import cats.instances.future._
@@ -60,25 +50,16 @@ class PlayTests extends AsyncWordSpec with Matchers {
         x <- Noop[F].noop
       } yield Results.Ok(x)
 
-    "FreeSAction creates an action from a program" in {
-      FreeSAction { program[Noop.Op] } shouldBe an[Action[Result]]
-    }
-
-    "FreeSAction creates an action from a function that returns a program given a request" in {
-      FreeSAction { request =>
-        Noop[Noop.Op].noop.map(_ => Results.Ok(request.method))
+    "FreeS programs can be used as return value in Play actions" in {
+      Action.async { _ =>
+        program[Noop.Op]
       } shouldBe an[Action[Result]]
     }
 
-    "The resulting action writes the result in the response" in {
-      import Helpers._
-
-      val action: EssentialAction  = FreeSAction { program[Noop.Op] }
-      val request                  = FakeRequest()
-      val response: Future[Result] = Helpers.call(action, request)
-
-      status(response) shouldBe 200
-      contentAsString(response) shouldBe "()"
+    "FreeS programs can interact with a given request and used as returned values in Play actions" in {
+      Action.async { request =>
+        Noop[Noop.Op].noop.map(_ => Results.Ok(request.method))
+      } shouldBe an[Action[Result]]
     }
   }
 }

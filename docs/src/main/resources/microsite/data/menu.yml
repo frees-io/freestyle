@@ -72,6 +72,9 @@ options:
       - title: Cats
         url: docs/cats
 
+      - title: Play Framework
+        url: docs/play
+
       - title: Monix
         url: TODO.html
 

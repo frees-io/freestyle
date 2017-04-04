@@ -194,17 +194,6 @@ lazy val freestyleFs2 = (crossProject in file("freestyle-fs2"))
 lazy val freestyleFs2JVM = freestyleFs2.jvm
 lazy val freestyleFs2JS  = freestyleFs2.js
 
-lazy val freestylePlay = (project in file("http/play"))
-  .dependsOn(freestyleJVM)
-  .settings(name := "freestyle-play")
-  .settings(
-    parallelExecution in Test := false,
-    libraryDependencies ++= Seq(
-      %%("play"),
-      %%("play-test") % "test"
-    )
-  )
-
 lazy val tests = (project in file("tests"))
   .dependsOn(freestyleJVM)
   .settings(noPublishSettings: _*)
@@ -235,6 +224,7 @@ lazy val docs = (project in file("docs"))
   .dependsOn(freestyleCacheJVM)
   .dependsOn(freestyleDoobie)
   .dependsOn(freestyleSlick)
+  .dependsOn(freestyleHttpPlay)
   .dependsOn(freestyleHttpHttp4s)
   .dependsOn(freestyleHttpFinch)
   .settings(micrositeSettings: _*)
@@ -280,5 +270,16 @@ lazy val freestyleHttpAkka = (project in file("http/akka"))
     libraryDependencies ++= Seq(
       "com.typesafe.akka" %% "akka-http" % "10.0.5",
       "com.typesafe.akka" %% "akka-http-testkit" % "10.0.5" % "test"
+    )
+)
+
+lazy val freestyleHttpPlay = (project in file("http/play"))
+  .dependsOn(freestyleJVM)
+  .settings(name := "freestyle-http-play")
+  .settings(
+    parallelExecution in Test := false,
+    libraryDependencies ++= Seq(
+      %%("play"),
+      %%("play-test") % "test"
     )
   )
