@@ -6,7 +6,7 @@ permalink: /docs/play/
 
 # Play Framework integration
 
-It is easy to use a freestyle program as a result of a Play Framework Action with the _freestyle-play_ module. This module provides an implicit conversion `FreeS[F, A] => Future[A]` which allows a user to define a Free program as the result of any Play Action that expects a Future as a response.
+It is easy to use a freestyle program as a result of a Play Framework Action with the _freestyle-http-play_ module. This module provides an implicit conversion `FreeS[F, A] => Future[A]` which allows a user to define a Free program as the result of any Play Action that expects a Future as a response.
 
 In order to enable this integration you may depend on _freestyle-http-play_
 
@@ -23,7 +23,7 @@ import cats._
 import cats.implicits._
 ```
 
-And some imports for the _freestyle-play_ module and Play itself:
+And some imports for the _freestyle-http-play_ module and Play itself:
 
 ```tut:silent
 import freestyle.http.play.implicits._
