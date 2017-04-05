@@ -65,7 +65,7 @@ options:
         url: TODO.html
 
       - title: Logging
-        url: TODO.html
+        url: docs/patterns/logging
 
   - title: Integrations
     url: TODO.html
