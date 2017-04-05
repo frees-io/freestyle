@@ -27,15 +27,15 @@ object algebras {
   }
 
   @free
-  trait SCtors2[F[_]] {
-    def i(a: Int): FreeS[F, Int]
-    def j(a: Int): FreeS[F, Int]
+  trait SCtors2[G[_]] {
+    def i(a: Int): FreeS[G, Int]
+    def j(a: Int): FreeS[G, Int]
   }
 
   @free
-  trait SCtors3[F[_]] {
-    def o(a: Int): FreeS[F, Int]
-    def p(a: Int): FreeS[F, Int]
+  trait SCtors3[H[_]] {
+    def o(a: Int): FreeS[H, Int]
+    def p(a: Int): FreeS[H, Int]
   }
 
   @free
@@ -74,15 +74,15 @@ object modules {
   }
 
   @module
-  trait M2[F[_]] {
-    val sctors3: SCtors3[F]
-    val sctors4: SCtors4[F]
+  trait M2[G[_]] {
+    val sctors3: SCtors3[G]
+    val sctors4: SCtors4[G]
   }
 
   @module
-  trait O1[F[_]] {
-    val m1: M1[F]
-    val m2: M2[F]
+  trait O1[H[_]] {
+    val m1: M1[H]
+    val m2: M2[H]
   }
 
   @module
