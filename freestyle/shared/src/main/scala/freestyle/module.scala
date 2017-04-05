@@ -16,7 +16,7 @@
 
 package freestyle
 
-import scala.language.experimental.macros
+import scala.reflect.internal._
 import scala.reflect.macros.whitebox
 import scala.reflect.runtime.universe._
 
@@ -90,17 +90,25 @@ object coproductcollect {
 
 object moduleImpl {
 
+  object messages {
+
+    val invalid = "Invalid use of the `@module` annotation"
+
+    val abstractOnly = "The `@module` macro annotation can only be applied to a trait or an abstract class."
+
+    val noCompanion = "The trait (or abstract class) annotated with `@module` must have no companion object."
+  }
+
   def impl(c: whitebox.Context)(annottees: c.Expr[Any]*): c.universe.Tree = {
     import c.universe._
-    import scala.reflect.internal._
-    import internal.reificationSupport._
+    import c.universe.internal.reificationSupport._
 
     def fail(msg: String) = c.abort(c.enclosingPosition, msg)
 
     def filterImplicitVars( trees: Template): List[ValDef]  =
       trees.collect { case v: ValDef if v.mods.hasFlag(Flag.DEFERRED) => v }
 
-    def mkCompanion( name: TypeName, implicits: List[ValDef] ): ModuleDef = {
+    def mkCompanion( name: TypeName, implicits: List[ValDef] ): ModuleDef =
       q"""
         object ${name.toTermName} extends FreeModuleLike {
           val X = coproductcollect.apply(this)
@@ -113,11 +121,10 @@ object moduleImpl {
           def apply[F[_]](implicit ev: $name[F]): $name[F] = ev
         }
       """
-    }
 
     // The main part
     annottees match {
-      case List(Expr(cls: ClassDef)) =>
+      case Expr(cls: ClassDef) :: Nil =>
         if (cls.mods.hasFlag(Flag.TRAIT | Flag.ABSTRACT)) {
           val userTrait @ ClassDef(_, name, _, clsTemplate) = cls.duplicate
           val implicits: List[ValDef] = filterImplicitVars(clsTemplate)
@@ -127,10 +134,12 @@ object moduleImpl {
             ${mkCompanion(name, implicits)}
           """
         } else
-          fail(s"@free requires trait or abstract class")
-      case _ =>
-        fail(
-          s"Invalid @module usage, only traits and abstract classes without companions are supported")
+          fail( s"${messages.invalid} in ${cls.name}. ${messages.abstractOnly}")
+
+      case Expr(cls: ClassDef) :: Expr(_) :: _ =>
+        fail( s"${messages.invalid} in ${cls.name}. ${messages.noCompanion}")
+
+      case _ => fail( s"${messages.invalid}. ${messages.abstractOnly}")
     }
   }
 }
