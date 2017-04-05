@@ -1,7 +1,7 @@
 ---
 layout: docs
 title: Async Callbacks
-permalink: /docs/integrations/async/
+permalink: /docs/effects/async/
 ---
 
 # Async Callbacks
