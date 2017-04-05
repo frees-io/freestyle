@@ -44,6 +44,9 @@ options:
       - title: Validation
         url: docs/effects/#Validation
 
+      - title: Async Callbacks
+        url: docs/effects/async
+
   - title: Example Target Stack
     url: docs/stack/
 

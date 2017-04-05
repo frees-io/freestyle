@@ -14,22 +14,16 @@
  * limitations under the License.
  */
 
-package freestyle.asyncMonix
+package freestyle.asyncFs2
 
 import freestyle.async._
 
-import monix.eval.Task
-import monix.execution.Cancelable
+import fs2.{Strategy, Task}
 
 object implicits {
-  implicit val monixTaskAsyncContext = new AsyncContext[Task] {
-    def runAsync[A](fa: Proc[A]): Task[A] = {
-      Task.create { (scheduler, callback) =>
-        scheduler.execute(new Runnable {
-          def run() = fa(_.fold(callback.onError, callback.onSuccess))
-        })
-        Cancelable.empty
-      }
-    }
+  implicit def fs2TaskAsyncContext(
+      implicit S: Strategy
+  ) = new AsyncContext[Task] {
+    def runAsync[A](fa: Proc[A]): Task[A] = Task.async(fa)(S)
   }
 }

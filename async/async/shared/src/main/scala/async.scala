@@ -35,17 +35,13 @@ object async {
 
   object implicits {
     implicit def futureAsyncContext(
-        implicit ex: ExecutionContext
+        implicit ec: ExecutionContext
     ) = new AsyncContext[Future] {
       def runAsync[A](fa: Proc[A]): Future[A] = {
         val p = Promise[A]()
 
-        ex.execute(new Runnable {
-          def run() =
-            fa({
-              case Right(v) => p.trySuccess(v)
-              case Left(ex) => p.tryFailure(ex)
-            })
+        ec.execute(new Runnable {
+          def run() = fa(_.fold(p.tryFailure, p.trySuccess))
         })
 
         p.future

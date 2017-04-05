@@ -74,6 +74,7 @@ lazy val freestyleAsyncFs = (crossProject in file("async/fs2"))
       %%%("fs2-cats")
     )
   )
+  .jsSettings(sharedJsSettings: _*)
 
 lazy val freestyleAsyncFsJVM = freestyleAsyncFs.jvm
 lazy val freestyleAsyncFsJS  = freestyleAsyncFs.js
@@ -227,6 +228,8 @@ lazy val docs = (project in file("docs"))
   .dependsOn(freestyleHttpPlay)
   .dependsOn(freestyleHttpHttp4s)
   .dependsOn(freestyleHttpFinch)
+  .dependsOn(freestyleAsyncFsJVM)
+  .dependsOn(freestyleAsyncMonixJVM)
   .settings(micrositeSettings: _*)
   .settings(noPublishSettings: _*)
   .settings(
