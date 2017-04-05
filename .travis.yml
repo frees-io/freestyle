@@ -14,6 +14,7 @@ install:
 - gem install sass
 - gem install jekyll -v 3.2.1
 script:
+- sbt ++$TRAVIS_SCALA_VERSION update
 - sbt ++$TRAVIS_SCALA_VERSION clean coverage test coverageReport
 - sbt ++$TRAVIS_SCALA_VERSION "docs/tut"
 
