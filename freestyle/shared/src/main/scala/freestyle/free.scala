@@ -16,7 +16,6 @@
 
 package freestyle
 
-import scala.annotation.{compileTimeOnly, StaticAnnotation}
 import scala.language.experimental.macros
 import scala.reflect.macros.blackbox
 
@@ -24,12 +23,7 @@ trait FreeModuleLike {
   type Op[A]
 }
 
-@compileTimeOnly("enable macro paradise to expand @free macro annotations")
-class free extends StaticAnnotation {
-  def macroTransform(annottees: Any*): Any = macro free.impl
-}
-
-object free {
+object freeImpl {
 
   object messages {
 
@@ -40,7 +34,7 @@ object free {
     val noCompanion = "The trait or class annotated with `@free` must have no companion object."
   }
 
-  def impl(c: blackbox.Context)(annottees: c.Expr[Any]*): c.universe.Tree = {
+  def free(c: blackbox.Context)(annottees: c.Expr[Any]*): c.universe.Tree = {
     import c.universe._
     import internal.reificationSupport._
 

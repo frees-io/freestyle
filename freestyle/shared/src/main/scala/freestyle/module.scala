@@ -16,7 +16,6 @@
 
 package freestyle
 
-import scala.annotation.{compileTimeOnly, StaticAnnotation}
 import scala.language.experimental.macros
 import scala.reflect.macros.whitebox
 import scala.reflect.runtime.universe._
@@ -89,12 +88,7 @@ object coproductcollect {
 
 }
 
-@compileTimeOnly("enable macro paradise to expand @module macro annotations")
-class module extends StaticAnnotation {
-  def macroTransform(annottees: Any*): Any = macro module.impl
-}
-
-object module {
+object moduleImpl {
 
   def impl(c: whitebox.Context)(annottees: c.Expr[Any]*): c.universe.Tree = {
     import c.universe._
