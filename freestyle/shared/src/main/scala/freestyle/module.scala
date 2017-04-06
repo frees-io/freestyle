@@ -111,8 +111,8 @@ object moduleImpl {
     lazy val LL = freshTypeName("LL$")
 
     def toImplArg(effVal: ValDef): ValDef = effVal match {
-      case q"$mods val $name: $eff[$ff, ..$args]" => effVal
-        //q"$mods val $name: $eff[$LL, ..$args]"
+      case q"$mods val $name: $eff[$ff, ..$args]" =>
+        q"$mods val $name: $eff[$LL, ..$args]"
     }
 
     def mkCompanion( userTrait: ClassDef): ModuleDef = {
@@ -132,9 +132,9 @@ object moduleImpl {
 
           type Op[$AA] = $xx.Op[$AA]
 
-          class To[F[_]](implicit ..$effArgs) extends $mod[F]
+          class To[$LL[_]](implicit ..$effArgs) extends $mod[$LL]
 
-          implicit def to[F[_]](implicit ..$effArgs): $mod[F] = new To[F]()
+          implicit def to[$LL[_]](implicit ..$effArgs): $mod[$LL] = new To[$LL]()
 
           def apply[$LL[_]](implicit $ev: $mod[$LL]): $mod[$LL] = $ev
         }
