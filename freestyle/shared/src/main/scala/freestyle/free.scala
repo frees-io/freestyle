@@ -41,7 +41,6 @@ object freeImpl {
     val MM = freshTypeName("MM$") // MM Target of the Handler's natural Transformation
     val LL = freshTypeName("LL$") // LL is the target of the Lifter's Injection
     val AA = freshTypeName("AA$") // AA is the parameter inside type applications
-    val freeMacro = symbolOf[freeImpl.type].asClass.module
 
     def fail(msg: String) = c.abort(c.enclosingPosition, msg)
 
@@ -143,9 +142,9 @@ object freeImpl {
       q"""
         object ${Eff.toTermName} {
 
-          import cats.arrow.FunctionK
-          import cats.free.Inject
-          import freestyle.FreeS
+          import _root_.cats.arrow.FunctionK
+          import _root_.cats.free.Inject
+          import _root_.freestyle.FreeS
 
           sealed trait $OP[$AA] extends scala.Product with java.io.Serializable
           ..${requests.map( _.mkRequestClass(TTs))}

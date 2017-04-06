@@ -66,7 +66,7 @@ object openUnion {
 
     def mkCoproduct(algebras: List[Type]): List[TypeDef] =
       algebras.map(x => TermName(x.toString) ) match {
-        case Nil => List( q"type Op[$AA] = Nothing" )
+        case Nil => q"type Op[$AA] = Nothing" :: Nil
 
         case alg :: Nil => q"type Op[$AA] = $alg.Op[$AA]" :: Nil
 
@@ -75,10 +75,10 @@ object openUnion {
 
           def copName(pos: Int): TypeName = TypeName( if (pos + 1 != num) s"C$pos" else "Op" )
 
-          val copDef1 = q"type ${copName(1)}[$AA] = cats.data.Coproduct[$alg1.Op, $alg0.Op, $AA]"
+          val copDef1 = q"type ${copName(1)}[$AA] = Coproduct[$alg1.Op, $alg0.Op, $AA]"
 
           def copDef(alg: Type, pos: Int ) : TypeDef =
-            q"type ${copName(pos)}[$AA] = cats.data.Coproduct[$alg.Op, ${copName(pos-1)}, $AA]"
+            q"type ${copName(pos)}[$AA] = Coproduct[$alg.Op, ${copName(pos-1)}, $AA]"
 
           val copDefs = algebras.zipWithIndex.drop(2).map { case (alg, pos) => copDef(alg, pos) }
           copDef1 :: copDefs
@@ -90,7 +90,7 @@ object openUnion {
     //ugly hack because as String it does not typecheck early which we need for types to be in scope
     val parsed     = coproducts.map( cop => c.parse(cop.toString))
 
-    c.Expr[Any]( q"new { ..$parsed }" )
+    c.Expr[Any](q"new { ..$parsed }")
   }
 
 }
@@ -134,6 +134,8 @@ object moduleImpl {
 
       q"""
         object ${mod.toTermName} extends FreeModuleLike {
+
+          import _root_.cats.data.Coproduct
 
           val $xx = openUnion.apply(this)
 
