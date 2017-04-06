@@ -230,6 +230,7 @@ lazy val docs = (project in file("docs"))
   .dependsOn(freestyleHttpFinch)
   .dependsOn(freestyleAsyncFsJVM)
   .dependsOn(freestyleAsyncMonixJVM)
+  .dependsOn(freestyleLoggingJVM)
   .settings(micrositeSettings: _*)
   .settings(noPublishSettings: _*)
   .settings(
