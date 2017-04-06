@@ -64,8 +64,8 @@ implicit val customerServiceHandler: CustomerService.Handler[Try] = new Customer
 }
 ```
 
-At this point we may agreggate our customer algebra with any other algebras in a _@module_ which will automatically compose monadic actions
-dervied from using different algebras.
+At this point we may aggregate our customer algebra with any other algebras in a _@module_ which will automatically compose monadic actions
+derived from using different algebras.
 
 ```tut:book
 import freestyle.logging._
@@ -89,14 +89,14 @@ def program[F[_]](implicit app : App[F]): FreeS[F, Unit] =
 
 Once we have a program we can interpret it to our desired runtime, in this case `scala.util.Try`
 
-```tut:book
+```tut:evaluated
 program[App.Op].exec[Try]
 ```
 
-### Alternative logging with the `WritterM` effect
+### Alternative logging with the `WriterM` effect
 
 The same semantics achieved by the backed in logging algebra can be achieved with traditional MTL style effects that impose a `MonadWriter` constrain in the program's
-target monad. Learn more about the writer effect in the [Effects](/docs/effects/#Writter) section.
+target monad. Learn more about the writer effect in the [Effects](/docs/effects/#Writer) section.
 
 ### A note on performance
 
