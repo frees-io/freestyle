@@ -19,10 +19,6 @@ package freestyle
 import scala.language.experimental.macros
 import scala.reflect.macros.blackbox
 
-trait FreeModuleLike {
-  type Op[A]
-}
-
 object freeImpl {
 
   object messages {
@@ -36,7 +32,7 @@ object freeImpl {
 
   def free(c: blackbox.Context)(annottees: c.Expr[Any]*): c.universe.Tree = {
     import c.universe._
-    import internal.reificationSupport._
+    import c.universe.internal.reificationSupport._
 
     def fail(msg: String) = c.abort(c.enclosingPosition, msg)
 

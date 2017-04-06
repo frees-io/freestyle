@@ -20,13 +20,18 @@ import scala.reflect.internal._
 import scala.reflect.macros.whitebox
 import scala.reflect.runtime.universe._
 
-object coproductcollect {
+trait FreeModuleLike {
+  type Op[A]
+}
+
+object openUnion {
 
   def apply[A](a: A): Any = macro materializeImpl[A]
 
-  def materializeImpl[A](c: whitebox.Context)(a: c.Expr[A])(
-      implicit foo: c.WeakTypeTag[A]): c.Expr[Any] = {
+  def materializeImpl[A](c: whitebox.Context)(a: c.Expr[A])( implicit foo: c.WeakTypeTag[A]): c.Expr[Any] = {
+
     import c.universe._
+    import c.universe.internal.reificationSupport._
 
     def fail(msg: String) = c.abort(c.enclosingPosition, msg)
 
@@ -57,21 +62,23 @@ object coproductcollect {
       fromClass(s)
     }
 
+    val AA = freshTypeName("AA$")
+
     def mkCoproduct(algebras: List[Type]): List[TypeDef] =
       algebras.map(x => TermName(x.toString) ) match {
-        case Nil => List( q"type Op[A] = Nothing")
+        case Nil => List( q"type Op[$AA] = Nothing" )
 
-        case List(alg) => List(q"type Op[A] = $alg.Op[A]")
+        case alg :: Nil => q"type Op[$AA] = $alg.Op[$AA]" :: Nil
 
         case alg0 :: alg1 :: algs =>
           val num = algebras.length
 
           def copName(pos: Int): TypeName = TypeName( if (pos + 1 != num) s"C$pos" else "Op" )
 
-          val copDef1 = q"type ${copName(1)}[A] = cats.data.Coproduct[$alg1.Op, $alg0.Op, A]"
+          val copDef1 = q"type ${copName(1)}[$AA] = cats.data.Coproduct[$alg1.Op, $alg0.Op, $AA]"
 
           def copDef(alg: Type, pos: Int ) : TypeDef =
-            q"type ${copName(pos)}[A] = cats.data.Coproduct[$alg.Op, ${copName(pos-1)}, A]"
+            q"type ${copName(pos)}[$AA] = cats.data.Coproduct[$alg.Op, ${copName(pos-1)}, $AA]"
 
           val copDefs = algebras.zipWithIndex.drop(2).map { case (alg, pos) => copDef(alg, pos) }
           copDef1 :: copDefs
@@ -128,7 +135,7 @@ object moduleImpl {
       q"""
         object ${mod.toTermName} extends FreeModuleLike {
 
-          val $xx = coproductcollect.apply(this)
+          val $xx = openUnion.apply(this)
 
           type Op[$AA] = $xx.Op[$AA]
 
