@@ -16,8 +16,10 @@
 
 package freestyle
 
+import cats.arrow.FunctionK
+import cats.free.Inject
 import scala.language.experimental.macros
-import scala.reflect.macros.blackbox
+import scala.reflect.macros.blackbox.Context
 
 object freeImpl {
 
@@ -30,9 +32,16 @@ object freeImpl {
     val noCompanion = "The trait or class annotated with `@free` must have no companion object."
   }
 
-  def free(c: blackbox.Context)(annottees: c.Expr[Any]*): c.universe.Tree = {
+  def free(c: Context)(annottees: c.Expr[Any]*): c.universe.Tree = {
     import c.universe._
     import c.universe.internal.reificationSupport._
+
+    /* Macro Hygiene: we first declare a long list of fresh names for term and types. */
+    val OP = TypeName("Op") // Root trait of the Effect ADT
+    val MM = freshTypeName("MM$") // MM Target of the Handler's natural Transformation
+    val LL = freshTypeName("LL$") // LL is the target of the Lifter's Injection
+    val AA = freshTypeName("AA$") // AA is the parameter inside type applications
+    val freeMacro = symbolOf[freeImpl.type].asClass.module
 
     def fail(msg: String) = c.abort(c.enclosingPosition, msg)
 
@@ -54,15 +63,6 @@ object freeImpl {
       case _ => fail( s"${messages.invalid}. It is an annotation for traits or classes.")
     }
 
-    // OP is the name of the Root trait of the Effect ADT
-    lazy val OP = TypeName("Op")
-    // MM Is the target of the Handler's natural Transformation
-    lazy val MM = freshTypeName("MM$")
-    // LL is the target of the Lifter's Injection
-    lazy val LL = freshTypeName("LL$")
-    // AA is the parameter inside type applications
-    lazy val AA = freshTypeName("AA$")
-
     def isRequestDef(tree: Tree): Boolean = tree match {
       case q"$mods def $name[..$tparams](...$paramss): FreeS[..$args]" => true
       case q"$mods def $name[..$tparams](...$paramss): FreeS.Par[..$args]" => true
@@ -78,11 +78,11 @@ object freeImpl {
       // Name of the Request ADT Class
       private[this] val Req: TypeName = TypeName(reqDef.name.toTypeName.encodedName.toString.capitalize + "OP")
       private[this] val Res = reqDef.tpt.asInstanceOf[AppliedTypeTree].args.last
+      private[this] val ReqC = Req.toTermName
 
       val params: List[ValDef] = reqDef.vparamss.flatten
 
-      def handlerCase: CaseDef  = {
-        val ReqC = Req.toTermName
+      def handlerCase: CaseDef  =
         if (params.isEmpty)
           cq"$ReqC() => $reqImpl"
         else {
@@ -91,8 +91,6 @@ object freeImpl {
           val uss = params.map( v => pq"_")
           cq"l @ $ReqC(..$uss) => $reqImpl(..$ffs)"
         }
-
-      }
 
       def handlerDef: DefDef =
         if (params.isEmpty)
@@ -114,7 +112,6 @@ object freeImpl {
         val injected = {
           /*filter: if !v.mods.hasFlag(Flag.IMPLICIT)*/
           val args = params.map(_.name)
-          val ReqC = Req.toTermName
           q"FreeS.inject[$OP, $LL]( $ReqC[..${tparams.map(_.name)} ](..$args) )"
         }
 
@@ -130,7 +127,7 @@ object freeImpl {
       }
     }
 
-    def mkEffectObject(effectTrait: ClassDef) : ModuleDef= {
+    def mkEffectObject(effectTrait: ClassDef): ModuleDef = {
 
       val requests: List[Request] = effectTrait.impl.collect {
         case dd:DefDef if isRequestDef(dd) => new Request(dd.asInstanceOf[DefDef])
