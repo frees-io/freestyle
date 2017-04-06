@@ -108,30 +108,39 @@ object moduleImpl {
     def filterImplicitVars( trees: Template): List[ValDef]  =
       trees.collect { case v: ValDef if v.mods.hasFlag(Flag.DEFERRED) => v }
 
-    def mkCompanion( name: TypeName, implicits: List[ValDef] ): ModuleDef =
+    def mkCompanion( userTrait: ClassDef): ModuleDef = {
+      val name = userTrait.name
+      val implicits: List[ValDef] = filterImplicitVars(userTrait.impl)
+      //  :+ q"val I: Inject[T, F]"
+
+      val LL = freshTypeName("LL$")
+      val AA = freshTypeName("AA$")
+      val ev = freshTermName("ev$")
+      val xx = freshTermName("xx$")
+
       q"""
         object ${name.toTermName} extends FreeModuleLike {
-          val X = coproductcollect.apply(this)
-          type Op[A] = X.Op[A]
+          val $xx = coproductcollect.apply(this)
+
+          type Op[$AA] = $xx.Op[$AA]
 
           class To[F[_]](implicit ..$implicits) extends $name[F]
 
           implicit def to[F[_]](implicit ..$implicits): To[F] = new To[F]()
 
-          def apply[F[_]](implicit ev: $name[F]): $name[F] = ev
+          def apply[$LL[_]](implicit $ev: $name[$LL]): $name[$LL] = $ev
         }
       """
+    }
 
     // The main part
     annottees match {
       case Expr(cls: ClassDef) :: Nil =>
         if (cls.mods.hasFlag(Flag.TRAIT | Flag.ABSTRACT)) {
-          val userTrait @ ClassDef(_, name, _, clsTemplate) = cls.duplicate
-          val implicits: List[ValDef] = filterImplicitVars(clsTemplate)
-          //  :+ q"val I: Inject[T, F]"
+          val userTrait = cls.duplicate
           q"""
             $userTrait
-            ${mkCompanion(name, implicits)}
+            ${mkCompanion(userTrait)}
           """
         } else
           fail( s"${messages.invalid} in ${cls.name}. ${messages.abstractOnly}")
