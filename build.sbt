@@ -137,17 +137,7 @@ lazy val fixResources = taskKey[Unit]("Fix application.conf presence on first cl
 lazy val freestyleConfig = (project in file("freestyle-config"))
   .dependsOn(freestyleJVM)
   .settings(
-    name := "freestyle-config",
-    fixResources := {
-      val testConf = (resourceDirectory in Test).value / "application.conf"
-      if (testConf.exists) {
-        IO.copyFile(
-          testConf,
-          (classDirectory in Compile).value / "application.conf"
-        )
-      }
-    },
-    compile in Test := ((compile in Test) dependsOn fixResources).value
+    name := "freestyle-config"
   )
   .settings(
     libraryDependencies ++= Seq(
