@@ -105,30 +105,38 @@ object moduleImpl {
 
     def fail(msg: String) = c.abort(c.enclosingPosition, msg)
 
-    def filterImplicitVars( trees: Template): List[ValDef]  =
+    def filterEffectVals(trees: Template): List[ValDef]  =
       trees.collect { case v: ValDef if v.mods.hasFlag(Flag.DEFERRED) => v }
 
-    def mkCompanion( userTrait: ClassDef): ModuleDef = {
-      val name = userTrait.name
-      val implicits: List[ValDef] = filterImplicitVars(userTrait.impl)
-      //  :+ q"val I: Inject[T, F]"
+    lazy val LL = freshTypeName("LL$")
 
-      val LL = freshTypeName("LL$")
+    def toImplArg(effVal: ValDef): ValDef = effVal match {
+      case q"$mods val $name: $eff[$ff, ..$args]" => effVal
+        //q"$mods val $name: $eff[$LL, ..$args]"
+    }
+
+    def mkCompanion( userTrait: ClassDef): ModuleDef = {
+      val mod = userTrait.name
+      val effVals: List[ValDef] = filterEffectVals(userTrait.impl)
+
       val AA = freshTypeName("AA$")
       val ev = freshTermName("ev$")
       val xx = freshTermName("xx$")
 
+      val effArgs: List[ValDef] = effVals.map( v => toImplArg(v) )
+
       q"""
-        object ${name.toTermName} extends FreeModuleLike {
+        object ${mod.toTermName} extends FreeModuleLike {
+
           val $xx = coproductcollect.apply(this)
 
           type Op[$AA] = $xx.Op[$AA]
 
-          class To[F[_]](implicit ..$implicits) extends $name[F]
+          class To[F[_]](implicit ..$effArgs) extends $mod[F]
 
-          implicit def to[F[_]](implicit ..$implicits): To[F] = new To[F]()
+          implicit def to[F[_]](implicit ..$effArgs): $mod[F] = new To[F]()
 
-          def apply[$LL[_]](implicit $ev: $name[$LL]): $name[$LL] = $ev
+          def apply[$LL[_]](implicit $ev: $mod[$LL]): $mod[$LL] = $ev
         }
       """
     }
