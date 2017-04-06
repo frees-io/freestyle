@@ -62,7 +62,7 @@ options:
         url: TODO.html
 
       - title: Configuration
-        url: TODO.html
+        url: docs/patterns/config
 
       - title: Logging
         url: docs/patterns/logging
