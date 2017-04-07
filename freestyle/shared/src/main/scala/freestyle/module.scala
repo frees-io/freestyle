@@ -16,18 +16,21 @@
 
 package freestyle
 
-import scala.annotation.{compileTimeOnly, StaticAnnotation}
-import scala.language.experimental.macros
-import scala.reflect.macros.whitebox
-import scala.reflect.runtime.universe._
+import scala.reflect.internal._
+import scala.reflect.macros.whitebox.Context
 
-object coproductcollect {
+trait FreeModuleLike {
+  type Op[A]
+}
+
+object openUnion {
 
   def apply[A](a: A): Any = macro materializeImpl[A]
 
-  def materializeImpl[A](c: whitebox.Context)(a: c.Expr[A])(
-      implicit foo: c.WeakTypeTag[A]): c.Expr[Any] = {
+  def materializeImpl[A](c: Context)(a: c.Expr[A])( implicit foo: c.WeakTypeTag[A]): c.Expr[Any] = {
+
     import c.universe._
+    import c.universe.internal.reificationSupport._
 
     def fail(msg: String) = c.abort(c.enclosingPosition, msg)
 
@@ -58,85 +61,109 @@ object coproductcollect {
       fromClass(s)
     }
 
+    val AA = freshTypeName("AA$")
+
     def mkCoproduct(algebras: List[Type]): List[TypeDef] =
       algebras.map(x => TermName(x.toString) ) match {
-        case Nil => List( q"type Op[A] = Nothing")
+        case Nil => q"type Op[$AA] = Nothing" :: Nil
 
-        case List(alg) => List(q"type Op[A] = $alg.Op[A]")
+        case alg :: Nil => q"type Op[$AA] = $alg.Op[$AA]" :: Nil
 
         case alg0 :: alg1 :: algs =>
+          /* We create several type aliases, where the type names are generated fresh names, 
+           * C0, C1, ..., C{n-1}, where n is the length of algebras. We then generate aliases: 
+           *
+           * type C1 = A1 |+| A0
+           * type C2 = A2 |+| C1
+           * type Ci = Ai |+| C{i-1}
+           * type C{n-1} = A{n-1} |+| C{n-2
+           * type Op{n-1}= C{n-1}
+           */
           val num = algebras.length
-
-          def copName(pos: Int): TypeName = TypeName( if (pos + 1 != num) s"C$pos" else "Op" )
-
-          val copDef1 = q"type ${copName(1)}[A] = cats.data.Coproduct[$alg1.Op, $alg0.Op, A]"
-
-          def copDef(alg: Type, pos: Int ) : TypeDef =
-            q"type ${copName(pos)}[A] = cats.data.Coproduct[$alg.Op, ${copName(pos-1)}, A]"
-
-          val copDefs = algebras.zipWithIndex.drop(2).map { case (alg, pos) => copDef(alg, pos) }
-          copDef1 :: copDefs
+          val ccs: List[TypeName] = List.range(0, num).map( i => freshTypeName("CC$") )
+          val tyDef1 = q"type ${ccs(1)}[$AA] = Coproduct[$alg1.Op, $alg0.Op, $AA]"
+          val tyDefs = algebras.zipWithIndex.drop(2).map { case (alg, pos) =>
+            q"type ${ccs(pos)}[$AA] = Coproduct[$alg.Op, ${ccs(pos-1)}, $AA]"
+          }
+          val opDef = q"type Op[$AA] = ${ccs.last}[$AA]"
+          tyDef1 :: (tyDefs :+ opDef)
       }
 
-    // The Main Part
     val algebras   = findAlgebras(weakTypeOf[A].typeSymbol.companion.asClass)
     val coproducts = mkCoproduct(algebras)
-    //ugly hack because as String it does not typecheck early which we need for types to be in scope
+    //ugly hack because, as String,  it does not typecheck, early which we need for types to be in scope
     val parsed     = coproducts.map( cop => c.parse(cop.toString))
 
-    c.Expr[Any]( q"new { ..$parsed }" )
+    c.Expr[Any](q"new { ..$parsed }")
   }
 
 }
 
-@compileTimeOnly("enable macro paradise to expand @module macro annotations")
-class module extends StaticAnnotation {
-  def macroTransform(annottees: Any*): Any = macro module.impl
-}
+object moduleImpl {
 
-object module {
-
-  def impl(c: whitebox.Context)(annottees: c.Expr[Any]*): c.universe.Tree = {
+  def impl(c: Context)(annottees: c.Expr[Any]*): c.universe.Tree = {
     import c.universe._
-    import scala.reflect.internal._
-    import internal.reificationSupport._
+    import c.universe.internal.reificationSupport._
 
     def fail(msg: String) = c.abort(c.enclosingPosition, msg)
 
-    def filterImplicitVars( trees: Template): List[ValDef]  =
+    def filterEffectVals(trees: Template): List[ValDef]  =
       trees.collect { case v: ValDef if v.mods.hasFlag(Flag.DEFERRED) => v }
 
-    def mkCompanion( name: TypeName, implicits: List[ValDef] ): ModuleDef = {
+    lazy val LL = freshTypeName("LL$")
+
+    def toImplArg(effVal: ValDef): ValDef = effVal match {
+      case q"$mods val $name: $eff[$ff, ..$args]" =>
+        q"$mods val $name: $eff[$LL, ..$args]"
+    }
+
+    def mkCompanion( userTrait: ClassDef): ModuleDef = {
+      val mod = userTrait.name
+      val effVals: List[ValDef] = filterEffectVals(userTrait.impl)
+
+      val AA = freshTypeName("AA$")
+      val ev = freshTermName("ev$")
+      val xx = freshTermName("xx$")
+
+      val effArgs: List[ValDef] = effVals.map( v => toImplArg(v) )
+
       q"""
-        object ${name.toTermName} extends FreeModuleLike {
-          val X = coproductcollect.apply(this)
-          type Op[A] = X.Op[A]
+        object ${mod.toTermName} extends FreeModuleLike {
 
-          class To[F[_]](implicit ..$implicits) extends $name[F]
+          import _root_.cats.data.Coproduct
 
-          implicit def to[F[_]](implicit ..$implicits): To[F] = new To[F]()
+          val $xx = openUnion.apply(this)
 
-          def apply[F[_]](implicit ev: $name[F]): $name[F] = ev
+          type Op[$AA] = $xx.Op[$AA]
+
+          class To[$LL[_]](implicit ..$effArgs) extends $mod[$LL]
+
+          implicit def to[$LL[_]](implicit ..$effArgs): $mod[$LL] = new To[$LL]()
+
+          def apply[$LL[_]](implicit $ev: $mod[$LL]): $mod[$LL] = $ev
         }
       """
     }
 
+    // Error Messages
+    val invalid = "Invalid use of the `@module` annotation"
+    val abstractOnly = "The `@module` annotation can only be applied to a trait or an abstract class."
+    val noCompanion = "The trait or class annotated with `@module` must have no companion object."
+
     // The main part
     annottees match {
-      case List(Expr(cls: ClassDef)) =>
+      case Expr(cls: ClassDef) :: Nil =>
         if (cls.mods.hasFlag(Flag.TRAIT | Flag.ABSTRACT)) {
-          val userTrait @ ClassDef(_, name, _, clsTemplate) = cls.duplicate
-          val implicits: List[ValDef] = filterImplicitVars(clsTemplate)
-          //  :+ q"val I: Inject[T, F]"
+          val userTrait = cls.duplicate
           q"""
             $userTrait
-            ${mkCompanion(name, implicits)}
+            ${mkCompanion(userTrait)}
           """
-        } else
-          fail(s"@free requires trait or abstract class")
-      case _ =>
-        fail(
-          s"Invalid @module usage, only traits and abstract classes without companions are supported")
+        } else fail( s"$invalid in ${cls.name}. $abstractOnly")
+
+      case Expr(cls: ClassDef) :: Expr(_) :: _ => fail( s"$invalid in ${cls.name}. $noCompanion")
+
+      case _ => fail( s"$invalid. $abstractOnly")
     }
   }
 }

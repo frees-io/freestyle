@@ -29,6 +29,15 @@ class moduleTests extends WordSpec with Matchers {
     import freestyle.implicits._
     import interps._
 
+    "be rejected if applied to a non-abstract class" in {
+      """@module class Foo[F[_]] { val x: Int}""" shouldNot compile
+    }
+
+    "be rejected if applied to a trait with companion object" in {
+      """@module trait  Foo[F[_]] { val x: Int} ; object Foo """ shouldNot compile
+    }
+
+
     "[simple] create a companion with a `T` type alias" in {
       type T[A] = M1.Op[A]
     }
