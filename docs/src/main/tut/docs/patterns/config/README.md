@@ -38,7 +38,7 @@ sealed trait Config {
 }
 ```
 
-The _freestyle-logging_ module contains a built in handler which you may use out of the box with target types such as `Try`, `Future`, `monix.eval.Task`, `fs2.Task`, and in general any other that can satisfy a `MonadError[M, Throwable]` constrain.
+The _freestyle-config_ module contains a built in handler which you may use out of the box with target types such as `Try`, `Future`, `monix.eval.Task`, `fs2.Task`, and in general any other that can satisfy a `MonadError[M, Throwable]` constrain.
 
 
 ### Example
