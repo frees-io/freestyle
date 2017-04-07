@@ -55,6 +55,9 @@ options:
 
     nested_options:
 
+      - title: Flexible Runtime Targets
+        url: docs/patterns/targets/
+
       - title: Cache
         url: docs/effects/Cache/
 

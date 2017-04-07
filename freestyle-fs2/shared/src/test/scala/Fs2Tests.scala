@@ -118,6 +118,10 @@ class Fs2Tests extends AsyncWordSpec with Matchers {
 
       program.exec[Future] map { _ shouldBe 42 }
     }
+
+    "provide a Capture instance for Task" in {
+      "Capture[Task]" should compile
+    }
   }
 
 }

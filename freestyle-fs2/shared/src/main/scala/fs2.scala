@@ -53,7 +53,7 @@ object fs2 {
     def runFold[A, B](z: B, f: (B, A) => B)(s: Stream[Eff, A]): FreeS.Par[F, B]
     def runLast[A](s: Stream[Eff, A]): FreeS.Par[F, Option[A]]
   }
-
+ 
   object implicits {
     implicit def freeStyleFs2StreamHandler[F[_]](
         implicit ME: MonadError[F, Throwable]
@@ -73,6 +73,10 @@ object fs2 {
         def runLast[A](s: Stream[Eff, A]): F[Option[A]] =
           s.runLast.run.foldMap(attemptF)
       }
+    }
+
+    implicit val freeStyleFs2CaptureInstance: Capture[Task] = new Capture[Task] {
+      override def capture[A](a: => A): Task[A] = Task.delay(a)
     }
 
     implicit class Fs2FreeSyntax[A](private val s: Stream[Eff, A]) extends AnyVal {
