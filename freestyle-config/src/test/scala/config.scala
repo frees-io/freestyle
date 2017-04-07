@@ -46,8 +46,7 @@ class ConfigTests extends AsyncWordSpec with Matchers {
     }
 
     "allow configuration to load classpath files" in {
-      val program = app.configM.
-      program.exec[Future] map { _.int("s") shouldBe Some(3) }
+      app.configM.load.exec[Future] map { _.int("s") shouldBe Some(3) }
     }
 
   }
