@@ -1,11 +1,12 @@
-import sbt.Keys._
-import sbt._
+import com.typesafe.sbt.site.jekyll.JekyllPlugin.autoImport._
 import microsites.MicrositeKeys._
 import microsites.util.BuildHelper.buildWithoutSuffix
-import sbtorgpolicies._
-import sbtorgpolicies.model._
+import sbt.Keys._
+import sbt._
+import sbtorgpolicies.OrgPoliciesPlugin
 import sbtorgpolicies.OrgPoliciesPlugin.autoImport._
-import com.typesafe.sbt.site.jekyll.JekyllPlugin.autoImport._
+import sbtorgpolicies.model._
+import scoverage.ScoverageSbtPlugin.autoImport._
 
 object ProjectPlugin extends AutoPlugin {
   override def trigger: PluginTrigger = allRequirements
@@ -49,13 +50,14 @@ object ProjectPlugin extends AutoPlugin {
     )
   }
 
-  import scoverage.ScoverageSbtPlugin.autoImport._
-
-  override def projectSettings =
+  override def projectSettings: Seq[Def.Setting[_]] =
     Seq(
       coverageMinimum := 80,
       coverageFailOnMinimum := false,
       description := "A Cohesive & Pragmatic Framework of FP centric Scala libraries",
+      startYear := Some(2017),
+      orgGithubTokenSetting := Option(System.getenv().get("GITHUB_TOKEN_REPO")),
+      resolvers += Resolver.sonatypeRepo("snapshots"),
       onLoad := (Command.process("project freestyle", _: State)) compose (onLoad in Global).value,
       scalacOptions ++= scalacAdvancedOptions,
       libraryDependencies += %%("scalatest") % "test",
