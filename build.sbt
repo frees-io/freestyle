@@ -136,27 +136,27 @@ lazy val freestyleTwitterUtil = (project in file("freestyle-twitter-util"))
 
 lazy val fixResources = taskKey[Unit]("Fix application.conf presence on first clean build.")
 
-lazy val freestyleConfig = (crossProject in file("freestyle-config"))
-  .dependsOn(freestyle)
+lazy val freestyleConfig = (project in file("freestyle-config"))
+  .dependsOn(freestyleJVM)
   .settings(
     name := "freestyle-config",
     fixResources := {
       val testConf = (resourceDirectory in Test).value / "application.conf"
+      val targetFile = (classDirectory in (freestyleJVM, Compile)).value / "application.conf"
       if (testConf.exists) {
         IO.copyFile(
           testConf,
-          (classDirectory in Compile).value / "application.conf"
+          targetFile
         )
       }
     },
     compile in Test := ((compile in Test) dependsOn fixResources).value
   )
   .settings(
-    libraryDependencies += %%%("shocon")
+    libraryDependencies ++= Seq(
+      %("config", "1.2.1")
+    )
   )
-
-lazy val freestyleConfigJVM = freestyleConfig.jvm
-lazy val freestyleConfigJS  = freestyleConfig.js
 
 lazy val freestyleFetch = (crossProject in file("freestyle-fetch"))
   .dependsOn(freestyle)
@@ -233,6 +233,7 @@ lazy val docs = (project in file("docs"))
   .dependsOn(freestyleAsyncFsJVM)
   .dependsOn(freestyleAsyncMonixJVM)
   .dependsOn(freestyleLoggingJVM)
+  .dependsOn(freestyleConfig)
   .settings(micrositeSettings: _*)
   .settings(noPublishSettings: _*)
   .settings(
