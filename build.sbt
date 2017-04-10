@@ -140,10 +140,11 @@ lazy val freestyleConfig = (project in file("freestyle-config"))
     name := "freestyle-config",
     fixResources := {
       val testConf = (resourceDirectory in Test).value / "application.conf"
+      val targetFile = (classDirectory in (freestyleJVM, Compile)).value / "application.conf"
       if (testConf.exists) {
         IO.copyFile(
           testConf,
-          (classDirectory in Compile).value / "application.conf"
+          targetFile
         )
       }
     },
