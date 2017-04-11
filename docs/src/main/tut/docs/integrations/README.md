@@ -6,5 +6,5 @@ permalink: /docs/integrations/
 
 # Integrations
 
-* [Doobie](/docs/integrations/doobie/)
-* [Akka HTTP](/docs/integrations/akkahttp/)
+* [Doobie](/docs/src/main/tut/docs/integrations/doobie/)
+* [Akka HTTP](/docs/src/main/tut/docs/integrations/akkahttp/)
