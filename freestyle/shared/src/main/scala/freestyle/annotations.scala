@@ -14,22 +14,18 @@
  * limitations under the License.
  */
 
-package freestyle.asyncMonix
+package freestyle
 
-import freestyle.async._
+import scala.annotation.{compileTimeOnly, StaticAnnotation}
+import scala.language.experimental.macros
 
-import monix.eval.Task
-import monix.execution.Cancelable
-
-object implicits {
-  implicit val monixTaskAsyncContext = new AsyncContext[Task] {
-    def runAsync[A](fa: Proc[A]): Task[A] = {
-      Task.create { (scheduler, callback) =>
-        scheduler.execute(new Runnable {
-          def run() = fa(_.fold(callback.onError, callback.onSuccess))
-        })
-        Cancelable.empty
-      }
-    }
-  }
+@compileTimeOnly("enable macro paradise to expand @free macro annotations")
+class free extends StaticAnnotation {
+  def macroTransform(annottees: Any*): Any = macro freeImpl.free
 }
+
+@compileTimeOnly("enable macro paradise to expand @module macro annotations")
+class module extends StaticAnnotation {
+  def macroTransform(annottees: Any*): Any = macro moduleImpl.impl
+}
+

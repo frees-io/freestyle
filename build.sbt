@@ -1,3 +1,5 @@
+import sbtorgpolicies.model._
+
 addCommandAlias("debug", "; clean ; test")
 
 addCommandAlias("validate", "; +clean ; +test; makeMicrosite")
@@ -74,6 +76,7 @@ lazy val freestyleAsyncFs = (crossProject in file("async/fs2"))
       %%%("fs2-cats")
     )
   )
+  .jsSettings(sharedJsSettings: _*)
 
 lazy val freestyleAsyncFsJVM = freestyleAsyncFs.jvm
 lazy val freestyleAsyncFsJS  = freestyleAsyncFs.js
@@ -112,7 +115,7 @@ lazy val freestyleDoobie = (project in file("freestyle-doobie"))
       %%("doobie-core-cats"),
       %%("doobie-h2-cats") % "test"
     )
-)
+  )
 
 lazy val freestyleSlick = (project in file("freestyle-slick"))
   .dependsOn(freestyleJVM, freestyleAsyncJVM)
@@ -124,36 +127,36 @@ lazy val freestyleSlick = (project in file("freestyle-slick"))
     )
   )
 
-lazy val freestyleTwitterUtil = (project in file("freestyle-twitter-util")).
-  dependsOn(freestyleJVM).
-  settings(name := "freestyle-twitter-util").
-  settings(
+lazy val freestyleTwitterUtil = (project in file("freestyle-twitter-util"))
+  .dependsOn(freestyleJVM)
+  .settings(name := "freestyle-twitter-util")
+  .settings(
     libraryDependencies += %%("catbird-util")
   )
 
 lazy val fixResources = taskKey[Unit]("Fix application.conf presence on first clean build.")
 
-lazy val freestyleConfig = (crossProject in file("freestyle-config"))
-  .dependsOn(freestyle)
+lazy val freestyleConfig = (project in file("freestyle-config"))
+  .dependsOn(freestyleJVM)
   .settings(
     name := "freestyle-config",
     fixResources := {
       val testConf = (resourceDirectory in Test).value / "application.conf"
+      val targetFile = (classDirectory in (freestyleJVM, Compile)).value / "application.conf"
       if (testConf.exists) {
         IO.copyFile(
           testConf,
-          (classDirectory in Compile).value / "application.conf"
+          targetFile
         )
       }
     },
     compile in Test := ((compile in Test) dependsOn fixResources).value
   )
   .settings(
-    libraryDependencies += %%%("shocon")
+    libraryDependencies ++= Seq(
+      %("config", "1.2.1")
+    )
   )
-
-lazy val freestyleConfigJVM = freestyleConfig.jvm
-lazy val freestyleConfigJS  = freestyleConfig.js
 
 lazy val freestyleFetch = (crossProject in file("freestyle-fetch"))
   .dependsOn(freestyle)
@@ -227,6 +230,10 @@ lazy val docs = (project in file("docs"))
   .dependsOn(freestyleHttpPlay)
   .dependsOn(freestyleHttpHttp4s)
   .dependsOn(freestyleHttpFinch)
+  .dependsOn(freestyleAsyncFsJVM)
+  .dependsOn(freestyleAsyncMonixJVM)
+  .dependsOn(freestyleLoggingJVM)
+  .dependsOn(freestyleConfig)
   .settings(micrositeSettings: _*)
   .settings(noPublishSettings: _*)
   .settings(
@@ -234,11 +241,10 @@ lazy val docs = (project in file("docs"))
     description := "freestyle docs"
   )
   .settings(
-    resolvers += "Sonatype OSS Snapshots" at "https://oss.sonatype.org/content/repositories/snapshots",
     libraryDependencies ++= Seq(
       %%("doobie-h2-cats"),
-      "com.h2database" % "h2" % "1.4.194" % "test",
-      "org.http4s" %% "http4s-dsl"  % "0.17.0-SNAPSHOT"
+      %%("http4s-dsl"),
+      "com.h2database" % "h2" % "1.4.194" % "test"
     )
   )
   .enablePlugins(MicrositesPlugin)
@@ -247,12 +253,9 @@ lazy val freestyleHttpHttp4s = (project in file("http/http4s"))
   .dependsOn(freestyleJVM)
   .settings(name := "freestyle-http-http4s")
   .settings(
-    resolvers += "Sonatype OSS Snapshots" at "https://oss.sonatype.org/content/repositories/snapshots",
     libraryDependencies ++= Seq(
-      "org.http4s" %% "http4s-core" % "0.17.0-SNAPSHOT",
-      "org.http4s" %% "http4s-dsl"  % "0.17.0-SNAPSHOT" % "test"
-      // %%("http4s-core"),
-      // %%("http4s-dsl") % "test"
+      %%("http4s-core"),
+      %%("http4s-dsl") % "test"
     )
   )
 
@@ -268,10 +271,10 @@ lazy val freestyleHttpAkka = (project in file("http/akka"))
   .settings(name := "freestyle-http-akka")
   .settings(
     libraryDependencies ++= Seq(
-      "com.typesafe.akka" %% "akka-http" % "10.0.5",
-      "com.typesafe.akka" %% "akka-http-testkit" % "10.0.5" % "test"
+      %%("akka-http"),
+      %%("akka-http-testkit") % "test"
     )
-)
+  )
 
 lazy val freestyleHttpPlay = (project in file("http/play"))
   .dependsOn(freestyleJVM)
@@ -283,3 +286,11 @@ lazy val freestyleHttpPlay = (project in file("http/play"))
       %%("play-test") % "test"
     )
   )
+
+orgAfterCISuccessTaskListSetting := List(
+  orgCreateFiles.toOrgTask,
+  orgCommitPolicyFiles.toOrgTask,
+  depUpdateDependencyIssues.toOrgTask,
+  (publishMicrosite in docs).toOrgTask,
+  orgPublishRelease.toOrgTask(allModulesScope = true, crossScalaVersionsScope = true)
+)

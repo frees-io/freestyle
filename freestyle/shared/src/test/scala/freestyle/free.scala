@@ -27,6 +27,14 @@ class freeTests extends WordSpec with Matchers {
     import algebras._
     import freestyle.implicits._
 
+    "be rejected if applied to a non-abstract class" in {
+      """@free class Foo[F[_]] { val x: Int}""" shouldNot compile
+    }
+
+    "be rejected if applied to a trait with companion object" in {
+      """ @free trait  Foo[F[_]] {def f: FreeS[F, Int]} ; object Foo """ shouldNot compile
+    }
+
     "create a companion with a `Op` type alias" in {
       type Op[A] = SCtors1.Op[A]
     }

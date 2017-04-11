@@ -44,6 +44,9 @@ options:
       - title: Validation
         url: docs/effects/#validation
 
+      - title: Async Callbacks
+        url: docs/effects/async
+
   - title: Example Target Stack
     url: docs/stack/
 
@@ -59,10 +62,10 @@ options:
         url: TODO.html
 
       - title: Configuration
-        url: TODO.html
+        url: docs/patterns/config
 
       - title: Logging
-        url: TODO.html
+        url: docs/patterns/logging
 
   - title: Integrations
     url: TODO.html

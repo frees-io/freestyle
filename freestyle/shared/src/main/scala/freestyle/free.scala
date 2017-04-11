@@ -16,49 +16,47 @@
 
 package freestyle
 
-import scala.annotation.{compileTimeOnly, StaticAnnotation}
-import scala.language.experimental.macros
-import scala.reflect.macros.blackbox
+import scala.reflect.macros.blackbox.Context
 
-trait FreeModuleLike {
-  type Op[A]
-}
+object freeImpl {
 
-@compileTimeOnly("enable macro paradise to expand @free macro annotations")
-class free extends StaticAnnotation {
-  def macroTransform(annottees: Any*): Any = macro free.impl
-}
-
-object free {
-
-  def impl(c: blackbox.Context)(annottees: c.Expr[Any]*): c.universe.Tree = {
+  def free(c: Context)(annottees: c.Expr[Any]*): c.universe.Tree = {
     import c.universe._
-    import internal.reificationSupport._
+    import c.universe.internal.reificationSupport._
+
+    /* Macro Hygiene: we first declare a long list of fresh names for term and types. */
+    val OP = TypeName("Op") // Root trait of the Effect ADT
+    val MM = freshTypeName("MM$") // MM Target of the Handler's natural Transformation
+    val LL = freshTypeName("LL$") // LL is the target of the Lifter's Injection
+    val AA = freshTypeName("AA$") // AA is the parameter inside type applications
 
     def fail(msg: String) = c.abort(c.enclosingPosition, msg)
 
+    // Messages of error
+    val invalid = "Invalid use of the `@free` annotation"
+    val abstractOnly = "The `@free` annotation can only be applied to a trait or to an abstract class."
+    val noCompanion = "The trait (or class) annotated with `@free` must have no companion object."
+
     def gen(): Tree = annottees match {
-      case List(Expr(cls: ClassDef)) =>
-        val effectTrait @ ClassDef(clsMods, _, _, _) = cls.duplicate
-        if (clsMods.hasFlag(Flag.TRAIT | Flag.ABSTRACT)) {
-          val effectObject = mkEffectObject(effectTrait)
+      case Expr(cls: ClassDef) :: Nil =>
+        if (cls.mods.hasFlag(Flag.TRAIT | Flag.ABSTRACT)) {
+          val effectTrait = cls.duplicate
           q"""
             $effectTrait
-            $effectObject
+            ${mkEffectObject(effectTrait)}
           """
-        } else
-          fail(s"@free requires trait or abstract class")
-      case _ =>
-        fail(
-          s"Invalid @free usage, only traits and abstract classes without companions are supported")
+        } else fail(s"$invalid in ${cls.name}. $abstractOnly")
+
+      case Expr(cls: ClassDef) :: Expr(_) :: _ => fail( s"$invalid in ${cls.name}. $noCompanion")
+
+      case _ => fail( s"$invalid. $abstractOnly")
     }
 
-    // OP is the name of the Root trait of the Effect ADT
-    lazy val OP = TypeName("Op")
-    // MM Is the target of the Handler's natural Transformation
-    lazy val MM = TypeName("MM")
-    // LL is the target of the Lifter's Injection
-    lazy val LL = TypeName("LL")
+    def isRequestDef(tree: Tree): Boolean = tree match {
+      case q"$mods def $name[..$tparams](...$paramss): FreeS[..$args]" => true
+      case q"$mods def $name[..$tparams](...$paramss): FreeS.Par[..$args]" => true
+      case _ => false
+    }
 
     class Request(reqDef: DefDef) {
 
@@ -69,11 +67,11 @@ object free {
       // Name of the Request ADT Class
       private[this] val Req: TypeName = TypeName(reqDef.name.toTypeName.encodedName.toString.capitalize + "OP")
       private[this] val Res = reqDef.tpt.asInstanceOf[AppliedTypeTree].args.last
+      private[this] val ReqC = Req.toTermName
 
       val params: List[ValDef] = reqDef.vparamss.flatten
 
-      def handlerCase: CaseDef  = {
-        val ReqC = Req.toTermName
+      def handlerCase: CaseDef  =
         if (params.isEmpty)
           cq"$ReqC() => $reqImpl"
         else {
@@ -83,8 +81,6 @@ object free {
           cq"l @ $ReqC(..$uss) => $reqImpl(..$ffs)"
         }
 
-      }
-
       def handlerDef: DefDef =
         if (params.isEmpty)
           q"protected[this] def $reqImpl[..$tparams]: $MM[$Res]"
@@ -92,15 +88,6 @@ object free {
           q"protected[this] def $reqImpl[..$tparams](..$params): $MM[$Res]"
 
 
-      /* A Request declaration in an Effect Trait, such as
-       *
-       * @free trait UserRepository[F[_]] {
-       *     def get(id: Long): FreeS[F, User]
-       *
-       * gets translated to a Request class such as
-       *
-       *     case class Get(id: Long) extends UserRepositoryOp[User]
-       */
       def mkRequestClass(effTTs: List[TypeDef]): ClassDef = {
         // Note: Effect trait type params are added to the request case class because its args may contain them
         val TTs = effTTs ++ tparams
@@ -114,7 +101,6 @@ object free {
         val injected = {
           /*filter: if !v.mods.hasFlag(Flag.IMPLICIT)*/
           val args = params.map(_.name)
-          val ReqC = Req.toTermName
           q"FreeS.inject[$OP, $LL]( $ReqC[..${tparams.map(_.name)} ](..$args) )"
         }
 
@@ -130,50 +116,45 @@ object free {
       }
     }
 
-    def getRequestDefs(effectTrait: ClassDef): List[DefDef] =
-      effectTrait.impl.filter {
-        case q"$mods def $name[..$tparams](...$paramss): FreeS[..$args]"     => true
-        case q"$mods def $name[..$tparams](...$paramss): FreeS.Par[..$args]" => true
-        case _ => false
-      }.map(_.asInstanceOf[DefDef])
+    def mkEffectObject(effectTrait: ClassDef): ModuleDef = {
 
-    def mkEffectObject(effectTrait: ClassDef) : ModuleDef= {
-
-      val effectName: TypeName = effectTrait.name
-      val requests: List[Request]  = getRequestDefs(effectTrait).map( p => new Request(p))
+      val requests: List[Request] = effectTrait.impl.collect {
+        case dd:DefDef if isRequestDef(dd) => new Request(dd.asInstanceOf[DefDef])
+     }
 
       val Eff = effectTrait.name
       val TTs = effectTrait.tparams.tail
+      val tns = TTs.map(_.name)
+      val ev =  freshTermName("ev$")
+      val ii =  freshTermName("ii$")
+      val fa =  freshTermName("fa$")
 
       q"""
-        object ${effectName.toTermName} {
+        object ${Eff.toTermName} {
 
-          import cats.arrow.FunctionK
-          import cats.free.Inject
-          import freestyle.FreeS
+          import _root_.cats.arrow.FunctionK
+          import _root_.cats.free.Inject
+          import _root_.freestyle.FreeS
 
-          sealed trait $OP[A] extends scala.Product with java.io.Serializable
+          sealed trait $OP[$AA] extends scala.Product with java.io.Serializable
           ..${requests.map( _.mkRequestClass(TTs))}
-
-          class To[$LL[_], ..$TTs](implicit I: Inject[$OP, $LL])
-            extends $Eff[$LL, ..${TTs.map(_.name)}] {
-              ..${requests.map(_.raiser )}
-          }
-
-          implicit def to[$LL[_], ..$TTs](implicit I: Inject[$OP, $LL]):
-              To[$LL, ..${TTs.map(_.name)}] = new To[$LL, ..$TTs]
-
-          def apply[$LL[_], ..$TTs](implicit ev: $Eff[$LL, ..${TTs.map(_.name)}]):
-              $Eff[$LL, ..${TTs.map(_.name)}] = ev
 
           trait Handler[$MM[_], ..$TTs] extends FunctionK[$OP, $MM] {
             ..${requests.map( _.handlerDef )}
 
-            override def apply[A](fa: $OP[A]): $MM[A] = fa match { 
+            override def apply[$AA]($fa: $OP[$AA]): $MM[$AA] = $fa match {
               case ..${requests.map(_.handlerCase )}
             }
-
           }
+
+          class To[$LL[_], ..$TTs](implicit $ii: Inject[$OP, $LL]) extends $Eff[$LL, ..$tns] {
+              ..${requests.map(_.raiser )}
+          }
+
+          implicit def to[$LL[_], ..$TTs](implicit $ii: Inject[$OP, $LL]):
+              To[$LL, ..$tns] = new To[$LL, ..$TTs]
+
+          def apply[$LL[_], ..$TTs](implicit $ev: $Eff[$LL, ..$tns]): $Eff[$LL, ..$tns] = $ev
 
         }
       """

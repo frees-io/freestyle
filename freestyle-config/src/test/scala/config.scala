@@ -30,7 +30,7 @@ class ConfigTests extends AsyncWordSpec with Matchers {
 
   implicit override def executionContext = ExecutionContext.Implicits.global
 
-  "Shocon config integration" should {
+  "Config integration" should {
 
     "allow configuration to be interleaved inside a program monadic flow" in {
       val program = for {
@@ -46,8 +46,7 @@ class ConfigTests extends AsyncWordSpec with Matchers {
     }
 
     "allow configuration to load classpath files" in {
-      val program = app.configM.load
-      program.exec[Future] map { _.int("s") shouldBe Some(3) }
+      app.configM.load.exec[Future] map { _.int("s") shouldBe Some(3) }
     }
 
   }
