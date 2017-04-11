@@ -29,7 +29,7 @@ import freestyle._
 
 # Automatic Dependency Injection
 
-Freestyle includes all the implicit machinery necessary to achieve seamless dependency injection of [`@free`](/docs/src/main/tut/docs/core/algebras.md) and [`@module`](/docs/src/main/tut/docs/core/modules.md) Algebras.
+Freestyle includes all the implicit machinery necessary to achieve seamless dependency injection of [`@free`](/docs/src/main/tut/docs/core/algebras/) and [`@module`](/docs/src/main/tut/docs/core/modules/) Algebras.
 Simply require any of your `@free` or `@module` trait as implicits where needed.
 
 ```scala
@@ -45,8 +45,8 @@ def storedUsers[F[_]]
 ```
 
 # Ready to use integrations
-Freestyle ships with [ready to use algebras and convenient syntax extensions](/docs/src/main/tut/docs/integrations) covering most of the application concerns such as persistence, configuration, logging, etc.
-In addition Freestyle includes commonly used FP [effects](/docs/src/main/tut/docs/effects) stack such as `option`, `error`, `reader`, `writer`, `state` based on the capabilities of
+Freestyle ships with [ready to use algebras and convenient syntax extensions](/docs/src/main/tut/docs/integrations/) covering most of the application concerns such as persistence, configuration, logging, etc.
+In addition Freestyle includes commonly used FP [effects](/docs/src/main/tut/docs/effects/) stack such as `option`, `error`, `reader`, `writer`, `state` based on the capabilities of
 the target runtime interpreters.
 
 ```scala
