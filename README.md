@@ -7,7 +7,7 @@ A Cohesive & Pragmatic Framework of FP centric Scala libraries
 
 # Build purely functional applications and libraries
 Build stack-safe purely functional applications and libraries that support parallel and sequential computations where declaration is decoupled from interpretation.
-Freestyle encourages programs built atop [Free algebras](/docs/src/main/tut/docs/core/algebras.md) that are interpreted at the edge of your application ensuring effects are localized and performed in a controlled environment.
+Freestyle encourages programs built atop [Free algebras](/docs/src/main/tut/docs/core/algebras/) that are interpreted at the edge of your application ensuring effects are localized and performed in a controlled environment.
 Applications built with Freestyle can be interpreted to any runtime semantics supported by the interpreter target type.
 
 ```scala
