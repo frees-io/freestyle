@@ -24,25 +24,25 @@ options:
     nested_options:
 
       - title: Error
-        url: docs/effects/#Error
+        url: docs/effects/#error
 
       - title: Option
-        url: docs/effects/#Option
+        url: docs/effects/#option
 
       - title: Reader
-        url: docs/effects/#Reader
+        url: docs/effects/#reader
 
       - title: Writer
-        url: docs/effects/#Writer
+        url: docs/effects/#writer
 
       - title: State
-        url: docs/effects/#State
+        url: docs/effects/#state
 
       - title: Traverse
-        url: docs/effects/#Traverse
+        url: docs/effects/#traverse
 
       - title: Validation
-        url: docs/effects/#Validation
+        url: docs/effects/#validation
 
   - title: Example Target Stack
     url: docs/stack/
@@ -105,7 +105,7 @@ options:
     nested_options:
 
       - title: Bibliography
-        url: docs/related/#Bibliography
+        url: docs/related/#bibliography
 
       - title: Scala Libraries
         url: docs/related/#Scala
