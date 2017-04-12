@@ -19,9 +19,9 @@ package freestyle
 import cats.instances.future._
 import freestyle.implicits._
 import freestyle.loggingJS.implicits._
-import org.scalatest._
+import org.scalatest.{AsyncWordSpec, Matchers}
 
-import scala.concurrent._
+import scala.concurrent.{ExecutionContext, Future}
 import scala.util.control.NoStackTrace
 
 class LoggingTests extends AsyncWordSpec with Matchers {
