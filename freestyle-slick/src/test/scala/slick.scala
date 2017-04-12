@@ -20,7 +20,10 @@ import _root_.slick.dbio.{DBIO, DBIOAction}
 import _root_.slick.jdbc.JdbcBackend
 import _root_.slick.jdbc.H2Profile.api._
 
-import org.scalatest.{AsyncWordSpec, Matchers}
+// import org.scalatest.{AsyncWordSpec, Matchers}
+import org.scalatest.{Matchers, WordSpec}
+import org.scalatest.concurrent.ScalaFutures
+import org.scalatest.time.{Milliseconds, Seconds, Span}
 
 import freestyle.implicits._
 import freestyle.slick._
@@ -28,12 +31,15 @@ import freestyle.slick.implicits._
 import cats.implicits._
 
 import scala.concurrent.Future
+import scala.concurrent.ExecutionContext.Implicits.global
 
-class SlickTests extends AsyncWordSpec with Matchers {
+// class SlickTests extends AsyncWordSpec with Matchers {
+class SlickTests extends WordSpec with Matchers with ScalaFutures {
 
   import algebras._
 
-  implicit override def executionContext = scala.concurrent.ExecutionContext.Implicits.global
+  // implicit override def executionContext = scala.concurrent.ExecutionContext.Implicits.global
+  implicit override def patienceConfig = PatienceConfig(Span(2, Seconds), Span(50, Milliseconds))
 
   implicit val db = Database.forURL("jdbc:h2:mem:test", driver = "org.h2.Driver")
 
@@ -47,7 +53,8 @@ class SlickTests extends AsyncWordSpec with Matchers {
         b <- app.slickM.run(query).freeS
         c <- FreeS.pure(1)
       } yield a + b + c
-      program.exec[Future] map { _ shouldBe 4 }
+      program.exec[Future].futureValue shouldBe 4
+      // program.exec[Future] map { _ shouldBe 4 }
     }
 
     "allow slick syntax to lift to FreeS" in {
@@ -56,7 +63,8 @@ class SlickTests extends AsyncWordSpec with Matchers {
         b <- query.liftFS[App.Op]
         c <- app.nonSlick.x
       } yield a + b + c
-      program.exec[Future] map { _ shouldBe 4 }
+      program.exec[Future].futureValue shouldBe 4
+      // program.exec[Future] map { _ shouldBe 4 }
     }
 
     "allow slick syntax to lift to FreeS.Par" in {
@@ -65,7 +73,8 @@ class SlickTests extends AsyncWordSpec with Matchers {
         b <- query.liftFSPar[App.Op].freeS
         c <- app.nonSlick.x
       } yield a + b + c
-      program.exec[Future] map { _ shouldBe 4 }
+      program.exec[Future].futureValue shouldBe 4
+      // program.exec[Future] map { _ shouldBe 4 }
     }
   }
 
