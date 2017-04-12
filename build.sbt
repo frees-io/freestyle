@@ -1,4 +1,5 @@
 import sbtorgpolicies.model._
+import sbtorgpolicies.libraries.v
 
 addCommandAlias("debug", "; clean ; test")
 
@@ -8,141 +9,169 @@ pgpPassphrase := Some(getEnvVar("PGP_PASSPHRASE").getOrElse("").toCharArray)
 pgpPublicRing := file(s"$gpgFolder/pubring.gpg")
 pgpSecretRing := file(s"$gpgFolder/secring.gpg")
 
-lazy val freestyle = (crossProject in file("freestyle"))
-  .settings(name := "freestyle")
+lazy val root = project.in(file("."))
+  .settings(moduleName := "root")
+  .settings(noPublishSettings)
+  .aggregate(freestyleJVM, freestyleJS)
+  .dependsOn(freestyleJVM, freestyleJS, tests % "test-internal -> test")
+
+lazy val freestyleJVM = project.in(file(".freestyleJVM"))
+  .settings(moduleName := "freestyle")
+  .aggregate(
+    coreJVM, monixJVM, effectsJVM, asyncJVM, asyncMonixJVM, asyncFs2JVM, cacheJVM, cacheRedis,
+    doobie, slick, twitterUtil, fetchJVM, config, loggingJVM, fs2JVM, docs, tests, 
+    httpAkka, httpFinch, httpHttp4s, httpPlay
+  )
+  .dependsOn(
+    coreJVM, monixJVM, effectsJVM, asyncJVM, asyncMonixJVM, asyncFs2JVM, cacheJVM, cacheRedis,
+    doobie, slick, twitterUtil, fetchJVM, config, loggingJVM, fs2JVM, tests % "test-internal -> test",
+    httpAkka, httpFinch, httpHttp4s, httpPlay
+  )
+
+lazy val freestyleJS = project.in(file(".freestyleJS"))
+  .settings(moduleName := "freestyle")
+  .aggregate(
+    coreJS, monixJS, effectsJS, asyncJS, asyncMonixJS, asyncFs2JS,
+    cacheJS, fetchJS, loggingJS, fs2JS
+  )
+  .dependsOn(
+    coreJS, monixJS, effectsJS, asyncJS, asyncMonixJS, asyncFs2JS,
+    cacheJS, fetchJS, loggingJS, fs2JS
+  )
+  .enablePlugins(ScalaJSPlugin)
+
+
+lazy val core = (crossProject in file("freestyle-core"))
+  .settings(name := "freestyle-core")
   .settings(
     libraryDependencies ++= Seq(
-      %("scala-reflect", scalaVersion.value),
-      %%%("cats-free"),
-      %%%("shapeless"),
-      %%("monix-eval") % "test",
-      %%("monix-cats") % "test"
+      scalaOrganization.value   % "scala-reflect" % scalaVersion.value,
+      "org.typelevel"         %%% "cats-free"     % v("cats"),
+      "com.chuusai"           %%% "shapeless"     % v("shapeless"),
+      "io.monix"              %%% "monix-eval"    % v("monix") % "test",
+      "io.monix"              %%% "monix-cats"    % v("monix") % "test"
     )
   )
   .jsSettings(sharedJsSettings: _*)
 
-lazy val freestyleJVM = freestyle.jvm
-lazy val freestyleJS  = freestyle.js
+lazy val coreJVM = core.jvm
+lazy val coreJS  = core.js
 
-lazy val freestyleMonix = (crossProject in file("freestyle-monix"))
+lazy val monix = (crossProject in file("freestyle-monix"))
+  .dependsOn(core)
   .settings(name := "freestyle-monix")
   .settings(
     libraryDependencies ++= Seq(
-      %%%("monix-eval"),
-      %%%("monix-cats")
+      "io.monix" %%% "monix-eval" % v("monix"),
+      "io.monix" %%% "monix-cats" % v("monix")
     )
   )
   .jsSettings(sharedJsSettings: _*)
 
-lazy val freestyleMonixJVM = freestyleMonix.jvm
-lazy val freestyleMonixJS  = freestyleMonix.js
+lazy val monixJVM = monix.jvm
+lazy val monixJS  = monix.js
 
-lazy val freestyleEffects = (crossProject in file("freestyle-effects"))
-  .dependsOn(freestyle)
+lazy val effects = (crossProject in file("freestyle-effects"))
+  .dependsOn(core)
   .settings(name := "freestyle-effects")
   .jsSettings(sharedJsSettings: _*)
 
-lazy val freestyleEffectsJVM = freestyleEffects.jvm
-lazy val freestyleEffectsJS  = freestyleEffects.js
+lazy val effectsJVM = effects.jvm
+lazy val effectsJS  = effects.js
 
-lazy val freestyleAsync = (crossProject in file("async/async"))
-  .dependsOn(freestyle)
+lazy val async = (crossProject in file("async/async"))
+  .dependsOn(core)
   .settings(name := "freestyle-async")
   .jsSettings(sharedJsSettings: _*)
 
-lazy val freestyleAsyncJVM = freestyleAsync.jvm
-lazy val freestyleAsyncJS  = freestyleAsync.js
+lazy val asyncJVM = async.jvm
+lazy val asyncJS  = async.js
 
-lazy val freestyleAsyncMonix = (crossProject in file("async/monix"))
-  .dependsOn(freestyle, freestyleAsync)
+lazy val asyncMonix = (crossProject in file("async/monix"))
+  .dependsOn(core, async)
   .settings(name := "freestyle-async-monix")
   .settings(
     libraryDependencies ++= Seq(
-      %%("monix-eval"),
-      %%("monix-cats")
+      "io.monix" %%% "monix-eval" % v("monix"),
+      "io.monix" %%% "monix-cats" % v("monix")
     )
   )
   .jsSettings(sharedJsSettings: _*)
 
-lazy val freestyleAsyncMonixJVM = freestyleAsyncMonix.jvm
-lazy val freestyleAsyncMonixJS  = freestyleAsyncMonix.js
+lazy val asyncMonixJVM = asyncMonix.jvm
+lazy val asyncMonixJS  = asyncMonix.js
 
-lazy val freestyleAsyncFs = (crossProject in file("async/fs2"))
-  .dependsOn(freestyle, freestyleAsync)
+lazy val asyncFs2 = (crossProject in file("async/fs2"))
+  .dependsOn(core, async)
   .settings(name := "freestyle-async-fs2")
   .settings(
     libraryDependencies ++= Seq(
-      %%%("fs2-core"),
-      %%%("fs2-cats")
+      "co.fs2" %%% "fs2-core" % v("fs2"),
+      "co.fs2" %%% "fs2-cats" % v("fs2-cats")
     )
   )
   .jsSettings(sharedJsSettings: _*)
 
-lazy val freestyleAsyncFsJVM = freestyleAsyncFs.jvm
-lazy val freestyleAsyncFsJS  = freestyleAsyncFs.js
+lazy val asyncFs2JVM = asyncFs2.jvm
+lazy val asyncFs2JS  = asyncFs2.js
 
-lazy val freestyleCache = (crossProject in file("freestyle-cache"))
-  .dependsOn(freestyle)
-  .settings(
-    name := "freestyle-cache"
-  )
+lazy val cache = (crossProject in file("freestyle-cache"))
+  .dependsOn(core)
+  .settings(name := "freestyle-cache")
   .jsSettings(sharedJsSettings: _*)
 
-lazy val freestyleCacheJVM = freestyleCache.jvm
-lazy val freestyleCacheJS  = freestyleCache.js
+lazy val cacheJVM = cache.jvm
+lazy val cacheJS  = cache.js
 
-lazy val freestyleCacheRedis = (crossProject in file("freestyle-cache-redis"))
-  .dependsOn(freestyle, freestyleCache)
+lazy val cacheRedis = (project in file("freestyle-cache-redis"))
+  .dependsOn(coreJVM, cacheJVM)
+  .settings(name := "freestyle-cache-redis")
   .settings(
-    name := "freestyle-cache-redis",
     resolvers += "Sonatype OSS Releases" at "https://oss.sonatype.org/content/repositories/releases/",
     resolvers += Resolver.mavenLocal,
     libraryDependencies ++= Seq(
-      %%("rediscala"),
-      %%("akka-actor")    % "test",
-      %("embedded-redis") % "test"
+      "com.github.etaty"          %% "rediscala"      % v("rediscala"),
+      "com.typesafe.akka"         %% "akka-actor"     % v("akka"),
+      "com.orange.redis-embedded"  % "embedded-redis" % v("embedded-redis")
     )
   )
-  .jsSettings(sharedJsSettings: _*)
 
-lazy val freestyleCacheRedisJVM = freestyleCacheRedis.jvm
-
-lazy val freestyleDoobie = (project in file("freestyle-doobie"))
-  .dependsOn(freestyleJVM)
+lazy val doobie = (project in file("freestyle-doobie"))
+  .dependsOn(coreJVM)
   .settings(name := "freestyle-doobie")
   .settings(
     libraryDependencies ++= Seq(
-      %%("doobie-core-cats"),
-      %%("doobie-h2-cats") % "test"
+      "org.tpolecat" %% "doobie-core-cats" % v("doobie"),
+      "org.tpolecat" %% "doobie-h2-cats"   % v("doobie")
     )
   )
 
-lazy val freestyleSlick = (project in file("freestyle-slick"))
-  .dependsOn(freestyleJVM, freestyleAsyncJVM)
+lazy val slick = (project in file("freestyle-slick"))
+  .dependsOn(coreJVM, asyncJVM)
   .settings(name := "freestyle-slick")
   .settings(
     libraryDependencies ++= Seq(
-      %%("slick"),
-      "com.h2database" % "h2" % "1.4.194" % "test"
+      "com.typesafe.slick" %% "slick" % v("slick"),
+      "com.h2database"      % "h2"    % "1.4.194" % "test"
     )
   )
 
-lazy val freestyleTwitterUtil = (project in file("freestyle-twitter-util"))
-  .dependsOn(freestyleJVM)
+lazy val twitterUtil = (project in file("freestyle-twitter-util"))
+  .dependsOn(coreJVM)
   .settings(name := "freestyle-twitter-util")
   .settings(
-    libraryDependencies += %%("catbird-util")
+    libraryDependencies += "io.catbird" %% "catbird-util" %v("catbird")
   )
 
 lazy val fixResources = taskKey[Unit]("Fix application.conf presence on first clean build.")
 
-lazy val freestyleConfig = (project in file("freestyle-config"))
-  .dependsOn(freestyleJVM)
+lazy val config = (project in file("freestyle-config"))
+  .dependsOn(coreJVM)
+  .settings(name := "freestyle-config")
   .settings(
-    name := "freestyle-config",
     fixResources := {
       val testConf = (resourceDirectory in Test).value / "application.conf"
-      val targetFile = (classDirectory in (freestyleJVM, Compile)).value / "application.conf"
+      val targetFile = (classDirectory in (coreJVM, Compile)).value / "application.conf"
       if (testConf.exists) {
         IO.copyFile(
           testConf,
@@ -153,57 +182,93 @@ lazy val freestyleConfig = (project in file("freestyle-config"))
     compile in Test := ((compile in Test) dependsOn fixResources).value
   )
   .settings(
-    libraryDependencies ++= Seq(
-      %("config", "1.2.1")
-    )
+    libraryDependencies += "com.typesafe" % "config" % v("config")
   )
 
-lazy val freestyleFetch = (crossProject in file("freestyle-fetch"))
-  .dependsOn(freestyle)
+lazy val fetch = (crossProject in file("freestyle-fetch"))
+  .dependsOn(core)
   .settings(name := "freestyle-fetch")
   .settings(
     libraryDependencies ++= Seq(
-      %%%("fetch"),
-      %%%("fetch-monix")
+      "com.47deg" %%% "fetch"       % v("fetch"),
+      "com.47deg" %%% "fetch-monix" % v("fetch")
     )
   )
   .jsSettings(sharedJsSettings: _*)
 
-lazy val freestyleFetchJVM = freestyleFetch.jvm
-lazy val freestyleFetchJS  = freestyleFetch.js
+lazy val fetchJVM = fetch.jvm
+lazy val fetchJS  = fetch.js
 
-lazy val freestyleLogging = (crossProject in file("freestyle-logging"))
-  .dependsOn(freestyle)
+lazy val logging = (crossProject in file("freestyle-logging"))
+  .dependsOn(core)
   .settings(name := "freestyle-logging")
   .jvmSettings(
-    libraryDependencies += %%("journal-core")
+    libraryDependencies += "io.verizon.journal" %% "core" % v("journal")
   )
   .jsSettings(
-    libraryDependencies += %%%("slogging")
+    libraryDependencies += "biz.enef" %%% "slogging" % v("slogging")
   )
   .jsSettings(sharedJsSettings: _*)
 
-lazy val freestyleLoggingJVM = freestyleLogging.jvm
-lazy val freestyleLoggingJS  = freestyleLogging.js
+lazy val loggingJVM = logging.jvm
+lazy val loggingJS  = logging.js
 
-lazy val freestyleFs2 = (crossProject in file("freestyle-fs2"))
-  .dependsOn(freestyle)
+lazy val fs2 = (crossProject in file("freestyle-fs2"))
+  .dependsOn(core)
   .settings(name := "freestyle-fs2")
   .settings(
-    libraryDependencies += %%%("fs2-core")
+    libraryDependencies += "co.fs2" %%% "fs2-core" % v("fs2")
   )
   .jsSettings(sharedJsSettings: _*)
 
-lazy val freestyleFs2JVM = freestyleFs2.jvm
-lazy val freestyleFs2JS  = freestyleFs2.js
+lazy val fs2JVM = fs2.jvm
+lazy val fs2JS  = fs2.js
+
+lazy val httpHttp4s = (project in file("http/http4s"))
+  .dependsOn(coreJVM)
+  .settings(name := "freestyle-http-http4s")
+  .settings(
+    libraryDependencies ++= Seq(
+      "org.http4s" %% "http4s-core" % v("http4s"),
+      "org.http4s" %% "http4s-dsl"  % v("http4s") % "test"
+    )
+  )
+
+lazy val httpFinch = (project in file("http/finch"))
+  .dependsOn(coreJVM)
+  .settings(name := "freestyle-http-finch")
+  .settings(
+    libraryDependencies += "com.github.finagle" %% "finch-core" % v("finch")
+  )
+
+lazy val httpAkka = (project in file("http/akka"))
+  .dependsOn(coreJVM)
+  .settings(name := "freestyle-http-akka")
+  .settings(
+    libraryDependencies ++= Seq(
+      "com.typesafe.akka" %% "akka-http"         % v("akka-http"),
+      "com.typesafe.akka" %% "akka-http-testkit" % v("akka-http") % "test"
+    )
+  )
+
+lazy val httpPlay = (project in file("http/play"))
+  .dependsOn(coreJVM)
+  .settings(name := "freestyle-http-play")
+  .settings(
+    parallelExecution in Test := false,
+    libraryDependencies ++= Seq(
+      "com.typesafe.play" %% "play"      % v("play"),
+      "com.typesafe.play" %% "play-test" % v("play") % "test"
+    )
+  )
 
 lazy val tests = (project in file("tests"))
-  .dependsOn(freestyleJVM)
+  .dependsOn(coreJVM)
   .settings(noPublishSettings: _*)
   .settings(
     libraryDependencies ++= Seq(
-      %("scala-reflect", scalaVersion.value),
-      %%("pcplod") % "test"
+      scalaOrganization.value  % "scala-reflect" % scalaVersion.value,
+      "org.ensime"            %% "pcplod"        % v("pcplod")
     ),
     fork in Test := true,
     javaOptions in Test ++= {
@@ -220,20 +285,8 @@ lazy val tests = (project in file("tests"))
   )
 
 lazy val docs = (project in file("docs"))
-  .dependsOn(freestyleJVM)
-  .dependsOn(freestyleEffectsJVM)
-  .dependsOn(freestyleFs2JVM)
-  .dependsOn(freestyleFetchJVM)
-  .dependsOn(freestyleCacheJVM)
-  .dependsOn(freestyleDoobie)
-  .dependsOn(freestyleSlick)
-  .dependsOn(freestyleHttpPlay)
-  .dependsOn(freestyleHttpHttp4s)
-  .dependsOn(freestyleHttpFinch)
-  .dependsOn(freestyleAsyncFsJVM)
-  .dependsOn(freestyleAsyncMonixJVM)
-  .dependsOn(freestyleLoggingJVM)
-  .dependsOn(freestyleConfig)
+  .dependsOn(coreJVM, effectsJVM, fs2JVM, fetchJVM, cacheJVM, loggingJVM, asyncFs2JVM, asyncMonixJVM)
+  .dependsOn(doobie, slick, httpPlay, httpHttp4s, httpFinch, config)
   .settings(micrositeSettings: _*)
   .settings(noPublishSettings: _*)
   .settings(
@@ -242,50 +295,10 @@ lazy val docs = (project in file("docs"))
   )
   .settings(
     libraryDependencies ++= Seq(
-      %%("doobie-h2-cats"),
-      %%("http4s-dsl"),
-      "com.h2database" % "h2" % "1.4.194" % "test"
+      "org.http4s" %% "http4s-dsl" % v("http4s")
     )
   )
   .enablePlugins(MicrositesPlugin)
-
-lazy val freestyleHttpHttp4s = (project in file("http/http4s"))
-  .dependsOn(freestyleJVM)
-  .settings(name := "freestyle-http-http4s")
-  .settings(
-    libraryDependencies ++= Seq(
-      %%("http4s-core"),
-      %%("http4s-dsl") % "test"
-    )
-  )
-
-lazy val freestyleHttpFinch = (project in file("http/finch"))
-  .dependsOn(freestyleJVM)
-  .settings(name := "freestyle-http-finch")
-  .settings(
-    libraryDependencies += %%("finch-core")
-  )
-
-lazy val freestyleHttpAkka = (project in file("http/akka"))
-  .dependsOn(freestyleJVM)
-  .settings(name := "freestyle-http-akka")
-  .settings(
-    libraryDependencies ++= Seq(
-      %%("akka-http"),
-      %%("akka-http-testkit") % "test"
-    )
-  )
-
-lazy val freestyleHttpPlay = (project in file("http/play"))
-  .dependsOn(freestyleJVM)
-  .settings(name := "freestyle-http-play")
-  .settings(
-    parallelExecution in Test := false,
-    libraryDependencies ++= Seq(
-      %%("play"),
-      %%("play-test") % "test"
-    )
-  )
 
 orgAfterCISuccessTaskListSetting := List(
   orgCreateFiles.toOrgTask,
