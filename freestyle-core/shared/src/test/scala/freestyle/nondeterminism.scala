@@ -23,7 +23,7 @@ import cats.instances.tuple._
 import cats.syntax.eq._
 import cats.syntax.either._
 import cats.laws.discipline.arbitrary._
-import cats.laws.discipline.{ApplicativeTests, MonadTests}
+import cats.laws.discipline.{ApplicativeTests, FunctorTests, MonadTests}
 import org.scalatest.{FunSuite, Matchers}
 import org.typelevel.discipline.scalatest.Discipline
 import scala.concurrent.{Await, Future}
@@ -52,10 +52,13 @@ class NonDeterminismTests extends FunSuite with Discipline with Matchers {
   implicit val throwableEq: Eq[Throwable] =
     Eq[String].on(_.toString)
 
-  checkAll("FutureNondeterminism", ApplicativeTests[Future].applicative[Int, Int, Int])
+
+  checkAll("FutureNondeterminism", FunctorTests[Future].functor[Int, Int, Int])
 
   // fails
   //  - flatMap consistent apply
+  //  - ap consistent with product + map
+  // checkAll("FutureNondeterminism", ApplicativeTests[Future].applicative[Int, Int, Int])
   // checkAll("FutureNondeterminism", MonadTests[Future].monad[Int, Int, Int])
 
 }

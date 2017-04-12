@@ -39,7 +39,7 @@ class SlickTests extends WordSpec with Matchers with ScalaFutures {
   import algebras._
 
   // implicit override def executionContext = scala.concurrent.ExecutionContext.Implicits.global
-  implicit override def patienceConfig = PatienceConfig(Span(2, Seconds), Span(50, Milliseconds))
+  implicit override def patienceConfig = PatienceConfig(Span(5, Seconds), Span(50, Milliseconds))
 
   implicit val db = Database.forURL("jdbc:h2:mem:test", driver = "org.h2.Driver")
 
