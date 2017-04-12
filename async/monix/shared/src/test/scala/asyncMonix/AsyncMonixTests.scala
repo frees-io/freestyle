@@ -36,12 +36,9 @@ class AsyncMonixTests extends AsyncWordSpec with Matchers {
       def program[F[_]: AsyncM] =
         for {
           a <- FreeS.pure(1)
-          b <- AsyncM[F].async[Int]((cb) => cb(Right(42)))
+          b <- AsyncM[F].async[Int](cb => cb(Right(42)))
           c <- FreeS.pure(1)
-          d <- AsyncM[F].async[Int]((cb) => {
-            Thread.sleep(100)
-            cb(Right(10))
-          })
+          d <- AsyncM[F].async[Int](cb => cb(Right(10)))
         } yield a + b + c + d
 
       program[AsyncM.Op].exec[Task].runAsync map { _ shouldBe 54 }

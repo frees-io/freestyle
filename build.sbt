@@ -14,7 +14,11 @@ lazy val freestyle = (crossProject in file("freestyle"))
       %("cats-free"),
       %("shapeless"),
       %("monix-eval") % "test",
-      %("monix-cats") % "test"): _*)
+      %("monix-cats") % "test",
+      %("cats-laws")  % "test",
+      %("discipline") % "test"
+    ): _*
+  )
 
 lazy val freestyleJVM = freestyle.jvm
 lazy val freestyleJS  = freestyle.js
@@ -58,34 +62,34 @@ lazy val docs = (project in file("docs"))
   )
   .enablePlugins(MicrositesPlugin)
 
-lazy val freestyleMonix = (crossProject in file("freestyle-monix"))
+lazy val monix = (crossProject in file("freestyle-monix"))
   .settings(name := "freestyle-monix")
   .jsSettings(sharedJsSettings: _*)
   .crossDepSettings(commonDeps ++ Seq(%("monix-eval"), %("monix-cats")): _*)
 
-lazy val freestyleMonixJVM = freestyleMonix.jvm
-lazy val freestyleMonixJS  = freestyleMonix.js
+lazy val monixJVM = monix.jvm
+lazy val monixJS  = monix.js
 
-lazy val freestyleEffects = (crossProject in file("freestyle-effects"))
+lazy val effects = (crossProject in file("freestyle-effects"))
   .dependsOn(freestyle)
   .settings(name := "freestyle-effects")
   .jsSettings(sharedJsSettings: _*)
   .crossDepSettings(commonDeps: _*)
 
-lazy val freestyleEffectsJVM = freestyleEffects.jvm
-lazy val freestyleEffectsJS  = freestyleEffects.js
+lazy val effectsJVM = effects.jvm
+lazy val effectsJS  = effects.js
 
-lazy val freestyleAsync = (crossProject in file("async/async"))
+lazy val async = (crossProject in file("async/async"))
   .dependsOn(freestyle)
   .settings(name := "freestyle-async")
   .jsSettings(sharedJsSettings: _*)
   .crossDepSettings(commonDeps: _*)
 
-lazy val freestyleAsyncJVM = freestyleAsync.jvm
-lazy val freestyleAsyncJS  = freestyleAsync.js
+lazy val asyncJVM = async.jvm
+lazy val asyncJS  = async.js
 
-lazy val freestyleAsyncMonix = (crossProject in file("async/monix"))
-  .dependsOn(freestyle, freestyleAsync)
+lazy val asyncMonix = (crossProject in file("async/monix"))
+  .dependsOn(freestyle, async)
   .settings(name := "freestyle-async-monix")
   .crossDepSettings(
     commonDeps ++ Seq(
@@ -94,29 +98,29 @@ lazy val freestyleAsyncMonix = (crossProject in file("async/monix"))
     ): _*)
   .jsSettings(sharedJsSettings: _*)
 
-lazy val freestyleAsyncMonixJVM = freestyleAsyncMonix.jvm
-lazy val freestyleAsyncMonixJS  = freestyleAsyncMonix.js
+lazy val asyncMonixJVM = asyncMonix.jvm
+lazy val asyncMonixJS  = asyncMonix.js
 
-lazy val freestyleAsyncFs = (crossProject in file("async/fs2"))
-  .dependsOn(freestyle, freestyleAsync)
+lazy val asyncFs = (crossProject in file("async/fs2"))
+  .dependsOn(freestyle, async)
   .settings(name := "freestyle-async-fs2")
   .jsSettings(sharedJsSettings: _*)
   .crossDepSettings(commonDeps ++ Seq(%("fs2-core"), %("fs2-cats")): _*)
 
-lazy val freestyleAsyncFsJVM = freestyleAsyncFs.jvm
-lazy val freestyleAsyncFsJS  = freestyleAsyncFs.js
+lazy val asyncFsJVM = asyncFs.jvm
+lazy val asyncFsJS  = asyncFs.js
 
-lazy val freestyleCache = (crossProject in file("freestyle-cache"))
+lazy val cache = (crossProject in file("freestyle-cache"))
   .dependsOn(freestyle)
   .settings(name := "freestyle-cache")
   .jsSettings(sharedJsSettings: _*)
   .crossDepSettings(commonDeps: _*)
 
-lazy val freestyleCacheJVM = freestyleCache.jvm
-lazy val freestyleCacheJS  = freestyleCache.js
+lazy val cacheJVM = cache.jvm
+lazy val cacheJS  = cache.js
 
-lazy val freestyleCacheRedis = (crossProject in file("freestyle-cache-redis"))
-  .dependsOn(freestyle, freestyleCache)
+lazy val cacheRedis = (crossProject in file("freestyle-cache-redis"))
+  .dependsOn(freestyle, cache)
   .settings(
     name := "freestyle-cache-redis",
     resolvers += "Sonatype OSS Releases" at "https://oss.sonatype.org/content/repositories/releases/",
@@ -131,36 +135,36 @@ lazy val freestyleCacheRedis = (crossProject in file("freestyle-cache-redis"))
   )
   .jsSettings(sharedJsSettings: _*)
 
-lazy val freestyleCacheRedisJVM = freestyleCacheRedis.jvm
+lazy val cacheRedisJVM = cacheRedis.jvm
 
-lazy val freestyleDoobie = (project in file("freestyle-doobie"))
+lazy val doobie = (project in file("freestyle-doobie"))
   .dependsOn(freestyleJVM)
   .settings(name := "freestyle-doobie")
   .settings(
     libraryDependencies ++= Seq(
       %%("doobie-core-cats"),
       %%("doobie-h2-cats") % "test"
-    )
+    ) ++ commonDeps
   )
 
-lazy val freestyleSlick = (project in file("freestyle-slick"))
-  .dependsOn(freestyleJVM, freestyleAsyncJVM)
+lazy val slick = (project in file("freestyle-slick"))
+  .dependsOn(freestyleJVM, asyncJVM)
   .settings(name := "freestyle-slick")
   .settings(
     libraryDependencies ++= Seq(
       %%("slick"),
       %("h2") % "test"
-    )
+    ) ++ commonDeps
   )
 
-lazy val freestyleTwitterUtil = (project in file("freestyle-twitter-util"))
+lazy val twitterUtil = (project in file("freestyle-twitter-util"))
   .dependsOn(freestyleJVM)
   .settings(name := "freestyle-twitter-util")
   .settings(
-    libraryDependencies += %%("catbird-util")
+    libraryDependencies ++= %%("catbird-util") +: commonDeps
   )
 
-lazy val freestyleConfig = (project in file("freestyle-config"))
+lazy val config = (project in file("freestyle-config"))
   .dependsOn(freestyleJVM)
   .settings(
     name := "freestyle-config",
@@ -179,10 +183,10 @@ lazy val freestyleConfig = (project in file("freestyle-config"))
   .settings(
     libraryDependencies ++= Seq(
       %("config", "1.2.1")
-    )
+    ) ++ commonDeps
   )
 
-lazy val freestyleFetch = (crossProject in file("freestyle-fetch"))
+lazy val fetch = (crossProject in file("freestyle-fetch"))
   .dependsOn(freestyle)
   .settings(name := "freestyle-fetch")
   .jsSettings(sharedJsSettings: _*)
@@ -193,10 +197,10 @@ lazy val freestyleFetch = (crossProject in file("freestyle-fetch"))
     ): _*
   )
 
-lazy val freestyleFetchJVM = freestyleFetch.jvm
-lazy val freestyleFetchJS  = freestyleFetch.js
+lazy val fetchJVM = fetch.jvm
+lazy val fetchJS  = fetch.js
 
-lazy val freestyleLogging = (crossProject in file("freestyle-logging"))
+lazy val logging = (crossProject in file("freestyle-logging"))
   .dependsOn(freestyle)
   .settings(name := "freestyle-logging")
   .jvmSettings(
@@ -206,11 +210,12 @@ lazy val freestyleLogging = (crossProject in file("freestyle-logging"))
     libraryDependencies += %%%("slogging")
   )
   .jsSettings(sharedJsSettings: _*)
+  .crossDepSettings(commonDeps: _*)
 
-lazy val freestyleLoggingJVM = freestyleLogging.jvm
-lazy val freestyleLoggingJS  = freestyleLogging.js
+lazy val loggingJVM = logging.jvm
+lazy val loggingJS  = logging.js
 
-lazy val freestyleFs2 = (crossProject in file("freestyle-fs2"))
+lazy val fs2 = (crossProject in file("freestyle-fs2"))
   .dependsOn(freestyle)
   .settings(name := "freestyle-fs2")
   .jsSettings(sharedJsSettings: _*)
@@ -220,37 +225,37 @@ lazy val freestyleFs2 = (crossProject in file("freestyle-fs2"))
     ): _*
   )
 
-lazy val freestyleFs2JVM = freestyleFs2.jvm
-lazy val freestyleFs2JS  = freestyleFs2.js
+lazy val fs2JVM = fs2.jvm
+lazy val fs2JS  = fs2.js
 
-lazy val freestyleHttpHttp4s = (project in file("http/http4s"))
+lazy val httpHttp4s = (project in file("http/http4s"))
   .dependsOn(freestyleJVM)
   .settings(name := "freestyle-http-http4s")
   .settings(
     libraryDependencies ++= Seq(
       %%("http4s-core"),
       %%("http4s-dsl") % "test"
-    )
+    ) ++ commonDeps
   )
 
-lazy val freestyleHttpFinch = (project in file("http/finch"))
+lazy val httpFinch = (project in file("http/finch"))
   .dependsOn(freestyleJVM)
   .settings(name := "freestyle-http-finch")
   .settings(
-    libraryDependencies += %%("finch-core")
+    libraryDependencies ++= %%("finch-core") +: commonDeps
   )
 
-lazy val freestyleHttpAkka = (project in file("http/akka"))
+lazy val httpAkka = (project in file("http/akka"))
   .dependsOn(freestyleJVM)
   .settings(name := "freestyle-http-akka")
   .settings(
     libraryDependencies ++= Seq(
       %%("akka-http"),
       %%("akka-http-testkit") % "test"
-    )
+    ) ++ commonDeps
   )
 
-lazy val freestyleHttpPlay = (project in file("http/play"))
+lazy val httpPlay = (project in file("http/play"))
   .dependsOn(freestyleJVM)
   .settings(name := "freestyle-http-play")
   .settings(
@@ -258,7 +263,7 @@ lazy val freestyleHttpPlay = (project in file("http/play"))
     libraryDependencies ++= Seq(
       %%("play"),
       %%("play-test") % "test"
-    )
+    ) ++ commonDeps
   )
 
 addCommandAlias("debug", "; clean ; test")
@@ -280,33 +285,33 @@ orgAfterCISuccessTaskListSetting := List(
 lazy val freestyleModules: Seq[ProjectReference] = Seq(
   freestyleJVM,
   freestyleJS,
-  freestyleMonixJVM,
-  freestyleMonixJS,
-  freestyleEffectsJVM,
-  freestyleEffectsJS,
-  freestyleAsyncJVM,
-  freestyleAsyncJS,
-  freestyleAsyncMonixJVM,
-  freestyleAsyncMonixJS,
-  freestyleAsyncFsJVM,
-  freestyleAsyncFsJS,
-  freestyleCacheJVM,
-  freestyleCacheJS,
-  freestyleCacheRedisJVM,
-  freestyleDoobie,
-  freestyleSlick,
-  freestyleTwitterUtil,
-  freestyleConfig,
-  freestyleFetchJVM,
-  freestyleFetchJS,
-  freestyleLoggingJVM,
-  freestyleLoggingJS,
-  freestyleFs2JVM,
-  freestyleFs2JS,
-  freestyleHttpHttp4s,
-  freestyleHttpFinch,
-  freestyleHttpAkka,
-  freestyleHttpPlay
+  monixJVM,
+  monixJS,
+  effectsJVM,
+  effectsJS,
+  asyncJVM,
+  asyncJS,
+  asyncMonixJVM,
+  asyncMonixJS,
+  asyncFsJVM,
+  asyncFsJS,
+  cacheJVM,
+  cacheJS,
+  cacheRedisJVM,
+  doobie,
+  slick,
+  twitterUtil,
+  config,
+  fetchJVM,
+  fetchJS,
+  loggingJVM,
+  loggingJS,
+  fs2JVM,
+  fs2JS,
+  httpHttp4s,
+  httpFinch,
+  httpAkka,
+  httpPlay
 )
 
 lazy val freestyleDependencies: Seq[ClasspathDependency] =

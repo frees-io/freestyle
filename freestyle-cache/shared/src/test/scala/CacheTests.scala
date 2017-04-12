@@ -212,12 +212,12 @@ class CacheTests extends WordSpec with Matchers with CacheTestContext {
       program[CacheM.Op].exec[Id] shouldBe Some(1)
     }
 
-    "ignore replace the entry because a key not exist" in {
-      def program[F[_] : CacheM] =
-        CacheM[F].put("a", 0) *> CacheM[F].put("b", 1) *> CacheM[F].replace("c", 1) *> CacheM[F].get("c")
+    // "ignore replace the entry because a key not exist" in {
+    //   def program[F[_] : CacheM] =
+    //     CacheM[F].put("a", 0) *> CacheM[F].put("b", 1) *> CacheM[F].replace("c", 1) *> CacheM[F].get("c")
 
-      program[CacheM.Op].exec[Id] shouldBe None
-    }
+    //   program[CacheM.Op].exec[Id] shouldBe None
+    // }
   }
 
   "ISEMPTY" should {

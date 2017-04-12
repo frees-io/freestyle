@@ -56,7 +56,7 @@ object ProjectPlugin extends AutoPlugin {
         "https://oss.sonatype.org/content/repositories/releases")
     )
 
-    lazy val commonDeps: Seq[ModuleID] = Seq(%("scalatest") % "test")
+    lazy val commonDeps: Seq[ModuleID] = Seq(%%("scalatest") % "test")
   }
 
   override def projectSettings: Seq[Def.Setting[_]] =
