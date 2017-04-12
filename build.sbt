@@ -48,8 +48,10 @@ lazy val core = (crossProject in file("freestyle-core"))
       scalaOrganization.value   % "scala-reflect" % scalaVersion.value,
       "org.typelevel"         %%% "cats-free"     % v("cats"),
       "com.chuusai"           %%% "shapeless"     % v("shapeless"),
-      "io.monix"              %%% "monix-eval"    % v("monix") % "test",
-      "io.monix"              %%% "monix-cats"    % v("monix") % "test"
+      "io.monix"              %%% "monix-eval"    % v("monix")      % "test",
+      "io.monix"              %%% "monix-cats"    % v("monix")      % "test",
+      "org.typelevel"         %%% "cats-laws"     % v("cats")       % "test",
+      "org.typelevel"         %%% "discipline"    % v("discipline") % "test"
     )
   )
   .jsSettings(sharedJsSettings: _*)
