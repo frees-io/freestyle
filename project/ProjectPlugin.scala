@@ -60,7 +60,6 @@ object ProjectPlugin extends AutoPlugin {
       resolvers += Resolver.sonatypeRepo("snapshots"),
       onLoad := (Command.process("project freestyle", _: State)) compose (onLoad in Global).value,
       scalacOptions ++= scalacAdvancedOptions,
-      libraryDependencies += %%("scalatest") % "test",
       parallelExecution in Test := false
     ) ++ scalaMacroDependencies
 }

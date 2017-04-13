@@ -52,7 +52,6 @@ class NonDeterminismTests extends FunSuite with Discipline with Matchers {
   implicit val throwableEq: Eq[Throwable] =
     Eq[String].on(_.toString)
 
-
   checkAll("FutureNondeterminism", FunctorTests[Future].functor[Int, Int, Int])
 
   // fails
