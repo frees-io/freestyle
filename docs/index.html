@@ -35,14 +35,17 @@
 <div class="language-scala kazari-id-1 highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">freestyle._</span>
 <span class="k">import</span> <span class="nn">freestyle.implicits._</span>
 
-<span class="nd">@free</span> <span class="k">trait</span> <span class="nc">Validation</span><span class="o">[</span><span class="kt">F</span><span class="o">[</span><span class="k">_</span><span class="o">]]</span> <span class="o">{</span>
-  <span class="k">def</span> <span class="n">minSize</span><span class="o">(</span><span class="n">s</span><span class="k">:</span> <span class="kt">String</span><span class="o">,</span> <span class="n">n</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span><span class="k">:</span> <span class="kt">FreeS.Par</span><span class="o">[</span><span class="kt">F</span>, <span class="kt">Boolean</span><span class="o">]</span>
-  <span class="k">def</span> <span class="n">hasNumber</span><span class="o">(</span><span class="n">s</span><span class="k">:</span> <span class="kt">String</span><span class="o">)</span><span class="k">:</span> <span class="kt">FreeS.Par</span><span class="o">[</span><span class="kt">F</span>, <span class="kt">Boolean</span><span class="o">]</span>
-<span class="o">}</span>
+<span class="k">object</span> <span class="nc">algebras</span> <span class="o">{</span>
 
-<span class="nd">@free</span> <span class="k">trait</span> <span class="nc">Interaction</span><span class="o">[</span><span class="kt">F</span><span class="o">[</span><span class="k">_</span><span class="o">]]</span> <span class="o">{</span>
-  <span class="k">def</span> <span class="n">tell</span><span class="o">(</span><span class="n">msg</span><span class="k">:</span> <span class="kt">String</span><span class="o">)</span><span class="k">:</span> <span class="kt">FreeS</span><span class="o">[</span><span class="kt">F</span>, <span class="kt">Unit</span><span class="o">]</span>
-  <span class="k">def</span> <span class="n">ask</span><span class="o">(</span><span class="n">prompt</span><span class="k">:</span> <span class="kt">String</span><span class="o">)</span><span class="k">:</span> <span class="kt">FreeS</span><span class="o">[</span><span class="kt">F</span>, <span class="kt">String</span><span class="o">]</span>
+    <span class="nd">@free</span> <span class="k">trait</span> <span class="nc">Validation</span><span class="o">[</span><span class="kt">F</span><span class="o">[</span><span class="k">_</span><span class="o">]]</span> <span class="o">{</span>
+      <span class="k">def</span> <span class="n">minSize</span><span class="o">(</span><span class="n">s</span><span class="k">:</span> <span class="kt">String</span><span class="o">,</span> <span class="n">n</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span><span class="k">:</span> <span class="kt">FreeS.Par</span><span class="o">[</span><span class="kt">F</span>, <span class="kt">Boolean</span><span class="o">]</span>
+      <span class="k">def</span> <span class="n">hasNumber</span><span class="o">(</span><span class="n">s</span><span class="k">:</span> <span class="kt">String</span><span class="o">)</span><span class="k">:</span> <span class="kt">FreeS.Par</span><span class="o">[</span><span class="kt">F</span>, <span class="kt">Boolean</span><span class="o">]</span>
+    <span class="o">}</span>
+
+    <span class="nd">@free</span> <span class="k">trait</span> <span class="nc">Interaction</span><span class="o">[</span><span class="kt">F</span><span class="o">[</span><span class="k">_</span><span class="o">]]</span> <span class="o">{</span>
+      <span class="k">def</span> <span class="n">tell</span><span class="o">(</span><span class="n">msg</span><span class="k">:</span> <span class="kt">String</span><span class="o">)</span><span class="k">:</span> <span class="kt">FreeS</span><span class="o">[</span><span class="kt">F</span>, <span class="kt">Unit</span><span class="o">]</span>
+      <span class="k">def</span> <span class="n">ask</span><span class="o">(</span><span class="n">prompt</span><span class="k">:</span> <span class="kt">String</span><span class="o">)</span><span class="k">:</span> <span class="kt">FreeS</span><span class="o">[</span><span class="kt">F</span>, <span class="kt">String</span><span class="o">]</span>
+    <span class="o">}</span>
 <span class="o">}</span>
 </code></pre>
 </div>
@@ -54,9 +57,14 @@
 <p>Freestyle algebras can be combined into <code class="highlighter-rouge">@module</code> definitions which provide aggregation and unification over the
 parametrization of Free programs.</p>
 
-<div class="language-scala kazari-id-1 highlighter-rouge"><pre class="highlight"><code><span class="nd">@module</span> <span class="k">trait</span> <span class="nc">Application</span><span class="o">[</span><span class="kt">F</span><span class="o">[</span><span class="k">_</span><span class="o">]]</span> <span class="o">{</span>
-  <span class="k">val</span> <span class="n">validation</span><span class="k">:</span> <span class="kt">Validation</span><span class="o">[</span><span class="kt">F</span><span class="o">]</span>
-  <span class="k">val</span> <span class="n">interaction</span><span class="k">:</span> <span class="kt">Interaction</span><span class="o">[</span><span class="kt">F</span><span class="o">]</span>
+<div class="language-scala kazari-id-1 highlighter-rouge"><pre class="highlight"><code><span class="k">object</span> <span class="nc">modules</span> <span class="o">{</span>
+
+    <span class="k">import</span> <span class="nn">algebras._</span>
+
+    <span class="nd">@module</span> <span class="k">trait</span> <span class="nc">Application</span><span class="o">[</span><span class="kt">F</span><span class="o">[</span><span class="k">_</span><span class="o">]]</span> <span class="o">{</span>
+      <span class="k">val</span> <span class="n">validation</span><span class="k">:</span> <span class="kt">Validation</span><span class="o">[</span><span class="kt">F</span><span class="o">]</span>
+      <span class="k">val</span> <span class="n">interaction</span><span class="k">:</span> <span class="kt">Interaction</span><span class="o">[</span><span class="kt">F</span><span class="o">]</span>
+    <span class="o">}</span>
 <span class="o">}</span>
 </code></pre>
 </div>
@@ -73,7 +81,10 @@ parametrization of Free programs.</p>
 
 <p>The example below combines both algebras to produce a more complex program</p>
 
-<div class="language-scala kazari-id-1 highlighter-rouge"><pre class="highlight"><code><span class="k">def</span> <span class="n">program</span><span class="o">[</span><span class="kt">F</span><span class="o">[</span><span class="k">_</span><span class="o">]](</span><span class="k">implicit</span> <span class="n">A</span><span class="k">:</span> <span class="kt">Application</span><span class="o">[</span><span class="kt">F</span><span class="o">])</span> <span class="k">=</span> <span class="o">{</span>
+<div class="language-scala kazari-id-1 highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">algebras._</span>
+<span class="k">import</span> <span class="nn">modules._</span>
+
+<span class="k">def</span> <span class="n">program</span><span class="o">[</span><span class="kt">F</span><span class="o">[</span><span class="k">_</span><span class="o">]](</span><span class="k">implicit</span> <span class="n">A</span><span class="k">:</span> <span class="kt">Application</span><span class="o">[</span><span class="kt">F</span><span class="o">])</span> <span class="k">=</span> <span class="o">{</span>
   <span class="k">import</span> <span class="nn">A._</span>
   <span class="k">import</span> <span class="nn">cats.implicits._</span>
 
