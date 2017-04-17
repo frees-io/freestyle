@@ -5,9 +5,11 @@ import microsites.MicrositesPlugin.autoImport.publishMicrosite
 import microsites.util.BuildHelper.buildWithoutSuffix
 import sbt.Keys._
 import sbt._
+import sbtorgpolicies.OrgPoliciesKeys.orgBadgeListSetting
 import sbtorgpolicies.OrgPoliciesPlugin
 import sbtorgpolicies.OrgPoliciesPlugin.autoImport._
 import sbtorgpolicies.model._
+import sbtorgpolicies.templates.badges._
 import scoverage.ScoverageSbtPlugin.autoImport._
 
 object ProjectPlugin extends AutoPlugin {
@@ -62,6 +64,14 @@ object ProjectPlugin extends AutoPlugin {
       description := "A Cohesive & Pragmatic Framework of FP centric Scala libraries",
       startYear := Some(2017),
       orgGithubTokenSetting := "GITHUB_TOKEN_REPO",
+      orgBadgeListSetting := List(
+        TravisBadge.apply,
+        CodecovBadge.apply,
+        LicenseBadge.apply,
+        GitterBadge.apply,
+        GitHubIssuesBadge.apply,
+        ScalaJSBadge.apply
+      ),
       resolvers += Resolver.sonatypeRepo("snapshots"),
       scalacOptions ++= scalacAdvancedOptions,
       libraryDependencies += %%("scalatest") % "test",
