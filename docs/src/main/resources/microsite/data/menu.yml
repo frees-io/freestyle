@@ -24,25 +24,28 @@ options:
     nested_options:
 
       - title: Error
-        url: docs/effects/#error
+        url: docs/effects/#errorm
+
+      - title: Either
+        url: docs/effects/#eithermg
 
       - title: Option
-        url: docs/effects/#option
+        url: docs/effects/#optionm
 
       - title: Reader
-        url: docs/effects/#reader
+        url: docs/effects/#readerm
 
       - title: Writer
-        url: docs/effects/#writer
+        url: docs/effects/#writerm
 
       - title: State
-        url: docs/effects/#state
+        url: docs/effects/#statem
 
       - title: Traverse
-        url: docs/effects/#traverse
+        url: docs/effects/#traversem
 
       - title: Validation
-        url: docs/effects/#validation
+        url: docs/effects/#validationm
 
       - title: Async Callbacks
         url: docs/effects/async

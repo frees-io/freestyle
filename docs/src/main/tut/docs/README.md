@@ -42,14 +42,17 @@ In the example below we will define two algebras with intermixed sequential and 
 import freestyle._
 import freestyle.implicits._
 
-@free trait Validation[F[_]] {
-  def minSize(s: String, n: Int): FreeS.Par[F, Boolean]
-  def hasNumber(s: String): FreeS.Par[F, Boolean]
-}
+object algebras {
 
-@free trait Interaction[F[_]] {
-  def tell(msg: String): FreeS[F, Unit]
-  def ask(prompt: String): FreeS[F, String]
+    @free trait Validation[F[_]] {
+      def minSize(s: String, n: Int): FreeS.Par[F, Boolean]
+      def hasNumber(s: String): FreeS.Par[F, Boolean]
+    }
+
+    @free trait Interaction[F[_]] {
+      def tell(msg: String): FreeS[F, Unit]
+      def ask(prompt: String): FreeS[F, String]
+    }
 }
 ```
 
@@ -61,9 +64,14 @@ Freestyle algebras can be combined into `@module` definitions which provide aggr
 parametrization of Free programs.
 
 ```tut:silent:decorate(.kazari-id-1)
-@module trait Application[F[_]] {
-  val validation: Validation[F]
-  val interaction: Interaction[F]
+object modules {
+
+    import algebras._
+
+    @module trait Application[F[_]] {
+      val validation: Validation[F]
+      val interaction: Interaction[F]
+    }
 }
 ```
 
@@ -80,6 +88,9 @@ Abstract definitions it's all it takes to start building programs that support s
 The example below combines both algebras to produce a more complex program
 
 ```tut:silent:decorate(.kazari-id-1)
+import algebras._
+import modules._
+
 def program[F[_]](implicit A: Application[F]) = {
   import A._
   import cats.implicits._
