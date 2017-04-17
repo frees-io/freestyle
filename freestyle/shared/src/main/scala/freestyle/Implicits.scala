@@ -26,12 +26,12 @@ import shapeless.Lazy
 trait Interpreters {
 
   implicit def interpretCoproduct[F[_], G[_], M[_]](
-      implicit fm: FunctionK[F, M],
-      gm: Lazy[FunctionK[G, M]]): FunctionK[Coproduct[F, G, ?], M] =
+      implicit fm: FSHandler[F, M],
+      gm: Lazy[FSHandler[G, M]]): FSHandler[Coproduct[F, G, ?], M] =
     fm or gm.value
 
   implicit def interpretAp[F[_], M[_]: Monad](
-      implicit fInterpreter: FunctionK[F, M]): FunctionK[FreeApplicative[F, ?], M] =
+      implicit fInterpreter: FSHandler[F, M]): FSHandler[FreeApplicative[F, ?], M] =
     λ[FunctionK[FreeApplicative[F, ?], M]](_.foldMap(fInterpreter))
 
   // workaround for https://github.com/typelevel/cats/issues/1505

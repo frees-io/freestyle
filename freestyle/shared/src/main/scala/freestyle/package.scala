@@ -16,6 +16,7 @@
 
 import cats.free.{Free, FreeApplicative, Inject}
 import cats.{~>, Applicative, Monad}
+import annotation.implicitNotFound
 
 package object freestyle {
 
@@ -28,8 +29,12 @@ package object freestyle {
    */
   type FreeS[F[_], A] = Free[FreeApplicative[F, ?], A]
 
+  @implicitNotFound(msg = AnnotationMessages.handlerNotFoundMsg)
+  type FSHandler[F[_], G[_]] = F ~> G
+
   /** Interprets a parallel fragment `f` into `g` */
-  type ParInterpreter[F[_], G[_]] = FreeApplicative[F, ?] ~> G
+  @implicitNotFound(msg = AnnotationMessages.handlerNotFoundMsg)
+  type ParInterpreter[F[_], G[_]] = FSHandler[FreeApplicative[F, ?], G]
 
   /**
    * Optimizes a parallel fragment `f` into a sequential series of parallel

@@ -21,6 +21,7 @@ import simulacrum.typeclass
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.Try
+import annotation.implicitNotFound
 
 /*
  * The method `Applicative#pure` in `cats.Applicative` is strict on its parameter. Thus, it
@@ -30,6 +31,7 @@ import scala.util.Try
  *  define a `Capture` type-class..
  */
 @typeclass
+@implicitNotFound(msg = AnnotationMessages.captureInstanceNotFoundMsg)
 trait Capture[F[_]] {
   def capture[A](a: => A): F[A]
 }

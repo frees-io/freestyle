@@ -61,6 +61,7 @@ object ProjectPlugin extends AutoPlugin {
       onLoad := (Command.process("project freestyle", _: State)) compose (onLoad in Global).value,
       scalacOptions ++= scalacAdvancedOptions,
       libraryDependencies += %%("scalatest") % "test",
-      parallelExecution in Test := false
+      parallelExecution in Test := false,
+      compileOrder in Compile := CompileOrder.JavaThenScala
     ) ++ scalaMacroDependencies
 }
