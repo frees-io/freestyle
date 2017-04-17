@@ -141,6 +141,83 @@ class EffectsTests extends AsyncWordSpec with Matchers {
 
   }
 
+  "Either Freestyle integration" should {
+
+    sealed trait CustomError
+    case object Custom1 extends CustomError
+
+    import freestyle.effects.either
+
+    val e = either[CustomError]
+    val ex = Custom1
+
+    import e.implicits._
+
+    import cats.instances.either._
+    import cats.syntax.either._
+
+    "allow an Either to be interleaved inside a program monadic flow" in {
+      def program[F[_]: e.EitherM] =
+        for {
+          a <- FreeS.pure(1)
+          b <- e.EitherM[F].error[Int](ex)
+          c <- FreeS.pure(1)
+        } yield a + b + c
+      program[e.EitherM.Op].exec[Either[CustomError, ?]] shouldBe Left(ex)
+    }
+
+    "allow an Exception to be captured inside a program monadic flow" in {
+      def program[F[_]: e.EitherM] =
+        for {
+          a <- FreeS.pure(1)
+          b <- e.EitherM[F].catchNonFatal[Int](Eval.later(throw new RuntimeException("BOOM")), _ => ex)
+          c <- FreeS.pure(1)
+        } yield a + b + c
+      program[e.EitherM.Op].exec[Either[CustomError, ?]] shouldBe Left(ex)
+    }
+
+    "allow an Either to propagate right biased" in {
+      def program[F[_]: e.EitherM] =
+        for {
+          a <- FreeS.pure(1)
+          b <- e.EitherM[F].either[Int](Right(1))
+          c <- FreeS.pure(1)
+        } yield a + b + c
+      program[e.EitherM.Op].exec[Either[CustomError, ?]] shouldBe Right(3)
+    }
+
+    "allow an Either to short circuit" in {
+      def program[F[_]: e.EitherM] =
+        for {
+          a <- FreeS.pure(1)
+          b <- e.EitherM[F].either[Int](Left(ex))
+          c <- FreeS.pure(1)
+        } yield a + b + c
+      program[e.EitherM.Op].exec[Either[CustomError, ?]] shouldBe Left(ex)
+    }
+
+    "allow an Either to propagate right biased using syntax" in {
+      def program[F[_]: e.EitherM] =
+        for {
+          a <- FreeS.pure(1)
+          b <- Either.right[CustomError, Int](1).liftFS
+          c <- FreeS.pure(1)
+        } yield a + b + c
+      program[e.EitherM.Op].exec[Either[CustomError, ?]] shouldBe Right(3)
+    }
+
+    "allow an Either to short circuit using syntax" in {
+      def program[F[_]: e.EitherM] =
+        for {
+          a <- FreeS.pure(1)
+          b <- Either.left[CustomError, Int](ex).liftFS
+          c <- FreeS.pure(1)
+        } yield a + b + c
+      program[e.EitherM.Op].exec[Either[CustomError, ?]] shouldBe Left(ex)
+    }
+
+  }
+
   "Reader integration" should {
 
     import freestyle.effects._
@@ -267,7 +344,7 @@ class EffectsTests extends AsyncWordSpec with Matchers {
 
     // Custom error types
 
-    sealed trait ValidationException{
+    sealed trait ValidationException {
       def explanation: String
     }
     case class NotValid(explanation: String) extends ValidationException
@@ -294,7 +371,7 @@ class EffectsTests extends AsyncWordSpec with Matchers {
           _ <- FreeS.pure(1)
         } yield b
 
-      program[vl.ValidationM.Op].exec[Logger].runEmpty map {  _ shouldBe Tuple2(List(), 42) }
+      program[vl.ValidationM.Op].exec[Logger].runEmpty map { _ shouldBe Tuple2(List(), 42) }
     }
 
     "invalid" in {
@@ -308,7 +385,7 @@ class EffectsTests extends AsyncWordSpec with Matchers {
         } yield b
 
       val errors = List(NotValid("oh"), MissingFirstName)
-      program[vl.ValidationM.Op].exec[Logger].runEmpty map { _  shouldBe Tuple2(errors, 42) }
+      program[vl.ValidationM.Op].exec[Logger].runEmpty map { _ shouldBe Tuple2(errors, 42) }
     }
 
     "errors" in {
@@ -316,14 +393,16 @@ class EffectsTests extends AsyncWordSpec with Matchers {
 
       def program[F[_]: vl.ValidationM] =
         for {
-          b <- vl.ValidationM[F].valid(42)
-          _ <- vl.ValidationM[F].invalid(NotValid("oh"))
-          _ <- vl.ValidationM[F].invalid(NotValid("no"))
-          _ <- FreeS.pure(1)
+          b            <- vl.ValidationM[F].valid(42)
+          _            <- vl.ValidationM[F].invalid(NotValid("oh"))
+          _            <- vl.ValidationM[F].invalid(NotValid("no"))
+          _            <- FreeS.pure(1)
           actualErrors <- vl.ValidationM[F].errors
         } yield actualErrors == expectedErrors
 
-      program[vl.ValidationM.Op].exec[Logger].runEmpty map { _  shouldBe Tuple2(expectedErrors, true) }
+      program[vl.ValidationM.Op].exec[Logger].runEmpty map {
+        _ shouldBe Tuple2(expectedErrors, true)
+      }
     }
 
     "fromEither" in {
@@ -334,10 +413,14 @@ class EffectsTests extends AsyncWordSpec with Matchers {
       def program[F[_]: vl.ValidationM] =
         for {
           a <- vl.ValidationM[F].fromEither(Right(42))
-          b <- vl.ValidationM[F].fromEither(Either.left[ValidationException, Unit](MissingFirstName))
+          b <- vl
+            .ValidationM[F]
+            .fromEither(Either.left[ValidationException, Unit](MissingFirstName))
         } yield a
 
-      program[vl.ValidationM.Op].exec[Logger].runEmpty.map { _ shouldBe Tuple2(expectedErrors, Right(42)) }
+      program[vl.ValidationM.Op].exec[Logger].runEmpty.map {
+        _ shouldBe Tuple2(expectedErrors, Right(42))
+      }
     }
 
     "fromValidatedNel" in {
@@ -346,12 +429,16 @@ class EffectsTests extends AsyncWordSpec with Matchers {
       def program[F[_]: vl.ValidationM] =
         for {
           a <- vl.ValidationM[F].fromValidatedNel(Validated.valid(42))
-          b <- vl.ValidationM[F].fromValidatedNel(
-            Validated.invalidNel[ValidationException, Unit](MissingFirstName)
-          )
+          b <- vl
+            .ValidationM[F]
+            .fromValidatedNel(
+              Validated.invalidNel[ValidationException, Unit](MissingFirstName)
+            )
         } yield a
 
-      program[vl.ValidationM.Op].exec[Logger].runEmpty.map { _ shouldBe Tuple2(List(MissingFirstName), Validated.valid(42)) }
+      program[vl.ValidationM.Op].exec[Logger].runEmpty.map {
+        _ shouldBe Tuple2(List(MissingFirstName), Validated.valid(42))
+      }
     }
 
     "syntax" in {
@@ -363,7 +450,9 @@ class EffectsTests extends AsyncWordSpec with Matchers {
         } yield a
 
       val expectedErrors = List(MissingFirstName, NotValid("no"))
-      program[vl.ValidationM.Op].exec[Logger].runEmpty.map { _ shouldBe Tuple2(expectedErrors, 42) }
+      program[vl.ValidationM.Op].exec[Logger].runEmpty.map {
+        _ shouldBe Tuple2(expectedErrors, 42)
+      }
     }
   }
 
