@@ -1,12 +1,10 @@
 import sbtorgpolicies.model._
 
-addCommandAlias("debug", "; clean ; test")
-
-addCommandAlias("validate", "; +clean ; +test; makeMicrosite")
-
-pgpPassphrase := Some(getEnvVar("PGP_PASSPHRASE").getOrElse("").toCharArray)
-pgpPublicRing := file(s"$gpgFolder/pubring.gpg")
-pgpSecretRing := file(s"$gpgFolder/secring.gpg")
+lazy val root = (project in file("."))
+  .settings(moduleName := "root")
+  .settings(name := "freestyle")
+  .settings(noPublishSettings: _*)
+  .aggregate(freestyleModules: _*)
 
 lazy val freestyle = (crossProject in file("freestyle"))
   .settings(name := "freestyle")
@@ -23,6 +21,45 @@ lazy val freestyle = (crossProject in file("freestyle"))
 
 lazy val freestyleJVM = freestyle.jvm
 lazy val freestyleJS  = freestyle.js
+
+lazy val tests = (project in file("tests"))
+  .dependsOn(freestyleJVM)
+  .settings(noPublishSettings: _*)
+  .settings(
+    libraryDependencies ++= Seq(
+      %("scala-reflect", scalaVersion.value),
+      %%("pcplod") % "test"
+    ),
+    fork in Test := true,
+    javaOptions in Test ++= {
+      val excludedScalacOptions: List[String] = List("-Yliteral-types", "-Ypartial-unification")
+      val options = (scalacOptions in Test).value.distinct
+        .filterNot(excludedScalacOptions.contains)
+        .mkString(",")
+      val cp = (fullClasspath in Test).value.map(_.data).filter(_.exists()).distinct.mkString(",")
+      Seq(
+        s"""-Dpcplod.settings=$options""",
+        s"""-Dpcplod.classpath=$cp"""
+      )
+    }
+  )
+
+lazy val docs = (project in file("docs"))
+  .dependsOn(freestyleDependencies: _*)
+  .settings(micrositeSettings: _*)
+  .settings(noPublishSettings: _*)
+  .settings(
+    name := "docs",
+    description := "freestyle docs"
+  )
+  .settings(
+    libraryDependencies ++= Seq(
+      %%("doobie-h2-cats"),
+      %%("http4s-dsl"),
+      %("h2") % "test"
+    )
+  )
+  .enablePlugins(MicrositesPlugin)
 
 lazy val freestyleMonix = (crossProject in file("freestyle-monix"))
   .settings(name := "freestyle-monix")
@@ -123,7 +160,7 @@ lazy val freestyleSlick = (project in file("freestyle-slick"))
   .settings(
     libraryDependencies ++= Seq(
       %%("slick"),
-      "com.h2database" % "h2" % "1.4.194" % "test"
+      %("h2") % "test"
     )
   )
 
@@ -134,14 +171,12 @@ lazy val freestyleTwitterUtil = (project in file("freestyle-twitter-util"))
     libraryDependencies += %%("catbird-util")
   )
 
-lazy val fixResources = taskKey[Unit]("Fix application.conf presence on first clean build.")
-
 lazy val freestyleConfig = (project in file("freestyle-config"))
   .dependsOn(freestyleJVM)
   .settings(
     name := "freestyle-config",
     fixResources := {
-      val testConf = (resourceDirectory in Test).value / "application.conf"
+      val testConf   = (resourceDirectory in Test).value / "application.conf"
       val targetFile = (classDirectory in (freestyleJVM, Compile)).value / "application.conf"
       if (testConf.exists) {
         IO.copyFile(
@@ -197,58 +232,6 @@ lazy val freestyleFs2 = (crossProject in file("freestyle-fs2"))
 lazy val freestyleFs2JVM = freestyleFs2.jvm
 lazy val freestyleFs2JS  = freestyleFs2.js
 
-lazy val tests = (project in file("tests"))
-  .dependsOn(freestyleJVM)
-  .settings(noPublishSettings: _*)
-  .settings(
-    libraryDependencies ++= Seq(
-      %("scala-reflect", scalaVersion.value),
-      %%("pcplod") % "test"
-    ),
-    fork in Test := true,
-    javaOptions in Test ++= {
-      val excludedScalacOptions: List[String] = List("-Yliteral-types", "-Ypartial-unification")
-      val options = (scalacOptions in Test).value.distinct
-        .filterNot(excludedScalacOptions.contains)
-        .mkString(",")
-      val cp = (fullClasspath in Test).value.map(_.data).filter(_.exists()).distinct.mkString(",")
-      Seq(
-        s"""-Dpcplod.settings=$options""",
-        s"""-Dpcplod.classpath=$cp"""
-      )
-    }
-  )
-
-lazy val docs = (project in file("docs"))
-  .dependsOn(freestyleJVM)
-  .dependsOn(freestyleEffectsJVM)
-  .dependsOn(freestyleFs2JVM)
-  .dependsOn(freestyleFetchJVM)
-  .dependsOn(freestyleCacheJVM)
-  .dependsOn(freestyleDoobie)
-  .dependsOn(freestyleSlick)
-  .dependsOn(freestyleHttpPlay)
-  .dependsOn(freestyleHttpHttp4s)
-  .dependsOn(freestyleHttpFinch)
-  .dependsOn(freestyleAsyncFsJVM)
-  .dependsOn(freestyleAsyncMonixJVM)
-  .dependsOn(freestyleLoggingJVM)
-  .dependsOn(freestyleConfig)
-  .settings(micrositeSettings: _*)
-  .settings(noPublishSettings: _*)
-  .settings(
-    name := "docs",
-    description := "freestyle docs"
-  )
-  .settings(
-    libraryDependencies ++= Seq(
-      %%("doobie-h2-cats"),
-      %%("http4s-dsl"),
-      "com.h2database" % "h2" % "1.4.194" % "test"
-    )
-  )
-  .enablePlugins(MicrositesPlugin)
-
 lazy val freestyleHttpHttp4s = (project in file("http/http4s"))
   .dependsOn(freestyleJVM)
   .settings(name := "freestyle-http-http4s")
@@ -287,10 +270,53 @@ lazy val freestyleHttpPlay = (project in file("http/play"))
     )
   )
 
+addCommandAlias("debug", "; clean ; test")
+
+addCommandAlias("validate", "; +clean ; +test; makeMicrosite")
+
+pgpPassphrase := Some(getEnvVar("PGP_PASSPHRASE").getOrElse("").toCharArray)
+pgpPublicRing := file(s"$gpgFolder/pubring.gpg")
+pgpSecretRing := file(s"$gpgFolder/secring.gpg")
+
 orgAfterCISuccessTaskListSetting := List(
   orgCreateFiles.toOrgTask,
   orgCommitPolicyFiles.toOrgTask,
   depUpdateDependencyIssues.toOrgTask,
   (publishMicrosite in docs).toOrgTask,
-  orgPublishRelease.toOrgTask(allModulesScope = true, crossScalaVersionsScope = true)
+  orgPublishReleaseTask.toOrgTask(allModulesScope = true, crossScalaVersionsScope = true)
 )
+
+lazy val freestyleModules: Seq[ProjectReference] = Seq(
+  freestyleJVM,
+  freestyleJS,
+  freestyleMonixJVM,
+  freestyleMonixJS,
+  freestyleEffectsJVM,
+  freestyleEffectsJS,
+  freestyleAsyncJVM,
+  freestyleAsyncJS,
+  freestyleAsyncMonixJVM,
+  freestyleAsyncMonixJS,
+  freestyleAsyncFsJVM,
+  freestyleAsyncFsJS,
+  freestyleCacheJVM,
+  freestyleCacheJS,
+  freestyleCacheRedisJVM,
+  freestyleDoobie,
+  freestyleSlick,
+  freestyleTwitterUtil,
+  freestyleConfig,
+  freestyleFetchJVM,
+  freestyleFetchJS,
+  freestyleLoggingJVM,
+  freestyleLoggingJS,
+  freestyleFs2JVM,
+  freestyleFs2JS,
+  freestyleHttpHttp4s,
+  freestyleHttpFinch,
+  freestyleHttpAkka,
+  freestyleHttpPlay
+)
+
+lazy val freestyleDependencies: Seq[ClasspathDependency] =
+  freestyleModules.map(ClasspathDependency(_, None))

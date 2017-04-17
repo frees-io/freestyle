@@ -24,15 +24,16 @@ libraryDependencies += "io.freestyle" %%% "freestyle-effects" % "0.1.0"
 If you are missing an effect from the following list please [raise an issue](https://github.com/47deg/freestyle/issues/new)
 so it can be considered in future releases.
 
-- [error](#error)
-- [option](#option)
-- [reader](#reader)
-- [writer](#writer)
-- [state](#state)
-- [traverse](#traverse)
-- [validation](#validation)
+- [error](#errorm)
+- [either](#eitherm)
+- [option](#optionm)
+- [reader](#readerm)
+- [writer](#writerm)
+- [state](#statem)
+- [traverse](#traversem)
+- [validation](#validationm)
 
-## Error
+## ErrorM
 
 The error effect allows short circuiting of programs and handling invocations which can potentially result in runtime exceptions.
 It includes three basic operations `either`, `error` and `catchNonFatal`.
@@ -118,7 +119,97 @@ def catchingExceptions[F[_]: ErrorM] =
 catchingExceptions[ErrorM.Op].exec[Target]
 ```
 
-## Option
+## EitherM
+
+The either effect allows short circuiting of programs and handling invocations which can potentially result in runtime exceptions and that can be translated to a custom left value.
+It includes three basic operations `either`, `error` and `catchNonFatal`.
+
+The constrains placed by this effect is that there needs to be an implicit evidence of `MonadError[M[_], E]` 
+for `Target` or any other runtime `M[_]` used in interpretation. In the example below this constrain is satisfied by
+`import cats.implicits._` which provides a `MonadError` instance for `Either[E, ?]`.
+
+### either
+
+`either` allows us to lift values of `Either[E, ?]` into the context of `FreeS` raising an error short circuiting 
+the program if the value is a `Left(e: E)` or continuing with the computation in the case of a `Right(a)` 
+
+```tut:book
+import freestyle._
+import freestyle.implicits._
+
+import freestyle.effects.either
+
+sealed trait BizException
+case object Biz1 extends BizException
+
+val e = either[BizException]
+
+import e.implicits._
+import cats.implicits._
+
+type Target[A] = Either[BizException, A]
+
+def shortCircuit[F[_]: e.EitherM] =
+  for {
+    a <- 1.pure[FreeS[F, ?]]
+    b <- e.EitherM[F].either[Int](Left(Biz1))
+    c <- 1.pure[FreeS[F, ?]]
+  } yield a + b + c
+
+shortCircuit[e.EitherM.Op].exec[Target]
+```
+
+```tut:book
+
+def continueWithRightValue[F[_]: e.EitherM] =
+  for {
+    a <- 1.pure[FreeS[F, ?]]
+    b <- e.EitherM[F].either[Int](Right(1))
+    c <- 1.pure[FreeS[F, ?]]
+  } yield a + b + c
+
+continueWithRightValue[e.EitherM.Op].exec[Target]
+```
+
+### error
+
+If you want so simply raise an error without throwing an exception you may use the `error` operation which short circuits
+the program. 
+
+```tut:book
+def shortCircuitWithError[F[_]: e.EitherM] =
+  for {
+    a <- 1.pure[FreeS[F, ?]]
+    b <- e.EitherM[F].error[Int](Biz1)
+    c <- 1.pure[FreeS[F, ?]]
+  } yield a + b + c
+
+shortCircuitWithError[e.EitherM.Op].exec[Target]
+```
+
+### catchNonFatal
+
+`catchNonFatal` allows capturing of exception in computations that are not guaranteed to succeed and may potentially throw
+a runtime exception when interacting with unprincipled APIs which signal errors as thrown exceptions.
+Not all subclass of `java.lang.Throwable` are captured by `catchNonFatal`, as its name implies just those that are considered
+in `scala.util.control.NonFatal`.
+
+`catchNonFatal` expects a `cats.Eval` value which holds a lazy computation and a function of `Throwable => E` that transforms the exception into the parametrized `E`
+
+```tut:book
+import cats.Eval
+
+def catchingExceptions[F[_]: e.EitherM] =
+  for {
+    a <- 1.pure[FreeS[F, ?]]
+    b <- e.EitherM[F].catchNonFatal[Int](Eval.later(throw new RuntimeException), _ => Biz1)
+    c <- 1.pure[FreeS[F, ?]]
+  } yield a + b + c
+  
+catchingExceptions[e.EitherM.Op].exec[Target]
+```
+
+## OptionM
 
 The option effect allows short circuiting of programs for optional values.
 It includes two basic operations: `option` and `non`.
@@ -177,7 +268,7 @@ def programNone2[F[_]: OptionM] =
 programNone2[OptionM.Op].exec[Option]
 ```
 
-## Reader
+## ReaderM
 
 The reader effect allows obtaining values from the environment. The initial seed for the environment value is provided
 at runtime interpretation.
@@ -230,7 +321,7 @@ def programReader[F[_]: rd.ReaderM] =
 programReader[rd.ReaderM.Op].exec[ConfigEnv].run(Config(n = 1))
 ```
 
-## Writer
+## WriterM
 
 The writer effect allows to accumulate values which can be obtained once the program is interpreted. 
 
@@ -281,7 +372,7 @@ def programTell[F[_]: wr.WriterM] =
 programTell[wr.WriterM.Op].exec[Logger].run
 ```
 
-## State
+## StateM
 
 The state effect enables purely functional state throughout programs.
 
@@ -359,7 +450,7 @@ def programInspect[F[_]: st.StateM] =
 programInspect[st.StateM.Op].exec[TargetState].run(1).value
 ```
 
-## Traverse
+## TraverseM
 
 Traverse acts as a generator and works with any `G[_]` for which a `cats.Foldable` instance is available.
 The target runtime `M[_]` requires a `MonadCombine[M]` instance.
@@ -403,7 +494,7 @@ def programEmpty[F[_]: TraverseM] =
 programEmpty[TraverseM.Op].exec[List]
 ```
 
-## Validation
+## ValidationM
 
 The validation effect allows for the distinction between valid and invalid values in a program, accumulating the validation errors when executing it.
 
