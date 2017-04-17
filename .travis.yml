@@ -20,5 +20,9 @@ script:
 - sbt ++$TRAVIS_SCALA_VERSION "docs/tut"
 
 after_success:
-- sbt ++$TRAVIS_SCALA_VERSION orgAfterCISuccess
+- if [ "$TRAVIS_BRANCH" = "master" -a "$TRAVIS_PULL_REQUEST" = "false" ]; then
+    sbt ++$TRAVIS_SCALA_VERSION depUpdateDependencyIssues;
+    sbt ++$TRAVIS_SCALA_VERSION orgPublishRelease;
+    sbt docs/publishMicrosite;
+  fi
 - bash <(curl -s https://codecov.io/bash)

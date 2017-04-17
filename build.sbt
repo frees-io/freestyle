@@ -1,13 +1,13 @@
 import sbtorgpolicies.model._
 
-lazy val freestyle = (project in file("."))
+lazy val root = (project in file("."))
+  .settings(moduleName := "root")
   .settings(name := "freestyle")
   .settings(noPublishSettings: _*)
   .aggregate(freestyleModules: _*)
-  .dependsOn(freestyleDependencies: _*)
 
-lazy val freestyleCore = (crossProject in file("freestyle"))
-  .settings(name := "freestyle-core")
+lazy val freestyle = (crossProject in file("freestyle"))
+  .settings(name := "freestyle")
   .settings(
     libraryDependencies ++= Seq(
       %("scala-reflect", scalaVersion.value),
@@ -19,11 +19,11 @@ lazy val freestyleCore = (crossProject in file("freestyle"))
   )
   .jsSettings(sharedJsSettings: _*)
 
-lazy val freestyleCoreJVM = freestyleCore.jvm
-lazy val freestyleCoreJS  = freestyleCore.js
+lazy val freestyleJVM = freestyle.jvm
+lazy val freestyleJS  = freestyle.js
 
 lazy val tests = (project in file("tests"))
-  .dependsOn(freestyleCoreJVM)
+  .dependsOn(freestyleJVM)
   .settings(noPublishSettings: _*)
   .settings(
     libraryDependencies ++= Seq(
@@ -75,7 +75,7 @@ lazy val freestyleMonixJVM = freestyleMonix.jvm
 lazy val freestyleMonixJS  = freestyleMonix.js
 
 lazy val freestyleEffects = (crossProject in file("freestyle-effects"))
-  .dependsOn(freestyleCore)
+  .dependsOn(freestyle)
   .settings(name := "freestyle-effects")
   .jsSettings(sharedJsSettings: _*)
 
@@ -83,7 +83,7 @@ lazy val freestyleEffectsJVM = freestyleEffects.jvm
 lazy val freestyleEffectsJS  = freestyleEffects.js
 
 lazy val freestyleAsync = (crossProject in file("async/async"))
-  .dependsOn(freestyleCore)
+  .dependsOn(freestyle)
   .settings(name := "freestyle-async")
   .jsSettings(sharedJsSettings: _*)
 
@@ -91,7 +91,7 @@ lazy val freestyleAsyncJVM = freestyleAsync.jvm
 lazy val freestyleAsyncJS  = freestyleAsync.js
 
 lazy val freestyleAsyncMonix = (crossProject in file("async/monix"))
-  .dependsOn(freestyleCore, freestyleAsync)
+  .dependsOn(freestyle, freestyleAsync)
   .settings(name := "freestyle-async-monix")
   .settings(
     libraryDependencies ++= Seq(
@@ -105,7 +105,7 @@ lazy val freestyleAsyncMonixJVM = freestyleAsyncMonix.jvm
 lazy val freestyleAsyncMonixJS  = freestyleAsyncMonix.js
 
 lazy val freestyleAsyncFs = (crossProject in file("async/fs2"))
-  .dependsOn(freestyleCore, freestyleAsync)
+  .dependsOn(freestyle, freestyleAsync)
   .settings(name := "freestyle-async-fs2")
   .settings(
     libraryDependencies ++= Seq(
@@ -119,7 +119,7 @@ lazy val freestyleAsyncFsJVM = freestyleAsyncFs.jvm
 lazy val freestyleAsyncFsJS  = freestyleAsyncFs.js
 
 lazy val freestyleCache = (crossProject in file("freestyle-cache"))
-  .dependsOn(freestyleCore)
+  .dependsOn(freestyle)
   .settings(
     name := "freestyle-cache"
   )
@@ -129,7 +129,7 @@ lazy val freestyleCacheJVM = freestyleCache.jvm
 lazy val freestyleCacheJS  = freestyleCache.js
 
 lazy val freestyleCacheRedis = (crossProject in file("freestyle-cache-redis"))
-  .dependsOn(freestyleCore, freestyleCache)
+  .dependsOn(freestyle, freestyleCache)
   .settings(
     name := "freestyle-cache-redis",
     resolvers += "Sonatype OSS Releases" at "https://oss.sonatype.org/content/repositories/releases/",
@@ -145,7 +145,7 @@ lazy val freestyleCacheRedis = (crossProject in file("freestyle-cache-redis"))
 lazy val freestyleCacheRedisJVM = freestyleCacheRedis.jvm
 
 lazy val freestyleDoobie = (project in file("freestyle-doobie"))
-  .dependsOn(freestyleCoreJVM)
+  .dependsOn(freestyleJVM)
   .settings(name := "freestyle-doobie")
   .settings(
     libraryDependencies ++= Seq(
@@ -155,7 +155,7 @@ lazy val freestyleDoobie = (project in file("freestyle-doobie"))
   )
 
 lazy val freestyleSlick = (project in file("freestyle-slick"))
-  .dependsOn(freestyleCoreJVM, freestyleAsyncJVM)
+  .dependsOn(freestyleJVM, freestyleAsyncJVM)
   .settings(name := "freestyle-slick")
   .settings(
     libraryDependencies ++= Seq(
@@ -165,19 +165,19 @@ lazy val freestyleSlick = (project in file("freestyle-slick"))
   )
 
 lazy val freestyleTwitterUtil = (project in file("freestyle-twitter-util"))
-  .dependsOn(freestyleCoreJVM)
+  .dependsOn(freestyleJVM)
   .settings(name := "freestyle-twitter-util")
   .settings(
     libraryDependencies += %%("catbird-util")
   )
 
 lazy val freestyleConfig = (project in file("freestyle-config"))
-  .dependsOn(freestyleCoreJVM)
+  .dependsOn(freestyleJVM)
   .settings(
     name := "freestyle-config",
     fixResources := {
       val testConf   = (resourceDirectory in Test).value / "application.conf"
-      val targetFile = (classDirectory in (freestyleCoreJVM, Compile)).value / "application.conf"
+      val targetFile = (classDirectory in (freestyleJVM, Compile)).value / "application.conf"
       if (testConf.exists) {
         IO.copyFile(
           testConf,
@@ -194,7 +194,7 @@ lazy val freestyleConfig = (project in file("freestyle-config"))
   )
 
 lazy val freestyleFetch = (crossProject in file("freestyle-fetch"))
-  .dependsOn(freestyleCore)
+  .dependsOn(freestyle)
   .settings(name := "freestyle-fetch")
   .settings(
     libraryDependencies ++= Seq(
@@ -208,7 +208,7 @@ lazy val freestyleFetchJVM = freestyleFetch.jvm
 lazy val freestyleFetchJS  = freestyleFetch.js
 
 lazy val freestyleLogging = (crossProject in file("freestyle-logging"))
-  .dependsOn(freestyleCore)
+  .dependsOn(freestyle)
   .settings(name := "freestyle-logging")
   .jvmSettings(
     libraryDependencies += %%("journal-core")
@@ -222,7 +222,7 @@ lazy val freestyleLoggingJVM = freestyleLogging.jvm
 lazy val freestyleLoggingJS  = freestyleLogging.js
 
 lazy val freestyleFs2 = (crossProject in file("freestyle-fs2"))
-  .dependsOn(freestyleCore)
+  .dependsOn(freestyle)
   .settings(name := "freestyle-fs2")
   .settings(
     libraryDependencies += %%%("fs2-core")
@@ -233,7 +233,7 @@ lazy val freestyleFs2JVM = freestyleFs2.jvm
 lazy val freestyleFs2JS  = freestyleFs2.js
 
 lazy val freestyleHttpHttp4s = (project in file("http/http4s"))
-  .dependsOn(freestyleCoreJVM)
+  .dependsOn(freestyleJVM)
   .settings(name := "freestyle-http-http4s")
   .settings(
     libraryDependencies ++= Seq(
@@ -243,14 +243,14 @@ lazy val freestyleHttpHttp4s = (project in file("http/http4s"))
   )
 
 lazy val freestyleHttpFinch = (project in file("http/finch"))
-  .dependsOn(freestyleCoreJVM)
+  .dependsOn(freestyleJVM)
   .settings(name := "freestyle-http-finch")
   .settings(
     libraryDependencies += %%("finch-core")
   )
 
 lazy val freestyleHttpAkka = (project in file("http/akka"))
-  .dependsOn(freestyleCoreJVM)
+  .dependsOn(freestyleJVM)
   .settings(name := "freestyle-http-akka")
   .settings(
     libraryDependencies ++= Seq(
@@ -260,7 +260,7 @@ lazy val freestyleHttpAkka = (project in file("http/akka"))
   )
 
 lazy val freestyleHttpPlay = (project in file("http/play"))
-  .dependsOn(freestyleCoreJVM)
+  .dependsOn(freestyleJVM)
   .settings(name := "freestyle-http-play")
   .settings(
     parallelExecution in Test := false,
@@ -287,8 +287,8 @@ orgAfterCISuccessTaskListSetting := List(
 )
 
 lazy val freestyleModules: Seq[ProjectReference] = Seq(
-  freestyleCoreJVM,
-  freestyleCoreJS,
+  freestyleJVM,
+  freestyleJS,
   freestyleMonixJVM,
   freestyleMonixJS,
   freestyleEffectsJVM,
