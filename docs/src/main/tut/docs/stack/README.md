@@ -77,7 +77,7 @@ object modules {
 
 To validate the order we check if the number of crates that is ordered bigger is than zero and that the requested apple cultivar is selled by the company.
 
-For the second part we use the [`reader`](../effects/#reader) effect algebra to read the set of apple cultivars from our `Config`.
+For the second part we use the [`reader`](../effects/reader) effect algebra to read the set of apple cultivars from our `Config`.
 
 We are here using [`Validated`](http://typelevel.org/cats/api/cats/data/Validated.html) to combine multiple errors in a [`NonEmptyList`](http://typelevel.org/cats/api/cats/data/NonEmptyList.html) represented by the type alias `cats.data.ValidatedNel`. `Validated` provides an easy way to accumate errors and more info can be found on the [`Cats` website](http://typelevel.org/cats/datatypes/validated.html). `NonEmptyList` is like a `List` with at least one element.
 
