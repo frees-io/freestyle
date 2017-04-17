@@ -1,5 +1,7 @@
 import com.typesafe.sbt.site.jekyll.JekyllPlugin.autoImport._
+import dependencies.DependenciesPlugin.autoImport.depUpdateDependencyIssues
 import microsites.MicrositeKeys._
+import microsites.MicrositesPlugin.autoImport.publishMicrosite
 import microsites.util.BuildHelper.buildWithoutSuffix
 import sbt.Keys._
 import sbt._
@@ -14,6 +16,9 @@ object ProjectPlugin extends AutoPlugin {
   override def requires: Plugins = OrgPoliciesPlugin
 
   object autoImport {
+
+    lazy val fixResources: TaskKey[Unit] =
+      taskKey[Unit]("Fix application.conf presence on first clean build.")
 
     lazy val micrositeSettings = Seq(
       micrositeName := "Freestyle",
@@ -56,9 +61,8 @@ object ProjectPlugin extends AutoPlugin {
       coverageFailOnMinimum := false,
       description := "A Cohesive & Pragmatic Framework of FP centric Scala libraries",
       startYear := Some(2017),
-      orgGithubTokenSetting := Option(System.getenv().get("GITHUB_TOKEN_REPO")),
+      orgGithubTokenSetting := "GITHUB_TOKEN_REPO",
       resolvers += Resolver.sonatypeRepo("snapshots"),
-      onLoad := (Command.process("project freestyle", _: State)) compose (onLoad in Global).value,
       scalacOptions ++= scalacAdvancedOptions,
       libraryDependencies += %%("scalatest") % "test",
       parallelExecution in Test := false

@@ -66,6 +66,14 @@ def loadUser[F[_]]
 }
 ```
 
+## freestyle in the wild
+
+If you wish to add your library here please consider a PR to include it in the list below.
+
+★ | ★ | ★
+--- | --- | ---
+![scala-exercises](https://www.scala-exercises.org/assets/images/navbar_brand.svg) | [**scala-exercises**](https://www.scala-exercises.org/) | Scala Exercises is an Open Source project for learning different technologies based in the Scala Programming Language.
+
 # Copyright
 
 freestyle is designed and developed by 47 Degrees
