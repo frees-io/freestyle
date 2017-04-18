@@ -24,28 +24,28 @@ options:
     nested_options:
 
       - title: Error
-        url: docs/effects/#errorm
+        url: docs/effects/error
 
       - title: Either
-        url: docs/effects/#eithermg
+        url: docs/effects/either
 
       - title: Option
-        url: docs/effects/#optionm
+        url: docs/effects/option
 
       - title: Reader
-        url: docs/effects/#readerm
+        url: docs/effects/reader
 
       - title: Writer
-        url: docs/effects/#writerm
+        url: docs/effects/writer
 
       - title: State
-        url: docs/effects/#statem
+        url: docs/effects/state
 
       - title: Traverse
-        url: docs/effects/#traversem
+        url: docs/effects/traverse
 
       - title: Validation
-        url: docs/effects/#validationm
+        url: docs/effects/validation
 
       - title: Async Callbacks
         url: docs/effects/async
@@ -111,7 +111,7 @@ options:
     nested_options:
 
       - title: Bibliography
-        url: docs/related/#Bibliography
+        url: docs/related/#bibliography
 
       - title: Scala Libraries
         url: docs/related/#Scala

@@ -122,4 +122,4 @@ implicitly[App.Op[_] =:= ManualAppCoproduct[_]]
 
 So far, we’ve covered how Freestyle can help with building and composing module programs based on `Free`, but `Free` programs are useless without a runtime interpreter that can evaluate the `Free` structure.
 
-Next, we will show you how `Freestyle` helps you simplify the way you define [runtime interpreters](/docs/core/interpreters/) for `Free` applications.
+Next, we will show you how `Freestyle` helps you simplify the way you define [runtime interpreters](../interpreters/) for `Free` applications.

@@ -148,4 +148,4 @@ This is because apps built with `Free` reify each action in an in-memory data st
 As a rule of thumb, the approach that we've seen working in production is modeling your key biz logic concepts as `Free` actions and leaving the heavy lifting to the interpreters where needed.
 For most common apps true bottlenecks are IO to Databases, Network, or the file system and this is rarely a concern.
 
-Now that we've learned to define our own interpreters, let's jump into [Parallelism](/docs/core/parallelism/).
+Now that we've learned to define our own interpreters, let's jump into [Parallelism](../parallelism/).

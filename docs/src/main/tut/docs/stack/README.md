@@ -74,7 +74,7 @@ object modules {
 
 To validate the order, we check to make sure the number of crates ordered is larger than zero, and that the requested variety of apple is sold by the company.
 
-For the second part, we use the [`reader`](/docs/effects/#error) effect algebra to read the set of apple varieties from our `Config`.
+For the second part, we use the [`reader`](../effects/reader) effect algebra to read the set of apple varieties from our `Config`.
 
 We are using [`Validated`](http://typelevel.org/cats/api/cats/data/Validated.html) here to combine multiple errors in a [`NonEmptyList`](http://typelevel.org/cats/api/cats/data/NonEmptyList.html) represented by the type alias `cats.data.ValidatedNel`. `Validated` provides an easy way to accumate errors. More information can be found on the [`Cats` website](http://typelevel.org/cats/datatypes/validated.html). `NonEmptyList` is a `List` with at least one element.
 
@@ -97,7 +97,7 @@ def validateOrder[F[_]](order: Order, customer: Customer)(implicit app: App[F]):
   }
 ```
 
-When validating an order, we need to acquire the customer’s information. If a customer places multiple orders, we don’t want to send a database request every time, so we can use the [`freestyle-cache`](/docs/effects/Cache) module to cache customers.
+When validating an order, we need to acquire the customer’s information. If a customer places multiple orders, we don’t want to send a database request every time, so we can use the [`freestyle-cache`](../effects/Cache) module to cache customers.
 
 In the `getCustomer` function, we first try to locate the customer in the cache by using the cache effect algebra, if we cannot find them, we fall back to retrieving the customer from a database (or other persistence store).
 

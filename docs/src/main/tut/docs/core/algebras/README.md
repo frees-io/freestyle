@@ -135,7 +135,7 @@ type Module[A] = Coproduct[Service3.Op, C1, A]
 This is obviously far from ideal, as building `Coproduct` types by hand often results in bizarre compile errors
 when the types don't align properly from being placed in the wrong order.
 
-Fear not. Freestyle provides a [modular system](/docs/core/modules/) to achieve Onion-style architectures
+Fear not. Freestyle provides a [modular system](../modules/) to achieve Onion-style architectures
 and removes all the complexity from building `Coproduct` types by hand and compose arbitrarily nested Modules containing Algebras.
 
-[Continue to Modules](/docs/core/modules/).
+[Continue to Modules](../modules/).

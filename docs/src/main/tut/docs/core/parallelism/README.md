@@ -112,4 +112,4 @@ In practice, you may not need to use `.freeS` since Freestyle supports an implic
 `FreeS.Par#freeS` is a function enriched into the `FreeApplicative` syntax that joins the result of both operations back
 into a free monad step whose result can be used in further monadic computation.
 
-Now that we've covered how to build modular programs that support both sequential and parallel style computations, let's explore some of the [extra freestyle integrations and effects](/docs/effects).
+Now that we've covered how to build modular programs that support both sequential and parallel style computations, let's explore some of the [extra freestyle integrations and effects](../../effects).

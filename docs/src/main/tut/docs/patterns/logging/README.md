@@ -96,7 +96,7 @@ program[App.Op].exec[Try]
 ### Alternative logging with the `WriterM` effect
 
 The same semantics achieved by the backed in logging algebra can be achieved with traditional MTL style effects that impose a `MonadWriter` constraint in the program's
-target monad. Learn more about the writer effect in the [Effects](/docs/effects/#Writer) section.
+target monad. Learn more about the writer effect in the [Effects](../../effects/writer) section.
 
 ### A note on performance
 

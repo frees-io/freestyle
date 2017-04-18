@@ -20,7 +20,7 @@ object aliases {
 }
 ```
 
-A [freestyle module](/docs/core/modules/) (with `@module`) is an easy way to combine multiple algebras and create a `Coproduct` of the underlying algebras together with the necessary `Inject` instances.
+A [freestyle module](../core/modules/) (with `@module`) is an easy way to combine multiple algebras and create a `Coproduct` of the underlying algebras together with the necessary `Inject` instances.
 
 - A `Coproduct` is a combination of data types. An operation of type `type FooBarOp[A] = Coproduct[FooOp, BarOp, A]` can either by a `FooOp` or a `BarOp`.
 - `Inject` is a type class which can inject a data type in a `Coproduct` containing that specific data type. An `Inject[FooOp, FooBarOp]` instance can inject a `FooOp` operation into the `FooBarOp` coproduct.
@@ -201,7 +201,7 @@ configTraversing.run(cfg)
 configIncrSum.run(cfg)
 ```
 
-The Cats data types can be used as the target of a Freestyle program, but they also cooperate well with `FreeS` and `FreeS.Par`. In the [stack example](/docs/stack/), the `getCustomer` method uses [`OptionT`](http://typelevel.org/cats/datatypes/optiont.html) to combine `FreeS` programs.
+The Cats data types can be used as the target of a Freestyle program, but they also cooperate well with `FreeS` and `FreeS.Par`. In the [stack example](../stack/), the `getCustomer` method uses [`OptionT`](http://typelevel.org/cats/datatypes/optiont.html) to combine `FreeS` programs.
 
 ## Standing on the shoulders of giant Cats
 
