@@ -8,7 +8,7 @@ The maintainers of the project are:
 
 ## Contributors
 
-These are the people that have contributed to the freestyle project:
+These are the people that have contributed to the Freestyle project:
 
 * [colin-passiv](https://github.com/colin-passiv)
 * Alejandro Gómez <[dialelo](https://github.com/dialelo)>
@@ -22,6 +22,7 @@ These are the people that have contributed to the freestyle project:
 * Jisoo Park <[guersam](https://github.com/guersam)>
 * Jorge Galindo <[jorgegalindocruces](https://github.com/jorgegalindocruces)>
 * Juan Pedro Moreno <[juanpedromoreno](https://github.com/juanpedromoreno)>
+* Maureen Elsberry  <[MaureenElsberry](https://github.com/MaureenElsberry)>
 * Peter Neyens <[peterneyens](https://github.com/peterneyens)>
 * Raúl Raja Martínez <[raulraja](https://github.com/raulraja)>
 * Sam Halliday <[fommil](https://github.com/fommil)>
