@@ -11,7 +11,7 @@
 </code></pre>
 </div>
 
-<p>And some imports for the <em>freestyle-doobie</em> module and doobie itself:</p>
+<p>And imports for the <em>freestyle-doobie</em> module and doobie itself:</p>
 
 <div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">freestyle.doobie._</span>
 <span class="k">import</span> <span class="nn">freestyle.doobie.implicits._</span>
@@ -21,7 +21,7 @@
 </code></pre>
 </div>
 
-<p>We will ask the database for a <code class="highlighter-rouge">Person</code>. To keep this example consise, we just use a simple query and don’t bother to create actual tables.</p>
+<p>We will ask the database for a <code class="highlighter-rouge">Person</code>. To keep this example concise, we just use a simple query and don’t bother to create actual tables:</p>
 
 <div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">case</span> <span class="k">class</span> <span class="nc">Person</span><span class="o">(</span><span class="n">name</span><span class="k">:</span> <span class="kt">String</span><span class="o">,</span> <span class="n">birthYear</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span>
 <span class="c1">// defined class Person
@@ -31,7 +31,7 @@
 </span></code></pre>
 </div>
 
-<p>We can embed this doobie <code class="highlighter-rouge">ConnectionIO</code> program in a freestyle program. We start with the most trivial case by only using the <code class="highlighter-rouge">DoobieM</code> algebra.</p>
+<p>We can embed this doobie <code class="highlighter-rouge">ConnectionIO</code> program in a freestyle program. We start with the most trivial case by only using the <code class="highlighter-rouge">DoobieM</code> algebra:</p>
 
 <div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">val</span> <span class="n">doobieFrees</span><span class="k">:</span> <span class="kt">FreeS</span><span class="o">[</span><span class="kt">DoobieM.Op</span>, <span class="kt">Person</span><span class="o">]</span> <span class="k">=</span>
   <span class="nc">DoobieM</span><span class="o">[</span><span class="kt">DoobieM.Op</span><span class="o">].</span><span class="n">transact</span><span class="o">(</span><span class="n">getPerson</span><span class="o">)</span>
@@ -39,7 +39,7 @@
 </span></code></pre>
 </div>
 
-<p>To execute this <code class="highlighter-rouge">FreeS</code> program we need a doobie <code class="highlighter-rouge">Transactor</code> for our target type; in this example we have chosen <code class="highlighter-rouge">fs2.Task</code>.</p>
+<p>To execute this <code class="highlighter-rouge">FreeS</code> program, we need a doobie <code class="highlighter-rouge">Transactor</code> for our target type; in this example, we have chosen <code class="highlighter-rouge">fs2.Task</code>:</p>
 
 <div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">_root_.fs2.Task</span>
 <span class="c1">// import _root_.fs2.Task
@@ -47,11 +47,11 @@
 <span class="k">implicit</span> <span class="k">val</span> <span class="n">xa</span><span class="k">:</span> <span class="kt">Transactor</span><span class="o">[</span><span class="kt">Task</span><span class="o">]</span> <span class="k">=</span>
   <span class="n">H2Transactor</span><span class="o">[</span><span class="kt">Task</span><span class="o">](</span><span class="s">"jdbc:h2:mem:test;DB_CLOSE_DELAY=-1"</span><span class="o">,</span> <span class="s">"sa"</span><span class="o">,</span> <span class="s">""</span><span class="o">).</span><span class="n">unsafeRunSync</span><span class="o">.</span>
     <span class="n">toOption</span><span class="o">.</span><span class="n">getOrElse</span><span class="o">(</span><span class="k">throw</span> <span class="k">new</span> <span class="nc">Exception</span><span class="o">(</span><span class="s">"Could not create example transactor"</span><span class="o">))</span>
-<span class="c1">// xa: doobie.imports.Transactor[fs2.Task] = doobie.h2.h2transactor$H2Transactor@449462b5
+<span class="c1">// xa: doobie.imports.Transactor[fs2.Task] = doobie.h2.h2transactor$H2Transactor@69dce225
 </span></code></pre>
 </div>
 
-<p>By using the <em>fs2-cats</em> interop project, we get the necessary type class instances for <code class="highlighter-rouge">Task</code>, so we can translate our <code class="highlighter-rouge">FreeS</code> program into a <code class="highlighter-rouge">Task</code>.</p>
+<p>By using the <em>fs2-cats</em> interop project, we get the necessary type class instances for <code class="highlighter-rouge">Task</code>, so we can translate our <code class="highlighter-rouge">FreeS</code> program into a <code class="highlighter-rouge">Task</code>:</p>
 
 <div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">_root_.fs2.interop.cats._</span>
 <span class="c1">// import _root_.fs2.interop.cats._
@@ -61,7 +61,7 @@
 </span></code></pre>
 </div>
 
-<p>To check if we actually get Alonzo Church as a <code class="highlighter-rouge">Person</code> we can use <code class="highlighter-rouge">Task#unsafeRunSync</code> in this example.</p>
+<p>To check if we actually get Alonzo Church as a <code class="highlighter-rouge">Person</code>, we can use <code class="highlighter-rouge">Task#unsafeRunSync</code> in this example:</p>
 
 <div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="n">task</span><span class="o">.</span><span class="n">unsafeRunSync</span><span class="o">.</span><span class="n">toOption</span>
 <span class="c1">// res2: Option[Person] = Some(Person(Alonzo Church,1903))
@@ -70,7 +70,7 @@
 
 <h2 id="doobiem-in-a-module"><code class="highlighter-rouge">DoobieM</code> in a module</h2>
 
-<p>Using only <code class="highlighter-rouge">DoobieM</code> is however not exactly useful as in that case it just adds an extra level of indirection on top of <code class="highlighter-rouge">ConnectionIO</code>. As a more realistic example we will use <code class="highlighter-rouge">DoobieM</code> in a module together with another algebra.</p>
+<p>Using only <code class="highlighter-rouge">DoobieM</code> is not exactly useful however, as it just adds an extra level of indirection on top of <code class="highlighter-rouge">ConnectionIO</code>. As a more realistic example, we will use <code class="highlighter-rouge">DoobieM</code> in a module together with another algebra:</p>
 
 <div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="nd">@free</span> <span class="k">trait</span> <span class="nc">Calc</span><span class="o">[</span><span class="kt">F</span><span class="o">[</span><span class="k">_</span><span class="o">]]</span> <span class="o">{</span>
   <span class="k">def</span> <span class="n">subtract</span><span class="o">(</span><span class="n">a</span><span class="k">:</span> <span class="kt">Int</span><span class="o">,</span> <span class="n">b</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span><span class="k">:</span> <span class="kt">FreeS</span><span class="o">[</span><span class="kt">F</span>, <span class="kt">Int</span><span class="o">]</span>
@@ -93,7 +93,7 @@
   <span class="k">new</span> <span class="nc">Calc</span><span class="o">.</span><span class="nc">Handler</span><span class="o">[</span><span class="kt">Task</span><span class="o">]</span> <span class="o">{</span>
     <span class="k">def</span> <span class="n">subtract</span><span class="o">(</span><span class="n">a</span><span class="k">:</span> <span class="kt">Int</span><span class="o">,</span> <span class="n">b</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span><span class="k">:</span> <span class="kt">Task</span><span class="o">[</span><span class="kt">Int</span><span class="o">]</span> <span class="k">=</span> <span class="nc">Task</span><span class="o">.</span><span class="n">now</span><span class="o">(</span><span class="n">a</span> <span class="o">-</span> <span class="n">b</span><span class="o">)</span>
   <span class="o">}</span>
-<span class="c1">// calcHandler: Calc.Handler[fs2.Task] = $anon$1@2fe06cf6
+<span class="c1">// calcHandler: Calc.Handler[fs2.Task] = $anon$1@42831fb5
 </span></code></pre>
 </div>
 
@@ -108,7 +108,7 @@
 </span></code></pre>
 </div>
 
-<p>We can use <code class="highlighter-rouge">Example.Op</code> as the functor and translate the resulting program to <code class="highlighter-rouge">Task</code>.</p>
+<p>We can use <code class="highlighter-rouge">Example.Op</code> as the functor and translate the resulting program to <code class="highlighter-rouge">Task</code>:</p>
 
 <div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">val</span> <span class="n">task2</span> <span class="k">=</span> <span class="n">example</span><span class="o">[</span><span class="kt">Example.Op</span><span class="o">].</span><span class="n">exec</span><span class="o">[</span><span class="kt">Task</span><span class="o">]</span>
 <span class="c1">// task2: fs2.Task[(Person, Int)] = Task

@@ -77,7 +77,7 @@ where something went wrong.</p>
 
 <div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">val</span> <span class="n">getSorted</span><span class="k">:</span> <span class="kt">Author</span> <span class="o">=&gt;</span> <span class="nc">FreeS</span><span class="o">[</span><span class="kt">AsyncM.Op</span>, <span class="kt">List</span><span class="o">[</span><span class="kt">Book</span><span class="o">]]</span> <span class="k">=</span>
   <span class="n">sortedBooks</span><span class="o">[</span><span class="kt">AsyncM.Op</span><span class="o">](</span><span class="nc">Library</span><span class="o">)</span> <span class="k">_</span>
-<span class="c1">// getSorted: Author =&gt; freestyle.FreeS[freestyle.async.AsyncM.Op,List[Book]] = $$Lambda$3447/2130062692@bfccc22
+<span class="c1">// getSorted: Author =&gt; freestyle.FreeS[freestyle.async.AsyncM.Op,List[Book]] = $$Lambda$3447/614792648@6fd097cc
 </span>
 <span class="k">val</span> <span class="n">dickensBooks</span> <span class="k">=</span> <span class="n">getSorted</span><span class="o">(</span><span class="nc">Author</span><span class="o">(</span><span class="s">"Dickens"</span><span class="o">))</span>
 <span class="c1">// dickensBooks: freestyle.FreeS[freestyle.async.AsyncM.Op,List[Book]] = Free(...)
@@ -124,10 +124,10 @@ where something went wrong.</p>
 //   at Library$.findBooks(&lt;console&gt;:33)
 //   at .$anonfun$sortedBooks$1(&lt;console&gt;:31)
 //   at .$anonfun$sortedBooks$1$adapted(&lt;console&gt;:30)
-//   at $$Lambda$3448/336413589.apply(Unknown Source)
+//   at $$Lambda$3448/2129963076.apply(Unknown Source)
 //   at fs2.Task$.$anonfun$async$2(Task.scala:247)
 //   at fs2.Task$.$anonfun$async$2$adapted(Task.scala:246)
-//   at fs2.Task$$$Lambda$3449/336167595.apply(Unknown Source)
+//   at fs2.Task$$$Lambda$3449/499937986.apply(Unknown Source)
 //   at fs2.internal.Future.listen(Future.scala:34)
 //   at fs2.internal.Future.runAsync(Future.scala:69)
 //   at fs2.Task.unsafeRunAsync(Task.scala:100)
@@ -158,13 +158,13 @@ where something went wrong.</p>
 <span class="c1">// import monix.execution.Scheduler
 </span>
 <span class="k">implicit</span> <span class="k">val</span> <span class="n">executionContext</span> <span class="k">=</span> <span class="nc">Scheduler</span><span class="o">.</span><span class="nc">Implicits</span><span class="o">.</span><span class="n">global</span>
-<span class="c1">// executionContext: monix.execution.Scheduler = monix.execution.schedulers.AsyncScheduler@68bbdf3d
+<span class="c1">// executionContext: monix.execution.Scheduler = monix.execution.schedulers.AsyncScheduler@6d9ee4a7
 </span>
 <span class="k">val</span> <span class="n">monixTask1</span> <span class="k">=</span> <span class="n">dickensBooks</span><span class="o">.</span><span class="n">exec</span><span class="o">[</span><span class="kt">MonixTask</span><span class="o">]</span>
-<span class="c1">// monixTask1: monix.eval.Task[List[Book]] = Task.FlatMap(Task.Suspend(monix.eval.Task$$$Lambda$3484/391384200@55c6d928), monix.eval.Task$$$Lambda$3485/760737888@8a0444c)
+<span class="c1">// monixTask1: monix.eval.Task[List[Book]] = Task.FlatMap(Task.Suspend(monix.eval.Task$$$Lambda$3484/1956066250@6584ffb9), monix.eval.Task$$$Lambda$3485/114663080@7517d5a8)
 </span>
 <span class="k">val</span> <span class="n">monixTask2</span> <span class="k">=</span> <span class="n">otherBooks</span><span class="o">.</span><span class="n">exec</span><span class="o">[</span><span class="kt">MonixTask</span><span class="o">]</span>
-<span class="c1">// monixTask2: monix.eval.Task[List[Book]] = Task.FlatMap(Task.Suspend(monix.eval.Task$$$Lambda$3484/391384200@3351e608), monix.eval.Task$$$Lambda$3485/760737888@8fc9d30)
+<span class="c1">// monixTask2: monix.eval.Task[List[Book]] = Task.FlatMap(Task.Suspend(monix.eval.Task$$$Lambda$3484/1956066250@17558bf3), monix.eval.Task$$$Lambda$3485/114663080@117f2679)
 </span></code></pre>
 </div>
 
@@ -173,7 +173,7 @@ where something went wrong.</p>
 //   at Library$.findBooks(&lt;console&gt;:33)
 //   at .$anonfun$sortedBooks$1(&lt;console&gt;:31)
 //   at .$anonfun$sortedBooks$1$adapted(&lt;console&gt;:30)
-//   at $$Lambda$3448/336413589.apply(Unknown Source)
+//   at $$Lambda$3448/2129963076.apply(Unknown Source)
 //   at freestyle.asyncMonix.implicits$$anon$1$$anon$2.run(async.scala:29)
 //   at scala.concurrent.impl.ExecutionContextImpl$AdaptedForkJoinTask.exec(ExecutionContextImpl.scala:140)
 //   at java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:289)
@@ -214,7 +214,7 @@ where something went wrong.</p>
 //   at Library$.findBooks(&lt;console&gt;:33)
 //   at .$anonfun$sortedBooks$1(&lt;console&gt;:31)
 //   at .$anonfun$sortedBooks$1$adapted(&lt;console&gt;:30)
-//   at $$Lambda$3448/336413589.apply(Unknown Source)
+//   at $$Lambda$3448/2129963076.apply(Unknown Source)
 //   at freestyle.async$implicits$$anon$2$$anon$3.run(async.scala:44)
 //   at scala.concurrent.impl.ExecutionContextImpl$AdaptedForkJoinTask.exec(ExecutionContextImpl.scala:140)
 //   at java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:289)
