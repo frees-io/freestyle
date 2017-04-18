@@ -34,7 +34,7 @@ lazy val tests = (project in file("tests"))
   .settings(
     libraryDependencies ++= Seq(
       scalaOrganization.value  % "scala-reflect" % scalaVersion.value,
-      "org.ensime"            %% "pcplod"        % v("pcplod")
+      %%("pcplod") % "test"
     ),
     fork in Test := true,
     javaOptions in Test ++= {
@@ -52,8 +52,7 @@ lazy val tests = (project in file("tests"))
   .settings(noPublishSettings)
 
 lazy val docs = (project in file("docs"))
-  .dependsOn(freestyleJVM, effectsJVM, fs2JVM, fetchJVM, cacheJVM, loggingJVM, asyncFs2JVM, asyncMonixJVM)
-  .dependsOn(doobie, slick, httpPlay, httpHttp4s, httpFinch, config)
+  .dependsOn(freestyleJvmDependencies: _*)
   .settings(micrositeSettings)
   .settings(noPublishSettings)
   .settings(
@@ -61,7 +60,7 @@ lazy val docs = (project in file("docs"))
     description := "freestyle docs"
   )
   .settings(
-    libraryDependencies += "org.http4s" %% "http4s-dsl" % v("http4s")
+    libraryDependencies += %%("http4s-dsl")
   )
   .enablePlugins(MicrositesPlugin)
 
@@ -70,14 +69,16 @@ lazy val freestyle = (crossProject in file("freestyle"))
   .settings(sharedTestSettings)
   .settings(
     libraryDependencies ++= Seq(
-      scalaOrganization.value   % "scala-reflect" % scalaVersion.value,
-      "org.typelevel"         %%% "cats-free"     % v("cats"),
-      "com.chuusai"           %%% "shapeless"     % v("shapeless"),
-      "io.monix"              %%% "monix-eval"    % v("monix")      % "test",
-      "io.monix"              %%% "monix-cats"    % v("monix")      % "test",
-      "org.typelevel"         %%% "cats-laws"     % v("cats")       % "test",
-      "org.typelevel"         %%% "discipline"    % v("discipline") % "test"
+      scalaOrganization.value   % "scala-reflect" % scalaVersion.value
     )
+  )
+  .crossDepSettings(     
+    %("cats-free"), 
+    %("shapeless"),
+    %("monix-eval") % "test",
+    %("monix-cats") % "test",
+    %("cats-laws")  % "test",
+    %("discipline") % "test"
   )
   .jsSettings(sharedJsSettings)
 
@@ -88,12 +89,7 @@ lazy val monix = (crossProject in file("freestyle-monix"))
   .dependsOn(freestyle)
   .settings(name := "freestyle-monix")
   .settings(sharedTestSettings)
-  .settings(
-    libraryDependencies ++= Seq(
-      "io.monix" %%% "monix-eval" % v("monix"),
-      "io.monix" %%% "monix-cats" % v("monix")
-    )
-  )
+  .crossDepSettings(%("monix-eval"), %("monix-cats"))
   .jsSettings(sharedJsSettings)
 
 lazy val monixJVM = monix.jvm
@@ -121,12 +117,7 @@ lazy val asyncMonix = (crossProject in file("async/monix"))
   .dependsOn(freestyle, async)
   .settings(name := "freestyle-async-monix")
   .settings(sharedTestSettings)
-  .settings(
-    libraryDependencies ++= Seq(
-      "io.monix" %%% "monix-eval" % v("monix"),
-      "io.monix" %%% "monix-cats" % v("monix")
-    )
-  )
+  .crossDepSettings(%("monix-eval"), %("monix-cats"))
   .jsSettings(sharedJsSettings)
 
 lazy val asyncMonixJVM = asyncMonix.jvm
@@ -136,12 +127,7 @@ lazy val asyncFs2 = (crossProject in file("async/fs2"))
   .dependsOn(freestyle, async)
   .settings(name := "freestyle-async-fs2")
   .settings(sharedTestSettings)
-  .settings(
-    libraryDependencies ++= Seq(
-      "co.fs2" %%% "fs2-core" % v("fs2"),
-      "co.fs2" %%% "fs2-cats" % v("fs2-cats")
-    )
-  )
+  .crossDepSettings(%("fs2-core"), %("fs2-cats"))
   .jsSettings(sharedJsSettings)
 
 lazy val asyncFs2JVM = asyncFs2.jvm
@@ -164,9 +150,9 @@ lazy val cacheRedis = (project in file("freestyle-cache-redis"))
     resolvers += "Sonatype OSS Releases" at "https://oss.sonatype.org/content/repositories/releases/",
     resolvers += Resolver.mavenLocal,
     libraryDependencies ++= Seq(
-      "com.github.etaty"          %% "rediscala"      % v("rediscala"),
-      "com.typesafe.akka"         %% "akka-actor"     % v("akka"),
-      "com.orange.redis-embedded"  % "embedded-redis" % v("embedded-redis")
+      %%("rediscala"),
+      %%("akka-actor") % "test",
+      %("embedded-redis") % "test"
     )
   )
 
@@ -176,8 +162,8 @@ lazy val doobie = (project in file("freestyle-doobie"))
   .settings(sharedTestSettings)
   .settings(
     libraryDependencies ++= Seq(
-      "org.tpolecat" %% "doobie-core-cats" % v("doobie"),
-      "org.tpolecat" %% "doobie-h2-cats"   % v("doobie")
+      %%("doobie-core-cats"),
+      %%("doobie-h2-cats")
     )
   )
 
@@ -186,10 +172,7 @@ lazy val slick = (project in file("freestyle-slick"))
   .settings(name := "freestyle-slick")
   .settings(sharedTestSettings)
   .settings(
-    libraryDependencies ++= Seq(
-      "com.typesafe.slick" %% "slick" % v("slick"),
-      "com.h2database"      % "h2"    % "1.4.194" % "test"
-    )
+    libraryDependencies ++= Seq(%%("slick"), %("h2") % "test")
   )
 
 lazy val twitterUtil = (project in file("freestyle-twitter-util"))
@@ -197,7 +180,7 @@ lazy val twitterUtil = (project in file("freestyle-twitter-util"))
   .settings(name := "freestyle-twitter-util")
   .settings(sharedTestSettings)
   .settings(
-    libraryDependencies += "io.catbird" %% "catbird-util" %v("catbird")
+    libraryDependencies += %%("catbird-util")
   )
 
 lazy val config = (project in file("freestyle-config"))
@@ -226,12 +209,7 @@ lazy val fetch = (crossProject in file("freestyle-fetch"))
   .dependsOn(freestyle)
   .settings(name := "freestyle-fetch")
   .settings(sharedTestSettings)
-  .settings(
-    libraryDependencies ++= Seq(
-      "com.47deg" %%% "fetch"       % v("fetch"),
-      "com.47deg" %%% "fetch-monix" % v("fetch")
-    )
-  )
+  .crossDepSettings(%("fetch"), %("fetch-monix"))
   .jsSettings(sharedJsSettings)
 
 lazy val fetchJVM = fetch.jvm
@@ -242,10 +220,10 @@ lazy val logging = (crossProject in file("freestyle-logging"))
   .settings(name := "freestyle-logging")
   .settings(sharedTestSettings)
   .jvmSettings(
-    libraryDependencies += "io.verizon.journal" %% "core" % v("journal")
+    libraryDependencies += %%("journal-core")
   )
   .jsSettings(
-    libraryDependencies += "biz.enef" %%% "slogging" % v("slogging")
+    libraryDependencies += %%%("slogging")
   )
   .jsSettings(sharedJsSettings)
 
@@ -269,10 +247,7 @@ lazy val httpHttp4s = (project in file("http/http4s"))
   .settings(name := "freestyle-http-http4s")
   .settings(sharedTestSettings)
   .settings(
-    libraryDependencies ++= Seq(
-      "org.http4s" %% "http4s-core" % v("http4s"),
-      "org.http4s" %% "http4s-dsl"  % v("http4s") % "test"
-    )
+    libraryDependencies ++= Seq(%%("http4s-core"), %%("http4s-dsl") % "test")
   )
 
 lazy val httpFinch = (project in file("http/finch"))
@@ -280,7 +255,7 @@ lazy val httpFinch = (project in file("http/finch"))
   .settings(name := "freestyle-http-finch")
   .settings(sharedTestSettings)
   .settings(
-    libraryDependencies += "com.github.finagle" %% "finch-core" % v("finch")
+    libraryDependencies += %%("finch-core")
   )
 
 lazy val httpAkka = (project in file("http/akka"))
@@ -288,10 +263,7 @@ lazy val httpAkka = (project in file("http/akka"))
   .settings(name := "freestyle-http-akka")
   .settings(sharedTestSettings)
   .settings(
-    libraryDependencies ++= Seq(
-      "com.typesafe.akka" %% "akka-http"         % v("akka-http"),
-      "com.typesafe.akka" %% "akka-http-testkit" % v("akka-http") % "test"
-    )
+    libraryDependencies ++= Seq(%%("akka-http"), %%("akka-http-testkit") % "test")
   )
 
 lazy val httpPlay = (project in file("http/play"))
@@ -300,10 +272,7 @@ lazy val httpPlay = (project in file("http/play"))
   .settings(sharedTestSettings)
   .settings(
     parallelExecution in Test := false,
-    libraryDependencies ++= Seq(
-      "com.typesafe.play" %% "play"      % v("play"),
-      "com.typesafe.play" %% "play-test" % v("play") % "test"
-    )
+    libraryDependencies ++= Seq(%%("play"), %%("play-test") % "test")
   )
 
 addCommandAlias("debug", "; clean ; test")
