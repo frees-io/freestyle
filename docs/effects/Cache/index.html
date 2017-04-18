@@ -2,29 +2,63 @@
 
 <p>The <code class="highlighter-rouge">Cache</code> effect algebra allows interacting with a <em>global</em> key-value data store.
 It declares several abstract operations to read and write data into the store.
-This algebra is parametrized on the types <code class="highlighter-rouge">K</code>, and <code class="highlighter-rouge">V</code>, for keys and values in the store, respectively.</p>
+This algebra is parametrized on the types <code class="highlighter-rouge">Key</code>, and <code class="highlighter-rouge">Val</code>, for keys and values in the store, respectively.</p>
 
-<p>The algebra assumes no specific implementation or representation of the data store, for
-that is given by each  <em>interpreter or handler</em> for the algebra.
-For the same reason, it poses no type constraint on <code class="highlighter-rouge">K</code> or <code class="highlighter-rouge">V</code> with regards to ordering, hashing, or encoding.
-Except, of course, that equality is defined for both types.</p>
+<pre><code class="language-Scala">class KeyValueProvider[Key, Val] {
+  @free sealed trait CacheM[F[_]] {
+    def get(key: Key):              FreeS.Par[F, Option[Val]]
+    def put(key: Key, newVal: Val): FreeS.Par[F, Unit]
+    def del(key: Key):              FreeS.Par[F, Unit]
+    def has(key: Key):              FreeS.Par[F, Boolean]
+    def keys:                       FreeS.Par[F, List[Key]]
+    def clear:                      FreeS.Par[F, Unit]
+  }
+}
+</code></pre>
+
+<p>To make the algebra parametric on the types of <code class="highlighter-rouge">Key</code> and <code class="highlighter-rouge">Value</code>, we wrap the declaration of the algebra inside a <code class="highlighter-rouge">KeyValueProvider</code>; but note that this class has no instance data.
+The algebra assumes no specific implementation or representation of the data store, since that is a matter for each <em>handler</em> of the algebra.
+For the same reason, it poses no type constraint on <code class="highlighter-rouge">Key</code> or <code class="highlighter-rouge">Val</code> with regards to ordering, hashing, or encoding, but it is assumed that equality is defined for both types.</p>
+
+<h3 id="using-the-cache-effect">Using the Cache Effect</h3>
+
+<p>The following code snippet shows how to import and use the operations from the Cache algebra inside a program.</p>
+
+<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">freestyle._</span>
+<span class="c1">// import freestyle._
+</span>
+<span class="k">import</span> <span class="nn">freestyle.implicits._</span>
+<span class="c1">// import freestyle.implicits._
+</span>
+<span class="k">import</span> <span class="nn">freestyle.cache._</span>
+<span class="c1">// import freestyle.cache._
+</span>
+<span class="k">import</span> <span class="nn">cats.implicits._</span>
+<span class="c1">// import cats.implicits._
+</span>
+<span class="k">val</span> <span class="n">prov</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">KeyValueProvider</span><span class="o">[</span><span class="kt">Char</span>, <span class="kt">Int</span><span class="o">]</span>
+<span class="c1">// prov: freestyle.cache.KeyValueProvider[Char,Int] = freestyle.cache.KeyValueProvider@6c1990f1
+</span>
+<span class="k">import</span> <span class="nn">prov.CacheM</span>
+<span class="c1">// import prov.CacheM
+</span>
+<span class="k">import</span> <span class="nn">prov.implicits._</span>
+<span class="c1">// import prov.implicits._
+</span>
+<span class="k">def</span> <span class="n">loadFrom</span><span class="o">[</span><span class="kt">F</span><span class="o">[</span><span class="k">_</span><span class="o">]</span><span class="kt">:</span> <span class="kt">prov.CacheM</span><span class="o">]</span> <span class="k">=</span> <span class="o">{</span>
+  <span class="k">for</span> <span class="o">{</span>
+    <span class="n">a</span> <span class="k">&lt;-</span> <span class="mf">1.</span><span class="n">pure</span><span class="o">[</span><span class="kt">FreeS</span><span class="o">[</span><span class="kt">F</span>, <span class="kt">?</span><span class="o">]]</span>
+    <span class="n">b</span> <span class="k">&lt;-</span> <span class="nc">CacheM</span><span class="o">[</span><span class="kt">F</span><span class="o">].</span><span class="n">get</span><span class="o">(</span><span class="sc">'a'</span><span class="o">)</span>
+    <span class="n">c</span> <span class="k">&lt;-</span> <span class="mf">1.</span><span class="n">pure</span><span class="o">[</span><span class="kt">FreeS</span><span class="o">[</span><span class="kt">F</span>, <span class="kt">?</span><span class="o">]]</span>
+  <span class="o">}</span> <span class="k">yield</span> <span class="n">a</span> <span class="o">+</span> <span class="n">b</span><span class="o">.</span><span class="n">getOrElse</span><span class="o">(</span><span class="mi">0</span><span class="o">)</span> <span class="o">+</span> <span class="n">c</span>
+<span class="o">}</span>
+<span class="c1">// loadFrom: [F[_]](implicit evidence$1: prov.CacheM[F])cats.free.Free[[β$0$]cats.free.FreeApplicative[F,β$0$],Int]
+</span></code></pre>
+</div>
 
 <h3 id="operations">Operations</h3>
 
 <p>The set of abstract operations of the <code class="highlighter-rouge">Cache</code> algebra are specified as follows.</p>
-
-<pre><code class="language-Scala">class KeyValueProvider[Key, Value] {
-    @free sealed trait CacheM[F[_]] {
-      def get(key: Key):              FreeS.Par[F, Option[Val]]
-      def put(key: Key, newVal: Val): FreeS.Par[F, Unit]
-      def del(key: Key):              FreeS.Par[F, Unit]
-      def has(key: Key):              FreeS.Par[F, Boolean]
-      def keys:                       FreeS.Par[F, List[Key]]
-      def clear:                      FreeS.Par[F, Unit]
-    }
-}
-</code></pre>
-<p>To make the algebra parametric on the types of <code class="highlighter-rouge">Key</code> and <code class="highlighter-rouge">Value</code>, we wrap the declaration of the algebra inside a <code class="highlighter-rouge">KeyValueProvider</code>; but note that this class has no instance data.</p>
 
 <ul>
   <li><code class="highlighter-rouge">get(key: Key): M[Option[Val]]</code> issues a query to the data store on a given key. The result can be <code class="highlighter-rouge">None</code>, if the store has no mapping for that key, or <code class="highlighter-rouge">Some(v)</code> if the key is mapped to the value <code class="highlighter-rouge">v</code>.</li>
