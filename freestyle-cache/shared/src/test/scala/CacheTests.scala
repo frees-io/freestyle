@@ -18,10 +18,9 @@ package freestyle.cache
 
 import cats.{Applicative, Id, ~>}
 import cats.syntax.cartesian._
-import cats.instances.option._
 import freestyle._
 import freestyle.implicits._
-import org.scalatest._
+import org.scalatest.{ Matchers, WordSpec }
 
 class CacheTests extends WordSpec with Matchers with CacheTestContext {
 
@@ -29,6 +28,19 @@ class CacheTests extends WordSpec with Matchers with CacheTestContext {
   import provider.CacheM
   import provider.implicits._
   import CacheM._
+
+  "CacheM algebra" should {
+
+    "allow a CacheM operation to interleaved inside a program monadic flow" in {
+      def prog[F[_]: CacheM]: FreeS[F, Int] =
+        for {
+          a <- FreeS.pure(1)
+          b <- CacheM[F].get("a")
+          c <- FreeS.pure(1)
+        } yield a + b.getOrElse(0) + c
+      prog[CacheM.Op].exec[Id] shouldBe 2
+    }
+  }
 
   "GET" should {
     "result in None if the datastore is empty" in {

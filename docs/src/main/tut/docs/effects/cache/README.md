@@ -8,30 +8,52 @@ permalink: /docs/effects/Cache/
 
 The `Cache` effect algebra allows interacting with a _global_ key-value data store.
 It declares several abstract operations to read and write data into the store.
-This algebra is parametrized on the types `K`, and `V`, for keys and values in the store, respectively.
+This algebra is parametrized on the types `Key`, and `Val`, for keys and values in the store, respectively.
 
-The algebra assumes no specific implementation or representation of the data store, for
-that is given by each  _interpreter or handler_ for the algebra.
-For the same reason, it poses no type constraint on `K` or `V` with regards to ordering, hashing, or encoding.
-Except, of course, that equality is defined for both types.
+```Scala
+class KeyValueProvider[Key, Val] {
+  @free sealed trait CacheM[F[_]] {
+    def get(key: Key):              FreeS.Par[F, Option[Val]]
+    def put(key: Key, newVal: Val): FreeS.Par[F, Unit]
+    def del(key: Key):              FreeS.Par[F, Unit]
+    def has(key: Key):              FreeS.Par[F, Boolean]
+    def keys:                       FreeS.Par[F, List[Key]]
+    def clear:                      FreeS.Par[F, Unit]
+  }
+}
+```
+
+To make the algebra parametric on the types of `Key` and `Value`, we wrap the declaration of the algebra inside a `KeyValueProvider`; but note that this class has no instance data.
+The algebra assumes no specific implementation or representation of the data store, since that is a matter for each _handler_ of the algebra.
+For the same reason, it poses no type constraint on `Key` or `Val` with regards to ordering, hashing, or encoding, but it is assumed that equality is defined for both types.
+
+### Using the Cache Effect
+
+The following code snippet shows how to import and use the operations from the Cache algebra inside a program.
+
+```tut:book
+import freestyle._
+import freestyle.implicits._
+import freestyle.cache._
+import cats.implicits._
+
+val prov = new KeyValueProvider[Char, Int]
+
+import prov.CacheM
+import prov.implicits._
+
+def loadFrom[F[_]: prov.CacheM] = {
+  for {
+    a <- 1.pure[FreeS[F, ?]]
+    b <- CacheM[F].get('a')
+    c <- 1.pure[FreeS[F, ?]]
+  } yield a + b.getOrElse(0) + c
+}
+```
 
 ### Operations
 
 The set of abstract operations of the `Cache` algebra are specified as follows.
-
-```Scala
-class KeyValueProvider[Key, Value] {
-    @free sealed trait CacheM[F[_]] {
-      def get(key: Key):              FreeS.Par[F, Option[Val]]
-      def put(key: Key, newVal: Val): FreeS.Par[F, Unit]
-      def del(key: Key):              FreeS.Par[F, Unit]
-      def has(key: Key):              FreeS.Par[F, Boolean]
-      def keys:                       FreeS.Par[F, List[Key]]
-      def clear:                      FreeS.Par[F, Unit]
-    }
-}
-```
-To make the algebra parametric on the types of `Key` and `Value`, we wrap the declaration of the algebra inside a `KeyValueProvider`; but note that this class has no instance data.
 
 * `get(key: Key): M[Option[Val]]` issues a query to the data store on a given key. The result can be `None`, if the store has no mapping for that key, or `Some(v)` if the key is mapped to the value `v`.
 * `put(key: Key, v: Value)` issues a command to
