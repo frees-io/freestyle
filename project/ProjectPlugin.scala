@@ -75,6 +75,7 @@ object ProjectPlugin extends AutoPlugin {
       resolvers += Resolver.sonatypeRepo("snapshots"),
       scalacOptions ++= scalacAdvancedOptions,
       libraryDependencies += %%("scalatest") % "test",
-      parallelExecution in Test := false
+      parallelExecution in Test := false,
+      compileOrder in Compile := CompileOrder.JavaThenScala
     ) ++ scalaMacroDependencies
 }

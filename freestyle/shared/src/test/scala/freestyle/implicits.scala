@@ -45,5 +45,24 @@ class implicitsTests extends WordSpec with Matchers {
       val program = List(s.x(1), s.x(2)).sequence[FreeS[SCtors1.Op, ?], Int]
       program.exec[Option] shouldBe (Some(List(1, 2)))
     }
-  }
+
+    "provide a custom implicit not found message for a missing implicit Handler" in {
+      shapeless.test.illTyped(
+        """Capture[Option]""",
+        ".*No Capture instance found for Option.*")
+    }
+
+    "provide a custom implicit not found message for a missing Capture instance" in {
+      shapeless.test.illTyped(
+        """SCtors1[SCtors1.Op].x(1).exec[scala.util.Try]""",
+        ".*Handler not found to transform.*")
+    }
+
+    "provide a custom implicit not found message for a missing FreeSLift instance" in {
+      shapeless.test.illTyped(
+        """implicitly[FreeSLift[SCtors1.Op, List]]""",
+        ".*No FreeSLift instance found for.*")
+    }
+
+   }
 }
