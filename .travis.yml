@@ -16,7 +16,10 @@ install:
 - gem install jekyll -v 3.2.1
 script:
 - sbt ++$TRAVIS_SCALA_VERSION clean coverage test coverageReport
-- sbt ++$TRAVIS_SCALA_VERSION "docs/tut"
+- if [ "$TRAVIS_SCALA_VERSION" = "2.12.1" ]; then
+    sbt "docs/tut";
+  fi
+
 
 after_success:
 - sbt ++$TRAVIS_SCALA_VERSION orgAfterCISuccess
