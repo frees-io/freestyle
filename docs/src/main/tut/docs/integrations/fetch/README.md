@@ -1,7 +1,7 @@
 ---
 layout: docs
 title: Fetch
-permalink: /docs/fetch/
+permalink: /docs/integrations/fetch/
 ---
 
 # Fetch

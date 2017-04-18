@@ -1,7 +1,7 @@
 ---
 layout: docs
 title: Cats
-permalink: /docs/cats/
+permalink: /docs/integrations/cats/
 ---
 
 # Cats
