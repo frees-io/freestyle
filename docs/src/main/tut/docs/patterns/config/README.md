@@ -6,10 +6,10 @@ permalink: /docs/patterns/config/
 
 ## Configuration
 
-The `Config` effect algebra is part of the `freestyle-config` module and it allows obtaining values from configuration files at any point in the monadic computation flow of a Freestyle program.
-The current implementation exposes the most important combinators found in [Typesafe Config](https://github.com/typesafehub/config)
+The `Config` effect algebra is part of the `freestyle-config` module, and it allows obtaining values from configuration files at any point in the monadic computation flow of a Freestyle program.
+The current implementation exposes the most important combinators found in [Typesafe Config](https://github.com/typesafehub/config).
 
-In order to enable this integration you may depend on _freestyle-config_
+In order to enable this integration, you can depend on _freestyle-config_:
 
 ```scala
 libraryDependencies += "com.47deg" %% "freestyle-config" % "0.1.0"
@@ -17,7 +17,7 @@ libraryDependencies += "com.47deg" %% "freestyle-config" % "0.1.0"
 
 ### Operations
 
-The set of abstract operations of the `ConfigM` algebra and `Config` object are specified as follows.
+The set of abstract operations of the `ConfigM` algebra and `Config` object are specified as follows:
 
 ```scala
 sealed trait Config {
@@ -38,20 +38,20 @@ sealed trait Config {
 }
 ```
 
-The _freestyle-config_ module contains a built in handler which you may use out of the box with target types such as `Try`, `Future`, `monix.eval.Task`, `fs2.Task`, and in general any other that can satisfy a `MonadError[M, Throwable]` constrain.
+The _freestyle-config_ module contains a built-in handler which you can use out of the box with target types such as `Try`, `Future`, `monix.eval.Task`, `fs2.Task`, and any other type in general that can satisfy a `MonadError[M, Throwable]` constraint.
 
 
 ### Example
 
-In the following example we will show how easy it is to add the config algebra and use it in a pure program.
+In the following example, we will show how easy it is to add the config algebra and use it in a pure program.
 
-Provided we have a configuration file in our classpath following the typesafe config conventions called `application.conf` with the following value.
+Provided we have a configuration file in our classpath following the typesafe config conventions called `application.conf` with the following value:
 
 ```
 disallowedStates = ["reverted", "closed"]
 ```
 
-Before anything the usual set of imports from freestyle and cats to create our algebras
+Before we do anything else, we’ll need to add the usual set of imports from freestyle and cats to create our algebras:
 
 ```tut:silent
 import freestyle._
@@ -62,7 +62,7 @@ import cats.implicits._
 import scala.util.Try
 ```
 
-We will define a very simple algebra with a stub handler that returns a list of issue states for ilustration purposes.
+We will define a very simple algebra with a stub handler that returns a list of issue states for illustration purposes:
 
 ```tut:book
 @free trait IssuesService[F[_]] {
@@ -74,8 +74,8 @@ implicit val issuesServiceHandler: IssuesService.Handler[Try] = new IssuesServic
 }
 ```
 
-At this point we may aggregate our issues algebra with any other algebras in a _@module_ which will automatically compose monadic actions
-derived from using different algebras.
+At this point, we may aggregate our issues algebra with any other algebras in a _@module_ which will automatically compose monadic actions
+derived from using different algebras:
 
 ```tut:book
 import freestyle.config._
@@ -87,7 +87,7 @@ import freestyle.config.implicits._
 }
 ```
 
-And finally we can create a program and compose our config algebra in the same monadic comprehension along with our issues service.
+And finally, we can create a program and compose our config algebra in the same monadic comprehension along with our issues service:
 
 ```tut:book
 def filteredStates[F[_]](implicit app : App[F]): FreeS[F, List[String]] =
@@ -98,7 +98,7 @@ def filteredStates[F[_]](implicit app : App[F]): FreeS[F, List[String]] =
   } yield currentStates.filterNot(disallowedStates.contains)
 ```
 
-Once we have a program we can interpret it to our desired runtime, in this case `scala.util.Try`
+Once we have a program we can interpret it to our desired runtime, in this case `scala.util.Try`:
 
 ```tut:book
 filteredStates[App.Op].exec[Try]

@@ -6,7 +6,7 @@ permalink: /docs/integrations/http4s/
 
 # http4s
 
-A freestyle program can easily be used with [http4s](http://http4s.org/).
+A Freestyle program can easily be used with [http4s](http://http4s.org/).
 
 You can add the _freestyle-http4s_ module as follows:
 
@@ -14,7 +14,7 @@ You can add the _freestyle-http4s_ module as follows:
 libraryDependencies += "com.47deg" %% "freestyle-http-http4s" % "0.1.0"
 ```
 
-Note that freestyle only supports the http4s version based on Cats and FS2.
+Note that Freestyle only supports the http4s version based on Cats and FS2.
 
 ## Integration
 
@@ -22,7 +22,7 @@ The _freestyle-http4s_ module allows you to return a `FreeS[F, A]` value if ther
 
 ## Example
 
-First lets import all the regular freestyle imports.
+First, lets import all the regular freestyle imports:
 
 ```tut:silent
 import freestyle._
@@ -35,7 +35,7 @@ And the specific import for `freestyle-http4s`:
 import freestyle.http.http4s._
 ```
 
-In this example we will create an algebra to calculate the VAT of a products' price.
+In this example, we will create an algebra to calculate the VAT of a product's price:
 
 ```tut:book
 import scala.math.BigDecimal

@@ -6,7 +6,7 @@ permalink: /docs/slick/
 
 # Slick integration
 
-It is easy to embed a slick program in a freestyle program using the _freestyle-slick_ module. This module provides a very simple algebra with only one operation: `run`. Handlers for this algebra are available automatically when interpreting to `scala.concurrent.Future` or to any other target type for which an `AsyncContext` from the module `freestyle-async` is found implicitly. Freestyle already provides `AsyncContext` instances for `fs2.Task` in `freestyle-async-fs2` and `monix.eval.Task` in `freestyle-async-monix`.
+It's easy to embed a slick program in a Freestyle program using the _freestyle-slick_ module. This module provides a very simple algebra with only one operation: `run`. Handlers for this algebra are available automatically when interpreting to `scala.concurrent.Future` or to any other target type for which an `AsyncContext` from the module `freestyle-async` is found implicitly. Freestyle already provides `AsyncContext` instances for `fs2.Task` in `freestyle-async-fs2` and `monix.eval.Task` in `freestyle-async-monix`.
 
 Here is an example that uses the Slick integration.
 
@@ -29,7 +29,7 @@ import _root_.slick.jdbc.H2Profile.api._
 import _root_.slick.jdbc.GetResult
 ```
 
-We will ask the database for a `Person`. To keep this example consise, we just use a simple query and don't bother to create actual tables.
+We will ask the database for a `Person`. To keep this example concise, we just use a simple query and don't bother to create actual tables:
 
 ```tut:book
 case class Person(name: String, birthYear: Int)
@@ -40,15 +40,15 @@ implicit val getPersonResult = GetResult(r => Person(r.nextString, r.nextInt))
 val getPerson: DBIO[Person] = sql"SELECT 'Alonzo Church', 1903".as[Person].head
 ```
 
-We can embed this slick `DBIO` program in a freestyle program. We start with the most trivial case by only using the `SlickM` algebra.
+We can embed this slick `DBIO` program in a Freestyle program. We start with the most trivial case by only using the `SlickM` algebra:
 
 ```tut:book
 val slickFrees: FreeS[SlickM.Op, Person] =
   SlickM[SlickM.Op].run(getPerson)
 ```
 
-To execute this `FreeS` program we need to import the _freestyle-slick_ module implicits.
-In this Example we are interpreting to `scala.concurrent.Future` and the following imports already includes all the implicits to achieve that once an implicit `Database` is provided. For simplicity we will use here an `H2` in memory database.
+To execute this `FreeS` program, we need to import the _freestyle-slick_ module implicits.
+In this Example, we are interpreting to `scala.concurrent.Future` and the following imports already include all the implicits needed to achieve that once an implicit `Database` is provided. For simplicity, we will use an `H2` in memory database:
 
 ```tut:book
 import freestyle.slick.implicits._
@@ -61,7 +61,7 @@ implicit val db = Database.forURL("jdbc:h2:mem:docs", driver = "org.h2.Driver")
 val future = slickFrees.exec[Future]
 ```
 
-To check if we actually get Alonzo Church as a `Person` we can block the future in this example.
+To check if we actually retrieve Alonzo Church as a `Person`, we can block the future in this example:
 
 ```tut:book
 import scala.concurrent.Await
@@ -71,7 +71,7 @@ Await.result(future, Duration.Inf)
 
 ## `SlickM` in a module
 
-Using only `SlickM` is however not exactly useful as in that case it just adds an extra level of indirection on top of `DBIO`. As a more realistic example we will use `SlickM` in a module together with another algebra.
+Only using `SlickM` is not exactly useful in this case as it just adds an extra level of indirection on top of `DBIO`. As a more realistic example, we will use `SlickM` in a module together with another algebra:
 
 
 ```tut:book
@@ -104,7 +104,7 @@ def example[F[_]: SlickM](implicit example: Example[F]): FreeS[F, (Person, Int)]
   } yield (person, age)
 ```
 
-We can use `Example.Op` as the functor and translate the resulting program to `Future`.
+We can use `Example.Op` as the functor and translate the resulting program to `Future`:
 
 ```tut:book
 val result = example[Example.Op].exec[Future]

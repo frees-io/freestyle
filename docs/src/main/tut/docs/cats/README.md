@@ -6,7 +6,7 @@ permalink: /docs/cats/
 
 # Cats
 
-Freestyle is build on top of Cats' [`Free`](http://typelevel.org/cats/datatypes/freemonad.html) and [`FreeApplicative`](http://typelevel.org/cats/datatypes/freeapplicative.html) and `FreeS` and `FreeS.Par` are just type aliases.
+Freestyle is built on top of Cats' [`Free`](http://typelevel.org/cats/datatypes/freemonad.html) and [`FreeApplicative`](http://typelevel.org/cats/datatypes/freeapplicative.html) and `FreeS` and `FreeS.Par` are just type aliases:
 
 ```tut:silent
 import cats.free.{ Free, FreeApplicative }
@@ -20,7 +20,7 @@ object aliases {
 }
 ```
 
-A [freestyle module](/docs/core/modules/) (with `@module`) is an easy way to combine multiple algebras and creates a `Coproduct` of the underlying algebras together with the necessary `Inject` instances.
+A [freestyle module](/docs/core/modules/) (with `@module`) is an easy way to combine multiple algebras and create a `Coproduct` of the underlying algebras together with the necessary `Inject` instances.
 
 - A `Coproduct` is a combination of data types. An operation of type `type FooBarOp[A] = Coproduct[FooOp, BarOp, A]` can either by a `FooOp` or a `BarOp`.
 - `Inject` is a type class which can inject a data type in a `Coproduct` containing that specific data type. An `Inject[FooOp, FooBarOp]` instance can inject a `FooOp` operation into the `FooBarOp` coproduct.
@@ -29,7 +29,7 @@ A [freestyle module](/docs/core/modules/) (with `@module`) is an easy way to com
 
 As `FreeS` is a [monad](http://typelevel.org/cats/typeclasses/monad.html) and `FreeS.Par` an [applicative](http://typelevel.org/cats/typeclasses/applicative.html), they can be used like any other monad/applicative in Cats.
 
-To see how we can use `FreeS` and `FreeS.Par` in combination with existing Cats functions, we will create a simple algebra with a sum and a product operation.
+To see how we can use `FreeS` and `FreeS.Par` in combination with existing Cats functions, we will create a simple algebra with a sum and a product operation:
 
 ```tut:book
 import freestyle._
@@ -40,7 +40,7 @@ import freestyle._
 }
 ```
 
-A simple `Id` handler.
+A simple `Id` handler:
 
 ```tut:book
 import cats.Id
@@ -51,7 +51,7 @@ implicit val idHandler = new Calc.Handler[Id] {
 }
 ```
 
-A handler translating the `Calc` algebra to `Future`, which introduces a little bit of artificial latency.
+A handler translating the `Calc` algebra to `Future`, which introduces a little bit of artificial latency:
 
 ```tut:book
 import scala.concurrent.Future
@@ -67,7 +67,7 @@ implicit val futureHandler = new Calc.Handler[Future] {
 
 We can use `Calc#sum` to create a function which increments an integer.
 
-We have `incrPar` and `incrSeq`, where multiple `incrPar` calls could potentially be executed in parallel.
+We have `incrPar` and `incrSeq`, where multiple `incrPar` calls could potentially be executed in parallel:
 
 ```tut:book
 val incrPar: Int => FreeS.Par[Calc.Op, Int] =
@@ -79,7 +79,7 @@ val incrSeq: Int => FreeS[Calc.Op, Int] =
 
 ### Traversing
 
-We will use `traverse` (provided by Cats' [`Traverse`](http://typelevel.org/cats/typeclasses/traverse.html)) to increment a list of integers with `incrPar` and `incrSeq`.
+We will use `traverse` (provided by Cats' [`Traverse`](http://typelevel.org/cats/typeclasses/traverse.html)) to increment a list of integers with `incrPar` and `incrSeq`:
 
 ```tut:book
 import cats.implicits._
@@ -98,7 +98,7 @@ traversingPar.exec[Id]
 traversingSeq.exec[Id]
 ```
 
-A simple timer method giving a rough estimate of the execution time of a piece of code.
+A simple timer method giving a rough estimate of the execution time of a piece of code:
 
 ```tut:book
 def simpleTime[A](th: => A): A = {
@@ -110,7 +110,7 @@ def simpleTime[A](th: => A): A = {
 }
 ```
 
-When we execute the increment traversals again using `Future`, we can observe the side effect that the parallel execution is quicker than the sequential.
+When we execute the increment traversals again using `Future`, we can observe that the parallel execution is now quicker than the sequential.
 
 ```tut:book
 import freestyle.nondeterminism._
@@ -124,9 +124,9 @@ val futSeq = traversingSeq.exec[Future]
 simpleTime(Await.result(futSeq, Duration.Inf))
 ```
 
-### Applicative and Monadic behaviour
+### Applicative and Monadic behavior
 
-We can combine applicative and monadic steps by using the cartesian builder (`|@|`) inside a for comprehension.
+We can combine applicative and monadic steps by using the Cartesian builder (`|@|`) inside a for comprehension:
 
 ```tut:book
 val incrAndMultiply =
@@ -142,7 +142,7 @@ incrAndMultiply.exec[Id]
 
 In the first line of the for comprehension, the two applicative operations using `incrPar` are independent and could be executed in parallel. In the last line we are using `FreeS.pure` as a handy alternative for `(c + 1).pure[FreeS[Calc.Op, ?]]` or `Applicative[FreeS[CalcOp, ?]].pure(c + 1)`.
 
-To see the side effect of replacing multiple independent monadic steps with one applicative step, we can again execute two similar programs using `Future`.
+To see the effect of replacing multiple independent monadic steps with one applicative step, we can again execute two similar programs using `Future`:
 
 ```tut:book
 val incrSeqSum = for {
@@ -165,17 +165,17 @@ simpleTime(Await.result(futPar2, Duration.Inf))
 
 ## Cats data types
 
-Imagine the case where we would like to execute our simple calculations by a (remote) service which needs some configuration. Our `Calc` algebra has no parameters taking configuration and we don't want to add this service specific configuration to the `Calc` algebra because that would mean that we also need to pass the configuration when we want to perform some calculations ourselves with our `Id` or `Future` handlers. A possible solution is to use the [`Kleisli`](http://typelevel.org/cats/datatypes/kleisli.html) or `ReaderT` data type from Cats as target for our `Calc` operations.
+Imagine a scenario where we want to execute our simple calculations by a (remote) service that needs some configuration and our `Calc` algebra has no parameters taking configuration. We don’t want to add this service specific configuration to the `Calc` algebra because it would mean that we would also need to pass the configuration when we want to perform calculations ourselves with our `Id` or `Future` handlers. A possible solution to this dilemma is to use the [`Kleisli`](http://typelevel.org/cats/datatypes/kleisli.html) or `ReaderT` data type from Cats as a target for our `Calc` operations.
 
-`Kleisli` is essentially just a function where you can sort of work with the eventual result in a for comprehension, `map` function, ... while you only supply the input to the `Kleisli` function when you actually need the final result.
+`Kleisli` is essentially a function where you can work with the eventual result in a for comprehension, `map` function; while only supplying the input to the `Kleisli` function when you need the final result.
 
-Our demo configuration will just contain a number that we will add to every computation, but in a more realistic case it could contain an API key, a URI, etc.
+Our demo configuration will only contain a number that we will add to every computation, but in a more realistic case, it could contain an API key, a URI, etc. 
 
 ```tut:book
 case class Config(n: Int)
 ```
 
-We will use `Reader[Config, ?]`, which is a type alias for `ReaderT[Id, Config, ?]`, as target here.
+We will use `Reader[Config, ?]`, which is a type alias for `ReaderT[Id, Config, ?]`, as target here:
 
 ```tut:book
 import cats.data.Reader
@@ -190,7 +190,7 @@ implicit val readerHandler =
   }
 ```
 
-With this `Reader` handler in place, we can translate some of the previous programs and supply the configuration to get the end result with `Kleisli#run`.
+With this `Reader` handler in place, we can translate some of the previous programs and supply the configuration to get the end result with `Kleisli#run`:
 
 ```tut:book
 val configTraversing = traversingSeq.exec[WithConfig]
@@ -201,7 +201,7 @@ configTraversing.run(cfg)
 configIncrSum.run(cfg)
 ```
 
-The Cats data types can be used as target of a freestyle program, but they cooperate also perfectly well with `FreeS` and `FreeS.Par`. In the [stack example](/docs/stack/) documentation section, the `getCustomer` method uses [`OptionT`](http://typelevel.org/cats/datatypes/optiont.html) to combine `FreeS` programs.
+The Cats data types can be used as the target of a Freestyle program, but they also cooperate well with `FreeS` and `FreeS.Par`. In the [stack example](/docs/stack/), the `getCustomer` method uses [`OptionT`](http://typelevel.org/cats/datatypes/optiont.html) to combine `FreeS` programs.
 
 ## Standing on the shoulders of giant Cats
 
