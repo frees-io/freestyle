@@ -17,7 +17,10 @@ install:
 script:
 - sbt ++$TRAVIS_SCALA_VERSION update
 - sbt ++$TRAVIS_SCALA_VERSION clean coverage test coverageReport
-- sbt ++$TRAVIS_SCALA_VERSION "docs/tut"
+- if [ "$TRAVIS_BRANCH" = "2.12.1" ]; then
+    sbt ++$TRAVIS_SCALA_VERSION "docs/tut";
+  fi
+
 
 after_success:
 - if [ "$TRAVIS_BRANCH" = "master" -a "$TRAVIS_PULL_REQUEST" = "false" ]; then
