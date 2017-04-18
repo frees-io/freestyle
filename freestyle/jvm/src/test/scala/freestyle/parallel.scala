@@ -20,7 +20,7 @@ import cats.data.Kleisli
 import cats.implicits._
 import monix.eval.Task
 import org.scalatest.{Matchers, WordSpec}
-import scala.concurrent.{ Await, Future }
+import scala.concurrent.{Await, Future}
 import scala.concurrent.duration.Duration
 
 class parallelTests extends WordSpec with Matchers {
