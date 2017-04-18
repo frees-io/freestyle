@@ -55,6 +55,8 @@ object ProjectPlugin extends AutoPlugin {
         "https://oss.sonatype.org/content/repositories/snapshots",
         "https://oss.sonatype.org/content/repositories/releases")
     )
+
+    lazy val commonDeps: Seq[ModuleID] = Seq(%("scalatest") % "test")
   }
 
   override def projectSettings: Seq[Def.Setting[_]] =
@@ -63,6 +65,7 @@ object ProjectPlugin extends AutoPlugin {
       coverageFailOnMinimum := false,
       description := "A Cohesive & Pragmatic Framework of FP centric Scala libraries",
       startYear := Some(2017),
+      orgProjectName := "Freestyle",
       orgGithubTokenSetting := "GITHUB_TOKEN_REPO",
       orgBadgeListSetting := List(
         TravisBadge.apply,
@@ -74,7 +77,6 @@ object ProjectPlugin extends AutoPlugin {
       ),
       resolvers += Resolver.sonatypeRepo("snapshots"),
       scalacOptions ++= scalacAdvancedOptions,
-      libraryDependencies += %%("scalatest") % "test",
       parallelExecution in Test := false,
       compileOrder in Compile := CompileOrder.JavaThenScala
     ) ++ scalaMacroDependencies
