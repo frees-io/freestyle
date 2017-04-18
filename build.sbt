@@ -119,23 +119,18 @@ lazy val cache = (crossProject in file("freestyle-cache"))
 lazy val cacheJVM = cache.jvm
 lazy val cacheJS  = cache.js
 
-lazy val cacheRedis = (crossProject in file("freestyle-cache-redis"))
-  .dependsOn(freestyle, cache)
+lazy val cacheRedis = (project in file("freestyle-cache-redis"))
+  .dependsOn(freestyleJVM, cacheJVM)
   .settings(
     name := "freestyle-cache-redis",
     resolvers += "Sonatype OSS Releases" at "https://oss.sonatype.org/content/repositories/releases/",
     resolvers += Resolver.mavenLocal,
-    libraryDependencies ++= Seq(%("embedded-redis") % "test")
+    libraryDependencies ++= Seq(
+      %%("rediscala"),
+      %%("akka-actor")    % "test",
+      %("embedded-redis") % "test"
+    )
   )
-  .crossDepSettings(
-    commonDeps ++ Seq(
-      %("rediscala"),
-      %("akka-actor") % "test"
-    ): _*
-  )
-  .jsSettings(sharedJsSettings: _*)
-
-lazy val cacheRedisJVM = cacheRedis.jvm
 
 lazy val doobie = (project in file("freestyle-doobie"))
   .dependsOn(freestyleJVM)
@@ -297,7 +292,7 @@ lazy val freestyleModules: Seq[ProjectReference] = Seq(
   asyncFsJS,
   cacheJVM,
   cacheJS,
-  cacheRedisJVM,
+  cacheRedis,
   doobie,
   slick,
   twitterUtil,
