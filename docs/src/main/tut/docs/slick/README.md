@@ -110,4 +110,5 @@ We can use `Example.Op` as the functor and translate the resulting program to `F
 val result = example[Example.Op].exec[Future]
 
 Await.result(result, Duration.Inf)
+db.shutdown
 ```
