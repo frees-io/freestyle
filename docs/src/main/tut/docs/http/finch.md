@@ -74,8 +74,6 @@ import shapeless.::
 We can use a freestyle program within `Endpoint#apply`:
 
 ```tut:book
-cats.Monad[Future]
-
 val gcdEndpointTwo = get(int :: int) { (a: Int, b: Int) =>
   Calc[Calc.Op].gcd(a, b).map(Ok(_))
 }

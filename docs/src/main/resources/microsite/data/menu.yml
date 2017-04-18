@@ -62,7 +62,7 @@ options:
         url: docs/effects/Cache/
 
       - title: Dependency Injection
-        url: TODO.html
+        url: docs/patterns/dependency-injection
 
       - title: Configuration
         url: docs/patterns/config
