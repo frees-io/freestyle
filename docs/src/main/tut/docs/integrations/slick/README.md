@@ -1,7 +1,7 @@
 ---
 layout: docs
 title: Slick
-permalink: /docs/slick/
+permalink: /docs/integrations/slick/
 ---
 
 # Slick integration

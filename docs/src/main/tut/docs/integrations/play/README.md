@@ -1,7 +1,7 @@
 ---
 layout: docs
 title: Play Framework
-permalink: /docs/play/
+permalink: /docs/integrations/play/
 ---
 
 # Play Framework integration

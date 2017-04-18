@@ -71,30 +71,30 @@ options:
         url: docs/patterns/logging
 
   - title: Integrations
-    url: TODO.html
+    url: docs/integrations
 
     nested_options:
 
       - title: Cats
-        url: docs/cats
+        url: docs/integrations/cats
 
       - title: Play Framework
-        url: docs/play
+        url: docs/integrations/play
 
       - title: Monix
         url: TODO.html
 
       - title: Fetch
-        url: docs/fetch
+        url: docs/integrations/fetch
 
       - title: FS2
-        url: docs/fs2
+        url: docs/integrations/fs2
 
       - title: Doobie
-        url: docs/doobie
+        url: docs/integrations/doobie
 
       - title: Slick
-        url: docs/slick
+        url: docs/integrations/slick
 
       - title: Akka HTTP
         url: docs/integrations/akkahttp

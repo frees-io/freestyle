@@ -1,7 +1,7 @@
 ---
 layout: docs
 title: FS2
-permalink: /docs/fs2/
+permalink: /docs/integrations/fs2/
 ---
 
 # FS2

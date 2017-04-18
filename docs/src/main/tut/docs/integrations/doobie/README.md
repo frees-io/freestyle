@@ -6,8 +6,7 @@ permalink: /docs/integrations/doobie/
 
 # Doobie integration
 
-It is easy to embed a doobie program in a freestyle program using the _freestyle-doobie_ module. This module provides a very simple algebra with only one operation: `transact`. Handlers for this algebra are available if there is a doobie `Transactor` for the target type.
-
+It's easy to embed a doobie program in a Freestyle program using the _freestyle-doobie_ module. This module provides a very simple algebra with only one operation: `transact`. Handlers for this algebra are available if there is a doobie `Transactor` for the target type.
 
 The standard freestyle and cats imports:
 
@@ -43,7 +42,7 @@ val doobieFrees: FreeS[DoobieM.Op, Person] =
   DoobieM[DoobieM.Op].transact(getPerson)
 ```
 
-To execute this `FreeS` program, we need a doobie `Transactor` for our target type; in this example, we have chosen `fs2.Task`:
+To execute this `FreeS` program, we need a doobie `Transactor` for our target type; in this example we have chosen `fs2.Task`:
 
 ```tut:book
 import _root_.fs2.Task
@@ -69,7 +68,7 @@ task.unsafeRunSync.toOption
 
 ## `DoobieM` in a module
 
-Using only `DoobieM` is not exactly useful however, as it just adds an extra level of indirection on top of `ConnectionIO`. As a more realistic example, we will use `DoobieM` in a module together with another algebra:
+Only using `DoobieM` is not exactly useful however, as it just adds an extra level of indirection on top of `ConnectionIO` in this case. As a more realistic example, we will use `DoobieM` in a module together with another algebra:
 
 
 ```tut:book
@@ -83,7 +82,7 @@ Using only `DoobieM` is not exactly useful however, as it just adds an extra lev
 }
 ```
 
-A `Handler[Task]` for `Calc` :
+A `Handler[Task]` for `Calc`:
 
 ```tut:book
 implicit val calcHandler: Calc.Handler[Task] =
