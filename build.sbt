@@ -50,8 +50,7 @@ lazy val docs = (project in file("docs"))
   .settings(noPublishSettings: _*)
   .settings(
     name := "docs",
-    description := "freestyle docs",
-    fork := false
+    description := "freestyle docs"
   )
   .settings(
     libraryDependencies ++= Seq(
