@@ -6,14 +6,11 @@ permalink: /docs/core/algebras/
 
 # Algebras
 
-Algebraic Data Types are the foundation to define `Free` based applications and libraries that express their operations as algebras.
-At the core of Freestyle algebras it's the `@free` macro annotation.
-`@free` expands abstract traits and classes automatically deriving Algebraic Data types and all the machinery needed to compose them from
-abstract method definitions.
+Algebraic Data Types are the foundation used to define `Free` based applications and libraries that express their operations as algebras. At the core of Freestyle algebras is the `@free` macro annotation. `@free` expands abstract traits and classes automatically deriving Algebraic Data types and all the machinery needed to compose them from abstract method definitions.
 
-When you build an algebra with Freestyle you only need to concentrate in the API that you want exposed as abstract smart constructors without worrying about how they will be implemented.
+When you build an algebra with Freestyle, you only need to concentrate on the API that you want to be exposed as abstract smart constructors, without worrying how they will be implemented.
 
-A trait or abstract class annotated with `@free` is all you need to create your first algebra with Freestyle.
+A trait or abstract class annotated with `@free` is all you need to create your first algebra with Freestyle:
 
 ```tut:book
 import freestyle._
@@ -27,7 +24,7 @@ case class User(id: Long, name: String)
 }
 ```
 
-This is similar to the simplified manual encoding below.
+This is similar to the simplified manual encoding below:
 
 ```tut:book
 import freestyle.FreeS
@@ -87,7 +84,7 @@ Let's examine the two fragments above to understand what Freestyle is doing for 
 
 ## Automatic method implementations
 
-From the abstract smart constructors Freestyle generates an Algebraic data types available through a companion object.
+From the abstract smart constructors, Freestyle generates an Algebraic data type available through a companion object.
 This Algebraic data type contains the shape needed to implement the abstract methods.
 
 Freestyle automatically implements those abstract methods using the `Inject` strategy for composing unrelated ADTs through a Coproduct as described
@@ -95,8 +92,7 @@ in [Data types a la Carte](http://www.cs.ru.nl/~W.Swierstra/Publications/DataTyp
 
 ## Dependency Injection
 
-As you may have noticed when defining algebras with `@free` there is no need to provide implicit evidences for the necessary
-`Inject` typeclasses that otherwise you need to manually provide to further evaluate your free monads when they are interleaved with other `Free` programs.
+As you may have noticed when defining algebras with `@free`, there is no need to provide implicit evidence for the necessary `Inject` typeclasses that otherwise need to be manually provided to further evaluate your free monads when they are interleaved with other `Free` programs.
 
 Beside providing the appropriate `Inject` evidences,  Freestyle creates an implicit method that will enable implicit summoning of the smart
 constructors class implementation and an `apply` method that allows summoning instances of your smart constructors where needed.
@@ -118,7 +114,7 @@ def myService2[F[_]: UserRepository] = ???
 ## Convenient type aliases
 
 All companions generated with `@free` define a `sealed trait Op[A]` as the root node of the requests ADT.
-You may use this to manually build `Coproduct` types which will serve in the parameterization of your application and code as in the example below
+You may use this to manually build `Coproduct` types which will serve in the parametrization of your application and code as in the example below:
 
 ```tut:book
 import cats.data.Coproduct
@@ -136,10 +132,10 @@ type C1[A] = Coproduct[Service1.Op, Service2.Op, A]
 type Module[A] = Coproduct[Service3.Op, C1, A]
 ```
 
-This is obviously far from ideal as building `Coproduct` types by hand often times result in bizarre compile errors
-when the types don't align properly arising from placing them in the wrong order.
+This is obviously far from ideal, as building `Coproduct` types by hand often results in bizarre compile errors
+when the types don't align properly from being placed in the wrong order.
 
-Fear not. Freestyle provides a [modular system](/docs/core/modules/) to achieve Onion style architectures
-and remove all the complexity from building `Coproduct` types by hand and compose arbitrarily nested Modules containing Algebras.
+Fear not. Freestyle provides a [modular system](/docs/core/modules/) to achieve Onion-style architectures
+and removes all the complexity from building `Coproduct` types by hand and compose arbitrarily nested Modules containing Algebras.
 
-[Continue to Modules](/docs/core/modules/)
+[Continue to Modules](/docs/core/modules/).

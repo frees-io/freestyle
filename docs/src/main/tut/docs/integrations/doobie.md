@@ -18,7 +18,7 @@ import freestyle.implicits._
 import cats.implicits._
 ```
 
-And some imports for the _freestyle-doobie_ module and doobie itself:
+And imports for the _freestyle-doobie_ module and doobie itself:
 
 ```tut:silent
 import freestyle.doobie._
@@ -28,7 +28,7 @@ import _root_.doobie.imports._
 import _root_.doobie.h2.h2transactor._
 ```
 
-We will ask the database for a `Person`. To keep this example consise, we just use a simple query and don't bother to create actual tables.
+We will ask the database for a `Person`. To keep this example concise, we just use a simple query and don't bother to create actual tables:
 
 ```tut:book
 case class Person(name: String, birthYear: Int)
@@ -36,14 +36,14 @@ case class Person(name: String, birthYear: Int)
 val getPerson: ConnectionIO[Person] = sql"SELECT 'Alonzo Church', 1903".query[Person].unique
 ```
 
-We can embed this doobie `ConnectionIO` program in a freestyle program. We start with the most trivial case by only using the `DoobieM` algebra.
+We can embed this doobie `ConnectionIO` program in a freestyle program. We start with the most trivial case by only using the `DoobieM` algebra:
 
 ```tut:book
 val doobieFrees: FreeS[DoobieM.Op, Person] =
   DoobieM[DoobieM.Op].transact(getPerson)
 ```
 
-To execute this `FreeS` program we need a doobie `Transactor` for our target type; in this example we have chosen `fs2.Task`.
+To execute this `FreeS` program, we need a doobie `Transactor` for our target type; in this example, we have chosen `fs2.Task`:
 
 ```tut:book
 import _root_.fs2.Task
@@ -53,7 +53,7 @@ implicit val xa: Transactor[Task] =
     toOption.getOrElse(throw new Exception("Could not create example transactor"))
 ```
 
-By using the _fs2-cats_ interop project, we get the necessary type class instances for `Task`, so we can translate our `FreeS` program into a `Task`.
+By using the _fs2-cats_ interop project, we get the necessary type class instances for `Task`, so we can translate our `FreeS` program into a `Task`:
 
 ```tut:book
 import _root_.fs2.interop.cats._
@@ -61,7 +61,7 @@ import _root_.fs2.interop.cats._
 val task = doobieFrees.exec[Task]
 ```
 
-To check if we actually get Alonzo Church as a `Person` we can use `Task#unsafeRunSync` in this example.
+To check if we actually get Alonzo Church as a `Person`, we can use `Task#unsafeRunSync` in this example:
 
 ```tut:book
 task.unsafeRunSync.toOption
@@ -69,7 +69,7 @@ task.unsafeRunSync.toOption
 
 ## `DoobieM` in a module
 
-Using only `DoobieM` is however not exactly useful as in that case it just adds an extra level of indirection on top of `ConnectionIO`. As a more realistic example we will use `DoobieM` in a module together with another algebra.
+Using only `DoobieM` is not exactly useful however, as it just adds an extra level of indirection on top of `ConnectionIO`. As a more realistic example, we will use `DoobieM` in a module together with another algebra:
 
 
 ```tut:book
@@ -102,7 +102,7 @@ def example[F[_]: DoobieM](implicit example: Example[F]): FreeS[F, (Person, Int)
   } yield (person, age)
 ```
 
-We can use `Example.Op` as the functor and translate the resulting program to `Task`.
+We can use `Example.Op` as the functor and translate the resulting program to `Task`:
 
 ```tut:book
 val task2 = example[Example.Op].exec[Task]

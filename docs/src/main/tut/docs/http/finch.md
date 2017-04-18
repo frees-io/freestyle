@@ -27,7 +27,7 @@ import freestyle._
 import freestyle.implicits._
 ```
 
-In this example we will create a Finch `Endpoint` which will be able to calculate the greatest common divisor (GCD) of two natural numbers.
+In this example, we will create a Finch `Endpoint` which will be able to calculate the greatest common divisor (GCD) of two natural numbers:
 
 ```tut:book
 @free trait Calc[F[_]] {
@@ -35,7 +35,7 @@ In this example we will create a Finch `Endpoint` which will be able to calculat
 }
 ```
 
-The greatest common divisor can be computed using Euclid's algorithm.
+The greatest common divisor can be computed using Euclid's algorithm:
 
 ```tut:book
 def gcd(a: Int, b: Int): Int =
@@ -51,7 +51,7 @@ def gcdFuture(a: Int, b: Int): Future[Int] =
   Future.value(gcd(a, b))
 ```
 
-We can now create a `Calc.Handler[Future]`.
+We can now create a `Calc.Handler[Future]`:
 
 ```tut:book
 import io.catbird.util._
@@ -61,7 +61,7 @@ implicit val futureHandler = new Calc.Handler[Future] {
 }
 ```
 
-Importing the _freestyle-finch_ module, Finch and shapeless' `::` used by Finch:
+Importing the _freestyle-finch_ module, Finch, and shapeless' `::` used by Finch:
 
 ```tut:silent
 import freestyle.http.finch._
@@ -71,7 +71,7 @@ import io.finch._
 import shapeless.::
 ```
 
-We can use a  freestyle program within `Endpoint#apply`.
+We can use a freestyle program within `Endpoint#apply`:
 
 ```tut:book
 cats.Monad[Future]
@@ -89,7 +89,7 @@ val gcdEndpointZero = get(/) {
 }
 ```
 
-We can combine the three enpoints and check the responses if we access the three endpoints.
+We can combine the three endpoints and check the responses if we access the three endpoints:
 
 ```tut:book
 import shapeless.:+:

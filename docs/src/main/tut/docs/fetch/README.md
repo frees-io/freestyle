@@ -6,9 +6,9 @@ permalink: /docs/fetch/
 
 # Fetch
 
-Running data fetches optimized by the [Fetch](https://github.com/47deg/fetch) library in freestyle programs can be achieved through the algebra and interpreter provided by the `freestyle-fetch` package. `freestyle-fetch` allows you to run fetch computations when interpreting free program, using the target runtime monad as their runtime type.
+Running data fetches optimized by the [Fetch](https://github.com/47deg/fetch) library in Freestyle programs can be achieved through the algebra and interpreter that are provided by the `freestyle-fetch` package. `freestyle-fetch` allows you to run Fetch computations when interpreting a free program, using the target runtime monad as their runtime type.
 
-Familiarity with fetch is assumed, take a look at [its documentation](http://47deg.github.io/fetch/) if you haven't before. We'll use a trivial data source for the examples:
+Familiarity with fetch is assumed, take a look at the [Fetch documentation](http://47deg.github.io/fetch/) if you haven't before. We'll use a trivial data source for the examples:
 
 ```tut:book
 import _root_.fetch._
@@ -28,7 +28,7 @@ object OneSource extends DataSource[Int, Int]{
 def fetchOne(x: Int): Fetch[Int] = Fetch(x)(OneSource)
 ```
 
-Let's start by creating a simple algebra for our application for printing messages in the screen:
+Let's start by creating a simple algebra for our application for printing messages on the screen:
 
 ```tut:book
 import freestyle._
@@ -39,7 +39,7 @@ import freestyle.implicits._
 }
 ```
 
-Then, make sure to include the fetch algebra `FetchM` in your application:
+Then, make sure to include the Fetch algebra `FetchM` in your application:
 
 ```tut:book
 import freestyle.fetch._
@@ -51,7 +51,7 @@ import freestyle.fetch.implicits._
 }
 ```
 
-Now that we've got our `Interact` algebra and `FetchM` in our app, we're ready to write a first program:
+Now that we've got our `Interact` algebra and `FetchM` in our app, we're ready to write the first program:
 
 ```tut:book
 def program[F[_]](
@@ -63,7 +63,7 @@ def program[F[_]](
   } yield x
 ```
 
-For running it, we need to create an implicit interpreter for our `Interact` algebra:
+To run this, we need to create an implicit interpreter for our `Interact` algebra:
 
 ```tut:book
 import cats.Monad
@@ -78,7 +78,7 @@ implicit def interactInterp[F[_]](
 }
 ```
 
-And now we can run the program to a `Future`, check how the result from the fetch is printed to the console:
+Now we can run the program to a `Future`. Check how the result from the fetch is printed to the console:
 
 ```tut:book
 import scala.concurrent._
@@ -94,7 +94,7 @@ A handful of operations for running fetches are exposed in the `FetchM` algebra.
 
 ### runA
 
-We've already seen `FetchM#runA`, which runs a fetch returning the final result.
+We've already seen `FetchM#runA`, which runs a fetch that returns the final result:
 
 ```tut:book
 def program[F[_]](
@@ -108,7 +108,7 @@ def program[F[_]](
 Await.result(program[App.Op].exec[Future], Duration.Inf)
 ```
 
-There is a variant of `runA` where a cache can be specified: `FetchM#runAWithCache`. In the following example we simply pass an empty in-memory cache, but you can pass your own cache or a resulting cache from a previous fetch.
+There is a variant of `runA` where a cache can be specified: `FetchM#runAWithCache`. In the following example, we simply pass an empty in-memory cache, but you can pass your own cache or a resulting cache from a previous fetch:
 
 ```tut:book
 def program[F[_]](
@@ -124,7 +124,7 @@ Await.result(program[App.Op].exec[Future], Duration.Inf)
 
 ### runE
 
-Fetch tracks its internal state with an environment of type `FetchEnv`. The `FetchM#runE` allows us to run a fetch and get is final environment out, ignoring its result.
+Fetch tracks its internal state with an environment of type `FetchEnv`. The `FetchM#runE` allows us to run a fetch and get its final environment out, ignoring its result:
 
 ```tut:book
 def program[F[_]](
@@ -138,7 +138,7 @@ def program[F[_]](
 Await.result(program[App.Op].exec[Future], Duration.Inf)
 ```
 
-There is a variant of `runE` where a cache can be specified: `FetchM#runEWithCache`. In the following example we simply pass an empty in-memory cache, but you can pass your own cache or a resulting cache from a previous fetch.
+There is a variant of `runE` where a cache can be specified: `FetchM#runEWithCache`. In the following example, we simply pass an empty in-memory cache, but you can pass your own cache or a resulting cache from a previous fetch.
 
 ```tut:book
 def program[F[_]](
@@ -154,7 +154,7 @@ Await.result(program[App.Op].exec[Future], Duration.Inf)
 
 ### runF
 
-If we are intested in both the final environment and the fetch result, we can use `FetchM#runF` to get a `(FetchEnv, A)` pair.
+If we're interested in both the final environment and the fetch result, we can use `FetchM#runF` to get a `(FetchEnv, A)` pair.
 
 ```tut:book
 def program[F[_]](
@@ -169,7 +169,7 @@ def program[F[_]](
 Await.result(program[App.Op].exec[Future], Duration.Inf)
 ```
 
-There is a variant of `runF` where a cache can be specified: `FetchM#runFWithCache`. In the following example we simply pass an empty in-memory cache, but you can pass your own cache or a resulting cache from a previous fetch.
+There is a variant of `runF` where a cache can be specified: `FetchM#runFWithCache`. In the following example, we simply pass an empty in-memory cache, but you can pass your own cache or a resulting cache from a previous fetch:
 
 ```tut:book
 def program[F[_]](
@@ -188,7 +188,7 @@ Await.result(program[App.Op].exec[Future], Duration.Inf)
 
 ### Reuse cache between fetches
 
-One of the things to consider when interleaving fetches in free programs is that the default in-memory cache won't be shared between fetch executions on diferent steps of the program. Look at how the message from `OneSource` that says `"Fetching 1"` is printed twice:
+One of the things to consider when interleaving fetches in free programs is that the default in-memory cache won't be shared between fetch executions on different steps of the program. Notice that the message from `OneSource` that says `"Fetching 1"` is printed twice:
 
 ```tut:book
 def program[F[_]](
@@ -203,7 +203,7 @@ def program[F[_]](
 Await.result(program[App.Op].exec[Future], Duration.Inf)
 ```
 
-However, we can run a fetch getting both the environment and result with `runF`, and pass the resulting cache to subsequent fetch runs. Note how the `"Fetching 1"` message is only printed once:
+However, we can run a fetch getting both the environment and the result with `runF`, and pass the resulting cache to subsequent fetch runs. Note how the `"Fetching 1"` message is only printed once:
 
 ```tut:book
 def program[F[_]](

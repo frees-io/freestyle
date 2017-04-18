@@ -6,23 +6,22 @@ permalink: /docs/effects/
 
 # Effects
 
-Freestyle comes builtin with a list of ready to use effects modeled as `@free` algebras contained in the `freestyle-effects` module.
-The current release of `freestyle-effects` supports Scala.jvm and Scala.js.
+Freestyle comes with a built-in list of ready-to-use effects modeled as `@free` algebras contained in the `freestyle-effects` module. The current release of `freestyle-effects` supports Scala.jvm and Scala.js.
 
-For Scala.jvm
+For Scala.jvm:
 
 ```scala
 libraryDependencies += "io.freestyle" %% "freestyle-effects" % "0.1.0"
 ```
 
-For Scala.js
+For Scala.js:
 
 ```scala
 libraryDependencies += "io.freestyle" %%% "freestyle-effects" % "0.1.0"
 ```
 
-If you are missing an effect from the following list please [raise an issue](https://github.com/47deg/freestyle/issues/new)
-so it can be considered in future releases.
+If you are missing an effect from the following list please [create an issue](https://github.com/47deg/freestyle/issues/new)
+so it can be considered for future releases.
 
 - [error](#errorm)
 - [either](#eitherm)
