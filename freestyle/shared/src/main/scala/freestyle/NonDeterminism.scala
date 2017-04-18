@@ -39,6 +39,9 @@ trait NonDeterminismInstances {
 
       override def ap[A, B](ff: Future[A => B])(fa: Future[A]): Future[B] =
         fa.zip(ff).map { case (a, f) => f(a) }
+
+      override def product[A, B](fa: Future[A], fb: Future[B]): Future[(A, B)] =
+        fa.zip(fb)
     }
 
 }

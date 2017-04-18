@@ -18,15 +18,14 @@ package freestyle
 
 import _root_.slick.dbio.{DBIO, DBIOAction}
 import _root_.slick.jdbc.JdbcBackend
+import _root_.slick.jdbc.H2Profile.api._
 
-import org.scalatest._
+import org.scalatest.{AsyncWordSpec, Matchers}
 
 import freestyle.implicits._
 import freestyle.slick._
 import freestyle.slick.implicits._
 import cats.implicits._
-
-import _root_.slick.jdbc.H2Profile.api._
 
 import scala.concurrent.Future
 

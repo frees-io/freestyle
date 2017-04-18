@@ -15,14 +15,12 @@ install:
 - gem install sass
 - gem install jekyll -v 3.2.1
 script:
-- sbt ++$TRAVIS_SCALA_VERSION update
 - sbt ++$TRAVIS_SCALA_VERSION clean coverage test coverageReport
-- sbt ++$TRAVIS_SCALA_VERSION "docs/tut"
+- if [ "$TRAVIS_SCALA_VERSION" = "2.12.1" ]; then
+    sbt "docs/tut";
+  fi
+
 
 after_success:
-- if [ "$TRAVIS_BRANCH" = "master" -a "$TRAVIS_PULL_REQUEST" = "false" ]; then
-    sbt ++$TRAVIS_SCALA_VERSION depUpdateDependencyIssues;
-    sbt ++$TRAVIS_SCALA_VERSION orgPublishRelease;
-    sbt docs/publishMicrosite;
-  fi
+- sbt ++$TRAVIS_SCALA_VERSION orgAfterCISuccess
 - bash <(curl -s https://codecov.io/bash)

@@ -16,7 +16,7 @@
 
 package freestyle
 
-import org.scalatest._
+import org.scalatest.{AsyncWordSpec, Matchers}
 
 import freestyle.implicits._
 import freestyle.config._
@@ -41,8 +41,11 @@ class ConfigTests extends AsyncWordSpec with Matchers {
     }
 
     "allow configuration to parse strings" in {
-      val program = app.configM.parseString("{n = 1}")
-      program.exec[Future] map { _.int("n") shouldBe Some(1) }
+      val program = for {
+        a   <- app.nonConfig.x
+        cfg <- app.configM.parseString("{n = 1}")
+      } yield cfg.int("n").map(_ + a)
+      program.exec[Future] map { _ shouldBe Some(1 + 1) }
     }
 
     "allow configuration to load classpath files" in {
