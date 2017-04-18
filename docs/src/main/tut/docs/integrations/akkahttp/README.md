@@ -24,22 +24,28 @@ the [Akka HTTP docs](http://doc.akka.io/docs/akka-http/10.0.5/java/http/introduc
 
 Thus, the `freestyle` integration for Akka HTTP provides an extension of that _magnet_ pattern, which allow us to generate
 response [marshallers](http://doc.akka.io/docs/akka-http/current/scala/http/common/marshalling.html).
-To be precise, what the integration gives is an `implicit` method that may generate an object of type
-
-```Scala
-marsh: ToEntityMarshaller[  FreeS[ F, A ] ]
-```
-for some types parameters `F[_]` , which is the target of the algebra, and for some base result type `A`.
+To be precise, what the integration gives is a couple of  `implicit` methods to generate an instance of
+ `ToEntityMarshaller[  FreeS[ F, A ] ] `, or `ToEntityMarshaller[ FreeS.Par[F, A]]`, where 
+the parameter `F[_]` is the target of the algebra, `A` is the type of the base result. 
 Note that the method has to be parametrised both on the `F` and on `A`, to make it as generic as possible.
-This is the method we have:
 
-```Scala
-  implicit def seqToEntityMarshaller[F[_], G[_], A](
-      implicit NT: F ~> G,
-      MonG: Monad[G],
-      gem: ToEntityMarshaller[G[A]]
-  ): ToEntityMarshaller[FreeS[F, A]] =
-    gem.compose((fs: FreeS[F, A]) => fs.exec[G])
+```tut:book
+import freestyle._
+import freestyle.implicits._
+import cats.{ ~>, Monad }
+import _root_.akka.http.scaladsl.marshalling.ToEntityMarshaller
+
+implicit def seqToEntityMarshaller[F[_], G[_], A](
+    implicit NT: F ~> G,
+    MonG: Monad[G],
+    gem: ToEntityMarshaller[G[A]]): ToEntityMarshaller[FreeS[F, A]] =
+  gem.compose((fs: FreeS[F, A]) => fs.exec[G])
+
+implicit def parToEntityMarshaller[F[_], G[_], A](
+    implicit NT: F ~> G,
+    MonG: Monad[G],
+    gem: ToEntityMarshaller[G[A]]): ToEntityMarshaller[FreeS.Par[F, A]] =
+  gem.compose((fp: FreeS.Par[F, A]) => FreeS.liftPar(fp).exec[G])
 ```
 
 To build such an object `marsh`, our method needs to find in scope :
@@ -66,7 +72,7 @@ First, we (1) define a domain class `User`, (2) write
 a `@free` algebra that returns values of a type `FreeS[F, User]`, and then (3) define an interpreter for that algebra to a type for 
 which a `Marshaller` _magnet_ exists. To keep things simple, we just interpret to `Id`.
 
-```Scala
+```tut:book
 import freestyle._
 import freestyle.implicits._
 
@@ -83,8 +89,9 @@ val app = UserApp.to[UserApp.Op]
 To use this `@free` algebra in a route, we need (1) an `EntityMarshaller` for our domain object,
 and (2) an interpreter of the algebra to a suitable domain, which for this example will be `Id`.
 
-```Scala
-import _root_.akka.http.scaladsl.marshalling.ToEntityMarshaller
+```tut:book
+import _root_.akka.http.scaladsl.marshalling.{ Marshaller, ToEntityMarshaller }
+import cats.Id
 
 implicit val userMarshaller: ToEntityMarshaller[User] =
   Marshaller.StringMarshaller.compose((user: User) => s"User(${user.name})")
@@ -97,7 +104,7 @@ implicit val handler: UserApp.Handler[Id] = new UserApp.Handler[Id] {
 
 With these in scope, one can now write the route by using the marshaller generators from Akka HTTP.
 
-```Scala
+```tut:book
 import _root_.akka.http.scaladsl.server.Directives._
 import _root_.akka.http.scaladsl.server.Route
 import _root_.akka.http.scaladsl.marshalling.{Marshaller, ToEntityMarshaller}
