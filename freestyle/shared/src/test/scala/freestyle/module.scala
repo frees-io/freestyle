@@ -24,8 +24,6 @@ class moduleTests extends WordSpec with Matchers {
 
   "the @module annotation" should {
 
-    import algebras._
-    import modules._
     import freestyle.implicits._
     import interps._
 

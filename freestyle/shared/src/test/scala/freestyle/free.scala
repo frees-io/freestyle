@@ -24,7 +24,6 @@ class freeTests extends WordSpec with Matchers {
 
   "the @free annotation" should {
 
-    import algebras._
     import freestyle.implicits._
 
     "be rejected if applied to a non-abstract class" in {
