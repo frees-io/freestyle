@@ -24,7 +24,6 @@ class implicitsTests extends WordSpec with Matchers {
 
   "Implicits" should {
 
-    import algebras._
     import freestyle.implicits._
 
     "provide a Monad for FreeS" in {

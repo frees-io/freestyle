@@ -34,14 +34,23 @@ object openUnion {
 
     def fail(msg: String) = c.abort(c.enclosingPosition, msg)
 
-    // s: the companion object of the `@module`-trait
+    /* The findAlgebras method takes as input the `ClassSymbol` for the `@module`-annotated `trait`,
+     * and it computes the list of _algebras_ (`@free`-annotated `trait`s) that are included in the module.
+     *
+     * Now, a `@module` M can directly include a `@free` algebra A, but it can also include another `@module` N.
+     * In this case, we also need to collect recursively all the `@free` algebras included in N.
+     *
+     * To recognise if the type of a variable refers to a `@module`, the generated companion object for any
+     * `@module` inherits from the `FreeModuleLike` trait.
+     */
     def findAlgebras(s: ClassSymbol): List[Type] = {
 
       // cs: the trait annotated as `@module`
       def methodsOf(cs: ClassSymbol): List[MethodSymbol] =
         cs.info.decls.toList.collect { case met: MethodSymbol if met.isAbstract => met }
 
-      // cs: the trait annotated as `@module`
+      // cs is a `@module` is the _class_ of the `object` extends from `FreeModuleLike`
+      // Note that a trait's companion object has a _real_ class, unknown, to rule its behaviour.
       def isModuleFS(cs: ClassSymbol): Boolean =
         cs.companion.asModule.moduleClass.asClass.baseClasses.exists {
           case x: ClassSymbol => x.name == TypeName("FreeModuleLike")
@@ -89,6 +98,7 @@ object openUnion {
           tyDef1 :: (tyDefs :+ opDef)
       }
 
+    // findAlgebras starts from the ClassSymbol of the `@moudle-annotated trait
     val algebras   = findAlgebras(weakTypeOf[A].typeSymbol.companion.asClass)
     val coproducts = mkCoproduct(algebras)
     //ugly hack because, as String,  it does not typecheck, early which we need for types to be in scope

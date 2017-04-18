@@ -27,8 +27,6 @@ class parallelTests extends WordSpec with Matchers {
 
   "Applicative Parallel Support" should {
 
-    import algebras._
-
     class NonDeterminismTestShared {
       import freestyle.nondeterminism._
       import freestyle.implicits._
