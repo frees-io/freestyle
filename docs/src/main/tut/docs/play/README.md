@@ -6,15 +6,15 @@ permalink: /docs/play/
 
 # Play Framework integration
 
-It is easy to use a freestyle program as a result of a Play Framework Action with the _freestyle-http-play_ module. This module provides an implicit conversion `FreeS[F, A] => Future[A]` which allows a user to define a Free program as the result of any Play Action that expects a Future as a response.
+Freestyle programs are easy to use as a result of a Play Framework Action with the  _freestyle-http-play_ module. This module provides an implicit conversion `FreeS[F, A] => Future[A]` which allows a user to define a Free program as the result of any Play Action that expects a Future as a response.
 
-In order to enable this integration you may depend on _freestyle-http-play_
+To enable this integration you can depend on _freestyle-http-play_:
 
 ```scala
 libraryDependencies += "com.47deg" %% "freestyle-http-play" % "0.1.0"
 ```
 
-The regular imports for working with Freestyle and Cats
+The regular imports for working with Freestyle and Cats:
 
 ```tut:silent
 import freestyle._
@@ -36,7 +36,7 @@ import akka.actor.ActorSystem
 import akka.stream.{ActorMaterializer, Materializer}
 ```
 
-For demonstration purposes we will create here a very simple program that returns an `OK` http status response.
+For demonstration purposes, we will create a very simple program that returns an `OK` http status response:
 
 ```tut:book
 object algebras {
@@ -65,7 +65,7 @@ def program[F[_]: Noop]: FreeS[F, Result] =
   } yield Results.Ok(msg)
 ```
 
-Once our program is defined we may simply return it as a result of any `Action` without the need to explicitly interpret it to `Future`
+Once our program is defined we may simply return it as a result of any `Action` without the need to explicitly interpret it to `Future`:
 
 ```tut:silent
 object AppController extends Controller {

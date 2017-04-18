@@ -45,9 +45,6 @@ object config {
 
     private[config] def loadConfig(c: com.typesafe.config.Config): Config = new Config {
 
-      implicit def asFiniteDuration(d: java.time.Duration): Duration =
-        Duration.fromNanos(d.toNanos)
-
       def hasPath(path: String): Boolean         = c.hasPath(path)
       def config(path: String): Option[Config]   = Option(loadConfig(c.getConfig(path)))
       def string(path: String): Option[String]   = Option(c.getString(path))
@@ -60,7 +57,7 @@ object config {
 
     }
 
-    lazy val underlying = loadConfig(ConfigFactory.load())
+    private[config] lazy val underlying = loadConfig(ConfigFactory.load())
 
     implicit def freestyleConfigHandler[M[_]](
         implicit ME: MonadError[M, Throwable]): ConfigM.Handler[M] =

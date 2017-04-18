@@ -16,10 +16,11 @@
 
 package freestyle
 
-import org.scalatest._
+import org.scalatest.{AsyncWordSpec, Matchers}
 import _root_.fetch._
 import _root_.fetch.implicits._
 
+import cats.syntax.cartesian._
 import freestyle.fetch._
 import freestyle.implicits._
 import freestyle.fetch.implicits._
@@ -59,6 +60,29 @@ class FetchTests extends AsyncWordSpec with Matchers {
         c <- app.nonFetch.x
       } yield a + b + c
       program.exec[Future] map { _ shouldBe "111" }
+    }
+
+    "allow a fetch to be run and return the result and/or environment with or without cache" in {
+      val fetch = fetchString(1)
+      val cache = InMemoryCache.empty
+
+      val nbRounds: Env => Int = _.rounds.length
+
+      (app.fetchM.runA(fetch) |@|
+      app.fetchM.runE(fetch) |@|
+      app.fetchM.runF(fetch) |@|
+      app.fetchM.runAWithCache(fetch, cache) |@|
+      app.fetchM.runEWithCache(fetch, cache) |@|
+      app.fetchM.runFWithCache(fetch, cache)).tupled.exec[Future].map {
+        case (a1, env2, (env3, a3), a4, env5, (env6, a6)) =>
+          a1 shouldBe "1"
+          a3 shouldBe a1
+          a4 shouldBe a1
+          a6 shouldBe a1
+          nbRounds(env3) shouldBe nbRounds(env2)
+          nbRounds(env5) shouldBe nbRounds(env2)
+          nbRounds(env6) shouldBe nbRounds(env2)
+      }
     }
 
   }

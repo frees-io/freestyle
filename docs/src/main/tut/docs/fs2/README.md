@@ -6,11 +6,11 @@ permalink: /docs/fs2/
 
 # FS2
 
-Interleaving FS2 streams in freestyle programs can be achieved through the algebra and interpreter provided by the `freestyle-fs2` package. `freestyle-fs2` allows you to run streams when interpreting free programs, using the target runtime monad as their effect type.
+Interleaving FS2 streams in Freestyle programs can be achieved through the algebra and interpreter provided by the `freestyle-fs2` package. `freestyle-fs2` allows you to run streams when interpreting free programs, using the target runtime monad as their effect type.
 
-Familiarity with fs2 is assumed, take a look at [its documentation](https://github.com/functional-streams-for-scala/fs2/blob/series/1.0/docs/guide.md) if you haven't before.
+Familiarity with fs2 is assumed, take a look at the [fs2 documentation](https://github.com/functional-streams-for-scala/fs2/blob/series/1.0/docs/guide.md) if you haven't before.
 
-We'll start by creating a simple algebra for our application for printing messages in the screen:
+We'll start by creating a simple algebra for our application for printing messages on the screen:
 
 ```tut:book
 import freestyle._
@@ -34,7 +34,7 @@ import freestyle.fs2.implicits._
 }
 ```
 
-Now that we've got our `Interact` algebra and `StreamM` in our app, we're ready to write a first program:
+Now that we've got our `Interact` algebra and `StreamM` in our app, we're ready to write the first program:
 
 ```tut:book
 import _root_.fs2.Stream
@@ -48,7 +48,7 @@ def program[F[_]](
   } yield x
 ```
 
-For running it, we need to create an implicit interpreter for our `Interact` algebra:
+To run it, we need to create an implicit interpreter for our `Interact` algebra:
 
 ```tut:book
 import cats._
@@ -63,7 +63,7 @@ implicit def interactInterp[F[_]](
 }
 ```
 
-And now we can run the program to a `Future`, check how the stream's value is printed to the console:
+And now we can run the program to a `Future`. Check how the stream's value is printed to the console:
 
 ```tut:book
 import cats.instances.future._
@@ -81,7 +81,7 @@ A handful of operations for running streams are exposed in the `StreamM` algebra
 
 ### runLog
 
-We've already seen `StreamM#runLog`, that runs a stream accumulating its result in a `Vector`. In the following example, we use it passing a Stream that emits the number 42 and ends.
+We've already seen `StreamM#runLog`, that runs a stream accumulating its result in a `Vector`. In the following example, we use it to pass a Stream that emits the number 42 and ends:
 
 ```tut:book
 def program[F[_]](
@@ -93,13 +93,13 @@ Await.result(program[App.Op].exec[Future], Duration.Inf)
 
 ### runFold
 
-We can run a fold over a stream too, let's create a stream with a series of numbers. We use a type provided by `freestyle-fs2` as the effect type for the stream (`Eff`), this allows the final stream effect type to be decided when running the program:
+We can run a fold over a stream too; let's create a stream with a series of numbers. We use a type provided by `freestyle-fs2` as the effect type for the stream (`Eff`), this allows the final stream effect type to be decided when running the program:
 
 ```tut:book
 val aStream: Stream[Eff, Int] = Stream.emits(0 until 10)
 ```
 
-Now we can fold over the above stream by adding all its numbers:
+Now we can fold over the above stream by adding all of its numbers:
 
 ```tut:book
 def program[F[_]](
@@ -123,9 +123,9 @@ Await.result(program[App.Op].exec[Future], Duration.Inf)
 
 ## Streaming IO
 
-The fs2 library comes with support for streaming IO through its `fs2-io` package, and its straightforward to integrate in freestyle programs.
+The fs2 library comes with support for streaming IO through its `fs2-io` package, and it's straightforward to integrate in freestyle programs.
 
-Borrowing the example from `fs2` README, here is a fahrenheit to celsius converter process. In order for an IO stream to be able to run in a free program, we need to use `Eff` as the effect type for the stream.
+Here is an example borrowed from the `fs2` README of a fahrenheit to celsius converter process. In order for an IO stream to be able to run in a free program, we need to use `Eff` as the effect type for the stream:
 
 ```tut:book
 import _root_.fs2.{io, text}
@@ -146,7 +146,7 @@ val converter: Stream[Eff, Unit] = {
 }
 ```
 
-We now can interleave this stream inside our free programs, choosing the streams' effect type when running the whole program.
+We can now interleave this stream inside our free programs, choosing the streams' effect type when running the whole program:
 
 ```tut:book
 def program[F[_]](
