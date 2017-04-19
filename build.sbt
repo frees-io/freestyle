@@ -27,7 +27,7 @@ lazy val tests = (project in file("tests"))
   .dependsOn(freestyleJVM)
   .settings(noPublishSettings: _*)
   .settings(
-    libraryDependencies ++= Seq(
+    libraryDependencies ++= commonDeps ++ Seq(
       %("scala-reflect", scalaVersion.value),
       %%("pcplod") % "test"
     ),

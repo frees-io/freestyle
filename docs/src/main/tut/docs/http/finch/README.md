@@ -30,8 +30,8 @@ import freestyle.implicits._
 In this example, we will create a Finch `Endpoint` which will be able to calculate the greatest common divisor (GCD) of two natural numbers:
 
 ```tut:book
-@free trait Calc[F[_]] {
-  def gcd(a: Int, b: Int): FreeS[F, Int]
+@free trait Calc {
+  def gcd(a: Int, b: Int): OpSeq[Int]
 }
 ```
 

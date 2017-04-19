@@ -20,15 +20,15 @@ libraryDependencies += "com.47deg" %% "freestyle-logging" % "0.1.0"
 The set of abstract operations of the `Logging` algebra are specified as follows:
 
 ```scala
-@free trait LoggingM[F[_]] {
-  def debug(msg: String): FreeS[F, Unit]
-  def debugWithCause(msg: String, cause: Throwable): FreeS[F, Unit]
-  def error(msg: String): FreeS[F, Unit]
-  def errorWithCause(msg: String, cause: Throwable): FreeS[F, Unit]
-  def info(msg: String): FreeS[F, Unit]
-  def infoWithCause(msg: String, cause: Throwable): FreeS[F, Unit]
-  def warn(msg: String): FreeS[F, Unit]
-  def warnWithCause(msg: String, cause: Throwable): FreeS[F, Unit]
+@free trait LoggingM {
+  def debug(msg: String): OpSeq[Unit]
+  def debugWithCause(msg: String, cause: Throwable): OpSeq[Unit]
+  def error(msg: String): OpSeq[Unit]
+  def errorWithCause(msg: String, cause: Throwable): OpSeq[Unit]
+  def info(msg: String): OpSeq[Unit]
+  def infoWithCause(msg: String, cause: Throwable): OpSeq[Unit]
+  def warn(msg: String): OpSeq[Unit]
+  def warnWithCause(msg: String, cause: Throwable): OpSeq[Unit]
 }
 ```
 
@@ -55,8 +55,8 @@ import scala.util.Try
 We will define a simple algebra with a stub handler that returns a list of customer Id's for illustration purposes:
 
 ```tut:book
-@free trait CustomerService[F[_]] {
-  def customers: FreeS[F, List[String]]
+@free trait CustomerService {
+  def customers: OpSeq[List[String]]
 }
 
 implicit val customerServiceHandler: CustomerService.Handler[Try] = new CustomerService.Handler[Try] {

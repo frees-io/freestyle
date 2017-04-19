@@ -23,11 +23,11 @@ object state {
 
   final class StateSeedProvider[S] {
 
-    @free sealed abstract class StateM[F[_]] {
-      def get: FreeS.Par[F, S]
-      def set(s: S): FreeS.Par[F, Unit]
-      def modify(f: S => S): FreeS.Par[F, Unit]
-      def inspect[A](f: S => A): FreeS.Par[F, A]
+    @free sealed abstract class StateM {
+      def get: OpPar[S]
+      def set(s: S): OpPar[Unit]
+      def modify(f: S => S): OpPar[Unit]
+      def inspect[A](f: S => A): OpPar[A]
     }
 
     object implicits {

@@ -26,16 +26,16 @@ object validation {
     type Errors = List[E]
 
     /** An algebra for introducing validation semantics in a program. **/
-    @free sealed trait ValidationM[F[_]] {
-      def valid[A](x: A): FreeS.Par[F, A]
+    @free sealed trait ValidationM {
+      def valid[A](x: A): OpPar[A]
 
-      def invalid(err: E): FreeS.Par[F, Unit]
+      def invalid(err: E): OpPar[Unit]
 
-      def errors: FreeS.Par[F, Errors]
+      def errors: OpPar[Errors]
 
-      def fromEither[A](x: Either[E, A]): FreeS.Par[F, Either[E, A]]
+      def fromEither[A](x: Either[E, A]): OpPar[Either[E, A]]
 
-      def fromValidatedNel[A](x: ValidatedNel[E, A]): FreeS.Par[F, ValidatedNel[E, A]]
+      def fromValidatedNel[A](x: ValidatedNel[E, A]): OpPar[ValidatedNel[E, A]]
     }
 
     object implicits {

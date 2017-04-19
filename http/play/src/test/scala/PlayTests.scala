@@ -66,8 +66,8 @@ class PlayTests extends AsyncWordSpec with Matchers {
 
 object algebras {
   @free
-  trait Noop[F[_]] {
-    def noop: FreeS[F, Unit]
+  trait Noop {
+    def noop: OpSeq[Unit]
   }
 }
 

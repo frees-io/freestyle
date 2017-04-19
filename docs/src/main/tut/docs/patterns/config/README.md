@@ -31,10 +31,10 @@ sealed trait Config {
   def duration(path: String, unit: TimeUnit): Option[Long]
 }
 
-@free sealed trait ConfigM[F[_]] {
-  def load: FreeS[F, Config]
-  def empty: FreeS[F, Config]
-  def parseString(s: String): FreeS[F, Config]
+@free sealed trait ConfigM {
+  def load: OpSeq[Config]
+  def empty: OpSeq[Config]
+  def parseString(s: String): OpSeq[Config]
 }
 ```
 
@@ -65,8 +65,8 @@ import scala.util.Try
 We will define a very simple algebra with a stub handler that returns a list of issue states for illustration purposes:
 
 ```tut:book
-@free trait IssuesService[F[_]] {
-  def states: FreeS[F, List[String]]
+@free trait IssuesService {
+  def states: OpSeq[List[String]]
 }
 
 implicit val issuesServiceHandler: IssuesService.Handler[Try] = new IssuesService.Handler[Try] {

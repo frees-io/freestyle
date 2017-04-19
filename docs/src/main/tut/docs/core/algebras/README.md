@@ -17,24 +17,24 @@ import freestyle._
 
 case class User(id: Long, name: String)
 
-@free trait UserRepository[F[_]] {
-  def get(id: Long): FreeS[F, User]
-  def save(user: User): FreeS[F, User]
-  def list: FreeS[F, List[User]]
+@free trait UserRepository {
+  def get(id: Long): OpSeq[User]
+  def save(user: User): OpSeq[User]
+  def list: OpSeq[List[User]]
 }
 ```
 
 This is similar to the simplified manual encoding below:
 
 ```tut:book
-import freestyle.FreeS
+import freestyle.{FreeS, EffectLike}
 
 case class User(id: Long, name: String)
 
-trait UserRepository[F[_]] {
-  def get(id: Long): FreeS[F, User]
-  def save(user: User): FreeS[F, User]
-  def getAll(filter: String): FreeS[F, List[User]]
+trait UserRepository[F[_]] extends freestyle.EffectLike[F] {
+  def get(id: Long): OpSeq[User]
+  def save(user: User): OpSeq[User]
+  def getAll(filter: String): OpSeq[List[User]]
 }
 
 object UserRepository {
@@ -119,14 +119,14 @@ You may use this to manually build `Coproduct` types which will serve in the par
 ```tut:book
 import cats.data.Coproduct
 
-@free trait Service1[F[_]]{
-  def x(n: Int): FreeS[F, Int]
+@free trait Service1{
+  def x(n: Int): OpSeq[Int]
 }
-@free trait Service2[F[_]]{
-  def y(n: Int): FreeS[F, Int]
+@free trait Service2{
+  def y(n: Int): OpSeq[Int]
 }
-@free trait Service3[F[_]]{
-  def z(n: Int): FreeS[F, Int]
+@free trait Service3{
+  def z(n: Int): OpSeq[Int]
 }
 type C1[A] = Coproduct[Service1.Op, Service2.Op, A]
 type Module[A] = Coproduct[Service3.Op, C1, A]

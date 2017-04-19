@@ -47,11 +47,11 @@ object fs2 {
     def suspend[A](fa: => Eff[A]): Eff[A] = fa
   }
 
-  @free sealed trait StreamM[F[_]] {
-    def run[A](s: Stream[Eff, A]): FreeS.Par[F, Unit]
-    def runLog[A](s: Stream[Eff, A]): FreeS.Par[F, Vector[A]]
-    def runFold[A, B](z: B, f: (B, A) => B)(s: Stream[Eff, A]): FreeS.Par[F, B]
-    def runLast[A](s: Stream[Eff, A]): FreeS.Par[F, Option[A]]
+  @free sealed trait StreamM {
+    def run[A](s: Stream[Eff, A]): OpPar[Unit]
+    def runLog[A](s: Stream[Eff, A]): OpPar[Vector[A]]
+    def runFold[A, B](z: B, f: (B, A) => B)(s: Stream[Eff, A]): OpPar[B]
+    def runLast[A](s: Stream[Eff, A]): OpPar[Option[A]]
   }
 
   object implicits {

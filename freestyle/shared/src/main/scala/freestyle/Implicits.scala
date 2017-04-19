@@ -16,7 +16,7 @@
 
 package freestyle
 
-import cats.Monad
+import cats.{ Applicative, Monad }
 import cats.arrow.FunctionK
 import cats.data.Coproduct
 import cats.free.{Free, FreeApplicative, Inject}
@@ -41,6 +41,9 @@ trait Interpreters {
 }
 
 trait FreeSInstances {
+  implicit def freestyleApplicativeForFreeS[F[_]]: Applicative[FreeS.Par[F, ?]] =
+    FreeApplicative.freeApplicative[F]
+
   implicit def freestyleMonadForFreeS[F[_]]: Monad[FreeS[F, ?]] =
     Free.catsFreeMonadForFree[FreeApplicative[F, ?]]
 }

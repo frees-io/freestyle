@@ -549,23 +549,23 @@ object collision {
   }
 
   @free
-  trait B[F[_]] {
-    def x: FreeS[F, Int]
+  trait B {
+    def x: OpSeq[Int]
   }
 
   @free
-  trait C[F[_]] {
-    def x: FreeS[F, Int]
+  trait C {
+    def x: OpSeq[Int]
   }
 
   @free
-  trait D[F[_]] {
-    def x: FreeS[F, Int]
+  trait D {
+    def x: OpSeq[Int]
   }
 
   @free
-  trait E[F[_]] {
-    def x: FreeS[F, Int]
+  trait E {
+    def x: OpSeq[Int]
   }
 
   @module

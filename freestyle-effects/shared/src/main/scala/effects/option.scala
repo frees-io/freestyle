@@ -21,9 +21,9 @@ import cats.MonadFilter
 
 object option {
 
-  @free sealed trait OptionM[F[_]] {
-    def option[A](fa: Option[A]): FreeS.Par[F, A]
-    def none[A]: FreeS.Par[F, A]
+  @free sealed trait OptionM {
+    def option[A](fa: Option[A]): OpPar[A]
+    def none[A]: OpPar[A]
   }
 
   trait OptionImplicits {
