@@ -20,43 +20,43 @@ import cats.arrow.FunctionK
 
 @free
 trait SCtors1 {
-  def x(a: Int): OpSeq[Int]
-  def y(a: Int): OpSeq[Int]
+  def x(a: Int): FS[Int]
+  def y(a: Int): FS[Int]
 }
 
 @free
 trait SCtors2 {
-  def i(a: Int): OpSeq[Int]
-  def j(a: Int): OpSeq[Int]
+  def i(a: Int): FS[Int]
+  def j(a: Int): FS[Int]
 }
 
 @free
 trait SCtors3 {
-  def o(a: Int): OpSeq[Int]
-  def p(a: Int): OpSeq[Int]
+  def o(a: Int): FS[Int]
+  def p(a: Int): FS[Int]
 }
 
 @free
 trait SCtors4 {
-  def k(a: Int): OpSeq[Int]
-  def m(a: Int): OpSeq[Int]
+  def k(a: Int): FS[Int]
+  def m(a: Int): FS[Int]
 }
 
 @free
 trait MixedFreeS {
-  def x: OpPar[Int]
-  def y: OpPar[Int]
-  def z: OpSeq[Int]
+  def x: FS[Int]
+  def y: FS[Int]
+  def z: FS[Int]
 }
 
 @free
 trait S1 {
-  def x(n: Int): OpSeq[Int]
+  def x(n: Int): FS[Int]
 }
 
 @free
 trait S2 {
-  def y(n: Int): OpSeq[Int]
+  def y(n: Int): FS[Int]
 }
 
 

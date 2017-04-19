@@ -24,12 +24,12 @@ import freestyle._
 import cats.implicits._
 
 @free trait KVStore {
-  def put[A](key: String, value: A): OpSeq[Unit]
-  def get[A](key: String): OpSeq[Option[A]]
-  def delete(key: String): OpSeq[Unit]
+  def put[A](key: String, value: A): FS[Unit]
+  def get[A](key: String): FS[Option[A]]
+  def delete(key: String): FS[Unit]
   def update[A](key: String, f: A => A): OpSeq[Unit] =
-    get[A](key) flatMap {
-      case Some(a) => put[A](key, f(a))
+    get[A](key).freeS flatMap {
+      case Some(a) => put[A](key, f(a)).freeS
       case None => ().pure[OpSeq]
     }
 }
@@ -85,8 +85,8 @@ To illustrate interpreter composition, let's define a new algebra `Log` which we
 
 ```tut:book
 @free trait Log {
-  def info(msg: String): OpSeq[Unit]
-  def warn(msg: String): OpSeq[Unit]
+  def info(msg: String): FS[Unit]
+  def warn(msg: String): FS[Unit]
 }
 ```
 

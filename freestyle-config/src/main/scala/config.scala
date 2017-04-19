@@ -36,9 +36,9 @@ object config {
   }
 
   @free sealed trait ConfigM {
-    def load: OpSeq[Config]
-    def empty: OpSeq[Config]
-    def parseString(s: String): OpSeq[Config]
+    def load: FS[Config]
+    def empty: FS[Config]
+    def parseString(s: String): FS[Config]
   }
 
   object implicits {

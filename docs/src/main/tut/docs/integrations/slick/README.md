@@ -76,7 +76,7 @@ Only using `SlickM` is not exactly useful in this case as it just adds an extra 
 
 ```tut:book
 @free trait Calc {
-  def subtract(a: Int, b: Int): OpSeq[Int]
+  def subtract(a: Int, b: Int): FS[Int]
 }
 
 @module trait Example[F[_]] {

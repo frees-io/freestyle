@@ -21,21 +21,21 @@ object logging {
   @free
   trait LoggingM {
 
-    def debug(msg: String): OpSeq[Unit]
+    def debug(msg: String): FS[Unit]
 
-    def debugWithCause(msg: String, cause: Throwable): OpSeq[Unit]
+    def debugWithCause(msg: String, cause: Throwable): FS[Unit]
 
-    def error(msg: String): OpSeq[Unit]
+    def error(msg: String): FS[Unit]
 
-    def errorWithCause(msg: String, cause: Throwable): OpSeq[Unit]
+    def errorWithCause(msg: String, cause: Throwable): FS[Unit]
 
-    def info(msg: String): OpSeq[Unit]
+    def info(msg: String): FS[Unit]
 
-    def infoWithCause(msg: String, cause: Throwable): OpSeq[Unit]
+    def infoWithCause(msg: String, cause: Throwable): FS[Unit]
 
-    def warn(msg: String): OpSeq[Unit]
+    def warn(msg: String): FS[Unit]
 
-    def warnWithCause(msg: String, cause: Throwable): OpSeq[Unit]
+    def warnWithCause(msg: String, cause: Throwable): FS[Unit]
   }
 
 }

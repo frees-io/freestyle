@@ -17,16 +17,16 @@ import freestyle._
 
 object algebras {
     @free trait Database {
-      def get(id: Int): OpSeq[Int]
+      def get(id: Int): FS[Int]
     }
     @free trait Cache {
-      def get(id: Int): OpSeq[Option[Int]]
+      def get(id: Int): FS[Option[Int]]
     }
     @free trait Presenter {
-      def show(id: Int): OpSeq[Int]
+      def show(id: Int): FS[Int]
     }
     @free trait IdValidation {
-      def validate(id: Option[Int]): OpSeq[Int]
+      def validate(id: Option[Int]): FS[Int]
     }
 }
 ```

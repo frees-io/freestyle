@@ -41,7 +41,7 @@ class implicitsTests extends WordSpec with Matchers {
     "enable sequence" in {
       implicit val optionHandler = interps.optionHandler1
       val s = SCtors1[SCtors1.Op]
-      val program = List(s.x(1), s.x(2)).sequence[FreeS[SCtors1.Op, ?], Int]
+      val program = List(s.x(1), s.x(2)).sequence[FreeS.Par[SCtors1.Op, ?], Int]
       program.exec[Option] shouldBe (Some(List(1, 2)))
     }
 
@@ -53,7 +53,7 @@ class implicitsTests extends WordSpec with Matchers {
 
     "provide a custom implicit not found message for a missing Capture instance" in {
       shapeless.test.illTyped(
-        """SCtors1[SCtors1.Op].x(1).exec[scala.util.Try]""",
+        """SCtors1[SCtors1.Op].x(1).freeS.exec[scala.util.Try]""",
         ".*Handler not found to transform.*")
     }
 

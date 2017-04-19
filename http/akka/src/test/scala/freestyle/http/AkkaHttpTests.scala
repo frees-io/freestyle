@@ -64,8 +64,8 @@ object userrepo {
 
   @free
   trait UserApp {
-    def get(id: Int): OpPar[User]
-    def list: OpSeq[List[User]]
+    def get(id: Int): FS[User]
+    def list: FS[List[User]]
   }
 
   implicit val handler: UserApp.Handler[Id] = new UserApp.Handler[Id] {

@@ -58,7 +58,7 @@ class PlayTests extends AsyncWordSpec with Matchers {
 
     "FreeS programs can interact with a given request and used as returned values in Play actions" in {
       Action.async { request =>
-        Noop[Noop.Op].noop.map(_ => Results.Ok(request.method))
+        Noop[Noop.Op].noop.map(_ => Results.Ok(request.method)).freeS
       } shouldBe an[Action[Result]]
     }
   }
@@ -67,7 +67,7 @@ class PlayTests extends AsyncWordSpec with Matchers {
 object algebras {
   @free
   trait Noop {
-    def noop: OpSeq[Unit]
+    def noop: FS[Unit]
   }
 }
 

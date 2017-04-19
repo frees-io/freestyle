@@ -42,7 +42,7 @@ For demonstration purposes, we will create a very simple program that returns an
 object algebras {
   @free
   trait Noop {
-    def ok: OpSeq[String]
+    def ok: FS[String]
   }
 }
 

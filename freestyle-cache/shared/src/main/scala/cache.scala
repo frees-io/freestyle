@@ -31,34 +31,34 @@ package cache {
     @free sealed trait CacheM {
 
       // Gets the value associated to a key, if there is one */
-      def get(key: Key): OpPar[Option[Val]]
+      def get(key: Key): FS[Option[Val]]
 
       // Sets the value of a key to a newValue.
-      def put(key: Key, newVal: Val): OpPar[Unit]
+      def put(key: Key, newVal: Val): FS[Unit]
 
       // Copy all of the mappings from the specified map to this cache
-      def putAll(keyValues: Map[Key, Val]): OpPar[Unit]
+      def putAll(keyValues: Map[Key, Val]): FS[Unit]
 
       //If the specified key is not already associated with a value, associate it with the given value.
-      def putIfAbsent(key: Key, newVal: Val): OpPar[Unit]
+      def putIfAbsent(key: Key, newVal: Val): FS[Unit]
 
       // Removes the entry for the key if one exists
-      def del(key: Key): OpPar[Unit]
+      def del(key: Key): FS[Unit]
 
       // Returns whether there is an entry for key or not.
-      def has(key: Key): OpPar[Boolean]
+      def has(key: Key): FS[Boolean]
 
       // Returns the set of keys in the store
-      def keys: OpPar[List[Key]]
+      def keys: FS[List[Key]]
 
       // Removes all entries
-      def clear: OpPar[Unit]
+      def clear: FS[Unit]
 
       //Replaces the entry for a key only if currently mapped to some value
-      def replace(key: Key, newVal: Val): OpPar[Unit]
+      def replace(key: Key, newVal: Val): FS[Unit]
 
       //Returns true if this cache contains no key-value mappings.
-      def isEmpty: OpPar[Boolean]
+      def isEmpty: FS[Boolean]
 
     }
 

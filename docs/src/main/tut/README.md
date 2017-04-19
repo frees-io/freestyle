@@ -16,11 +16,11 @@ Applications built with Freestyle can be interpreted to any runtime semantics su
 import freestyle._
 
 @free trait Database {
-  def get(id: UserId): OpSeq[User]
+  def get(id: UserId): FS[User]
 }
 
 @free trait Cache {
-  def get(id: UserId): OpSeq[User]
+  def get(id: UserId): FS[User]
 }
 
 @module trait Persistence[F[_]] {

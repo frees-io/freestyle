@@ -43,13 +43,13 @@ import freestyle._
 import freestyle.implicits._
 
 @free trait Validation {
-  def minSize(s: String, n: Int): OpPar[Boolean]
-  def hasNumber(s: String): OpPar[Boolean]
+  def minSize(s: String, n: Int): FS[Boolean]
+  def hasNumber(s: String): FS[Boolean]
 }
 
 @free trait Interaction {
-  def tell(msg: String): OpSeq[Unit]
-  def ask(prompt: String): OpSeq[String]
+  def tell(msg: String): FS[Unit]
+  def ask(prompt: String): FS[String]
 }
 ```
 

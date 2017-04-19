@@ -30,7 +30,7 @@ object async {
 
   /** Async computation algebra. **/
   @free sealed trait AsyncM {
-    def async[A](fa: Proc[A]): OpPar[A]
+    def async[A](fa: Proc[A]): FS[A]
   }
 
   object implicits {

@@ -58,15 +58,14 @@ package object freestyle {
     def liftPar[F[_], A](freeap: FreeS.Par[F, A]): FreeS[F, A] =
       Free.liftF(freeap)
 
-    def inject[F[_], G[_]]: FreeSParInjectPartiallyApplied[F, G] =
+    def inject[F[_], G[_]](implicit I: Inject[F, G]): FreeSParInjectPartiallyApplied[F, G] =
       new FreeSParInjectPartiallyApplied
 
     /**
      * Pre-application of an injection to a `F[A]` value.
      */
-    final class FreeSParInjectPartiallyApplied[F[_], G[_]] {
-      def apply[A](fa: F[A])(implicit I: Inject[F, G]): FreeS.Par[G, A] =
-        FreeApplicative.lift(I.inj(fa))
+    final class FreeSParInjectPartiallyApplied[F[_], G[_]](implicit I: Inject[F, G]) {
+      def apply[A](fa: F[A]): FreeS.Par[G, A] = FreeApplicative.lift(I.inj(fa))
     }
 
     /**

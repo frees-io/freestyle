@@ -31,7 +31,7 @@ In this example, we will create a Finch `Endpoint` which will be able to calcula
 
 ```tut:book
 @free trait Calc {
-  def gcd(a: Int, b: Int): OpSeq[Int]
+  def gcd(a: Int, b: Int): FS[Int]
 }
 ```
 

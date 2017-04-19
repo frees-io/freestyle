@@ -18,9 +18,9 @@ import freestyle._
 case class User(id: Long, name: String)
 
 @free trait UserRepository {
-  def get(id: Long): OpSeq[User]
-  def save(user: User): OpSeq[User]
-  def list: OpSeq[List[User]]
+  def get(id: Long): FS[User]
+  def save(user: User): FS[User]
+  def list: FS[List[User]]
 }
 ```
 
@@ -32,31 +32,30 @@ import freestyle.{FreeS, EffectLike}
 case class User(id: Long, name: String)
 
 trait UserRepository[F[_]] extends freestyle.EffectLike[F] {
-  def get(id: Long): OpSeq[User]
-  def save(user: User): OpSeq[User]
-  def getAll(filter: String): OpSeq[List[User]]
+  def get(id: Long): FS[User]
+  def save(user: User): FS[User]
+  def getAll(filter: String): FS[List[User]]
 }
 
 object UserRepository {
-  import cats.arrow.FunctionK
-  import cats.free.Inject
-  import freestyle.FreeS
+  import _root_.cats.arrow.FunctionK
+  import _root_.cats.free.Inject
+  import _root_.freestyle.FreeS
 
   sealed trait Op[A] extends Product with Serializable
   final case class Get(id: Long) extends Op[User]
   final case class Save(user: User) extends Op[User]
   final case class GetAll(filter: String) extends Op[List[User]]
 
-  class To[L[_]](implicit I: Inject[Op, L]) extends UserRepository[L] {
+  class To[L[_]](implicit ii: Inject[Op, L]) extends UserRepository[L] {
 
-    def get(id: Long): FreeS[L, User] =
-        FreeS.liftPar( FreeS.inject[Op, L]( Get(id)) )
+    private[this] val inj = FreeS.inject[Op, L](ii)
 
-    def save(user: User): FreeS[L, User] =
-        FreeS.liftPar( FreeS.inject[Op, L]( Save(user)) )
+    def get(id: Long): FS[User] = inj( Get(id) )
 
-    def getAll(filter: String): FreeS[L, List[User]] =
-        FreeS.liftPar( FreeS.inject[Op, L]( GetAll(filter)) )
+    def save(user: User): FS[User] = inj( Save(user) )
+
+    def getAll(filter: String): FS[List[User]] = inj( GetAll(filter) )
   }
 
   implicit def to[L[_]](implicit I: Inject[Op, L]): UserRepository[L] =
@@ -120,13 +119,13 @@ You may use this to manually build `Coproduct` types which will serve in the par
 import cats.data.Coproduct
 
 @free trait Service1{
-  def x(n: Int): OpSeq[Int]
+  def x(n: Int): FS[Int]
 }
 @free trait Service2{
-  def y(n: Int): OpSeq[Int]
+  def y(n: Int): FS[Int]
 }
 @free trait Service3{
-  def z(n: Int): OpSeq[Int]
+  def z(n: Int): FS[Int]
 }
 type C1[A] = Coproduct[Service1.Op, Service2.Op, A]
 type Module[A] = Coproduct[Service3.Op, C1, A]

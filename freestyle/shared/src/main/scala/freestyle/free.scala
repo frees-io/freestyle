@@ -19,6 +19,7 @@ package freestyle
 import scala.reflect.macros.blackbox.Context
 
 trait EffectLike[F[_]] {
+  final type FS[A] = FreeS.Par[F, A]
   final type OpSeq[A] = FreeS[F, A]
   final type OpPar[A] = FreeS.Par[F, A]
 }
@@ -42,7 +43,7 @@ object freeImpl {
     val invalid = "Invalid use of the `@free` annotation"
     val abstractOnly = "The `@free` annotation can only be applied to a trait or to an abstract class."
     val noCompanion = "The trait (or class) annotated with `@free` must have no companion object."
-    val onlyReqs = "In a `@free`-annotated trait (or class), all abstract method declarations should be of type OpSeq[_] or OpPar[_]"
+    val onlyReqs = "In a `@free`-annotated trait (or class), all abstract method declarations should be of type FS[_]"
 
     def gen(): Tree = annottees match {
       case Expr(cls: ClassDef) :: Nil =>
@@ -108,27 +109,16 @@ object freeImpl {
           q"case class $Req[..$TTs](..$params) extends $OP[$Res]"
       }
 
-      def raiser: DefDef = {
-        val args = params.map(_.name)
-        val injected = q"$inj( $ReqC[..${tparams.map(_.name)} ](..$args) )"
-
-        val liftType = reqDef.tpt.asInstanceOf[AppliedTypeTree]
-
-        val impl = liftType match {
-          case tq"OpSeq[$aa]" => q"FreeS.liftPar($injected)"
-          case tq"OpPar[$aa]" => injected
-          case tpt => // Note: due to filter in getRequestDefs, this case is unreachable.
-            fail(s"unknown abstract type found in @free container: $tpt : raw: ${showRaw(tpt)}")
-        }
-
-        q"override def ${reqDef.name}[..$tparams](...${reqDef.vparamss}): $liftType = $impl"
-      }
+      def raiser: DefDef =
+        q"""
+          override def ${reqDef.name}[..$tparams](...${reqDef.vparamss}): ${reqDef.tpt} =
+            $inj( $ReqC[..${tparams.map(_.name)} ](..${params.map(_.name)}) )
+        """
     }
 
     def collectRequests(effectTrait: ClassDef): List[Request] = effectTrait.impl.collect {
       case dd @ q"$mods def $name[..$tparams](...$paramss): $tyRes" => tyRes match {
-        case tq"OpPar[..$args]" => new Request(dd.asInstanceOf[DefDef])
-        case tq"OpSeq[..$args]" => new Request(dd.asInstanceOf[DefDef])
+        case tq"FS[..$args]" => new Request(dd.asInstanceOf[DefDef])
         case _ => fail(s"$invalid in definition of method $name in ${effectTrait.name}. $onlyReqs")
       }
     }
@@ -163,7 +153,7 @@ object freeImpl {
           }
 
           class To[$LL[_], ..$TTs](implicit $ii: Inject[$OP, $LL]) extends $Eff[$LL, ..$tns] {
-            private[this] val $inj = FreeS.inject[$OP, $LL]
+            private[this] val $inj = FreeS.inject[$OP, $LL]($ii)
             ..${requests.map(_.raiser )}
           }
 

@@ -27,15 +27,15 @@ object validation {
 
     /** An algebra for introducing validation semantics in a program. **/
     @free sealed trait ValidationM {
-      def valid[A](x: A): OpPar[A]
+      def valid[A](x: A): FS[A]
 
-      def invalid(err: E): OpPar[Unit]
+      def invalid(err: E): FS[Unit]
 
-      def errors: OpPar[Errors]
+      def errors: FS[Errors]
 
-      def fromEither[A](x: Either[E, A]): OpPar[Either[E, A]]
+      def fromEither[A](x: Either[E, A]): FS[Either[E, A]]
 
-      def fromValidatedNel[A](x: ValidatedNel[E, A]): OpPar[ValidatedNel[E, A]]
+      def fromValidatedNel[A](x: ValidatedNel[E, A]): FS[ValidatedNel[E, A]]
     }
 
     object implicits {

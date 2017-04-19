@@ -24,8 +24,8 @@ object writer {
   final class AccumulatorProvider[W] {
 
     @free sealed abstract class WriterM {
-      def writer[A](aw: (W, A)): OpPar[A]
-      def tell(w: W): OpPar[Unit]
+      def writer[A](aw: (W, A)): FS[A]
+      def tell(w: W): FS[Unit]
     }
 
     object implicits {

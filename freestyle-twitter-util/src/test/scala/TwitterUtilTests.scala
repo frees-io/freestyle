@@ -97,9 +97,9 @@ object algebras {
 
   @free
   trait MixedFreeS {
-    def x: OpPar[Int]
-    def y: OpPar[Int]
-    def z: OpSeq[Int]
+    def x: FS[Int]
+    def y: FS[Int]
+    def z: FS[Int]
   }
 
 }
