@@ -22,8 +22,8 @@ import fs2.util.{Catchable, Suspendable}
 
 object doobie {
 
-  @free sealed trait DoobieM[F[_]] {
-    def transact[A](f: ConnectionIO[A]): FreeS.Par[F, A]
+  @free sealed trait DoobieM {
+    def transact[A](f: ConnectionIO[A]): OpPar[A]
   }
 
   object implicits {

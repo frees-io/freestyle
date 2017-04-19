@@ -34,9 +34,9 @@ To see how we can use `FreeS` and `FreeS.Par` in combination with existing Cats 
 ```tut:book
 import freestyle._
 
-@free trait Calc[F[_]] {
-  def sum(a: Int, b: Int): FreeS.Par[F, Int]
-  def product(a: Int, b: Int): FreeS.Par[F, Int]
+@free trait Calc {
+  def sum(a: Int, b: Int): OpPar[Int]
+  def product(a: Int, b: Int): OpPar[Int]
 }
 ```
 

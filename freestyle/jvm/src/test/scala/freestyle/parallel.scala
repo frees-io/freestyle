@@ -122,9 +122,9 @@ class parallelTests extends WordSpec with Matchers {
       type ParValidator[A] = Kleisli[Future, String, A]
 
       @free
-      trait Validation[F[_]] {
-        def minSize(n: Int): FreeS.Par[F, Boolean]
-        def hasNumber: FreeS.Par[F, Boolean]
+      trait Validation {
+        def minSize(n: Int): OpPar[Boolean]
+        def hasNumber: OpPar[Boolean]
       }
 
       implicit val interpreter = new Validation.Handler[ParValidator] {

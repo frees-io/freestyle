@@ -19,45 +19,46 @@ package freestyle
 import cats.arrow.FunctionK
 
 @free
-trait SCtors1[F[_]] {
-  def x(a: Int): FreeS[F, Int]
-  def y(a: Int): FreeS[F, Int]
+trait SCtors1 {
+  def x(a: Int): OpSeq[Int]
+  def y(a: Int): OpSeq[Int]
 }
 
 @free
-trait SCtors2[G[_]] {
-  def i(a: Int): FreeS[G, Int]
-  def j(a: Int): FreeS[G, Int]
+trait SCtors2 {
+  def i(a: Int): OpSeq[Int]
+  def j(a: Int): OpSeq[Int]
 }
 
 @free
-trait SCtors3[H[_]] {
-  def o(a: Int): FreeS[H, Int]
-  def p(a: Int): FreeS[H, Int]
+trait SCtors3 {
+  def o(a: Int): OpSeq[Int]
+  def p(a: Int): OpSeq[Int]
 }
 
 @free
-trait SCtors4[F[_]] {
-  def k(a: Int): FreeS[F, Int]
-  def m(a: Int): FreeS[F, Int]
+trait SCtors4 {
+  def k(a: Int): OpSeq[Int]
+  def m(a: Int): OpSeq[Int]
 }
 
 @free
-trait MixedFreeS[F[_]] {
-  def x: FreeS.Par[F, Int]
-  def y: FreeS.Par[F, Int]
-  def z: FreeS[F, Int]
+trait MixedFreeS {
+  def x: OpPar[Int]
+  def y: OpPar[Int]
+  def z: OpSeq[Int]
 }
 
 @free
-trait S1[F[_]] {
-  def x(n: Int): FreeS[F, Int]
+trait S1 {
+  def x(n: Int): OpSeq[Int]
 }
 
 @free
-trait S2[F[_]] {
-  def y(n: Int): FreeS[F, Int]
+trait S2 {
+  def y(n: Int): OpSeq[Int]
 }
+
 
 @module
 trait M1[F[_]] {

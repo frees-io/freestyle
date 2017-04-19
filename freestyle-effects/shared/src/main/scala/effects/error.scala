@@ -21,10 +21,10 @@ import cats.{Eval, MonadError}
 
 object error {
 
-  @free sealed trait ErrorM[F[_]] {
-    def either[A](fa: Either[Throwable, A]): FreeS.Par[F, A]
-    def error[A](e: Throwable): FreeS.Par[F, A]
-    def catchNonFatal[A](a: Eval[A]): FreeS.Par[F, A]
+  @free sealed trait ErrorM {
+    def either[A](fa: Either[Throwable, A]): OpPar[A]
+    def error[A](e: Throwable): OpPar[A]
+    def catchNonFatal[A](a: Eval[A]): OpPar[A]
   }
 
   trait ErrorImplicits {

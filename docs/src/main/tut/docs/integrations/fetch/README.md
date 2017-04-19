@@ -34,8 +34,8 @@ Let's start by creating a simple algebra for our application for printing messag
 import freestyle._
 import freestyle.implicits._
 
-@free trait Interact[F[_]] {
-  def tell(msg: String): FreeS[F, Unit]
+@free trait Interact {
+  def tell(msg: String): OpSeq[Unit]
 }
 ```
 

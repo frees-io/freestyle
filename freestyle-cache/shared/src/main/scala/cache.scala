@@ -28,37 +28,37 @@ package cache {
      * We assume that the actual store is too big or remote to allow for general
      * operations over all values, or to search or to iterate over all keys
      */
-    @free sealed trait CacheM[F[_]] {
+    @free sealed trait CacheM {
 
       // Gets the value associated to a key, if there is one */
-      def get(key: Key): FreeS.Par[F, Option[Val]]
+      def get(key: Key): OpPar[Option[Val]]
 
       // Sets the value of a key to a newValue.
-      def put(key: Key, newVal: Val): FreeS.Par[F, Unit]
+      def put(key: Key, newVal: Val): OpPar[Unit]
 
       // Copy all of the mappings from the specified map to this cache
-      def putAll(keyValues: Map[Key, Val]): FreeS.Par[F, Unit]
+      def putAll(keyValues: Map[Key, Val]): OpPar[Unit]
 
       //If the specified key is not already associated with a value, associate it with the given value.
-      def putIfAbsent(key: Key, newVal: Val): FreeS.Par[F, Unit]
+      def putIfAbsent(key: Key, newVal: Val): OpPar[Unit]
 
       // Removes the entry for the key if one exists
-      def del(key: Key): FreeS.Par[F, Unit]
+      def del(key: Key): OpPar[Unit]
 
       // Returns whether there is an entry for key or not.
-      def has(key: Key): FreeS.Par[F, Boolean]
+      def has(key: Key): OpPar[Boolean]
 
       // Returns the set of keys in the store
-      def keys: FreeS.Par[F, List[Key]]
+      def keys: OpPar[List[Key]]
 
       // Removes all entries
-      def clear: FreeS.Par[F, Unit]
+      def clear: OpPar[Unit]
 
       //Replaces the entry for a key only if currently mapped to some value
-      def replace(key: Key, newVal: Val): FreeS.Par[F, Unit]
+      def replace(key: Key, newVal: Val): OpPar[Unit]
 
       //Returns true if this cache contains no key-value mappings.
-      def isEmpty: FreeS.Par[F, Boolean]
+      def isEmpty: OpPar[Boolean]
 
     }
 

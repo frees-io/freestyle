@@ -16,17 +16,17 @@ Let’s first define a few algebras to illustrate how Modules work. We will star
 import freestyle._
 
 object algebras {
-    @free trait Database[F[_]] {
-      def get(id: Int): FreeS[F, Int]
+    @free trait Database {
+      def get(id: Int): OpSeq[Int]
     }
-    @free trait Cache[F[_]] {
-      def get(id: Int): FreeS[F, Option[Int]]
+    @free trait Cache {
+      def get(id: Int): OpSeq[Option[Int]]
     }
-    @free trait Presenter[F[_]] {
-      def show(id: Int): FreeS[F, Int]
+    @free trait Presenter {
+      def show(id: Int): OpSeq[Int]
     }
-    @free trait IdValidation[F[_]] {
-      def validate(id: Option[Int]): FreeS[F, Int]
+    @free trait IdValidation {
+      def validate(id: Option[Int]): OpSeq[Int]
     }
 }
 ```

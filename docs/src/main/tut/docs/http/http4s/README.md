@@ -40,9 +40,9 @@ In this example, we will create an algebra to calculate the VAT of a product's p
 ```tut:book
 import scala.math.BigDecimal
 
-@free trait CalcVAT[F[_]] {
-  def vat(price: BigDecimal): FreeS[F, BigDecimal]
-  def withVat(price: BigDecimal): FreeS[F, BigDecimal] =
+@free trait CalcVAT {
+  def vat(price: BigDecimal): OpSeq[BigDecimal]
+  def withVat(price: BigDecimal): OpSeq[BigDecimal] =
     vat(price).map(_ + price)
 }
 ```

@@ -124,8 +124,8 @@ class Fs2Tests extends AsyncWordSpec with Matchers {
 
 object algebras {
   @free
-  trait NonStream[F[_]] {
-    def x: FreeS[F, Int]
+  trait NonStream {
+    def x: OpSeq[Int]
   }
 
   implicit def nonStreamHandler: NonStream.Handler[Future] =

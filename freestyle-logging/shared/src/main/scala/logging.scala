@@ -19,23 +19,23 @@ package freestyle
 object logging {
 
   @free
-  trait LoggingM[F[_]] {
+  trait LoggingM {
 
-    def debug(msg: String): FreeS[F, Unit]
+    def debug(msg: String): OpSeq[Unit]
 
-    def debugWithCause(msg: String, cause: Throwable): FreeS[F, Unit]
+    def debugWithCause(msg: String, cause: Throwable): OpSeq[Unit]
 
-    def error(msg: String): FreeS[F, Unit]
+    def error(msg: String): OpSeq[Unit]
 
-    def errorWithCause(msg: String, cause: Throwable): FreeS[F, Unit]
+    def errorWithCause(msg: String, cause: Throwable): OpSeq[Unit]
 
-    def info(msg: String): FreeS[F, Unit]
+    def info(msg: String): OpSeq[Unit]
 
-    def infoWithCause(msg: String, cause: Throwable): FreeS[F, Unit]
+    def infoWithCause(msg: String, cause: Throwable): OpSeq[Unit]
 
-    def warn(msg: String): FreeS[F, Unit]
+    def warn(msg: String): OpSeq[Unit]
 
-    def warnWithCause(msg: String, cause: Throwable): FreeS[F, Unit]
+    def warnWithCause(msg: String, cause: Throwable): OpSeq[Unit]
   }
 
 }

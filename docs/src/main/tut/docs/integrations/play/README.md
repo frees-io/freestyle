@@ -41,8 +41,8 @@ For demonstration purposes, we will create a very simple program that returns an
 ```tut:book
 object algebras {
   @free
-  trait Noop[F[_]] {
-    def ok: FreeS[F, String]
+  trait Noop {
+    def ok: OpSeq[String]
   }
 }
 
