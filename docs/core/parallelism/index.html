@@ -23,9 +23,9 @@ FreeS is an alias for a Free monad that represents a sequential fragment of pote
 <div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">freestyle._</span>
 <span class="c1">// import freestyle._
 </span>
-<span class="nd">@free</span> <span class="k">trait</span> <span class="nc">Validation</span><span class="o">[</span><span class="kt">F</span><span class="o">[</span><span class="k">_</span><span class="o">]]</span> <span class="o">{</span>
-  <span class="k">def</span> <span class="n">minSize</span><span class="o">(</span><span class="n">n</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span><span class="k">:</span> <span class="kt">FreeS.Par</span><span class="o">[</span><span class="kt">F</span>, <span class="kt">Boolean</span><span class="o">]</span>
-  <span class="k">def</span> <span class="n">hasNumber</span><span class="k">:</span> <span class="kt">FreeS.Par</span><span class="o">[</span><span class="kt">F</span>, <span class="kt">Boolean</span><span class="o">]</span>
+<span class="nd">@free</span> <span class="k">trait</span> <span class="nc">Validation</span> <span class="o">{</span>
+  <span class="k">def</span> <span class="n">minSize</span><span class="o">(</span><span class="n">n</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span><span class="k">:</span> <span class="kt">OpPar</span><span class="o">[</span><span class="kt">Boolean</span><span class="o">]</span>
+  <span class="k">def</span> <span class="n">hasNumber</span><span class="k">:</span> <span class="kt">OpPar</span><span class="o">[</span><span class="kt">Boolean</span><span class="o">]</span>
 <span class="o">}</span>
 <span class="c1">// defined trait Validation
 // defined object Validation
@@ -74,19 +74,19 @@ Freestyle ships with ready to use instances for <code class="highlighter-rouge">
   <span class="k">override</span> <span class="k">def</span> <span class="n">hasNumber</span><span class="k">:</span> <span class="kt">ParValidator</span><span class="o">[</span><span class="kt">Boolean</span><span class="o">]</span> <span class="k">=</span>
     <span class="nc">Kleisli</span><span class="o">(</span><span class="n">s</span> <span class="k">=&gt;</span> <span class="nc">Future</span><span class="o">(</span><span class="n">s</span><span class="o">.</span><span class="n">exists</span><span class="o">(</span><span class="n">c</span> <span class="k">=&gt;</span> <span class="s">"0123456789"</span><span class="o">.</span><span class="n">contains</span><span class="o">(</span><span class="n">c</span><span class="o">))))</span>
 <span class="o">}</span>
-<span class="c1">// interpreter: Validation.Handler[ParValidator] = $anon$1@5563ac5d
+<span class="c1">// interpreter: Validation.Handler[ParValidator] = $anon$1@3ccc5a92
 </span>
 <span class="k">val</span> <span class="n">validation</span> <span class="k">=</span> <span class="nc">Validation</span><span class="o">[</span><span class="kt">Validation.Op</span><span class="o">]</span>
-<span class="c1">// validation: Validation[Validation.Op] = Validation$To@26b83307
+<span class="c1">// validation: Validation[Validation.Op] = Validation$To@4fc1524d
 </span>
 <span class="k">import</span> <span class="nn">validation._</span>
 <span class="c1">// import validation._
 </span>
 <span class="k">val</span> <span class="n">parValidation</span> <span class="k">=</span> <span class="o">(</span><span class="n">minSize</span><span class="o">(</span><span class="mi">3</span><span class="o">)</span> <span class="o">|@|</span> <span class="n">hasNumber</span><span class="o">).</span><span class="n">map</span><span class="o">(</span><span class="k">_</span> <span class="o">::</span> <span class="k">_</span> <span class="o">::</span> <span class="nc">Nil</span><span class="o">)</span>
-<span class="c1">// parValidation: freestyle.FreeS.Par[Validation.Op,List[Boolean]] = FreeApplicative(...)
+<span class="c1">// parValidation: validation.OpPar[List[Boolean]] = FreeApplicative(...)
 </span>
 <span class="k">val</span> <span class="n">validator</span> <span class="k">=</span> <span class="n">parValidation</span><span class="o">.</span><span class="n">exec</span><span class="o">[</span><span class="kt">ParValidator</span><span class="o">]</span>
-<span class="c1">// validator: ParValidator[List[Boolean]] = Kleisli(cats.data.Kleisli$$Lambda$2655/1541479004@159ceecb)
+<span class="c1">// validator: ParValidator[List[Boolean]] = Kleisli(cats.data.Kleisli$$Lambda$2660/946300319@782667d8)
 </span>
 <span class="c1">//validator.run("abc1") runs each op in parallel and returns the result in a Future
 </span></code></pre>
@@ -96,10 +96,10 @@ Freestyle ships with ready to use instances for <code class="highlighter-rouge">
 
 <p>Sequential and parallel actions can be easily intermixed in <code class="highlighter-rouge">@free</code> algebras:</p>
 
-<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="nd">@free</span> <span class="k">trait</span> <span class="nc">MixedFreeS</span><span class="o">[</span><span class="kt">F</span><span class="o">[</span><span class="k">_</span><span class="o">]]</span> <span class="o">{</span>
-  <span class="k">def</span> <span class="n">x</span><span class="k">:</span> <span class="kt">FreeS.Par</span><span class="o">[</span><span class="kt">F</span>, <span class="kt">Int</span><span class="o">]</span>
-  <span class="k">def</span> <span class="n">y</span><span class="k">:</span> <span class="kt">FreeS.Par</span><span class="o">[</span><span class="kt">F</span>, <span class="kt">Int</span><span class="o">]</span>
-  <span class="k">def</span> <span class="n">z</span><span class="k">:</span> <span class="kt">FreeS</span><span class="o">[</span><span class="kt">F</span>, <span class="kt">Int</span><span class="o">]</span>
+<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="nd">@free</span> <span class="k">trait</span> <span class="nc">MixedFreeS</span> <span class="o">{</span>
+  <span class="k">def</span> <span class="n">x</span><span class="k">:</span> <span class="kt">OpPar</span><span class="o">[</span><span class="kt">Int</span><span class="o">]</span>
+  <span class="k">def</span> <span class="n">y</span><span class="k">:</span> <span class="kt">OpPar</span><span class="o">[</span><span class="kt">Int</span><span class="o">]</span>
+  <span class="k">def</span> <span class="n">z</span><span class="k">:</span> <span class="kt">OpSeq</span><span class="o">[</span><span class="kt">Int</span><span class="o">]</span>
 <span class="o">}</span>
 <span class="c1">// defined trait MixedFreeS
 // defined object MixedFreeS

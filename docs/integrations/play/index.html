@@ -34,8 +34,8 @@
 
 <div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">object</span> <span class="nc">algebras</span> <span class="o">{</span>
   <span class="nd">@free</span>
-  <span class="k">trait</span> <span class="nc">Noop</span><span class="o">[</span><span class="kt">F</span><span class="o">[</span><span class="k">_</span><span class="o">]]</span> <span class="o">{</span>
-    <span class="k">def</span> <span class="n">ok</span><span class="k">:</span> <span class="kt">FreeS</span><span class="o">[</span><span class="kt">F</span>, <span class="kt">String</span><span class="o">]</span>
+  <span class="k">trait</span> <span class="nc">Noop</span> <span class="o">{</span>
+    <span class="k">def</span> <span class="n">ok</span><span class="k">:</span> <span class="kt">OpSeq</span><span class="o">[</span><span class="kt">String</span><span class="o">]</span>
   <span class="o">}</span>
 <span class="o">}</span>
 <span class="c1">// defined object algebras

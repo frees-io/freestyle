@@ -12,10 +12,10 @@
 <span class="k">case</span> <span class="k">class</span> <span class="nc">User</span><span class="o">(</span><span class="n">id</span><span class="k">:</span> <span class="kt">Long</span><span class="o">,</span> <span class="n">name</span><span class="k">:</span> <span class="kt">String</span><span class="o">)</span>
 <span class="c1">// defined class User
 </span>
-<span class="nd">@free</span> <span class="k">trait</span> <span class="nc">UserRepository</span><span class="o">[</span><span class="kt">F</span><span class="o">[</span><span class="k">_</span><span class="o">]]</span> <span class="o">{</span>
-  <span class="k">def</span> <span class="n">get</span><span class="o">(</span><span class="n">id</span><span class="k">:</span> <span class="kt">Long</span><span class="o">)</span><span class="k">:</span> <span class="kt">FreeS</span><span class="o">[</span><span class="kt">F</span>, <span class="kt">User</span><span class="o">]</span>
-  <span class="k">def</span> <span class="n">save</span><span class="o">(</span><span class="n">user</span><span class="k">:</span> <span class="kt">User</span><span class="o">)</span><span class="k">:</span> <span class="kt">FreeS</span><span class="o">[</span><span class="kt">F</span>, <span class="kt">User</span><span class="o">]</span>
-  <span class="k">def</span> <span class="n">list</span><span class="k">:</span> <span class="kt">FreeS</span><span class="o">[</span><span class="kt">F</span>, <span class="kt">List</span><span class="o">[</span><span class="kt">User</span><span class="o">]]</span>
+<span class="nd">@free</span> <span class="k">trait</span> <span class="nc">UserRepository</span> <span class="o">{</span>
+  <span class="k">def</span> <span class="n">get</span><span class="o">(</span><span class="n">id</span><span class="k">:</span> <span class="kt">Long</span><span class="o">)</span><span class="k">:</span> <span class="kt">OpSeq</span><span class="o">[</span><span class="kt">User</span><span class="o">]</span>
+  <span class="k">def</span> <span class="n">save</span><span class="o">(</span><span class="n">user</span><span class="k">:</span> <span class="kt">User</span><span class="o">)</span><span class="k">:</span> <span class="kt">OpSeq</span><span class="o">[</span><span class="kt">User</span><span class="o">]</span>
+  <span class="k">def</span> <span class="n">list</span><span class="k">:</span> <span class="kt">OpSeq</span><span class="o">[</span><span class="kt">List</span><span class="o">[</span><span class="kt">User</span><span class="o">]]</span>
 <span class="o">}</span>
 <span class="c1">// defined trait UserRepository
 // defined object UserRepository
@@ -24,16 +24,16 @@
 
 <p>This is similar to the simplified manual encoding below:</p>
 
-<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">freestyle.FreeS</span>
-<span class="c1">// import freestyle.FreeS
+<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">freestyle.</span><span class="o">{</span><span class="nc">FreeS</span><span class="o">,</span> <span class="nc">EffectLike</span><span class="o">}</span>
+<span class="c1">// import freestyle.{FreeS, EffectLike}
 </span>
 <span class="k">case</span> <span class="k">class</span> <span class="nc">User</span><span class="o">(</span><span class="n">id</span><span class="k">:</span> <span class="kt">Long</span><span class="o">,</span> <span class="n">name</span><span class="k">:</span> <span class="kt">String</span><span class="o">)</span>
 <span class="c1">// defined class User
 </span>
-<span class="k">trait</span> <span class="nc">UserRepository</span><span class="o">[</span><span class="kt">F</span><span class="o">[</span><span class="k">_</span><span class="o">]]</span> <span class="o">{</span>
-  <span class="k">def</span> <span class="n">get</span><span class="o">(</span><span class="n">id</span><span class="k">:</span> <span class="kt">Long</span><span class="o">)</span><span class="k">:</span> <span class="kt">FreeS</span><span class="o">[</span><span class="kt">F</span>, <span class="kt">User</span><span class="o">]</span>
-  <span class="k">def</span> <span class="n">save</span><span class="o">(</span><span class="n">user</span><span class="k">:</span> <span class="kt">User</span><span class="o">)</span><span class="k">:</span> <span class="kt">FreeS</span><span class="o">[</span><span class="kt">F</span>, <span class="kt">User</span><span class="o">]</span>
-  <span class="k">def</span> <span class="n">getAll</span><span class="o">(</span><span class="n">filter</span><span class="k">:</span> <span class="kt">String</span><span class="o">)</span><span class="k">:</span> <span class="kt">FreeS</span><span class="o">[</span><span class="kt">F</span>, <span class="kt">List</span><span class="o">[</span><span class="kt">User</span><span class="o">]]</span>
+<span class="k">trait</span> <span class="nc">UserRepository</span><span class="o">[</span><span class="kt">F</span><span class="o">[</span><span class="k">_</span><span class="o">]]</span> <span class="nc">extends</span> <span class="n">freestyle</span><span class="o">.</span><span class="nc">EffectLike</span><span class="o">[</span><span class="kt">F</span><span class="o">]</span> <span class="o">{</span>
+  <span class="k">def</span> <span class="n">get</span><span class="o">(</span><span class="n">id</span><span class="k">:</span> <span class="kt">Long</span><span class="o">)</span><span class="k">:</span> <span class="kt">OpSeq</span><span class="o">[</span><span class="kt">User</span><span class="o">]</span>
+  <span class="k">def</span> <span class="n">save</span><span class="o">(</span><span class="n">user</span><span class="k">:</span> <span class="kt">User</span><span class="o">)</span><span class="k">:</span> <span class="kt">OpSeq</span><span class="o">[</span><span class="kt">User</span><span class="o">]</span>
+  <span class="k">def</span> <span class="n">getAll</span><span class="o">(</span><span class="n">filter</span><span class="k">:</span> <span class="kt">String</span><span class="o">)</span><span class="k">:</span> <span class="kt">OpSeq</span><span class="o">[</span><span class="kt">List</span><span class="o">[</span><span class="kt">User</span><span class="o">]]</span>
 <span class="o">}</span>
 <span class="c1">// defined trait UserRepository
 // warning: previously defined object UserRepository is not a companion to trait UserRepository.
@@ -106,7 +106,7 @@ This effectively enables implicits based Dependency Injection where you may choo
 using the implicits scoping rules to place different implementations where appropriate.</p>
 
 <div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">val</span> <span class="n">userRepository</span> <span class="k">=</span> <span class="nc">UserRepository</span><span class="o">[</span><span class="kt">UserRepository.Op</span><span class="o">]</span>
-<span class="c1">// userRepository: UserRepository[UserRepository.Op] = UserRepository$To@588c2023
+<span class="c1">// userRepository: UserRepository[UserRepository.Op] = UserRepository$To@3088c82b
 </span></code></pre>
 </div>
 
@@ -128,20 +128,20 @@ You may use this to manually build <code class="highlighter-rouge">Coproduct</co
 <div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">cats.data.Coproduct</span>
 <span class="c1">// import cats.data.Coproduct
 </span>
-<span class="nd">@free</span> <span class="k">trait</span> <span class="nc">Service1</span><span class="o">[</span><span class="kt">F</span><span class="o">[</span><span class="k">_</span><span class="o">]]{</span>
-  <span class="k">def</span> <span class="n">x</span><span class="o">(</span><span class="n">n</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span><span class="k">:</span> <span class="kt">FreeS</span><span class="o">[</span><span class="kt">F</span>, <span class="kt">Int</span><span class="o">]</span>
+<span class="nd">@free</span> <span class="k">trait</span> <span class="nc">Service1</span><span class="o">{</span>
+  <span class="k">def</span> <span class="n">x</span><span class="o">(</span><span class="n">n</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span><span class="k">:</span> <span class="kt">OpSeq</span><span class="o">[</span><span class="kt">Int</span><span class="o">]</span>
 <span class="o">}</span>
 <span class="c1">// defined trait Service1
 // defined object Service1
 </span>
-<span class="nd">@free</span> <span class="k">trait</span> <span class="nc">Service2</span><span class="o">[</span><span class="kt">F</span><span class="o">[</span><span class="k">_</span><span class="o">]]{</span>
-  <span class="k">def</span> <span class="n">y</span><span class="o">(</span><span class="n">n</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span><span class="k">:</span> <span class="kt">FreeS</span><span class="o">[</span><span class="kt">F</span>, <span class="kt">Int</span><span class="o">]</span>
+<span class="nd">@free</span> <span class="k">trait</span> <span class="nc">Service2</span><span class="o">{</span>
+  <span class="k">def</span> <span class="n">y</span><span class="o">(</span><span class="n">n</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span><span class="k">:</span> <span class="kt">OpSeq</span><span class="o">[</span><span class="kt">Int</span><span class="o">]</span>
 <span class="o">}</span>
 <span class="c1">// defined trait Service2
 // defined object Service2
 </span>
-<span class="nd">@free</span> <span class="k">trait</span> <span class="nc">Service3</span><span class="o">[</span><span class="kt">F</span><span class="o">[</span><span class="k">_</span><span class="o">]]{</span>
-  <span class="k">def</span> <span class="n">z</span><span class="o">(</span><span class="n">n</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span><span class="k">:</span> <span class="kt">FreeS</span><span class="o">[</span><span class="kt">F</span>, <span class="kt">Int</span><span class="o">]</span>
+<span class="nd">@free</span> <span class="k">trait</span> <span class="nc">Service3</span><span class="o">{</span>
+  <span class="k">def</span> <span class="n">z</span><span class="o">(</span><span class="n">n</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span><span class="k">:</span> <span class="kt">OpSeq</span><span class="o">[</span><span class="kt">Int</span><span class="o">]</span>
 <span class="o">}</span>
 <span class="c1">// defined trait Service3
 // defined object Service3

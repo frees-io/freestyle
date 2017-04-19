@@ -19,18 +19,18 @@ member in your algebras companion.</p>
 <span class="k">import</span> <span class="nn">cats.implicits._</span>
 <span class="c1">// import cats.implicits._
 </span>
-<span class="nd">@free</span> <span class="k">trait</span> <span class="nc">KVStore</span><span class="o">[</span><span class="kt">F</span><span class="o">[</span><span class="k">_</span><span class="o">]]</span> <span class="o">{</span>
-  <span class="k">def</span> <span class="n">put</span><span class="o">[</span><span class="kt">A</span><span class="o">](</span><span class="n">key</span><span class="k">:</span> <span class="kt">String</span><span class="o">,</span> <span class="n">value</span><span class="k">:</span> <span class="kt">A</span><span class="o">)</span><span class="k">:</span> <span class="kt">FreeS</span><span class="o">[</span><span class="kt">F</span>, <span class="kt">Unit</span><span class="o">]</span>
-  <span class="k">def</span> <span class="n">get</span><span class="o">[</span><span class="kt">A</span><span class="o">](</span><span class="n">key</span><span class="k">:</span> <span class="kt">String</span><span class="o">)</span><span class="k">:</span> <span class="kt">FreeS</span><span class="o">[</span><span class="kt">F</span>, <span class="kt">Option</span><span class="o">[</span><span class="kt">A</span><span class="o">]]</span>
-  <span class="k">def</span> <span class="n">delete</span><span class="o">(</span><span class="n">key</span><span class="k">:</span> <span class="kt">String</span><span class="o">)</span><span class="k">:</span> <span class="kt">FreeS</span><span class="o">[</span><span class="kt">F</span>, <span class="kt">Unit</span><span class="o">]</span>
-  <span class="k">def</span> <span class="n">update</span><span class="o">[</span><span class="kt">A</span><span class="o">](</span><span class="n">key</span><span class="k">:</span> <span class="kt">String</span><span class="o">,</span> <span class="n">f</span><span class="k">:</span> <span class="kt">A</span> <span class="o">=&gt;</span> <span class="n">A</span><span class="o">)</span><span class="k">:</span> <span class="kt">FreeS</span><span class="o">[</span><span class="kt">F</span>, <span class="kt">Unit</span><span class="o">]</span> <span class="k">=</span> 
+<span class="nd">@free</span> <span class="k">trait</span> <span class="nc">KVStore</span> <span class="o">{</span>
+  <span class="k">def</span> <span class="n">put</span><span class="o">[</span><span class="kt">A</span><span class="o">](</span><span class="n">key</span><span class="k">:</span> <span class="kt">String</span><span class="o">,</span> <span class="n">value</span><span class="k">:</span> <span class="kt">A</span><span class="o">)</span><span class="k">:</span> <span class="kt">OpSeq</span><span class="o">[</span><span class="kt">Unit</span><span class="o">]</span>
+  <span class="k">def</span> <span class="n">get</span><span class="o">[</span><span class="kt">A</span><span class="o">](</span><span class="n">key</span><span class="k">:</span> <span class="kt">String</span><span class="o">)</span><span class="k">:</span> <span class="kt">OpSeq</span><span class="o">[</span><span class="kt">Option</span><span class="o">[</span><span class="kt">A</span><span class="o">]]</span>
+  <span class="k">def</span> <span class="n">delete</span><span class="o">(</span><span class="n">key</span><span class="k">:</span> <span class="kt">String</span><span class="o">)</span><span class="k">:</span> <span class="kt">OpSeq</span><span class="o">[</span><span class="kt">Unit</span><span class="o">]</span>
+  <span class="k">def</span> <span class="n">update</span><span class="o">[</span><span class="kt">A</span><span class="o">](</span><span class="n">key</span><span class="k">:</span> <span class="kt">String</span><span class="o">,</span> <span class="n">f</span><span class="k">:</span> <span class="kt">A</span> <span class="o">=&gt;</span> <span class="n">A</span><span class="o">)</span><span class="k">:</span> <span class="kt">OpSeq</span><span class="o">[</span><span class="kt">Unit</span><span class="o">]</span> <span class="k">=</span>
     <span class="n">get</span><span class="o">[</span><span class="kt">A</span><span class="o">](</span><span class="n">key</span><span class="o">)</span> <span class="n">flatMap</span> <span class="o">{</span>
       <span class="k">case</span> <span class="nc">Some</span><span class="o">(</span><span class="n">a</span><span class="o">)</span> <span class="k">=&gt;</span> <span class="n">put</span><span class="o">[</span><span class="kt">A</span><span class="o">](</span><span class="n">key</span><span class="o">,</span> <span class="n">f</span><span class="o">(</span><span class="n">a</span><span class="o">))</span>
-      <span class="k">case</span> <span class="nc">None</span> <span class="k">=&gt;</span> <span class="o">().</span><span class="n">pure</span><span class="o">[</span><span class="kt">FreeS</span><span class="o">[</span><span class="kt">F</span>, <span class="kt">?</span><span class="o">]]</span>
+      <span class="k">case</span> <span class="nc">None</span> <span class="k">=&gt;</span> <span class="o">().</span><span class="n">pure</span><span class="o">[</span><span class="kt">OpSeq</span><span class="o">]</span>
     <span class="o">}</span>
 <span class="o">}</span>
 <span class="c1">// &lt;console&gt;:18: warning: a type was inferred to be `Any`; this may indicate a programming error.
-//        @free trait KVStore[F[_]] {
+//        @free trait KVStore {
 //         ^
 // defined trait KVStore
 // defined object KVStore
@@ -53,7 +53,7 @@ member in your algebras companion.</p>
   <span class="k">def</span> <span class="n">delete</span><span class="o">(</span><span class="n">key</span><span class="k">:</span> <span class="kt">String</span><span class="o">)</span><span class="k">:</span> <span class="kt">KVStoreState</span><span class="o">[</span><span class="kt">Unit</span><span class="o">]</span> <span class="k">=</span>
     <span class="nc">State</span><span class="o">.</span><span class="n">modify</span><span class="o">(</span><span class="k">_</span> <span class="o">-</span> <span class="n">key</span><span class="o">)</span>
 <span class="o">}</span>
-<span class="c1">// kvStoreHandler: KVStore.Handler[KVStoreState] = $anon$1@14e283c8
+<span class="c1">// kvStoreHandler: KVStore.Handler[KVStoreState] = $anon$1@345be439
 </span></code></pre>
 </div>
 
@@ -90,9 +90,9 @@ member in your algebras companion.</p>
 by the evidence of it’s algebras’ interpreters.
 To illustrate interpreter composition, let’s define a new algebra <code class="highlighter-rouge">Log</code> which we will compose with our <code class="highlighter-rouge">KVStore</code> operations:</p>
 
-<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="nd">@free</span> <span class="k">trait</span> <span class="nc">Log</span><span class="o">[</span><span class="kt">F</span><span class="o">[</span><span class="k">_</span><span class="o">]]</span> <span class="o">{</span>
-  <span class="k">def</span> <span class="n">info</span><span class="o">(</span><span class="n">msg</span><span class="k">:</span> <span class="kt">String</span><span class="o">)</span><span class="k">:</span> <span class="kt">FreeS</span><span class="o">[</span><span class="kt">F</span>, <span class="kt">Unit</span><span class="o">]</span>
-  <span class="k">def</span> <span class="n">warn</span><span class="o">(</span><span class="n">msg</span><span class="k">:</span> <span class="kt">String</span><span class="o">)</span><span class="k">:</span> <span class="kt">FreeS</span><span class="o">[</span><span class="kt">F</span>, <span class="kt">Unit</span><span class="o">]</span>
+<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="nd">@free</span> <span class="k">trait</span> <span class="nc">Log</span> <span class="o">{</span>
+  <span class="k">def</span> <span class="n">info</span><span class="o">(</span><span class="n">msg</span><span class="k">:</span> <span class="kt">String</span><span class="o">)</span><span class="k">:</span> <span class="kt">OpSeq</span><span class="o">[</span><span class="kt">Unit</span><span class="o">]</span>
+  <span class="k">def</span> <span class="n">warn</span><span class="o">(</span><span class="n">msg</span><span class="k">:</span> <span class="kt">String</span><span class="o">)</span><span class="k">:</span> <span class="kt">OpSeq</span><span class="o">[</span><span class="kt">Unit</span><span class="o">]</span>
 <span class="o">}</span>
 <span class="c1">// defined trait Log
 // defined object Log
@@ -156,7 +156,7 @@ below:</p>
 <span class="c1">// import freestyle.implicits._
 </span>
 <span class="n">program</span><span class="o">[</span><span class="kt">Backend.Op</span><span class="o">].</span><span class="n">exec</span><span class="o">[</span><span class="kt">KVStoreState</span><span class="o">]</span>
-<span class="c1">// res0: KVStoreState[Option[Int]] = cats.data.StateT@3f303d8f
+<span class="c1">// res0: KVStoreState[Option[Int]] = cats.data.StateT@28f554ba
 </span></code></pre>
 </div>
 

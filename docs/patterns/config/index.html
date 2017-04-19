@@ -24,10 +24,10 @@ The current implementation exposes the most important combinators found in <a hr
   <span class="k">def</span> <span class="n">duration</span><span class="o">(</span><span class="n">path</span><span class="k">:</span> <span class="kt">String</span><span class="o">,</span> <span class="n">unit</span><span class="k">:</span> <span class="kt">TimeUnit</span><span class="o">)</span><span class="k">:</span> <span class="kt">Option</span><span class="o">[</span><span class="kt">Long</span><span class="o">]</span>
 <span class="o">}</span>
 
-<span class="nd">@free</span> <span class="k">sealed</span> <span class="k">trait</span> <span class="nc">ConfigM</span><span class="o">[</span><span class="kt">F</span><span class="o">[</span><span class="k">_</span><span class="o">]]</span> <span class="o">{</span>
-  <span class="k">def</span> <span class="n">load</span><span class="k">:</span> <span class="kt">FreeS</span><span class="o">[</span><span class="kt">F</span>, <span class="kt">Config</span><span class="o">]</span>
-  <span class="k">def</span> <span class="n">empty</span><span class="k">:</span> <span class="kt">FreeS</span><span class="o">[</span><span class="kt">F</span>, <span class="kt">Config</span><span class="o">]</span>
-  <span class="k">def</span> <span class="n">parseString</span><span class="o">(</span><span class="n">s</span><span class="k">:</span> <span class="kt">String</span><span class="o">)</span><span class="k">:</span> <span class="kt">FreeS</span><span class="o">[</span><span class="kt">F</span>, <span class="kt">Config</span><span class="o">]</span>
+<span class="nd">@free</span> <span class="k">sealed</span> <span class="k">trait</span> <span class="nc">ConfigM</span> <span class="o">{</span>
+  <span class="k">def</span> <span class="n">load</span><span class="k">:</span> <span class="kt">OpSeq</span><span class="o">[</span><span class="kt">Config</span><span class="o">]</span>
+  <span class="k">def</span> <span class="n">empty</span><span class="k">:</span> <span class="kt">OpSeq</span><span class="o">[</span><span class="kt">Config</span><span class="o">]</span>
+  <span class="k">def</span> <span class="n">parseString</span><span class="o">(</span><span class="n">s</span><span class="k">:</span> <span class="kt">String</span><span class="o">)</span><span class="k">:</span> <span class="kt">OpSeq</span><span class="o">[</span><span class="kt">Config</span><span class="o">]</span>
 <span class="o">}</span>
 </code></pre>
 </div>
@@ -57,8 +57,8 @@ The current implementation exposes the most important combinators found in <a hr
 
 <p>We will define a very simple algebra with a stub handler that returns a list of issue states for illustration purposes:</p>
 
-<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="nd">@free</span> <span class="k">trait</span> <span class="nc">IssuesService</span><span class="o">[</span><span class="kt">F</span><span class="o">[</span><span class="k">_</span><span class="o">]]</span> <span class="o">{</span>
-  <span class="k">def</span> <span class="n">states</span><span class="k">:</span> <span class="kt">FreeS</span><span class="o">[</span><span class="kt">F</span>, <span class="kt">List</span><span class="o">[</span><span class="kt">String</span><span class="o">]]</span>
+<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="nd">@free</span> <span class="k">trait</span> <span class="nc">IssuesService</span> <span class="o">{</span>
+  <span class="k">def</span> <span class="n">states</span><span class="k">:</span> <span class="kt">OpSeq</span><span class="o">[</span><span class="kt">List</span><span class="o">[</span><span class="kt">String</span><span class="o">]]</span>
 <span class="o">}</span>
 <span class="c1">// defined trait IssuesService
 // defined object IssuesService
@@ -66,7 +66,7 @@ The current implementation exposes the most important combinators found in <a hr
 <span class="k">implicit</span> <span class="k">val</span> <span class="n">issuesServiceHandler</span><span class="k">:</span> <span class="kt">IssuesService.Handler</span><span class="o">[</span><span class="kt">Try</span><span class="o">]</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">IssuesService</span><span class="o">.</span><span class="nc">Handler</span><span class="o">[</span><span class="kt">Try</span><span class="o">]</span> <span class="o">{</span>
   <span class="k">def</span> <span class="n">states</span><span class="k">:</span> <span class="kt">Try</span><span class="o">[</span><span class="kt">List</span><span class="o">[</span><span class="kt">String</span><span class="o">]]</span> <span class="k">=</span> <span class="nc">Try</span><span class="o">(</span><span class="nc">List</span><span class="o">(</span><span class="s">"open"</span><span class="o">,</span> <span class="s">"reverted"</span><span class="o">,</span> <span class="s">"in progress"</span><span class="o">,</span> <span class="s">"closed"</span><span class="o">))</span>
 <span class="o">}</span>
-<span class="c1">// issuesServiceHandler: IssuesService.Handler[scala.util.Try] = $anon$1@3361cf53
+<span class="c1">// issuesServiceHandler: IssuesService.Handler[scala.util.Try] = $anon$1@751bbbd5
 </span></code></pre>
 </div>
 

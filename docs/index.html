@@ -37,14 +37,14 @@
 
 <span class="k">object</span> <span class="nc">algebras</span> <span class="o">{</span>
 
-    <span class="nd">@free</span> <span class="k">trait</span> <span class="nc">Validation</span><span class="o">[</span><span class="kt">F</span><span class="o">[</span><span class="k">_</span><span class="o">]]</span> <span class="o">{</span>
-      <span class="k">def</span> <span class="n">minSize</span><span class="o">(</span><span class="n">s</span><span class="k">:</span> <span class="kt">String</span><span class="o">,</span> <span class="n">n</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span><span class="k">:</span> <span class="kt">FreeS.Par</span><span class="o">[</span><span class="kt">F</span>, <span class="kt">Boolean</span><span class="o">]</span>
-      <span class="k">def</span> <span class="n">hasNumber</span><span class="o">(</span><span class="n">s</span><span class="k">:</span> <span class="kt">String</span><span class="o">)</span><span class="k">:</span> <span class="kt">FreeS.Par</span><span class="o">[</span><span class="kt">F</span>, <span class="kt">Boolean</span><span class="o">]</span>
+    <span class="nd">@free</span> <span class="k">trait</span> <span class="nc">Validation</span> <span class="o">{</span>
+      <span class="k">def</span> <span class="n">minSize</span><span class="o">(</span><span class="n">s</span><span class="k">:</span> <span class="kt">String</span><span class="o">,</span> <span class="n">n</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span><span class="k">:</span> <span class="kt">OpPar</span><span class="o">[</span><span class="kt">Boolean</span><span class="o">]</span>
+      <span class="k">def</span> <span class="n">hasNumber</span><span class="o">(</span><span class="n">s</span><span class="k">:</span> <span class="kt">String</span><span class="o">)</span><span class="k">:</span> <span class="kt">OpPar</span><span class="o">[</span><span class="kt">Boolean</span><span class="o">]</span>
     <span class="o">}</span>
 
-    <span class="nd">@free</span> <span class="k">trait</span> <span class="nc">Interaction</span><span class="o">[</span><span class="kt">F</span><span class="o">[</span><span class="k">_</span><span class="o">]]</span> <span class="o">{</span>
-      <span class="k">def</span> <span class="n">tell</span><span class="o">(</span><span class="n">msg</span><span class="k">:</span> <span class="kt">String</span><span class="o">)</span><span class="k">:</span> <span class="kt">FreeS</span><span class="o">[</span><span class="kt">F</span>, <span class="kt">Unit</span><span class="o">]</span>
-      <span class="k">def</span> <span class="n">ask</span><span class="o">(</span><span class="n">prompt</span><span class="k">:</span> <span class="kt">String</span><span class="o">)</span><span class="k">:</span> <span class="kt">FreeS</span><span class="o">[</span><span class="kt">F</span>, <span class="kt">String</span><span class="o">]</span>
+    <span class="nd">@free</span> <span class="k">trait</span> <span class="nc">Interaction</span> <span class="o">{</span>
+      <span class="k">def</span> <span class="n">tell</span><span class="o">(</span><span class="n">msg</span><span class="k">:</span> <span class="kt">String</span><span class="o">)</span><span class="k">:</span> <span class="kt">OpSeq</span><span class="o">[</span><span class="kt">Unit</span><span class="o">]</span>
+      <span class="k">def</span> <span class="n">ask</span><span class="o">(</span><span class="n">prompt</span><span class="k">:</span> <span class="kt">String</span><span class="o">)</span><span class="k">:</span> <span class="kt">OpSeq</span><span class="o">[</span><span class="kt">String</span><span class="o">]</span>
     <span class="o">}</span>
 <span class="o">}</span>
 </code></pre>

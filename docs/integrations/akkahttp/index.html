@@ -89,14 +89,14 @@ which a <code class="highlighter-rouge">Marshaller</code> <em>magnet</em> exists
 <span class="c1">// defined class User
 </span>
 <span class="nd">@free</span>
-<span class="k">trait</span> <span class="nc">UserApp</span><span class="o">[</span><span class="kt">F</span><span class="o">[</span><span class="k">_</span><span class="o">]]</span> <span class="o">{</span>
-  <span class="k">def</span> <span class="n">get</span><span class="o">(</span><span class="n">id</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span><span class="k">:</span> <span class="kt">FreeS</span><span class="o">[</span><span class="kt">F</span>, <span class="kt">User</span><span class="o">]</span>
+<span class="k">trait</span> <span class="nc">UserApp</span> <span class="o">{</span>
+  <span class="k">def</span> <span class="n">get</span><span class="o">(</span><span class="n">id</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span><span class="k">:</span> <span class="kt">OpSeq</span><span class="o">[</span><span class="kt">User</span><span class="o">]</span>
 <span class="o">}</span>
 <span class="c1">// defined trait UserApp
 // defined object UserApp
 </span>
 <span class="k">val</span> <span class="n">app</span> <span class="k">=</span> <span class="nc">UserApp</span><span class="o">.</span><span class="n">to</span><span class="o">[</span><span class="kt">UserApp.Op</span><span class="o">]</span>
-<span class="c1">// app: UserApp.To[UserApp.Op] = UserApp$To@2da1b693
+<span class="c1">// app: UserApp.To[UserApp.Op] = UserApp$To@7ee221c5
 </span></code></pre>
 </div>
 
@@ -111,13 +111,13 @@ and (2) an interpreter of the algebra to a suitable domain, which for this examp
 </span>
 <span class="k">implicit</span> <span class="k">val</span> <span class="n">userMarshaller</span><span class="k">:</span> <span class="kt">ToEntityMarshaller</span><span class="o">[</span><span class="kt">User</span><span class="o">]</span> <span class="k">=</span>
   <span class="nc">Marshaller</span><span class="o">.</span><span class="nc">StringMarshaller</span><span class="o">.</span><span class="n">compose</span><span class="o">((</span><span class="n">user</span><span class="k">:</span> <span class="kt">User</span><span class="o">)</span> <span class="k">=&gt;</span> <span class="n">s</span><span class="s">"User(${user.name})"</span><span class="o">)</span>
-<span class="c1">// userMarshaller: akka.http.scaladsl.marshalling.ToEntityMarshaller[User] = akka.http.scaladsl.marshalling.Marshaller$$anon$1@410174da
+<span class="c1">// userMarshaller: akka.http.scaladsl.marshalling.ToEntityMarshaller[User] = akka.http.scaladsl.marshalling.Marshaller$$anon$1@a0d1df9
 </span>
 <span class="k">implicit</span> <span class="k">val</span> <span class="n">handler</span><span class="k">:</span> <span class="kt">UserApp.Handler</span><span class="o">[</span><span class="kt">Id</span><span class="o">]</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">UserApp</span><span class="o">.</span><span class="nc">Handler</span><span class="o">[</span><span class="kt">Id</span><span class="o">]</span> <span class="o">{</span>
   <span class="k">private</span><span class="o">[</span><span class="kt">this</span><span class="o">]</span> <span class="k">val</span> <span class="n">users</span><span class="k">:</span> <span class="kt">Map</span><span class="o">[</span><span class="kt">Int</span>, <span class="kt">User</span><span class="o">]</span> <span class="k">=</span> <span class="nc">Map</span><span class="o">(</span> <span class="mi">1</span> <span class="o">-&gt;</span> <span class="nc">User</span><span class="o">(</span><span class="s">"foo"</span><span class="o">)</span> <span class="o">)</span>
     <span class="k">override</span> <span class="k">def</span> <span class="n">get</span><span class="o">(</span><span class="n">id</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span><span class="k">:</span> <span class="kt">User</span> <span class="o">=</span> <span class="n">users</span><span class="o">.</span><span class="n">get</span><span class="o">(</span><span class="n">id</span><span class="o">).</span><span class="n">getOrElse</span><span class="o">(</span><span class="nc">User</span><span class="o">(</span><span class="s">"default"</span><span class="o">))</span>
 <span class="o">}</span>
-<span class="c1">// handler: UserApp.Handler[cats.Id] = $anon$1@29d3acc9
+<span class="c1">// handler: UserApp.Handler[cats.Id] = $anon$1@242b601f
 </span></code></pre>
 </div>
 
@@ -138,7 +138,7 @@ and (2) an interpreter of the algebra to a suitable domain, which for this examp
 <span class="k">val</span> <span class="n">route</span><span class="k">:</span> <span class="kt">Route</span> <span class="o">=</span>  <span class="o">(</span><span class="n">get</span> <span class="o">&amp;</span> <span class="n">path</span><span class="o">(</span><span class="s">"user"</span> <span class="o">/</span> <span class="nc">IntNumber</span><span class="o">))</span> <span class="o">{</span> <span class="n">id</span> <span class="k">=&gt;</span>
   <span class="n">complete</span><span class="o">(</span><span class="n">app</span><span class="o">.</span><span class="n">get</span><span class="o">(</span><span class="n">id</span><span class="o">))</span>
 <span class="o">}</span>
-<span class="c1">// route: akka.http.scaladsl.server.Route = akka.http.scaladsl.server.directives.BasicDirectives$$Lambda$3954/497877629@156c2a84
+<span class="c1">// route: akka.http.scaladsl.server.Route = akka.http.scaladsl.server.directives.BasicDirectives$$Lambda$3966/932790755@363722dd
 </span></code></pre>
 </div>
 

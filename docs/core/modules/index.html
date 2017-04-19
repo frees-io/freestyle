@@ -10,17 +10,17 @@ help organize algebras in groups that can be arbitrarily nested.</p>
 <span class="c1">// import freestyle._
 </span>
 <span class="k">object</span> <span class="nc">algebras</span> <span class="o">{</span>
-    <span class="nd">@free</span> <span class="k">trait</span> <span class="nc">Database</span><span class="o">[</span><span class="kt">F</span><span class="o">[</span><span class="k">_</span><span class="o">]]</span> <span class="o">{</span>
-      <span class="k">def</span> <span class="n">get</span><span class="o">(</span><span class="n">id</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span><span class="k">:</span> <span class="kt">FreeS</span><span class="o">[</span><span class="kt">F</span>, <span class="kt">Int</span><span class="o">]</span>
+    <span class="nd">@free</span> <span class="k">trait</span> <span class="nc">Database</span> <span class="o">{</span>
+      <span class="k">def</span> <span class="n">get</span><span class="o">(</span><span class="n">id</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span><span class="k">:</span> <span class="kt">OpSeq</span><span class="o">[</span><span class="kt">Int</span><span class="o">]</span>
     <span class="o">}</span>
-    <span class="nd">@free</span> <span class="k">trait</span> <span class="nc">Cache</span><span class="o">[</span><span class="kt">F</span><span class="o">[</span><span class="k">_</span><span class="o">]]</span> <span class="o">{</span>
-      <span class="k">def</span> <span class="n">get</span><span class="o">(</span><span class="n">id</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span><span class="k">:</span> <span class="kt">FreeS</span><span class="o">[</span><span class="kt">F</span>, <span class="kt">Option</span><span class="o">[</span><span class="kt">Int</span><span class="o">]]</span>
+    <span class="nd">@free</span> <span class="k">trait</span> <span class="nc">Cache</span> <span class="o">{</span>
+      <span class="k">def</span> <span class="n">get</span><span class="o">(</span><span class="n">id</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span><span class="k">:</span> <span class="kt">OpSeq</span><span class="o">[</span><span class="kt">Option</span><span class="o">[</span><span class="kt">Int</span><span class="o">]]</span>
     <span class="o">}</span>
-    <span class="nd">@free</span> <span class="k">trait</span> <span class="nc">Presenter</span><span class="o">[</span><span class="kt">F</span><span class="o">[</span><span class="k">_</span><span class="o">]]</span> <span class="o">{</span>
-      <span class="k">def</span> <span class="n">show</span><span class="o">(</span><span class="n">id</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span><span class="k">:</span> <span class="kt">FreeS</span><span class="o">[</span><span class="kt">F</span>, <span class="kt">Int</span><span class="o">]</span>
+    <span class="nd">@free</span> <span class="k">trait</span> <span class="nc">Presenter</span> <span class="o">{</span>
+      <span class="k">def</span> <span class="n">show</span><span class="o">(</span><span class="n">id</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span><span class="k">:</span> <span class="kt">OpSeq</span><span class="o">[</span><span class="kt">Int</span><span class="o">]</span>
     <span class="o">}</span>
-    <span class="nd">@free</span> <span class="k">trait</span> <span class="nc">IdValidation</span><span class="o">[</span><span class="kt">F</span><span class="o">[</span><span class="k">_</span><span class="o">]]</span> <span class="o">{</span>
-      <span class="k">def</span> <span class="n">validate</span><span class="o">(</span><span class="n">id</span><span class="k">:</span> <span class="kt">Option</span><span class="o">[</span><span class="kt">Int</span><span class="o">])</span><span class="k">:</span> <span class="kt">FreeS</span><span class="o">[</span><span class="kt">F</span>, <span class="kt">Int</span><span class="o">]</span>
+    <span class="nd">@free</span> <span class="k">trait</span> <span class="nc">IdValidation</span> <span class="o">{</span>
+      <span class="k">def</span> <span class="n">validate</span><span class="o">(</span><span class="n">id</span><span class="k">:</span> <span class="kt">Option</span><span class="o">[</span><span class="kt">Int</span><span class="o">])</span><span class="k">:</span> <span class="kt">OpSeq</span><span class="o">[</span><span class="kt">Int</span><span class="o">]</span>
     <span class="o">}</span>
 <span class="o">}</span>
 <span class="c1">// defined object algebras
