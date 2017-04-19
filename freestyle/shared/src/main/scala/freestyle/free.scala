@@ -20,8 +20,10 @@ import scala.reflect.macros.blackbox.Context
 
 trait EffectLike[F[_]] {
   final type FS[A] = FreeS.Par[F, A]
-  final type OpSeq[A] = FreeS[F, A]
-  final type OpPar[A] = FreeS.Par[F, A]
+  final object FS {
+    final type Seq[A] = FreeS[F, A]
+    final type Par[A] = FreeS.Par[F, A]
+  }
 }
 
 object freeImpl {

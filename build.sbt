@@ -55,6 +55,7 @@ lazy val docs = (project in file("docs"))
   )
   .settings(
     libraryDependencies ++= Seq(
+      %%("play") % "test",
       %%("doobie-h2-cats"),
       %%("http4s-dsl"),
       %("h2") % "test"
@@ -256,7 +257,7 @@ lazy val httpPlay = (project in file("http/play"))
   .settings(
     parallelExecution in Test := false,
     libraryDependencies ++= Seq(
-      %%("play"),
+      %%("play") % "test",
       %%("play-test") % "test"
     ) ++ commonDeps
   )

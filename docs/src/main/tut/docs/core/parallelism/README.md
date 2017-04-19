@@ -50,12 +50,10 @@ The code below illustrates a handler that will allow parallel executions thanks 
 
 ```tut:book
 import cats.data.Kleisli
-import cats.implicits._
-import scala.concurrent._
+import cats.syntax.cartesian._
+import scala.concurrent.Future
 import scala.concurrent.duration._
 import scala.concurrent.ExecutionContext.Implicits.global
-
-import freestyle.implicits._
 
 type ParValidator[A] = Kleisli[Future, String, A]
 
@@ -92,17 +90,14 @@ Sequential and parallel actions can be easily intermixed in `@free` algebras:
 Using the [cats cartesian builder operator \|@\|](http://eed3si9n.com/herding-cats/Cartesian.html#The+Applicative+Style) we can easily describe steps that run in parallel:
 
 ```tut:book
-import freestyle.implicits._
-import cats.implicits._
-
 def program[F[_]](implicit M: MixedFreeS[F]) = {
   import M._
   for {
     a <- z //3
-    bc <- (x |@| y).tupled.freeS //(1,2) potentially x and y run in parallel
-	(b, c) = bc
-	d <- z //3
-  } yield a :: b :: c :: d :: Nil // List(3,1,2,3)
+    bc <- (x |@| y).tupled.freeS
+    (b, c) = bc
+    d <- z //3
+  } yield List(a,b,c,d)
 }
 ```
 

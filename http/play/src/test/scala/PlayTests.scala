@@ -18,7 +18,7 @@ package freestyle.http
 
 import org.scalatest.{AsyncWordSpec, Matchers}
 
-import scala.concurrent._
+import scala.concurrent.ExecutionContext
 
 import cats.Monad
 
@@ -27,9 +27,8 @@ import freestyle.implicits._
 
 import freestyle.http.play.implicits._
 
-import _root_.play.api.mvc._
-import _root_.play.api.http._
-import _root_.play.api.test._
+import _root_.play.api.mvc.{Action, Codec, Request, Result, Results}
+import _root_.play.api.http.{ContentTypeOf, Writeable}
 
 class PlayTests extends AsyncWordSpec with Matchers {
   implicit override def executionContext = ExecutionContext.Implicits.global
@@ -46,9 +45,7 @@ class PlayTests extends AsyncWordSpec with Matchers {
     import handlers._
 
     def program[F[_]: Noop]: FreeS[F, Result] =
-      for {
-        x <- Noop[F].noop
-      } yield Results.Ok(x)
+      Noop[F].noop.map(x => Results.Ok(x))
 
     "FreeS programs can be used as return value in Play actions" in {
       Action.async { _ =>
@@ -56,7 +53,13 @@ class PlayTests extends AsyncWordSpec with Matchers {
       } shouldBe an[Action[Result]]
     }
 
-    "FreeS programs can interact with a given request and used as returned values in Play actions" in {
+    "FreeS.Par programs can interact with a given request and used as returned values in Play actions" in {
+      Action.async { request =>
+        Noop[Noop.Op].noop.map(_ => Results.Ok(request.method))
+      } shouldBe an[Action[Result]]
+    }
+
+    "FreeS sequentials programs can interact with a given request and used as returned values in Play actions" in {
       Action.async { request =>
         Noop[Noop.Op].noop.map(_ => Results.Ok(request.method)).freeS
       } shouldBe an[Action[Result]]
