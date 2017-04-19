@@ -38,21 +38,18 @@ Freestyle core feature is the definition of `Free` boilerplate-free algebras tha
 
 In the example below we will define two algebras with intermixed sequential and parallel computations.
 
-```tut:silent:decorate(.kazari-id-1)
+```tut:book
 import freestyle._
 import freestyle.implicits._
 
-object algebras {
+@free trait Validation[F[_]] {
+  def minSize(s: String, n: Int): FreeS.Par[F, Boolean]
+  def hasNumber(s: String): FreeS.Par[F, Boolean]
+}
 
-    @free trait Validation[F[_]] {
-      def minSize(s: String, n: Int): FreeS.Par[F, Boolean]
-      def hasNumber(s: String): FreeS.Par[F, Boolean]
-    }
-
-    @free trait Interaction[F[_]] {
-      def tell(msg: String): FreeS[F, Unit]
-      def ask(prompt: String): FreeS[F, String]
-    }
+@free trait Interaction[F[_]] {
+  def tell(msg: String): FreeS[F, Unit]
+  def ask(prompt: String): FreeS[F, String]
 }
 ```
 
@@ -63,15 +60,10 @@ Learn more about [algebras](./core/algebras) in the extended documentation.
 Freestyle algebras can be combined into `@module` definitions which provide aggregation and unification over the
 parametrization of Free programs.
 
-```tut:silent:decorate(.kazari-id-1)
-object modules {
-
-    import algebras._
-
-    @module trait Application[F[_]] {
-      val validation: Validation[F]
-      val interaction: Interaction[F]
-    }
+```tut:book
+@module trait Application[F[_]] {
+  val validation: Validation[F]
+  val interaction: Interaction[F]
 }
 ```
 
@@ -87,10 +79,7 @@ Abstract definitions it's all it takes to start building programs that support s
 
 The example below combines both algebras to produce a more complex program
 
-```tut:silent:decorate(.kazari-id-1)
-import algebras._
-import modules._
-
+```tut:book
 def program[F[_]](implicit A: Application[F]) = {
   import A._
   import cats.implicits._
@@ -110,7 +99,7 @@ def program[F[_]](implicit A: Application[F]) = {
 
 In order to run programs we need interpreters. We define interpreters providing implementations for the operations defined in our algebras.
 
-```tut:silent:decorate(.kazari-id-1)
+```tut:book
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
@@ -129,7 +118,7 @@ The mere fact that you provide implicit evidences for the individual steps enabl
 
 At this point we can run our pure programs at the edge of the world.
 
-```tut:silent:decorate(.kazari-id-1)
+```tut:book
 import cats.implicits._
 import scala.concurrent.duration.Duration
 import scala.concurrent.Await

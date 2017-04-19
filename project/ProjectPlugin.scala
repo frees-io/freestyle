@@ -41,19 +41,7 @@ object ProjectPlugin extends AutoPlugin {
         "gray-light"      -> "#E6E7EC",
         "gray-lighter"    -> "#F4F5F9",
         "white-color"     -> "#E6E7EC"
-      ),
-      micrositeKazariCodeMirrorTheme := "dracula",
-      micrositeKazariDependencies := Seq(
-        microsites.KazariDependency(
-          "com.47deg",
-          "freestyle",
-          buildWithoutSuffix(scalaVersion.value),
-          version.value),
-        microsites.KazariDependency("org.scalamacros", "paradise", scalaVersion.value, "2.1.0")
-      ),
-      micrositeKazariResolvers := Seq(
-        "https://oss.sonatype.org/content/repositories/snapshots",
-        "https://oss.sonatype.org/content/repositories/releases")
+      )
     )
 
     lazy val commonDeps: Seq[ModuleID] = Seq(%%("scalatest") % "test")
