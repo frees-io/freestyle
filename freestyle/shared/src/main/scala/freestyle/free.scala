@@ -34,6 +34,7 @@ object freeImpl {
     val MM = freshTypeName("MM$") // MM Target of the Handler's natural Transformation
     val LL = freshTypeName("LL$") // LL is the target of the Lifter's Injection
     val AA = freshTypeName("AA$") // AA is the parameter inside type applications
+    val inj = freshTermName("toInj")
 
     def fail(msg: String) = c.abort(c.enclosingPosition, msg)
 
@@ -41,6 +42,7 @@ object freeImpl {
     val invalid = "Invalid use of the `@free` annotation"
     val abstractOnly = "The `@free` annotation can only be applied to a trait or to an abstract class."
     val noCompanion = "The trait (or class) annotated with `@free` must have no companion object."
+    val onlyReqs = "In a `@free`-annotated trait (or class), all abstract method declarations should be of type OpSeq[_] or OpPar[_]"
 
     def gen(): Tree = annottees match {
       case Expr(cls: ClassDef) :: Nil =>
@@ -57,25 +59,14 @@ object freeImpl {
       case _ => fail( s"$invalid. $abstractOnly")
     }
 
-    def isRequestDef(tree: Tree): Boolean = tree match {
-      case q"$mods def $name[..$tparams](...$paramss): OpSeq[..$args]" => true
-      case q"$mods def $name[..$tparams](...$paramss): OpPar[..$args]" => true
-      case _ => false
-    }
 
     def mkEffectTrait(cls: ClassDef): ClassDef = {
       val FF = freshTypeName("FF$")
-
-      val ffTParam: TypeDef = {
-        val wildcard = TypeDef(Modifiers(Flag.PARAM), typeNames.WILDCARD, List(), TypeBoundsTree(EmptyTree, EmptyTree))
-        TypeDef(Modifiers(Flag.PARAM), FF, List(wildcard), TypeBoundsTree(EmptyTree, EmptyTree))
-      }
+      // this is to make a TypeDef for `$FF[_]`
+      val wildcard = TypeDef(Modifiers(Flag.PARAM), typeNames.WILDCARD, List(), TypeBoundsTree(EmptyTree, EmptyTree))
+      val ffTParam = TypeDef(Modifiers(Flag.PARAM), FF, List(wildcard), TypeBoundsTree(EmptyTree, EmptyTree))
       val ClassDef(mods, name, tparams, Template(parents, self, body)) = cls
-
-      val ntparams = ffTParam :: tparams
-      val nparents = parents :+ tq"freestyle.EffectLike[$FF]"
-
-      ClassDef(mods, name, ntparams, Template(nparents, self, body))
+      ClassDef(mods, name, ffTParam :: tparams, Template(parents :+ tq"freestyle.EffectLike[$FF]", self, body))
     }
 
     class Request(reqDef: DefDef) {
@@ -118,17 +109,15 @@ object freeImpl {
       }
 
       def raiser: DefDef = {
-        val injected = {
-          /*filter: if !v.mods.hasFlag(Flag.IMPLICIT)*/
-          val args = params.map(_.name)
-          q"FreeS.inject[$OP, $LL]( $ReqC[..${tparams.map(_.name)} ](..$args) )"
-        }
+        val args = params.map(_.name)
+        val injected = q"$inj( $ReqC[..${tparams.map(_.name)} ](..$args) )"
 
-        val tpt = reqDef.tpt.asInstanceOf[AppliedTypeTree]
-        val (liftType, impl) = tpt match {
-          case tq"OpSeq[$aa]" => (tpt, q"FreeS.liftPar($injected)" )
-          case tq"OpPar[$aa]" => (tpt, injected )
-          case _ => // Note: due to filter in getRequestDefs, this case is unreachable.
+        val liftType = reqDef.tpt.asInstanceOf[AppliedTypeTree]
+
+        val impl = liftType match {
+          case tq"OpSeq[$aa]" => q"FreeS.liftPar($injected)"
+          case tq"OpPar[$aa]" => injected
+          case tpt => // Note: due to filter in getRequestDefs, this case is unreachable.
             fail(s"unknown abstract type found in @free container: $tpt : raw: ${showRaw(tpt)}")
         }
 
@@ -136,11 +125,17 @@ object freeImpl {
       }
     }
 
+    def collectRequests(effectTrait: ClassDef): List[Request] = effectTrait.impl.collect {
+      case dd @ q"$mods def $name[..$tparams](...$paramss): $tyRes" => tyRes match {
+        case tq"OpPar[..$args]" => new Request(dd.asInstanceOf[DefDef])
+        case tq"OpSeq[..$args]" => new Request(dd.asInstanceOf[DefDef])
+        case _ => fail(s"$invalid in definition of method $name in ${effectTrait.name}. $onlyReqs")
+      }
+    }
+
     def mkEffectObject(effectTrait: ClassDef): ModuleDef = {
 
-      val requests: List[Request] = effectTrait.impl.collect {
-        case dd:DefDef if isRequestDef(dd) => new Request(dd.asInstanceOf[DefDef])
-      }
+      val requests: List[Request] = collectRequests(effectTrait)
 
       val Eff = effectTrait.name
       val TTs = effectTrait.tparams
@@ -168,7 +163,8 @@ object freeImpl {
           }
 
           class To[$LL[_], ..$TTs](implicit $ii: Inject[$OP, $LL]) extends $Eff[$LL, ..$tns] {
-              ..${requests.map(_.raiser )}
+            private[this] val $inj = FreeS.inject[$OP, $LL]
+            ..${requests.map(_.raiser )}
           }
 
           implicit def to[$LL[_], ..$TTs](implicit $ii: Inject[$OP, $LL]):
