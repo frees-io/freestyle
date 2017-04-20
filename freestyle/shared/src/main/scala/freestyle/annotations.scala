@@ -24,6 +24,11 @@ class free extends StaticAnnotation {
   def macroTransform(annottees: Any*): Any = macro freeImpl.free
 }
 
+@compileTimeOnly("enable macro paradise to expand @tagless macro annotations")
+class tagless extends StaticAnnotation {
+  def macroTransform(annottees: Any*): Any = macro taglessImpl.tagless
+}
+
 @compileTimeOnly("enable macro paradise to expand @module macro annotations")
 class module extends StaticAnnotation {
   def macroTransform(annottees: Any*): Any = macro moduleImpl.impl
