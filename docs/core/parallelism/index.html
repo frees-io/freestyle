@@ -24,8 +24,8 @@ FreeS is an alias for a Free monad that represents a sequential fragment of pote
 <span class="c1">// import freestyle._
 </span>
 <span class="nd">@free</span> <span class="k">trait</span> <span class="nc">Validation</span> <span class="o">{</span>
-  <span class="k">def</span> <span class="n">minSize</span><span class="o">(</span><span class="n">n</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span><span class="k">:</span> <span class="kt">OpPar</span><span class="o">[</span><span class="kt">Boolean</span><span class="o">]</span>
-  <span class="k">def</span> <span class="n">hasNumber</span><span class="k">:</span> <span class="kt">OpPar</span><span class="o">[</span><span class="kt">Boolean</span><span class="o">]</span>
+  <span class="k">def</span> <span class="n">minSize</span><span class="o">(</span><span class="n">n</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span><span class="k">:</span> <span class="kt">FS</span><span class="o">[</span><span class="kt">Boolean</span><span class="o">]</span>
+  <span class="k">def</span> <span class="n">hasNumber</span><span class="k">:</span> <span class="kt">FS</span><span class="o">[</span><span class="kt">Boolean</span><span class="o">]</span>
 <span class="o">}</span>
 <span class="c1">// defined trait Validation
 // defined object Validation
@@ -49,20 +49,17 @@ Freestyle ships with ready to use instances for <code class="highlighter-rouge">
 <div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">cats.data.Kleisli</span>
 <span class="c1">// import cats.data.Kleisli
 </span>
-<span class="k">import</span> <span class="nn">cats.implicits._</span>
-<span class="c1">// import cats.implicits._
+<span class="k">import</span> <span class="nn">cats.syntax.cartesian._</span>
+<span class="c1">// import cats.syntax.cartesian._
 </span>
-<span class="k">import</span> <span class="nn">scala.concurrent._</span>
-<span class="c1">// import scala.concurrent._
+<span class="k">import</span> <span class="nn">scala.concurrent.Future</span>
+<span class="c1">// import scala.concurrent.Future
 </span>
 <span class="k">import</span> <span class="nn">scala.concurrent.duration._</span>
 <span class="c1">// import scala.concurrent.duration._
 </span>
 <span class="k">import</span> <span class="nn">scala.concurrent.ExecutionContext.Implicits.global</span>
 <span class="c1">// import scala.concurrent.ExecutionContext.Implicits.global
-</span>
-<span class="k">import</span> <span class="nn">freestyle.implicits._</span>
-<span class="c1">// import freestyle.implicits._
 </span>
 <span class="k">type</span> <span class="kt">ParValidator</span><span class="o">[</span><span class="kt">A</span><span class="o">]</span> <span class="k">=</span> <span class="nc">Kleisli</span><span class="o">[</span><span class="kt">Future</span>, <span class="kt">String</span>, <span class="kt">A</span><span class="o">]</span>
 <span class="c1">// defined type alias ParValidator
@@ -74,19 +71,19 @@ Freestyle ships with ready to use instances for <code class="highlighter-rouge">
   <span class="k">override</span> <span class="k">def</span> <span class="n">hasNumber</span><span class="k">:</span> <span class="kt">ParValidator</span><span class="o">[</span><span class="kt">Boolean</span><span class="o">]</span> <span class="k">=</span>
     <span class="nc">Kleisli</span><span class="o">(</span><span class="n">s</span> <span class="k">=&gt;</span> <span class="nc">Future</span><span class="o">(</span><span class="n">s</span><span class="o">.</span><span class="n">exists</span><span class="o">(</span><span class="n">c</span> <span class="k">=&gt;</span> <span class="s">"0123456789"</span><span class="o">.</span><span class="n">contains</span><span class="o">(</span><span class="n">c</span><span class="o">))))</span>
 <span class="o">}</span>
-<span class="c1">// interpreter: Validation.Handler[ParValidator] = $anon$1@58c8fbdb
+<span class="c1">// interpreter: Validation.Handler[ParValidator] = $anon$1@7e6d5394
 </span>
 <span class="k">val</span> <span class="n">validation</span> <span class="k">=</span> <span class="nc">Validation</span><span class="o">[</span><span class="kt">Validation.Op</span><span class="o">]</span>
-<span class="c1">// validation: Validation[Validation.Op] = Validation$To@46075a9a
+<span class="c1">// validation: Validation[Validation.Op] = Validation$To@2d52ba49
 </span>
 <span class="k">import</span> <span class="nn">validation._</span>
 <span class="c1">// import validation._
 </span>
 <span class="k">val</span> <span class="n">parValidation</span> <span class="k">=</span> <span class="o">(</span><span class="n">minSize</span><span class="o">(</span><span class="mi">3</span><span class="o">)</span> <span class="o">|@|</span> <span class="n">hasNumber</span><span class="o">).</span><span class="n">map</span><span class="o">(</span><span class="k">_</span> <span class="o">::</span> <span class="k">_</span> <span class="o">::</span> <span class="nc">Nil</span><span class="o">)</span>
-<span class="c1">// parValidation: validation.OpPar[List[Boolean]] = FreeApplicative(...)
+<span class="c1">// parValidation: validation.FS[List[Boolean]] = FreeApplicative(...)
 </span>
 <span class="k">val</span> <span class="n">validator</span> <span class="k">=</span> <span class="n">parValidation</span><span class="o">.</span><span class="n">exec</span><span class="o">[</span><span class="kt">ParValidator</span><span class="o">]</span>
-<span class="c1">// validator: ParValidator[List[Boolean]] = Kleisli(cats.data.Kleisli$$Lambda$2675/401907398@6ce062b8)
+<span class="c1">// validator: ParValidator[List[Boolean]] = Kleisli(cats.data.Kleisli$$Lambda$2680/142578477@335816fb)
 </span>
 <span class="c1">//validator.run("abc1") runs each op in parallel and returns the result in a Future
 </span></code></pre>
@@ -97,9 +94,9 @@ Freestyle ships with ready to use instances for <code class="highlighter-rouge">
 <p>Sequential and parallel actions can be easily intermixed in <code class="highlighter-rouge">@free</code> algebras:</p>
 
 <div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="nd">@free</span> <span class="k">trait</span> <span class="nc">MixedFreeS</span> <span class="o">{</span>
-  <span class="k">def</span> <span class="n">x</span><span class="k">:</span> <span class="kt">OpPar</span><span class="o">[</span><span class="kt">Int</span><span class="o">]</span>
-  <span class="k">def</span> <span class="n">y</span><span class="k">:</span> <span class="kt">OpPar</span><span class="o">[</span><span class="kt">Int</span><span class="o">]</span>
-  <span class="k">def</span> <span class="n">z</span><span class="k">:</span> <span class="kt">OpSeq</span><span class="o">[</span><span class="kt">Int</span><span class="o">]</span>
+  <span class="k">def</span> <span class="n">x</span><span class="k">:</span> <span class="kt">FS</span><span class="o">[</span><span class="kt">Int</span><span class="o">]</span>
+  <span class="k">def</span> <span class="n">y</span><span class="k">:</span> <span class="kt">FS</span><span class="o">[</span><span class="kt">Int</span><span class="o">]</span>
+  <span class="k">def</span> <span class="n">z</span><span class="k">:</span> <span class="kt">FS</span><span class="o">[</span><span class="kt">Int</span><span class="o">]</span>
 <span class="o">}</span>
 <span class="c1">// defined trait MixedFreeS
 // defined object MixedFreeS
@@ -108,21 +105,15 @@ Freestyle ships with ready to use instances for <code class="highlighter-rouge">
 
 <p>Using the <a href="http://eed3si9n.com/herding-cats/Cartesian.html#The+Applicative+Style">cats cartesian builder operator |@|</a> we can easily describe steps that run in parallel:</p>
 
-<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">freestyle.implicits._</span>
-<span class="c1">// import freestyle.implicits._
-</span>
-<span class="k">import</span> <span class="nn">cats.implicits._</span>
-<span class="c1">// import cats.implicits._
-</span>
-<span class="k">def</span> <span class="n">program</span><span class="o">[</span><span class="kt">F</span><span class="o">[</span><span class="k">_</span><span class="o">]](</span><span class="k">implicit</span> <span class="n">M</span><span class="k">:</span> <span class="kt">MixedFreeS</span><span class="o">[</span><span class="kt">F</span><span class="o">])</span> <span class="k">=</span> <span class="o">{</span>
+<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">def</span> <span class="n">program</span><span class="o">[</span><span class="kt">F</span><span class="o">[</span><span class="k">_</span><span class="o">]](</span><span class="k">implicit</span> <span class="n">M</span><span class="k">:</span> <span class="kt">MixedFreeS</span><span class="o">[</span><span class="kt">F</span><span class="o">])</span> <span class="k">=</span> <span class="o">{</span>
   <span class="k">import</span> <span class="nn">M._</span>
   <span class="k">for</span> <span class="o">{</span>
     <span class="n">a</span> <span class="k">&lt;-</span> <span class="n">z</span> <span class="c1">//3
-</span>    <span class="n">bc</span> <span class="k">&lt;-</span> <span class="o">(</span><span class="n">x</span> <span class="o">|@|</span> <span class="n">y</span><span class="o">).</span><span class="n">tupled</span><span class="o">.</span><span class="n">freeS</span> <span class="c1">//(1,2) potentially x and y run in parallel
-</span>	<span class="o">(</span><span class="n">b</span><span class="o">,</span> <span class="n">c</span><span class="o">)</span> <span class="k">=</span> <span class="n">bc</span>
-	<span class="n">d</span> <span class="k">&lt;-</span> <span class="n">z</span> <span class="c1">//3
-</span>  <span class="o">}</span> <span class="k">yield</span> <span class="n">a</span> <span class="o">::</span> <span class="n">b</span> <span class="o">::</span> <span class="n">c</span> <span class="o">::</span> <span class="n">d</span> <span class="o">::</span> <span class="nc">Nil</span> <span class="c1">// List(3,1,2,3)
-</span><span class="o">}</span>
+</span>    <span class="n">bc</span> <span class="k">&lt;-</span> <span class="o">(</span><span class="n">x</span> <span class="o">|@|</span> <span class="n">y</span><span class="o">).</span><span class="n">tupled</span><span class="o">.</span><span class="n">freeS</span>
+    <span class="o">(</span><span class="n">b</span><span class="o">,</span> <span class="n">c</span><span class="o">)</span> <span class="k">=</span> <span class="n">bc</span>
+    <span class="n">d</span> <span class="k">&lt;-</span> <span class="n">z</span> <span class="c1">//3
+</span>  <span class="o">}</span> <span class="k">yield</span> <span class="nc">List</span><span class="o">(</span><span class="n">a</span><span class="o">,</span><span class="n">b</span><span class="o">,</span><span class="n">c</span><span class="o">,</span><span class="n">d</span><span class="o">)</span>
+<span class="o">}</span>
 <span class="c1">// program: [F[_]](implicit M: MixedFreeS[F])cats.free.Free[[β$0$]cats.free.FreeApplicative[F,β$0$],List[Int]]
 </span></code></pre>
 </div>

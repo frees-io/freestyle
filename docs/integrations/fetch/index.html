@@ -37,7 +37,7 @@
 <span class="c1">// import freestyle.implicits._
 </span>
 <span class="nd">@free</span> <span class="k">trait</span> <span class="nc">Interact</span> <span class="o">{</span>
-  <span class="k">def</span> <span class="n">tell</span><span class="o">(</span><span class="n">msg</span><span class="k">:</span> <span class="kt">String</span><span class="o">)</span><span class="k">:</span> <span class="kt">OpSeq</span><span class="o">[</span><span class="kt">Unit</span><span class="o">]</span>
+  <span class="k">def</span> <span class="n">tell</span><span class="o">(</span><span class="n">msg</span><span class="k">:</span> <span class="kt">String</span><span class="o">)</span><span class="k">:</span> <span class="kt">FS</span><span class="o">[</span><span class="kt">Unit</span><span class="o">]</span>
 <span class="o">}</span>
 <span class="c1">// defined trait Interact
 // defined object Interact
@@ -163,7 +163,7 @@
 </span>
 <span class="nc">Await</span><span class="o">.</span><span class="n">result</span><span class="o">(</span><span class="n">program</span><span class="o">[</span><span class="kt">App.Op</span><span class="o">].</span><span class="n">exec</span><span class="o">[</span><span class="kt">Future</span><span class="o">],</span> <span class="nc">Duration</span><span class="o">.</span><span class="nc">Inf</span><span class="o">)</span>
 <span class="c1">// Hello
-// res3: fetch.FetchEnv = FetchEnv(InMemoryCache(Map((One,1) -&gt; 1)),Queue(Round(InMemoryCache(Map()),FetchOne(1,One),1,95651721946911,95651722075165)))
+// res3: fetch.FetchEnv = FetchEnv(InMemoryCache(Map((One,1) -&gt; 1)),Queue(Round(InMemoryCache(Map()),FetchOne(1,One),1,139402054892718,139402055106853)))
 </span></code></pre>
 </div>
 
@@ -180,7 +180,7 @@
 </span>
 <span class="nc">Await</span><span class="o">.</span><span class="n">result</span><span class="o">(</span><span class="n">program</span><span class="o">[</span><span class="kt">App.Op</span><span class="o">].</span><span class="n">exec</span><span class="o">[</span><span class="kt">Future</span><span class="o">],</span> <span class="nc">Duration</span><span class="o">.</span><span class="nc">Inf</span><span class="o">)</span>
 <span class="c1">// Hello
-// res4: fetch.FetchEnv = FetchEnv(InMemoryCache(Map((One,1) -&gt; 1)),Queue(Round(InMemoryCache(Map()),FetchOne(1,One),1,95652317367361,95652317583924)))
+// res4: fetch.FetchEnv = FetchEnv(InMemoryCache(Map((One,1) -&gt; 1)),Queue(Round(InMemoryCache(Map()),FetchOne(1,One),1,139403310117410,139403310296570)))
 </span></code></pre>
 </div>
 
@@ -200,7 +200,7 @@
 </span>
 <span class="nc">Await</span><span class="o">.</span><span class="n">result</span><span class="o">(</span><span class="n">program</span><span class="o">[</span><span class="kt">App.Op</span><span class="o">].</span><span class="n">exec</span><span class="o">[</span><span class="kt">Future</span><span class="o">],</span> <span class="nc">Duration</span><span class="o">.</span><span class="nc">Inf</span><span class="o">)</span>
 <span class="c1">// Hello
-// res5: fetch.FetchEnv = FetchEnv(InMemoryCache(Map((One,1) -&gt; 1)),Queue(Round(InMemoryCache(Map()),FetchOne(1,One),1,95652884100440,95652884238013)))
+// res5: fetch.FetchEnv = FetchEnv(InMemoryCache(Map((One,1) -&gt; 1)),Queue(Round(InMemoryCache(Map()),FetchOne(1,One),1,139405439669790,139405439850022)))
 </span></code></pre>
 </div>
 
@@ -218,7 +218,7 @@
 </span>
 <span class="nc">Await</span><span class="o">.</span><span class="n">result</span><span class="o">(</span><span class="n">program</span><span class="o">[</span><span class="kt">App.Op</span><span class="o">].</span><span class="n">exec</span><span class="o">[</span><span class="kt">Future</span><span class="o">],</span> <span class="nc">Duration</span><span class="o">.</span><span class="nc">Inf</span><span class="o">)</span>
 <span class="c1">// Hello
-// res6: fetch.FetchEnv = FetchEnv(InMemoryCache(Map((One,1) -&gt; 1)),Queue(Round(InMemoryCache(Map()),FetchOne(1,One),1,95653449876943,95653450034990)))
+// res6: fetch.FetchEnv = FetchEnv(InMemoryCache(Map((One,1) -&gt; 1)),Queue(Round(InMemoryCache(Map()),FetchOne(1,One),1,139406334467002,139406334608031)))
 </span></code></pre>
 </div>
 

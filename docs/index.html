@@ -39,15 +39,15 @@
 <span class="c1">// import freestyle.implicits._
 </span>
 <span class="nd">@free</span> <span class="k">trait</span> <span class="nc">Validation</span> <span class="o">{</span>
-  <span class="k">def</span> <span class="n">minSize</span><span class="o">(</span><span class="n">s</span><span class="k">:</span> <span class="kt">String</span><span class="o">,</span> <span class="n">n</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span><span class="k">:</span> <span class="kt">OpPar</span><span class="o">[</span><span class="kt">Boolean</span><span class="o">]</span>
-  <span class="k">def</span> <span class="n">hasNumber</span><span class="o">(</span><span class="n">s</span><span class="k">:</span> <span class="kt">String</span><span class="o">)</span><span class="k">:</span> <span class="kt">OpPar</span><span class="o">[</span><span class="kt">Boolean</span><span class="o">]</span>
+  <span class="k">def</span> <span class="n">minSize</span><span class="o">(</span><span class="n">s</span><span class="k">:</span> <span class="kt">String</span><span class="o">,</span> <span class="n">n</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span><span class="k">:</span> <span class="kt">FS</span><span class="o">[</span><span class="kt">Boolean</span><span class="o">]</span>
+  <span class="k">def</span> <span class="n">hasNumber</span><span class="o">(</span><span class="n">s</span><span class="k">:</span> <span class="kt">String</span><span class="o">)</span><span class="k">:</span> <span class="kt">FS</span><span class="o">[</span><span class="kt">Boolean</span><span class="o">]</span>
 <span class="o">}</span>
 <span class="c1">// defined trait Validation
 // defined object Validation
 </span>
 <span class="nd">@free</span> <span class="k">trait</span> <span class="nc">Interaction</span> <span class="o">{</span>
-  <span class="k">def</span> <span class="n">tell</span><span class="o">(</span><span class="n">msg</span><span class="k">:</span> <span class="kt">String</span><span class="o">)</span><span class="k">:</span> <span class="kt">OpSeq</span><span class="o">[</span><span class="kt">Unit</span><span class="o">]</span>
-  <span class="k">def</span> <span class="n">ask</span><span class="o">(</span><span class="n">prompt</span><span class="k">:</span> <span class="kt">String</span><span class="o">)</span><span class="k">:</span> <span class="kt">OpSeq</span><span class="o">[</span><span class="kt">String</span><span class="o">]</span>
+  <span class="k">def</span> <span class="n">tell</span><span class="o">(</span><span class="n">msg</span><span class="k">:</span> <span class="kt">String</span><span class="o">)</span><span class="k">:</span> <span class="kt">FS</span><span class="o">[</span><span class="kt">Unit</span><span class="o">]</span>
+  <span class="k">def</span> <span class="n">ask</span><span class="o">(</span><span class="n">prompt</span><span class="k">:</span> <span class="kt">String</span><span class="o">)</span><span class="k">:</span> <span class="kt">FS</span><span class="o">[</span><span class="kt">String</span><span class="o">]</span>
 <span class="o">}</span>
 <span class="c1">// defined trait Interaction
 // defined object Interaction
@@ -113,13 +113,13 @@ parametrization of Free programs.</p>
   <span class="k">override</span> <span class="k">def</span> <span class="n">minSize</span><span class="o">(</span><span class="n">s</span><span class="k">:</span> <span class="kt">String</span><span class="o">,</span> <span class="n">n</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span><span class="k">:</span> <span class="kt">Future</span><span class="o">[</span><span class="kt">Boolean</span><span class="o">]</span> <span class="k">=</span> <span class="nc">Future</span><span class="o">(</span><span class="n">s</span><span class="o">.</span><span class="n">size</span> <span class="o">&gt;=</span> <span class="n">n</span><span class="o">)</span>
   <span class="k">override</span> <span class="k">def</span> <span class="n">hasNumber</span><span class="o">(</span><span class="n">s</span><span class="k">:</span> <span class="kt">String</span><span class="o">)</span><span class="k">:</span> <span class="kt">Future</span><span class="o">[</span><span class="kt">Boolean</span><span class="o">]</span> <span class="k">=</span> <span class="nc">Future</span><span class="o">(</span><span class="n">s</span><span class="o">.</span><span class="n">exists</span><span class="o">(</span><span class="n">c</span> <span class="k">=&gt;</span> <span class="s">"0123456789"</span><span class="o">.</span><span class="n">contains</span><span class="o">(</span><span class="n">c</span><span class="o">)))</span>
 <span class="o">}</span>
-<span class="c1">// validationHandler: Validation.Handler[scala.concurrent.Future] = $anon$1@26142d61
+<span class="c1">// validationHandler: Validation.Handler[scala.concurrent.Future] = $anon$1@2e666d3d
 </span>
 <span class="k">implicit</span> <span class="k">val</span> <span class="n">interactionHandler</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">Interaction</span><span class="o">.</span><span class="nc">Handler</span><span class="o">[</span><span class="kt">Future</span><span class="o">]</span> <span class="o">{</span>
   <span class="k">override</span> <span class="k">def</span> <span class="n">tell</span><span class="o">(</span><span class="n">s</span><span class="k">:</span> <span class="kt">String</span><span class="o">)</span><span class="k">:</span> <span class="kt">Future</span><span class="o">[</span><span class="kt">Unit</span><span class="o">]</span> <span class="k">=</span> <span class="nc">Future</span><span class="o">.</span><span class="n">successful</span><span class="o">(</span><span class="n">println</span><span class="o">(</span><span class="n">s</span><span class="o">))</span>
   <span class="k">override</span> <span class="k">def</span> <span class="n">ask</span><span class="o">(</span><span class="n">s</span><span class="k">:</span> <span class="kt">String</span><span class="o">)</span><span class="k">:</span> <span class="kt">Future</span><span class="o">[</span><span class="kt">String</span><span class="o">]</span> <span class="k">=</span> <span class="nc">Future</span><span class="o">.</span><span class="n">successful</span> <span class="o">{</span> <span class="n">println</span><span class="o">(</span><span class="n">s</span><span class="o">);</span> <span class="s">"This could have been user input 1"</span> <span class="o">}</span>
 <span class="o">}</span>
-<span class="c1">// interactionHandler: Interaction.Handler[scala.concurrent.Future] = $anon$1@ff13b53
+<span class="c1">// interactionHandler: Interaction.Handler[scala.concurrent.Future] = $anon$1@55f868d2
 </span></code></pre>
 </div>
 

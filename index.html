@@ -58,11 +58,11 @@ Applications built with Freestyle can be interpreted to any runtime semantics su
         <div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">freestyle._</span>
 
 <span class="nd">@free</span> <span class="k">trait</span> <span class="nc">Database</span> <span class="o">{</span>
-  <span class="k">def</span> <span class="n">get</span><span class="o">(</span><span class="n">id</span><span class="k">:</span> <span class="kt">UserId</span><span class="o">)</span><span class="k">:</span> <span class="kt">OpSeq</span><span class="o">[</span><span class="kt">User</span><span class="o">]</span>
+  <span class="k">def</span> <span class="n">get</span><span class="o">(</span><span class="n">id</span><span class="k">:</span> <span class="kt">UserId</span><span class="o">)</span><span class="k">:</span> <span class="kt">FS</span><span class="o">[</span><span class="kt">User</span><span class="o">]</span>
 <span class="o">}</span>
 
 <span class="nd">@free</span> <span class="k">trait</span> <span class="nc">Cache</span> <span class="o">{</span>
-  <span class="k">def</span> <span class="n">get</span><span class="o">(</span><span class="n">id</span><span class="k">:</span> <span class="kt">UserId</span><span class="o">)</span><span class="k">:</span> <span class="kt">OpSeq</span><span class="o">[</span><span class="kt">User</span><span class="o">]</span>
+  <span class="k">def</span> <span class="n">get</span><span class="o">(</span><span class="n">id</span><span class="k">:</span> <span class="kt">UserId</span><span class="o">)</span><span class="k">:</span> <span class="kt">FS</span><span class="o">[</span><span class="kt">User</span><span class="o">]</span>
 <span class="o">}</span>
 
 <span class="nd">@module</span> <span class="k">trait</span> <span class="nc">Persistence</span><span class="o">[</span><span class="kt">F</span><span class="o">[</span><span class="k">_</span><span class="o">]]</span> <span class="o">{</span>
