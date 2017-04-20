@@ -24,10 +24,10 @@ object state {
   final class StateSeedProvider[S] {
 
     @free sealed abstract class StateM {
-      def get: OpPar[S]
-      def set(s: S): OpPar[Unit]
-      def modify(f: S => S): OpPar[Unit]
-      def inspect[A](f: S => A): OpPar[A]
+      def get: FS[S]
+      def set(s: S): FS[Unit]
+      def modify(f: S => S): FS[Unit]
+      def inspect[A](f: S => A): FS[A]
     }
 
     object implicits {

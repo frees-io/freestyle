@@ -35,12 +35,12 @@ We will represent these capabilities using two algebras: `CustomerPersistence` a
 ```tut:book
 object algebras {
   @free trait CustomerPersistence {
-    def getCustomer(id: CustomerId): OpPar[Option[Customer]]
+    def getCustomer(id: CustomerId): FS[Option[Customer]]
   }
 
   @free trait StockPersistence {
-    def checkQuantityAvailable(variety: String): OpPar[Int]
-    def registerOrder(order: Order): OpPar[Unit]
+    def checkQuantityAvailable(variety: String): FS[Int]
+    def registerOrder(order: Order): FS[Unit]
   }
 }
 ```

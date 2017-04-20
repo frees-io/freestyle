@@ -21,14 +21,14 @@ The set of abstract operations of the `Logging` algebra are specified as follows
 
 ```scala
 @free trait LoggingM {
-  def debug(msg: String): OpSeq[Unit]
-  def debugWithCause(msg: String, cause: Throwable): OpSeq[Unit]
-  def error(msg: String): OpSeq[Unit]
-  def errorWithCause(msg: String, cause: Throwable): OpSeq[Unit]
-  def info(msg: String): OpSeq[Unit]
-  def infoWithCause(msg: String, cause: Throwable): OpSeq[Unit]
-  def warn(msg: String): OpSeq[Unit]
-  def warnWithCause(msg: String, cause: Throwable): OpSeq[Unit]
+  def debug(msg: String): FS[Unit]
+  def debugWithCause(msg: String, cause: Throwable): FS[Unit]
+  def error(msg: String): FS[Unit]
+  def errorWithCause(msg: String, cause: Throwable): FS[Unit]
+  def info(msg: String): FS[Unit]
+  def infoWithCause(msg: String, cause: Throwable): FS[Unit]
+  def warn(msg: String): FS[Unit]
+  def warnWithCause(msg: String, cause: Throwable): FS[Unit]
 }
 ```
 
@@ -56,7 +56,7 @@ We will define a simple algebra with a stub handler that returns a list of custo
 
 ```tut:book
 @free trait CustomerService {
-  def customers: OpSeq[List[String]]
+  def customers: FS[List[String]]
 }
 
 implicit val customerServiceHandler: CustomerService.Handler[Try] = new CustomerService.Handler[Try] {

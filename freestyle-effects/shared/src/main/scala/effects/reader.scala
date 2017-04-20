@@ -24,8 +24,8 @@ object reader {
   final class EnvironmentProvider[R] {
 
     @free abstract class ReaderM {
-      def ask: OpPar[R]
-      def reader[B](f: R => B): OpPar[B]
+      def ask: FS[R]
+      def reader[B](f: R => B): FS[B]
     }
 
     object implicits {

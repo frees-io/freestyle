@@ -80,8 +80,8 @@ object algebras {
 
   @free
   trait UserRepository {
-    def get(id: Long): OpPar[User]
-    def list: OpPar[List[User]]
+    def get(id: Long): FS[User]
+    def list: FS[List[User]]
   }
 
   @module

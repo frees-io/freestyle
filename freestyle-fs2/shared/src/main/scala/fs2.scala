@@ -48,10 +48,10 @@ object fs2 {
   }
 
   @free sealed trait StreamM {
-    def run[A](s: Stream[Eff, A]): OpPar[Unit]
-    def runLog[A](s: Stream[Eff, A]): OpPar[Vector[A]]
-    def runFold[A, B](z: B, f: (B, A) => B)(s: Stream[Eff, A]): OpPar[B]
-    def runLast[A](s: Stream[Eff, A]): OpPar[Option[A]]
+    def run[A](s: Stream[Eff, A]): FS[Unit]
+    def runLog[A](s: Stream[Eff, A]): FS[Vector[A]]
+    def runFold[A, B](z: B, f: (B, A) => B)(s: Stream[Eff, A]): FS[B]
+    def runLast[A](s: Stream[Eff, A]): FS[Option[A]]
   }
 
   object implicits {

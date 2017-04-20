@@ -74,7 +74,7 @@ class DoobieTests extends AsyncWordSpec with Matchers {
 object algebras {
   @free
   trait NonDoobie {
-    def x: OpSeq[Int]
+    def x: FS[Int]
   }
 
   implicit def nonDoobieHandler: NonDoobie.Handler[Task] =

@@ -26,8 +26,8 @@ object traverse {
     /** Acts as a generator providing traversable semantics to programs
      */
     @free sealed abstract class TraverseM {
-      def empty[A]: OpPar[A]
-      def fromTraversable[A](ta: G[A]): OpPar[A]
+      def empty[A]: FS[A]
+      def fromTraversable[A](ta: G[A]): FS[A]
     }
 
     /** Interpretable as long as Foldable instance for G[_] and a MonadCombine for M[_] exists

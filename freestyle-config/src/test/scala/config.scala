@@ -59,7 +59,7 @@ class ConfigTests extends AsyncWordSpec with Matchers {
 object algebras {
   @free
   trait NonConfig {
-    def x: OpSeq[Int]
+    def x: FS[Int]
   }
 
   implicit def nonConfigHandler: NonConfig.Handler[Future] =

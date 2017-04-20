@@ -21,12 +21,12 @@ import _root_.fetch._
 object fetch {
 
   @free sealed trait FetchM {
-    def runA[A](f: Fetch[A]): OpPar[A]
-    def runF[A](f: Fetch[A]): OpPar[(FetchEnv, A)]
-    def runE[A](f: Fetch[A]): OpPar[FetchEnv]
-    def runAWithCache[A](f: Fetch[A], cache: DataSourceCache): OpPar[A]
-    def runFWithCache[A](f: Fetch[A], cache: DataSourceCache): OpPar[(FetchEnv, A)]
-    def runEWithCache[A](f: Fetch[A], cache: DataSourceCache): OpPar[FetchEnv]
+    def runA[A](f: Fetch[A]): FS[A]
+    def runF[A](f: Fetch[A]): FS[(FetchEnv, A)]
+    def runE[A](f: Fetch[A]): FS[FetchEnv]
+    def runAWithCache[A](f: Fetch[A], cache: DataSourceCache): FS[A]
+    def runFWithCache[A](f: Fetch[A], cache: DataSourceCache): FS[(FetchEnv, A)]
+    def runEWithCache[A](f: Fetch[A], cache: DataSourceCache): FS[FetchEnv]
   }
 
   object implicits {

@@ -123,8 +123,8 @@ class parallelTests extends WordSpec with Matchers {
 
       @free
       trait Validation {
-        def minSize(n: Int): OpPar[Boolean]
-        def hasNumber: OpPar[Boolean]
+        def minSize(n: Int): FS[Boolean]
+        def hasNumber: FS[Boolean]
       }
 
       implicit val interpreter = new Validation.Handler[ParValidator] {

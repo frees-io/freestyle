@@ -550,22 +550,22 @@ object collision {
 
   @free
   trait B {
-    def x: OpSeq[Int]
+    def x: FS[Int]
   }
 
   @free
   trait C {
-    def x: OpSeq[Int]
+    def x: FS[Int]
   }
 
   @free
   trait D {
-    def x: OpSeq[Int]
+    def x: FS[Int]
   }
 
   @free
   trait E {
-    def x: OpSeq[Int]
+    def x: FS[Int]
   }
 
   @module

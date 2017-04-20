@@ -32,9 +32,9 @@ sealed trait Config {
 }
 
 @free sealed trait ConfigM {
-  def load: OpSeq[Config]
-  def empty: OpSeq[Config]
-  def parseString(s: String): OpSeq[Config]
+  def load: FS[Config]
+  def empty: FS[Config]
+  def parseString(s: String): FS[Config]
 }
 ```
 
@@ -66,7 +66,7 @@ We will define a very simple algebra with a stub handler that returns a list of 
 
 ```tut:book
 @free trait IssuesService {
-  def states: OpSeq[List[String]]
+  def states: FS[List[String]]
 }
 
 implicit val issuesServiceHandler: IssuesService.Handler[Try] = new IssuesService.Handler[Try] {

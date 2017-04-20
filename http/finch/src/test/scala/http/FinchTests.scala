@@ -109,7 +109,7 @@ class FinchTests extends AsyncWordSpec with Matchers {
 object algebra {
   @free
   trait Calc {
-    def sum(a: Int, b: Int): OpPar[Int]
+    def sum(a: Int, b: Int): FS[Int]
   }
 }
 

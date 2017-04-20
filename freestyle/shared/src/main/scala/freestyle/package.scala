@@ -51,23 +51,17 @@ package object freestyle {
       Free.liftF(FreeApplicative.lift(fa))
 
     /** Lift a sequential `Free[F, A]` into `FreeS[F, A]` */
-    def liftSeq[F[_], A](free: Free[F, A]): FreeS[F, A] =
-      free.compile(λ[(F ~> FreeS.Par[F, ?])](fa => FreeApplicative.lift(fa)))
+    def liftSeq[F[_], A](free: Free[F, A]): FreeS[F, A] = {
+      val lifter = λ[(F ~> FreeS.Par[F, ?])](fa => FreeApplicative.lift(fa))
+      free.compile(lifter)
+    }
 
     /** Lift a parallel `FreeApplicative[F, A]` into `FreeS[F, A]` */
     def liftPar[F[_], A](freeap: FreeS.Par[F, A]): FreeS[F, A] =
       Free.liftF(freeap)
 
-    def inject[F[_], G[_]]: FreeSParInjectPartiallyApplied[F, G] =
-      new FreeSParInjectPartiallyApplied
-
-    /**
-     * Pre-application of an injection to a `F[A]` value.
-     */
-    final class FreeSParInjectPartiallyApplied[F[_], G[_]] {
-      def apply[A](fa: F[A])(implicit I: Inject[F, G]): FreeS.Par[G, A] =
-        FreeApplicative.lift(I.inj(fa))
-    }
+    def inject[F[_], G[_]](implicit I: Inject[F, G]): F ~> FreeS.Par[G, ?] =
+      λ[F ~> FreeS.Par[G, ?]](fa => FreeApplicative.lift(I.inj(fa) ) )
 
     /**
      * Lift a pure `A` value `FreeS[F, A]`.
@@ -111,8 +105,8 @@ package object freestyle {
      */
     def freeS: FreeS[F, A] = FreeS.liftPar(fa)
 
-    def exec[G[_]: Applicative](implicit interpreter: F ~> G): G[A] =
-      fa.foldMap(interpreter)
+    def exec[G[_]: Applicative](implicit handler: FSHandler[F,G]): G[A] =
+      fa.foldMap(handler)
   }
 
   /**

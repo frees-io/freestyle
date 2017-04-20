@@ -16,7 +16,7 @@ We'll start by creating a simple algebra for our application for printing messag
 import freestyle._
 
 @free trait Interact {
-  def tell(msg: String): OpSeq[Unit]
+  def tell(msg: String): FS[Unit]
 }
 ```
 

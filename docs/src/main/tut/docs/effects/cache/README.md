@@ -13,12 +13,12 @@ This algebra is parametrized on the types `Key`, and `Val`, for keys and values 
 ```Scala
 class KeyValueProvider[Key, Val] {
   @free sealed trait CacheM {
-    def get(key: Key):              OpPar[Option[Val]]
-    def put(key: Key, newVal: Val): OpPar[Unit]
-    def del(key: Key):              OpPar[Unit]
-    def has(key: Key):              OpPar[Boolean]
-    def keys:                       OpPar[List[Key]]
-    def clear:                      OpPar[Unit]
+    def get(key: Key):              FS[Option[Val]]
+    def put(key: Key, newVal: Val): FS[Unit]
+    def del(key: Key):              FS[Unit]
+    def has(key: Key):              FS[Boolean]
+    def keys:                       FS[List[Key]]
+    def clear:                      FS[Unit]
   }
 }
 ```

@@ -149,9 +149,9 @@ h1, h2, h3, h4, h5, h6, #site-header {
     font-size: 32px;
 }
 ree trait UserRepository[F[_]] {
-  def get(id: Long): OpSeq[User]
-  def save(user: User): OpSeq[User]
-  def list: OpSeq[List[User]]
+  def get(id: Long): FS[User]
+  def save(user: User): FS[User]
+  def list: FS[List[User]]
 }
 #site-main p {
     margin-bottom: 30px;

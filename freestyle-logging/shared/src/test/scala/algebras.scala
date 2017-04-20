@@ -24,7 +24,7 @@ object algebras {
 
   @free
   trait NonLogging {
-    def x: OpSeq[Int]
+    def x: FS[Int]
   }
 
   implicit def nonLoggingHandler: NonLogging.Handler[Future] =

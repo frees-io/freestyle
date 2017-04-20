@@ -80,7 +80,7 @@ case class User(name: String)
 
 @free
 trait UserApp {
-  def get(id: Int): OpSeq[User]
+  def get(id: Int): FS[User]
 }
 
 val app = UserApp.to[UserApp.Op]

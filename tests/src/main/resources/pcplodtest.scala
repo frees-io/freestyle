@@ -20,7 +20,7 @@ import cats.implicits._
 
 object pcplodtest {
   @free trait PcplodTestAlgebra {
-    def test(n: Int): OpPar[Int]
+    def test(n: Int): FS[Int]
   }
   implicit val impl = new PcplodTestAlgebra.H@handler@andler[Option] {
     override def test(n:Int): Option[Int] = Some(1)
