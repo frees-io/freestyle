@@ -73,13 +73,13 @@ object openUnion {
     val AA = freshTypeName("AA$")
 
     def mkCoproduct(algebras: List[Type]): List[TypeDef] =
-      algebras.map(x => TermName(x.toString) ) match {
+      algebras.map(x => TermName(s"_root_.${x.toString}" )) match {
         case Nil => q"type Op[$AA] = Nothing" :: Nil
 
         case alg :: Nil => q"type Op[$AA] = $alg.Op[$AA]" :: Nil
 
         case alg0 :: alg1 :: algs =>
-          /* We create several type aliases, where the type names are generated fresh names, 
+          /* We create several type aliases, where the type names are generated fresh names,
            * C0, C1, ..., C{n-1}, where n is the length of algebras. We then generate aliases: 
            *
            * type C1 = A1 |+| A0
@@ -88,8 +88,7 @@ object openUnion {
            * type C{n-1} = A{n-1} |+| C{n-2
            * type Op{n-1}= C{n-1}
            */
-          val num = algebras.length
-          val ccs: List[TypeName] = List.range(0, num).map( i => freshTypeName("CC$") )
+          val ccs: List[TypeName] = algebras.map( _ => freshTypeName("CC$") )
           val tyDef1 = q"type ${ccs(1)}[$AA] = Coproduct[$alg1.Op, $alg0.Op, $AA]"
           val tyDefs = algebras.zipWithIndex.drop(2).map { case (alg, pos) =>
             q"type ${ccs(pos)}[$AA] = Coproduct[$alg.Op, ${ccs(pos-1)}, $AA]"
@@ -139,11 +138,11 @@ object moduleImpl {
       val effArgs: List[ValDef] = effVals.map( v => toImplArg(v) )
 
       q"""
-        object ${mod.toTermName} extends FreeModuleLike {
+        object ${mod.toTermName} extends _root_.freestyle.FreeModuleLike {
 
           import _root_.cats.data.Coproduct
 
-          val $xx = openUnion.apply(this)
+          val $xx = _root_.freestyle.openUnion.apply(this)
 
           type Op[$AA] = $xx.Op[$AA]
 

@@ -14,22 +14,23 @@
  * limitations under the License.
  */
 
-// The purpose of this test is to see if freestyle still compiles classes in _root_ package. 
+/** This tests reproduces the bug in https://github.com/47deg/freestyle/issues/165
+  *
+  * The problem was that the "@module" macro was not using _root_ to start the type 
+  * references, which causes some collisions. This is a problem of macro hygiene.
+  */
+
+package issue165
 
 import freestyle._
 
+// The root of this package is freestyle.issue165.issue165
+object issue165
+
 @free trait India {
-  def kolkata(msg: String): FS[Unit]
-}
-
-package country {
-
-  @free trait China {
-    def beijing(msg: String): FS[Unit]
-  }
-
+  def kolkata: FS[Int]
 }
 
 @module trait Asia[F[_]] {
-  val china: country.China[F]
+  val india: India[F]
 }
