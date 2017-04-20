@@ -30,10 +30,7 @@ def fetchOne(x: Int): Fetch[Int] = Fetch(x)(OneSource)
 
 Let's start by creating a simple algebra for our application for printing messages on the screen:
 
-```tut:book
-import freestyle._
-import freestyle.implicits._
-
+```scala
 @free trait Interact {
   def tell(msg: String): FS[Unit]
 }
@@ -42,8 +39,10 @@ import freestyle.implicits._
 Then, make sure to include the Fetch algebra `FetchM` in your application:
 
 ```tut:book
+import freestyle._
 import freestyle.fetch._
 import freestyle.fetch.implicits._
+import freestyle.docs.integrations.Interact
 
 @module trait App[F[_]] {
   val interact: Interact[F]
@@ -54,9 +53,8 @@ import freestyle.fetch.implicits._
 Now that we've got our `Interact` algebra and `FetchM` in our app, we're ready to write the first program:
 
 ```tut:book
-def program[F[_]](
-  implicit app: App[F]
-): FreeS[F, Int] =  for {
+def program[F[_]]( implicit app: App[F] ): FreeS[F, Int] =  
+  for {
     _ <- app.interact.tell("Hello")
     x <- app.fetches.runA(fetchOne(1))
     _ <- app.interact.tell(s"Result: ${x}")
@@ -81,7 +79,9 @@ implicit def interactInterp[F[_]](
 Now we can run the program to a `Future`. Check how the result from the fetch is printed to the console:
 
 ```tut:book
-import scala.concurrent._
+import freestyle.implicits._
+
+import scala.concurrent.{Await, Future}
 import scala.concurrent.duration._
 import scala.concurrent.ExecutionContext.Implicits.global
 

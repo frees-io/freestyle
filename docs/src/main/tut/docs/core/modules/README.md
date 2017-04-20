@@ -11,54 +11,58 @@ In the same way that architectures are traditionally built in layers where separ
 help organize algebras in groups that can be arbitrarily nested.
 
 Let’s first define a few algebras to illustrate how Modules work. We will start with some basic low-level style ops related to persistence. In our Persistence related algebras, we have a few ops that can go against a DB and others to a Cache service or system. On the presentation side, an application can display or perform input validation.
+The code for these algebras is available [here](../../../../scala/modules.scala).
 
-```tut:book
+```scala
 import freestyle._
 
-object algebras {
-    @free trait Database {
-      def get(id: Int): FS[Int]
-    }
-    @free trait Cache {
-      def get(id: Int): FS[Option[Int]]
-    }
-    @free trait Presenter {
-      def show(id: Int): FS[Int]
-    }
-    @free trait IdValidation {
-      def validate(id: Option[Int]): FS[Int]
-    }
+@free trait Cache {
+  def get(id: Int): FS[Option[Int]]
+}
+@free trait Database {
+  def get(id: Int): FS[Int]
+}
+@free trait IdValidation {
+  def validate(id: Option[Int]): FS[Int]
+}
+@free trait Presenter {
+  def show(id: Int): FS[Int]
 }
 ```
 
-At this point, we can group these different application concerns in modules.
+At this point, we can group these different application concerns in modules. 
+A module is a trait (or abstract class) bearing the `@module` macro annotation.
+The trait declares several `val` variables that refer to the algebras used in the module. 
+
+```tut:reset:book
+import freestyle._
+import freestyle.docs.core.modules.{ Cache, Database, IdValidation, Presenter }
+
+@module trait Persistence[F[_]] {
+  val cache: Cache[F]
+  val database: Database[F]
+}
+@module trait Display[F[_]] {
+  val presenter: Presenter[F]
+  val validator: IdValidation[F]
+}
+```
+The code for these modules is available at [here](../../../../scala/modules.scala).
+In addtition to algebras, modules can also refer to other modules.
 Modules can be further nested so they become part of the tree that conforms an application or library:
 
-
-```tut:book
-import algebras._
-
-object modules {
-    @module trait Persistence[F[_]] {
-      val database: Database[F]
-      val cache: Cache[F]
-    }
-    @module trait Display[F[_]] {
-      val presenter: Presenter[F]
-      val validator: IdValidation[F]
-    }
-    @module trait App[F[_]] {
-      val persistence: Persistence[F]
-      val display: Display[F]
-    }
+```tut:reset:book
+import freestyle._
+import freestyle.docs.core.modules._
+@module trait App[F[_]] {
+  val persistence: Persistence[F]
+  val display: Display[F]
 }
 ```
 
 This enables one to build programs that are properly typed and parameterized in a modular and composable way:
 
 ```tut:book
-import modules._
-
 def program[F[_]](
 	implicit
 	  app: App[F]): FreeS[F, Int] = {

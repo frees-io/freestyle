@@ -36,6 +36,10 @@ import cats.implicits._
 ```
 
 To define a runtime interpreter for this, we simply extend `KVStore.Handler[M[_]]` and implement its abstract members:
+```tut:reset:invisible
+import freestyle._
+import freestyle.docs.core.interpreters._
+```
 
 ```tut:book
 import cats.data.State
@@ -81,9 +85,10 @@ implicit def manualKvStoreHandler: KVStore.Op ~> KVStoreState =
 
 Freestyle performs automatic composition of interpreters by providing the implicit machinery necessary to derive a Module interpreter
 by the evidence of it's algebras' interpreters.
-To illustrate interpreter composition, let's define a new algebra `Log` which we will compose with our `KVStore` operations:
+To illustrate interpreter composition, we define a new algebra `Log`, which we will compose with our `KVStore` operations. 
+The code for `Log` is available [here](../../../../scala/interpreters.scala).
 
-```tut:book
+```scala
 @free trait Log {
   def info(msg: String): FS[Unit]
   def warn(msg: String): FS[Unit]
@@ -94,6 +99,7 @@ Once our algebra is defined we can easily write an interpreter for it:
 
 ```tut:book
 import cats.implicits._
+import freestyle.docs.core.interpreters
 
 implicit def logHandler: Log.Handler[KVStoreState] = 
   new Log.Handler[KVStoreState] {

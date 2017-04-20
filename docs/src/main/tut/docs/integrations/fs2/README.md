@@ -12,9 +12,7 @@ Familiarity with fs2 is assumed, take a look at the [fs2 documentation](https://
 
 We'll start by creating a simple algebra for our application for printing messages on the screen:
 
-```tut:book
-import freestyle._
-
+```scala
 @free trait Interact {
   def tell(msg: String): FS[Unit]
 }
@@ -23,6 +21,7 @@ import freestyle._
 Then, make sure to include the streams algebra `StreamM` in your application:
 
 ```tut:book
+import freestyle.docs.integrations.Interact
 import freestyle._
 import freestyle.implicits._
 import freestyle.fs2._
@@ -51,7 +50,7 @@ def program[F[_]](
 To run it, we need to create an implicit interpreter for our `Interact` algebra:
 
 ```tut:book
-import cats._
+import cats.MonadError
 
 implicit def interactInterp[F[_]](
   implicit ME: MonadError[F, Throwable]
@@ -68,8 +67,8 @@ And now we can run the program to a `Future`. Check how the stream's value is pr
 ```tut:book
 import cats.instances.future._
 
-import scala.concurrent._
-import scala.concurrent.duration._
+import scala.concurrent.{Await, Future}
+import scala.concurrent.duration.Duration
 import scala.concurrent.ExecutionContext.Implicits.global
 
 Await.result(program[App.Op].exec[Future], Duration.Inf)

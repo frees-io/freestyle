@@ -56,21 +56,13 @@ Before we do anything else, we’ll need to add the usual set of imports from fr
 ```tut:silent
 import freestyle._
 import freestyle.implicits._
-import cats._
-import cats.implicits._
-
-import scala.util.Try
 ```
 
 We will define a very simple algebra with a stub handler that returns a list of issue states for illustration purposes:
 
-```tut:book
+```scala
 @free trait IssuesService {
   def states: FS[List[String]]
-}
-
-implicit val issuesServiceHandler: IssuesService.Handler[Try] = new IssuesService.Handler[Try] {
-  def states: Try[List[String]] = Try(List("open", "reverted", "in progress", "closed"))
 }
 ```
 
@@ -80,6 +72,7 @@ derived from using different algebras:
 ```tut:book
 import freestyle.config._
 import freestyle.config.implicits._
+import freestyle.docs.patterns.IssuesService
 
 @module trait App[F[_]] {
   val issuesService: IssuesService[F]
@@ -98,9 +91,18 @@ def filteredStates[F[_]](implicit app : App[F]): FreeS[F, List[String]] =
   } yield currentStates.filterNot(disallowedStates.contains)
 ```
 
-Once we have a program we can interpret it to our desired runtime, in this case `scala.util.Try`:
+Once we have a program, we can interpret it to our desired runtime. In this case, we want to interpret it to `scala.util.Try`, for which we need two things. 
+First, we have to provide a _handler_ of type `IssuesService.Handler[Try]`, to specify how to interpret the basic operations in the algebra. 
+Second, we need an instance of `Monad[Try]`, for which we use the one from `cats`. 
 
 ```tut:book
+import scala.util.Try
+import cats.instances.try_._
+
+implicit val issuesServiceHandler: IssuesService.Handler[Try] = new IssuesService.Handler[Try] {
+  def states: Try[List[String]] = Try(List("open", "reverted", "in progress", "closed"))
+}
+
 filteredStates[App.Op].exec[Try]
 ```
 

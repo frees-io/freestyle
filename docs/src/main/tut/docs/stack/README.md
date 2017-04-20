@@ -17,7 +17,7 @@ import freestyle.implicits._
 
 Now we can create data types for a customer and an order together with a `Config` data type which holds a set of all the apple varieties the company sells.
 
-```tut:silent
+```scala
 import java.util.UUID
 
 type CustomerId = UUID
@@ -29,38 +29,37 @@ case class Config(varieties: Set[String])
 ```
 
 It should be possible to get a `Customer` for a specified `CustomerId` from a data store holding the company's customers. We should be able to check how many crates of a specific apple variety the company has in stock, and finally, process the order.
+We represent these capabilities using two algebras, `CustomerPersistence` and `StockPersistence`, which are combined together in a `Persistence` module. 
 
-We will represent these capabilities using two algebras: `CustomerPersistence` and `StockPersistence`.
+```scala
+@free trait CustomerPersistence {
+  def getCustomer(id: CustomerId): FS[Option[Customer]]
+}
 
-```tut:book
-object algebras {
-  @free trait CustomerPersistence {
-    def getCustomer(id: CustomerId): FS[Option[Customer]]
-  }
+@free trait StockPersistence {
+  def checkQuantityAvailable(variety: String): FS[Int]
+  def registerOrder(order: Order): FS[Unit]
+}
 
-  @free trait StockPersistence {
-    def checkQuantityAvailable(variety: String): FS[Int]
-    def registerOrder(order: Order): FS[Unit]
-  }
+@module trait Persistence[F[_]] {
+  val customer: CustomerPersistence[F]
+  val stock: StockPersistence[F]
 }
 ```
 
-These two algebras will be combined together in a `Persistence` module, that in turn will be part of our `App` module, that additionally includes the
+The `Persistence` module, in turn, will be part of our `App` module, that also includes the
 capabilities to fail, to read from our `Config` configuration, and to cache `Customer`s using respectively `error` and `reader` from the _freestyle-effects_ module and `cache` from the _freestyle-cache_ module.
 
 ```tut:book
+import java.util.UUID
+import freestyle.docs.stack._
+import freestyle.docs.stack.types._
 import freestyle.effects.error._
 import freestyle.effects.reader
 import freestyle.cache.KeyValueProvider
 
-object modules {
   val rd = reader[Config]
   val cacheP = new KeyValueProvider[CustomerId, Customer]
-
-  @module trait Persistence[F[_]] {
-    val customer: algebras.CustomerPersistence[F]
-    val stock: algebras.StockPersistence[F]
-  }
 
   @module trait App[F[_]] {
     val persistence: Persistence[F]
@@ -69,7 +68,6 @@ object modules {
     val cacheM: cacheP.CacheM[F]
     val readerM: rd.ReaderM[F]
   }
-}
 ```
 
 To validate the order, we check to make sure the number of crates ordered is larger than zero, and that the requested variety of apple is sold by the company.
@@ -81,7 +79,6 @@ We are using [`Validated`](http://typelevel.org/cats/api/cats/data/Validated.htm
 The `|+|` syntax used below is provided by Cats (because `Validated` has a [`Semigroup`](http://typelevel.org/cats/typeclasses/semigroup.html) instance) which makes it possible to combine the error messages of the two checks:
 
 ```tut:book
-import modules._
 import cats.data.{NonEmptyList, ValidatedNel}
 import cats.implicits._
 
@@ -106,6 +103,7 @@ We are using the [`OptionT`](http://typelevel.org/cats/datatypes/optiont.html) m
 
 ```tut:book
 import cats.data.OptionT
+import cats.implicits._
 
 def getCustomer[F[_]](id: CustomerId)(implicit app: App[F]): FreeS[F, Option[Customer]] =
   // first try to get the customer from the cache
@@ -174,8 +172,6 @@ type Stack[A] = Kleisli[Task, Config, A]
 Now we create the interpreters or handlers for algebras of our `Persistence` module by implementing their specific `Handler` traits as `x.Handler[Stack]`:
 
 ```tut:book
-import algebras._
-
 val customerId1 = UUID.fromString("00000000-0000-0000-0000-000000000000")
 
 implicit val customerPersistencteHandler: CustomerPersistence.Handler[Stack] =

@@ -74,10 +74,14 @@ Await.result(future, Duration.Inf)
 Only using `SlickM` is not exactly useful in this case as it just adds an extra level of indirection on top of `DBIO`. As a more realistic example, we will use `SlickM` in a module together with another algebra:
 
 
-```tut:book
+```scala
 @free trait Calc {
   def subtract(a: Int, b: Int): FS[Int]
 }
+```
+
+```tut:book
+import freestyle.docs.integrations.Calc
 
 @module trait Example[F[_]] {
   val slickM: SlickM[F]

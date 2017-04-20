@@ -71,10 +71,13 @@ task.unsafeRunSync.toOption
 Only using `DoobieM` is not exactly useful however, as it just adds an extra level of indirection on top of `ConnectionIO` in this case. As a more realistic example, we will use `DoobieM` in a module together with another algebra:
 
 
-```tut:book
+```scala
 @free trait Calc {
   def subtract(a: Int, b: Int): FS[Int]
 }
+```
+```tut:book
+import freestyle.docs.integrations.Calc
 
 @module trait Example[F[_]] {
   val doobieM: DoobieM[F]

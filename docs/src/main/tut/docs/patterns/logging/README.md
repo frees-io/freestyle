@@ -17,7 +17,7 @@ libraryDependencies += "com.47deg" %% "freestyle-logging" % "0.1.0"
 
 ### Operations
 
-The set of abstract operations of the `Logging` algebra are specified as follows:
+The set of abstract operations of the [`Logging` algebra](../../../../../../../freestyle-logging/shared/src/main/scala/logging.scala) are specified as follows:
 
 ```scala
 @free trait LoggingM {
@@ -32,10 +32,11 @@ The set of abstract operations of the `Logging` algebra are specified as follows
 }
 ```
 
-Each one of the operations corresponds to variations of `debug`, `error`, `info`, and `warn` which cover most use cases when performing logging in an application.
+Each operation corresponds to a variations of the typical operations `debug`, `error`, `info`, or `warn`, which cover most use cases when performing logging in an application.
 
-The _freestyle-logging_ module contains built-in interpreters for both Scala.jvm and Scala.js which you may use out of the box.
-The JVM handler interpreter is based on the [Verizon's Journal Library](https://github.com/Verizon/journal) and the JS handler in [slogging](https://github.com/jokade/slogging).
+The _freestyle-logging_ module contains built-in handlers, both for Scala.jvm and for Scala.js, which you can use out of the box.
+The [JVM handler](../../../../../../../freestyle-logging/jvm/src/main/scala/loggingJVM.scala) is based on the [Verizon's Journal Library](https://github.com/Verizon/journal).
+The [JS handler](../../../../../../../freestyle-logging/js/src/main/scala/loggingJS.scala) is based on the [slogging](https://github.com/jokade/slogging) library.
 
 ### Example
 
@@ -46,22 +47,18 @@ Before we do anything else, we need to add the usual set of imports from Freesty
 ```tut:silent
 import freestyle._
 import freestyle.implicits._
-import cats._
-import cats.implicits._
-
-import scala.util.Try
 ```
 
-We will define a simple algebra with a stub handler that returns a list of customer Id's for illustration purposes:
+We will use a simple algebra, whose code is available [here](../../../../scala/logging.scala), 
+along with a stub handler that returns a list of customer Id's for illustration purposes.
 
-```tut:book
+```scala
 @free trait CustomerService {
   def customers: FS[List[String]]
 }
-
-implicit val customerServiceHandler: CustomerService.Handler[Try] = new CustomerService.Handler[Try] {
-  def customers: Try[List[String]] = Try(List("John", "Jane", "Luis"))
-}
+```
+```tut:silent
+import freestyle.docs.patterns.CustomerService
 ```
 
 At this point, we may aggregate our customer algebra with any other algebras in a _@module_ which will automatically compose monadic actions
@@ -87,9 +84,23 @@ def program[F[_]](implicit app : App[F]): FreeS[F, Unit] =
   } yield ()
 ```
 
-Once we have a program, we can interpret it to our desired runtime, in this case, `scala.util.Try`:
+Once we have a program, we can interpret it to our desired runtime. In this case, we want to use `scala.util.Try` as our runtime. 
+For this, we need to  implement a handler `CustomerService.Handler[Try]`, to specify how to interpret our algebra into `Try`. 
+
+```tut:book
+import scala.util.Try
+
+implicit val customerServiceHandler: CustomerService.Handler[Try] =
+  new CustomerService.Handler[Try] {
+    def customers: Try[List[String]] = Try(List("John", "Jane", "Luis"))
+  }
+```
+
+Finally, to interpret the whole program, we also need an instance of `cats.Monad[Try]`, so we will use the one that `cats` provides. 
 
 ```tut:evaluated
+import cats.instances.try_._
+
 program[App.Op].exec[Try]
 ```
 

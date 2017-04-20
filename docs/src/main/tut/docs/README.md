@@ -40,7 +40,6 @@ In the example below we will define two algebras with intermixed sequential and 
 
 ```tut:book
 import freestyle._
-import freestyle.implicits._
 
 @free trait Validation {
   def minSize(s: String, n: Int): FS[Boolean]
@@ -60,6 +59,10 @@ Learn more about [algebras](./core/algebras) in the extended documentation.
 Freestyle algebras can be combined into `@module` definitions which provide aggregation and unification over the
 parametrization of Free programs.
 
+```tut:reset:silent
+import freestyle._
+import freestyle.docs._
+```
 ```tut:book
 @module trait Application[F[_]] {
   val validation: Validation[F]
@@ -80,9 +83,11 @@ Abstract definitions it's all it takes to start building programs that support s
 The example below combines both algebras to produce a more complex program
 
 ```tut:book
+import cats.syntax.cartesian._
+import freestyle.implicits._
+
 def program[F[_]](implicit A: Application[F]) = {
   import A._
-  import cats.implicits._
 
   for {
     userInput <- interaction.ask("Give me something with at least 3 chars and a number on it")
@@ -119,7 +124,7 @@ The mere fact that you provide implicit evidences for the individual steps enabl
 At this point we can run our pure programs at the edge of the world.
 
 ```tut:book
-import cats.implicits._
+import cats.instances.future._
 import scala.concurrent.duration.Duration
 import scala.concurrent.Await
 
