@@ -11,13 +11,13 @@ Freestyle comes with a built-in list of ready-to-use effects modeled as `@free` 
 For Scala.jvm:
 
 ```scala
-libraryDependencies += "io.freestyle" %% "freestyle-effects" % "0.1.0"
+libraryDependencies += "com.47deg" %% "freestyle-effects" % "0.1.0"
 ```
 
 For Scala.js:
 
 ```scala
-libraryDependencies += "io.freestyle" %%% "freestyle-effects" % "0.1.0"
+libraryDependencies += "com.47deg" %%% "freestyle-effects" % "0.1.0"
 ```
 
 If you are missing an effect from the following list please [create an issue](https://github.com/47deg/freestyle/issues/new)
