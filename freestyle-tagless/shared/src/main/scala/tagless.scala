@@ -16,41 +16,7 @@
 
 package freestyle
 
-import cats.Monad
-
 import scala.reflect.macros.blackbox.Context
-
-/**
-  * A tagless operation interpreted when a `H` Handler is provided
-  */
-trait Alg[H[_[_]], A] { self =>
-
-  def apply[F[_]](implicit handler: H[F]): F[A]
-
-}
-
-trait MonadSupport[H[_[_]], A] { self =>
-
-  import cats.implicits._
-
-  def apply[M[_]: Monad](implicit handler: H[M]): M[A]
-
-  def exec[M[_]: Monad](implicit handler: H[M]): M[A] = apply[M]
-
-  def map[B](f: A => B): MonadSupport[H, B] = new MonadSupport[H, B] {
-    def apply[F[_]: Monad](implicit handler: H[F]): F[B] = self[F].map(f)
-  }
-
-  def flatMap[B](f: A => MonadSupport[H, B]): MonadSupport[H, B] =
-    new MonadSupport[H, B] {
-      def apply[F[_]: Monad](implicit handler: H[F]): F[B] = self[F].flatMap(f(_)[F])
-    }
-
-}
-
-trait TaglessEffectLike[F[_]] { self =>
-  final type FS[A] = F[A]
-}
 
 object taglessImpl {
 
@@ -128,14 +94,14 @@ object taglessImpl {
           val args = params.map(_.name)
           val ev =  freshTermName("ev$")
           //q"FreeS.inject[$OP, $LL]( $ReqC[..${tparams.map(_.name)} ](..$args) )"
-          q"""new _root_.freestyle.Alg[Handler, $Res] {
-                def apply[$LL[_]](implicit $ev: Handler[$LL]): $LL[$Res] = $ev.${reqDef.name}(..${args})
+          q"""new _root_.freestyle.Alg[TFHandler, $Res] {
+                def apply[$LL[_]: _root_.cats.Monad](implicit $ev: TFHandler[$LL]): $LL[$Res] = $ev.${reqDef.name}(..$args)
              }
             """
         }
 
         val tpt = reqDef.tpt.asInstanceOf[AppliedTypeTree]
-        q"def ${reqDef.name}[..$tparams](...${reqDef.vparamss}): _root_.freestyle.Alg[Handler, $Res] = $injected"
+        q"def ${reqDef.name}[..$tparams](...${reqDef.vparamss}): _root_.freestyle.Alg[TFHandler, $Res] = $injected"
       }
 
     }
@@ -161,16 +127,24 @@ object taglessImpl {
       q"""
         object ${Eff.toTermName} {
 
-          type $OP[$AA] = _root_.freestyle.Alg[Handler, $AA]
+          type Op[A] = MonadSupportToFreeS.Op[A]
 
-          trait Handler[$LL[_], ..$TTs] extends $Eff[$LL, ..$tns] with _root_.cats.arrow.FunctionK[$OP, $LL] {
+          trait TFHandler[$LL[_], ..$TTs] extends $Eff[$LL, ..$tns] {
             ..${requests.map(_.handlerDef)}
-            override def apply[$AA]($fa: $OP[$AA]): $LL[$AA] = $fa(this)
           }
 
-         object Ops {
-           ..${requests.map(_.raiser(Eff))}
-         }
+          @free trait MonadSupportToFreeS {
+            def toFreeS[A](m : _root_.freestyle.Alg[TFHandler, A]) : FS[A]
+          }
+
+          implicit def freesHandler[M[_]: Monad](implicit taglessHandler: TFHandler[M]) : MonadSupportToFreeS.Handler[M] = new MonadSupportToFreeS.Handler[M] {
+            def toFreeS[A](m : _root_.freestyle.Alg[TFHandler, A]) : M[A] = m.exec[M]
+          }
+
+          implicit def toFreeS[F[_], A](alg: _root_.freestyle.Alg[TFHandler, A])(implicit MS : MonadSupportToFreeS[F]): FreeS[F, A] =
+            MS.toFreeS[A](alg)
+
+          ..${requests.map(_.raiser(Eff))}
 
           def apply[$LL[_], ..$TTs](implicit $ev: $Eff[$LL, ..$tns]): $Eff[$LL, ..$tns] = $ev
 

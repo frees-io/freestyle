@@ -16,7 +16,7 @@
 
 package freestyle
 
-import cats.{ Applicative, Monad }
+import cats.{Applicative, Monad}
 import cats.arrow.FunctionK
 import cats.data.Coproduct
 import cats.free.{Free, FreeApplicative, Inject}
@@ -48,10 +48,4 @@ trait FreeSInstances {
     Free.catsFreeMonadForFree[FreeApplicative[F, ?]]
 }
 
-trait TaglessSyntax {
-  implicit class DslToMonadicDsl[H[_[_]], A](dsl: Alg[H, A]) extends MonadSupport[H, A] {
-    def apply[F[_]: Monad](implicit interpreter: H[F]): F[A] = dsl.apply(interpreter)
-  }
-}
-
-object implicits extends Interpreters with FreeSInstances with TaglessSyntax
+object implicits extends Interpreters with FreeSInstances

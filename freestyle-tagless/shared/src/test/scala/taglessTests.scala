@@ -14,12 +14,11 @@
  * limitations under the License.
  */
 
-package freestyle
-
+import freestyle._
+import freestyle.implicits._
+import org.scalatest.{Matchers, WordSpec}
 import cats._
 import cats.implicits._
-import org.scalatest.{Matchers, WordSpec}
-
 
 object taglessAlg {
 
@@ -29,31 +28,54 @@ object taglessAlg {
     def y(a: Int): FS[Int]
   }
 
-  implicit val optionHandler1: TG1.Handler[Option] = new TG1.Handler[Option] {
+  implicit val optionHandler1: TG1.TFHandler[Option] = new TG1.TFHandler[Option] {
     def x(a: Int): Option[Int] = Some(a)
     def y(a: Int): Option[Int] = Some(a)
   }
+
+}
+
+object freeAlg {
+
+  @free
+  trait F1 {
+    def a(a: Int): FS[Int]
+    def b(a: Int): FS[Int]
+  }
+
+  implicit val optionHandler1: F1.Handler[Option] = new F1.Handler[Option] {
+    def a(a: Int): Option[Int] = Some(a)
+    def b(a: Int): Option[Int] = Some(a)
+  }
+
 }
 
 class taglessTests extends WordSpec with Matchers {
 
-  import taglessAlg._
+  import freeAlg._, taglessAlg._
+
+  @module trait App[F[_]] {
+    val f1 : F1[F]
+    val ag : TG1.MonadSupportToFreeS[F]
+  }
 
 
   "the @tagless annotation" should {
 
     "compile" in {
 
-      import freestyle.implicits._
-
-      def program[F[_]] = {
-        val s = TG1.Ops
+      def program[F[_] : F1: TG1.MonadSupportToFreeS]: FreeS[F, Int] = {
+        val s = TG1
+        val f = F1[F]
         for {
-          a <- s.x(1)
-          b <- s.y(1)
-        } yield a + b
+          a <- f.a(1)
+          b <- f.b(1)
+          x <- s.x(1)
+          y <- s.y(1)
+        } yield a + b + x + y
       }
-      program.exec[Option] shouldBe Option(2)
+      import TG1._
+      program[App.Op].exec[Option] shouldBe Option(4)
 
     }
 

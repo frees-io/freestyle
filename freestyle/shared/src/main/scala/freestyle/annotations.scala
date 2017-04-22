@@ -16,17 +16,12 @@
 
 package freestyle
 
-import scala.annotation.{compileTimeOnly, StaticAnnotation}
+import scala.annotation.{StaticAnnotation, compileTimeOnly}
 import scala.language.experimental.macros
 
 @compileTimeOnly("enable macro paradise to expand @free macro annotations")
 class free extends StaticAnnotation {
   def macroTransform(annottees: Any*): Any = macro freeImpl.free
-}
-
-@compileTimeOnly("enable macro paradise to expand @tagless macro annotations")
-class tagless extends StaticAnnotation {
-  def macroTransform(annottees: Any*): Any = macro taglessImpl.tagless
 }
 
 @compileTimeOnly("enable macro paradise to expand @module macro annotations")

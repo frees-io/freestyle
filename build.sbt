@@ -23,6 +23,15 @@ lazy val freestyle = (crossProject in file("freestyle"))
 lazy val freestyleJVM = freestyle.jvm
 lazy val freestyleJS  = freestyle.js
 
+lazy val tagless = (crossProject in file("freestyle-tagless"))
+  .dependsOn(freestyle)
+  .settings(name := "freestyle-tagless")
+  .jsSettings(sharedJsSettings: _*)
+  .crossDepSettings(commonDeps: _*)
+
+lazy val taglessJVM = tagless.jvm
+lazy val taglessJS  = tagless.js
+
 lazy val tests = (project in file("tests"))
   .dependsOn(freestyleJVM)
   .settings(noPublishSettings: _*)
@@ -281,6 +290,8 @@ orgAfterCISuccessTaskListSetting := List(
 lazy val freestyleModules: Seq[ProjectReference] = Seq(
   freestyleJVM,
   freestyleJS,
+  taglessJVM,
+  taglessJS,
   monixJVM,
   monixJS,
   effectsJVM,
