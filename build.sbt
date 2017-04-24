@@ -262,6 +262,14 @@ lazy val httpPlay = (project in file("http/play"))
     ) ++ commonDeps
   )
 
+lazy val todolistExample = (project in file("freestyle-examples/todolist"))
+  .dependsOn(freestyleJVM)
+  .dependsOn(doobie)
+  .settings(name := "freestyle-examples-todolist")
+  .settings(
+    libraryDependencies ++= commonDeps
+  )
+
 addCommandAlias("debug", "; clean ; test")
 
 addCommandAlias("validate", "; +clean ; +test; makeMicrosite")
@@ -307,7 +315,8 @@ lazy val freestyleModules: Seq[ProjectReference] = Seq(
   httpHttp4s,
   httpFinch,
   httpAkka,
-  httpPlay
+  httpPlay,
+  todolistExample
 )
 
 lazy val freestyleDependencies: Seq[ClasspathDependency] =
