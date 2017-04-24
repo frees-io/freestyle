@@ -83,9 +83,9 @@ object algebras {
     }
 
   @module
-  trait App[F[_]] {
-    val nonSlick: NonSlick[F]
-    val slickM: SlickM[F]
+  trait App {
+    val nonSlick: NonSlick
+    val slickM: SlickM
   }
 
   val app = App[App.Op]

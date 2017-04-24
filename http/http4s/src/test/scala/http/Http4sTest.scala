@@ -85,8 +85,8 @@ object algebras {
   }
 
   @module
-  trait App[F[_]] {
-    val userRepo: UserRepository[F]
+  trait App {
+    val userRepo: UserRepository
   }
 }
 

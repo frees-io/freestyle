@@ -19,9 +19,7 @@ package freestyle
 import scala.reflect.internal._
 import scala.reflect.macros.whitebox.Context
 
-trait FreeModuleLike {
-  type Op[A]
-}
+trait FreeModuleLike
 
 object openUnion {
 
@@ -52,9 +50,7 @@ object openUnion {
       // cs is a `@module` is the _class_ of the `object` extends from `FreeModuleLike`
       // Note that a trait's companion object has a _real_ class, unknown, to rule its behaviour.
       def isModuleFS(cs: ClassSymbol): Boolean =
-        cs.companion.asModule.moduleClass.asClass.baseClasses.exists {
-          case x: ClassSymbol => x.name == TypeName("FreeModuleLike")
-        }
+        cs.baseClasses.exists( _.name == TypeName("FreeModuleLike") )
 
       // cs: the trait annotated as `@module`
       def fromClass(cs: ClassSymbol): List[Type] =
@@ -123,15 +119,33 @@ object moduleImpl {
     val LL = freshTypeName("LL$")
 
     def toImplArg(effVal: ValDef): ValDef = effVal match {
-      case q"$mods val $name: $eff[$ff, ..$args]" =>
+      case q"$mods val $name: $eff[..$args]" =>
         q"$mods val $name: $eff[$LL, ..$args]"
     }
 
-    def mkCompanion( userTrait: ClassDef): ModuleDef = {
+    def mkModuleTrait(cls: ClassDef): ClassDef = {
+      val FF = freshTypeName("FF$")
+      // this is to make a TypeDef for `$FF[_]`
+      val wildcard = TypeDef(Modifiers(Flag.PARAM), typeNames.WILDCARD, List(), TypeBoundsTree(EmptyTree, EmptyTree))
+      val ffTParam = TypeDef(Modifiers(Flag.PARAM), FF, List(wildcard), TypeBoundsTree(EmptyTree, EmptyTree))
+
+      val ClassDef(mods, name, tparams, Template(parents, self, body)) = cls
+
+      val nbody = body.map {
+        case q"$mods val $name: $eff[..$args]" => q"$mods val $name: $eff[$FF, ..$args]"
+        case x => x
+      }
+      val nimpl = Template(parents :+ tq"freestyle.FreeModuleLike", self, nbody)
+      ClassDef(mods, name, ffTParam :: tparams, nimpl)
+    }
+
+    def mkModuleObject(userTrait: ClassDef): ModuleDef = {
       val mod = userTrait.name
       val effVals: List[ValDef] = filterEffectVals(userTrait.impl)
 
-      val tns = userTrait.tparams.tail.map(_.name)
+      val tts = userTrait.tparams
+      val tns = tts.map(_.name)
+
       val AA = freshTypeName("AA$")
       val ev = freshTermName("ev$")
       val xx = freshTermName("xx$")
@@ -139,7 +153,7 @@ object moduleImpl {
       val effArgs: List[ValDef] = effVals.map( v => toImplArg(v) )
 
       q"""
-        object ${mod.toTermName} extends FreeModuleLike {
+        object ${mod.toTermName} {
 
           import _root_.cats.data.Coproduct
 
@@ -147,11 +161,11 @@ object moduleImpl {
 
           type Op[$AA] = $xx.Op[$AA]
 
-          class To[$LL[_]](implicit ..$effArgs) extends $mod[$LL, ..$tns]
+          class To[$LL[_], ..$tts](implicit ..$effArgs) extends $mod[$LL, ..$tns]
 
-          implicit def to[$LL[_]](implicit ..$effArgs): To[$LL] = new To[$LL]()
+          implicit def to[$LL[_], ..$tts](implicit ..$effArgs): To[$LL, ..$tns] = new To[$LL, ..$tns]()
 
-          def apply[$LL[_]](implicit $ev: $mod[$LL, ..$tns]): $mod[$LL, ..$tns] = $ev
+          def apply[$LL[_], ..$tts](implicit $ev: $mod[$LL, ..$tns]): $mod[$LL, ..$tns] = $ev
         }
       """
     }
@@ -165,10 +179,9 @@ object moduleImpl {
     annottees match {
       case Expr(cls: ClassDef) :: Nil =>
         if (cls.mods.hasFlag(Flag.TRAIT | Flag.ABSTRACT)) {
-          val userTrait = cls.duplicate
           q"""
-            $userTrait
-            ${mkCompanion(userTrait)}
+            ${mkModuleTrait(cls.duplicate)}
+            ${mkModuleObject(cls.duplicate)}
           """
         } else fail( s"$invalid in ${cls.name}. $abstractOnly")
 

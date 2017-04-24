@@ -61,40 +61,40 @@ trait S2 {
 
 
 @module
-trait M1[F[_]] {
-  val sctors1: SCtors1[F]
-  val sctors2: SCtors2[F]
+trait M1 {
+  val sctors1: SCtors1
+  val sctors2: SCtors2
 }
 
 @module
-trait M2[G[_]] {
-  val sctors3: SCtors3[G]
-  val sctors4: SCtors4[G]
+trait M2 {
+  val sctors3: SCtors3
+  val sctors4: SCtors4
 }
 
 @module
-trait O1[H[_]] {
-  val m1: M1[H]
-  val m2: M2[H]
+trait O1 {
+  val m1: M1
+  val m2: M2
 }
 
 @module
-trait O2[F[_]] {
-  val o1: O1[F]
+trait O2 {
+  val o1: O1
   val x = 1
   def y = 2
 }
 
 @module
-trait O3[F[_]] {
+trait O3 {
   def x = 1
   def y = 2
 }
 
 @module
-trait StateProp[F[_]] {
-  val s1: S1[F]
-  val s2: S2[F]
+trait StateProp {
+  val s1: S1
+  val s2: S2
 }
 
 object interps {

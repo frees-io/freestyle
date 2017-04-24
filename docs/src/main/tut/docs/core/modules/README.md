@@ -39,17 +39,17 @@ Modules can be further nested so they become part of the tree that conforms an a
 import algebras._
 
 object modules {
-    @module trait Persistence[F[_]] {
-      val database: Database[F]
-      val cache: Cache[F]
+    @module trait Persistence {
+      val database: Database
+      val cache: Cache
     }
-    @module trait Display[F[_]] {
-      val presenter: Presenter[F]
-      val validator: IdValidation[F]
+    @module trait Display {
+      val presenter: Presenter
+      val validator: IdValidation
     }
-    @module trait App[F[_]] {
-      val persistence: Persistence[F]
-      val display: Display[F]
+    @module trait App {
+      val persistence: Persistence
+      val display: Display
     }
 }
 ```

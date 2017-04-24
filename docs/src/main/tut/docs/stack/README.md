@@ -57,17 +57,17 @@ object modules {
   val rd = reader[Config]
   val cacheP = new KeyValueProvider[CustomerId, Customer]
 
-  @module trait Persistence[F[_]] {
-    val customer: algebras.CustomerPersistence[F]
-    val stock: algebras.StockPersistence[F]
+  @module trait Persistence {
+    val customer: algebras.CustomerPersistence
+    val stock: algebras.StockPersistence
   }
 
-  @module trait App[F[_]] {
-    val persistence: Persistence[F]
+  @module trait App {
+    val persistence: Persistence
 
-    val errorM: ErrorM[F]
-    val cacheM: cacheP.CacheM[F]
-    val readerM: rd.ReaderM[F]
+    val errorM: ErrorM
+    val cacheM: cacheP.CacheM
+    val readerM: rd.ReaderM
   }
 }
 ```

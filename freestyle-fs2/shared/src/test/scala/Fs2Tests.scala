@@ -134,9 +134,9 @@ object algebras {
     }
 
   @module
-  trait App[F[_]] {
-    val nonStream: NonStream[F]
-    val streamM: StreamM[F]
+  trait App {
+    val nonStream: NonStream
+    val streamM: StreamM
   }
 
   val app = App[App.Op]

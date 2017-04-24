@@ -28,9 +28,9 @@ import freestyle.implicits._
 import freestyle.fs2._
 import freestyle.fs2.implicits._
 
-@module trait App[F[_]] {
-  val interact: Interact[F]
-  val streams: StreamM[F]
+@module trait App {
+  val interact: Interact
+  val streams: StreamM
 }
 ```
 

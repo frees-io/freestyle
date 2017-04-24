@@ -23,9 +23,9 @@ import freestyle._
   def get(id: UserId): FS[User]
 }
 
-@module trait Persistence[F[_]] {
-  val database: Database[F]
-  val cache: Cache[F]
+@module trait Persistence {
+  val database: Database
+  val cache: Cache
 }
 ```
 </div>

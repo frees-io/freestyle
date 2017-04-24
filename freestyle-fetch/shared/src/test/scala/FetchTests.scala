@@ -101,9 +101,9 @@ object algebras {
     }
 
   @module
-  trait App[F[_]] {
-    val nonFetch: NonFetch[F]
-    val fetchM: FetchM[F]
+  trait App {
+    val nonFetch: NonFetch
+    val fetchM: FetchM
   }
 
   val app = App[App.Op]
