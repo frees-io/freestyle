@@ -265,9 +265,15 @@ lazy val httpPlay = (project in file("http/play"))
 lazy val todolistExample = (project in file("freestyle-examples/todolist"))
   .dependsOn(freestyleJVM)
   .dependsOn(doobie)
+  .dependsOn(httpFinch)
+  .dependsOn(fs2JVM)
   .settings(name := "freestyle-examples-todolist")
   .settings(
-    libraryDependencies ++= commonDeps
+    libraryDependencies ++= Seq(
+      %%("circe-generic"),
+      %%("doobie-h2-cats"),
+      "com.github.finagle" %% "finch-circe" % "0.14.0"
+    ) ++ commonDeps
   )
 
 addCommandAlias("debug", "; clean ; test")

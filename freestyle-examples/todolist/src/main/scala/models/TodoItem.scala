@@ -14,14 +14,6 @@
  * limitations under the License.
  */
 
-import apis.Api
-import com.twitter.finagle.Http
-import com.twitter.util.Await
+package models
 
-import io.finch._
-import io.finch.circe._
-import io.circe.generic.auto._
-
-object TodoListApp extends App {
-  Await.ready(Http.server.serve(":8081", Api.instance.api.toService))
-}
+case class TodoItem(id: Int, item: String)

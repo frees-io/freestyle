@@ -14,14 +14,15 @@
  * limitations under the License.
  */
 
-import apis.Api
-import com.twitter.finagle.Http
-import com.twitter.util.Await
+package algebras
 
-import io.finch._
-import io.finch.circe._
-import io.circe.generic.auto._
+import freestyle._
+import freestyle.implicits._
 
-object TodoListApp extends App {
-  Await.ready(Http.server.serve(":8081", Api.instance.api.toService))
+import freestyle.doobie._
+import freestyle.doobie.implicits._
+
+@module
+trait TodoListModule[F[_]] {
+  val doobieM: DoobieM[F]
 }

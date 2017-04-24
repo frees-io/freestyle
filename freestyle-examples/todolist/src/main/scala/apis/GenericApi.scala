@@ -14,14 +14,21 @@
  * limitations under the License.
  */
 
-import apis.Api
-import com.twitter.finagle.Http
-import com.twitter.util.Await
+package apis
 
 import io.finch._
-import io.finch.circe._
-import io.circe.generic.auto._
+import models.Pong
 
-object TodoListApp extends App {
-  Await.ready(Http.server.serve(":8081", Api.instance.api.toService))
+trait GenericApi {
+  val ping: Endpoint[Pong] =
+    get("ping") {
+      Ok(Pong.current)
+    }
+
+  val hello: Endpoint[String] =
+    get("hello") {
+      Ok("Hello World")
+    }
+
+  val genericApi = (hello :+: ping)
 }

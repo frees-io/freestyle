@@ -14,14 +14,12 @@
  * limitations under the License.
  */
 
-import apis.Api
-import com.twitter.finagle.Http
-import com.twitter.util.Await
+package apis
 
-import io.finch._
-import io.finch.circe._
-import io.circe.generic.auto._
+class Api extends GenericApi with TodoItemApi {
+  val api = genericApi :+: todoItemApi
+}
 
-object TodoListApp extends App {
-  Await.ready(Http.server.serve(":8081", Api.instance.api.toService))
+object Api {
+  implicit def instance = new Api
 }
