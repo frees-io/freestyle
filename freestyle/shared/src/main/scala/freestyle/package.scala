@@ -72,6 +72,19 @@ package object freestyle {
   }
 
   /**
+    * Syntax functions for Free
+    */
+  implicit class FreeOps[F[_], A](private val fa: Free[F, A]) extends AnyVal {
+
+    /**
+      * Runs a seq/par program by converting each parallel fragment in `f` into an `H`
+      * `H` should probably be an `IO`/`Task` like `Monad` also providing parallel execution.
+      */
+    def exec[H[_]: Monad](implicit interpreter: FSHandler[F, H]): H[A] =
+      fa.foldMap(interpreter)
+  }
+
+  /**
    * Syntax functions for FreeS.Par
    */
   implicit class FreeSOps[F[_], A](private val fa: FreeS[F, A]) extends AnyVal {

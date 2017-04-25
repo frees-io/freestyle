@@ -21,6 +21,7 @@ import cats._
 import cats.implicits._
 import algebras._
 import cats.arrow.FunctionK
+import cats.free.Free
 import handlers._
 import modules._
 import utils._
@@ -72,7 +73,7 @@ class taglessTests extends WordSpec with Matchers {
     }
 
     "remain stack safe when interpreted to stack safe monads" in {
-      SOProgram[FreeS[Option, ?]](0).exec[Option] shouldBe Option(iterations)
+      SOProgram[Free[Option, ?]](0).exec[Option] shouldBe Option(iterations)
     }
 
   }
@@ -114,10 +115,10 @@ object handlers  {
     def y(a: Int): Option[Int] = Some(a)
   }
 
-  implicit val stackSafeOptionHandler1: TG1.Handler[FreeS[Option, ?]] = new TG1.Handler[FreeS[Option, ?]] {
-    def x(a: Int): FreeS[Option, Int] = FreeS.liftFA(Some(a))
+  implicit val stackSafeOptionHandler1: TG1.Handler[Free[Option, ?]] = new TG1.Handler[Free[Option, ?]] {
+    def x(a: Int): Free[Option, Int] = Free.liftF(Some(a))
 
-    def y(a: Int): FreeS[Option, Int] = FreeS.liftFA(Some(a))
+    def y(a: Int): Free[Option, Int] = Free.liftF(Some(a))
   }
 
   implicit val optionHandler2: TG2.Handler[Option] = new TG2.Handler[Option] {
