@@ -139,8 +139,6 @@ object taglessImpl {
       """
     }
 
-    val x = gen()
-    println(x)
-    x
+    gen()
   }
 }
