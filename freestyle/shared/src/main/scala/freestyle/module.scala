@@ -32,27 +32,20 @@ object openUnion {
 
     def fail(msg: String) = c.abort(c.enclosingPosition, msg)
 
-    /* The findAlgebras method takes as input the `ClassSymbol` for the `@module`-annotated `trait`,
-     * and it computes the list of _algebras_ (`@free`-annotated `trait`s) that are included in the module.
+    /* This method takes as input the `ClassSymbol` of the `@module`-annotated `trait` and computes the list
+     *  of _algebras_ (`@free`-annotated `trait`s) used, directly or transitively, by the `@module`.
      *
-     * Now, a `@module` M can directly include a `@free` algebra A, but it can also include another `@module` N.
-     * In this case, we also need to collect recursively all the `@free` algebras included in N.
-     *
-     * To recognise if the type of a variable refers to a `@module`, the generated companion object for any
-     * `@module` inherits from the `FreeModuleLike` trait.
+     * To recognise if a `val` type is itself  a `@module`, the `@module` macro adds `FreeModuleLike`
+     * trait as a super-class of the `@module`-annotated trait.
      */
     def findAlgebras(s: ClassSymbol): List[Type] = {
 
-      // cs: the trait annotated as `@module`
       def methodsOf(cs: ClassSymbol): List[MethodSymbol] =
         cs.info.decls.toList.collect { case met: MethodSymbol if met.isAbstract => met }
 
-      // cs is a `@module` is the _class_ of the `object` extends from `FreeModuleLike`
-      // Note that a trait's companion object has a _real_ class, unknown, to rule its behaviour.
       def isModuleFS(cs: ClassSymbol): Boolean =
         cs.baseClasses.exists( _.name == TypeName("FreeModuleLike") )
 
-      // cs: the trait annotated as `@module`
       def fromClass(cs: ClassSymbol): List[Type] =
         methodsOf(cs).flatMap(x => fromMethod(x.returnType))
 
@@ -75,8 +68,8 @@ object openUnion {
         case alg :: Nil => q"type Op[$AA] = $alg.Op[$AA]" :: Nil
 
         case alg0 :: alg1 :: algs =>
-          /* We create several type aliases, where the type names are generated fresh names, 
-           * C0, C1, ..., C{n-1}, where n is the length of algebras. We then generate aliases: 
+          /* We create several type aliases, where the type names are generated fresh names,
+           * C0, C1, ..., C{n-1}, where n is the length of algebras. We then generate aliases:
            *
            * type C1 = A1 |+| A0
            * type C2 = A2 |+| C1
@@ -84,8 +77,7 @@ object openUnion {
            * type C{n-1} = A{n-1} |+| C{n-2
            * type Op{n-1}= C{n-1}
            */
-          val num = algebras.length
-          val ccs: List[TypeName] = List.range(0, num).map( i => freshTypeName("CC$") )
+          val ccs: List[TypeName] = algebras.map( _ => freshTypeName("CC$") )
           val tyDef1 = q"type ${ccs(1)}[$AA] = Coproduct[$alg1.Op, $alg0.Op, $AA]"
           val tyDefs = algebras.zipWithIndex.drop(2).map { case (alg, pos) =>
             q"type ${ccs(pos)}[$AA] = Coproduct[$alg.Op, ${ccs(pos-1)}, $AA]"
@@ -141,16 +133,13 @@ object moduleImpl {
 
     def mkModuleObject(userTrait: ClassDef): ModuleDef = {
       val mod = userTrait.name
-      val effVals: List[ValDef] = filterEffectVals(userTrait.impl)
-
       val tts = userTrait.tparams
       val tns = tts.map(_.name)
-
       val AA = freshTypeName("AA$")
       val ev = freshTermName("ev$")
       val xx = freshTermName("xx$")
 
-      val effArgs: List[ValDef] = effVals.map( v => toImplArg(v) )
+      val effArgs: List[ValDef] = filterEffectVals(userTrait.impl).map( v => toImplArg(v) )
 
       q"""
         object ${mod.toTermName} {
