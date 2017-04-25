@@ -1,16 +1,17 @@
 import com.typesafe.sbt.site.jekyll.JekyllPlugin.autoImport._
-import dependencies.DependenciesPlugin.autoImport.depUpdateDependencyIssues
 import microsites.MicrositeKeys._
-import microsites.MicrositesPlugin.autoImport.publishMicrosite
-import microsites.util.BuildHelper.buildWithoutSuffix
 import sbt.Keys._
 import sbt._
 import sbtorgpolicies.OrgPoliciesKeys.orgBadgeListSetting
 import sbtorgpolicies.OrgPoliciesPlugin
 import sbtorgpolicies.OrgPoliciesPlugin.autoImport._
 import sbtorgpolicies.model._
+import sbtorgpolicies.runnable.SetSetting
 import sbtorgpolicies.templates.badges._
-import scoverage.ScoverageSbtPlugin.autoImport._
+import sbtorgpolicies.runnable.syntax._
+import scoverage.ScoverageKeys
+import scoverage.ScoverageKeys._
+import tut.Plugin._
 
 object ProjectPlugin extends AutoPlugin {
   override def trigger: PluginTrigger = allRequirements
@@ -49,12 +50,9 @@ object ProjectPlugin extends AutoPlugin {
 
   override def projectSettings: Seq[Def.Setting[_]] =
     Seq(
-      coverageMinimum := 80,
-      coverageFailOnMinimum := false,
       description := "A Cohesive & Pragmatic Framework of FP centric Scala libraries",
       startYear := Some(2017),
       orgProjectName := "Freestyle",
-      orgGithubTokenSetting := "GITHUB_TOKEN_REPO",
       orgBadgeListSetting := List(
         TravisBadge.apply,
         CodecovBadge.apply,
@@ -63,9 +61,22 @@ object ProjectPlugin extends AutoPlugin {
         GitHubIssuesBadge.apply,
         ScalaJSBadge.apply
       ),
+      orgSupportedScalaJSVersion := Some("0.6.15"),
+      orgScriptTaskListSetting := List(
+        orgValidateFiles.asRunnableItem,
+        (clean in Global).asRunnableItemFull,
+        SetSetting(coverageEnabled in Global, true).asRunnableItem,
+        (compile in Compile).asRunnableItemFull,
+        (test in Test).asRunnableItemFull,
+        (ScoverageKeys.coverageReport in Test).asRunnableItemFull,
+        (ScoverageKeys.coverageAggregate in Test).asRunnableItemFull
+      ) ++ guard(scalaBinaryVersion.value == "2.12")(
+        (tut in ProjectRef(file("."), "docs")).asRunnableItem),
       resolvers += Resolver.sonatypeRepo("snapshots"),
       scalacOptions ++= scalacAdvancedOptions,
+      scalacOptions ~= (_ filterNot (_ == "-Yliteral-types")),
       parallelExecution in Test := false,
-      compileOrder in Compile := CompileOrder.JavaThenScala
+      compileOrder in Compile := CompileOrder.JavaThenScala,
+      coverageFailOnMinimum := false
     ) ++ scalaMacroDependencies
 }

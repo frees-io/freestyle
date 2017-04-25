@@ -10,9 +10,13 @@ A freestyle program can easily be used with [Finch](https://finagle.github.io/fi
 
 You can add the _freestyle-finch_ module as follows:
 
+[comment]: # (Start Replace)
+
 ```scala
 libraryDependencies += "com.47deg" %% "freestyle-http-finch" % "0.1.0"
 ```
+
+[comment]: # (End Replace)
 
 ## Integration
 

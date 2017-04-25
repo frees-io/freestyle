@@ -1,25 +1,31 @@
 language: scala
+
+dist: precise
+
+sudo: required
+
 scala:
-- 2.11.8
-- 2.12.1
+- 2.11.11
+- 2.12.2
+
 jdk:
 - oraclejdk8
+
 before_install:
 - if [ "$TRAVIS_BRANCH" = "master" -a "$TRAVIS_PULL_REQUEST" = "false" ]; then
-    bash scripts/decrypt-keys.sh;
+    openssl aes-256-cbc -K $encrypted_86276aecec54_key -iv $encrypted_86276aecec54_iv -in secring.gpg.enc -out secring.gpg -d;
   fi
 - export PATH=${PATH}:./vendor/bundle
+
 install:
 - rvm use 2.2.3 --install --fuzzy
 - gem update --system
 - gem install sass
 - gem install jekyll -v 3.2.1
-script:
-- sbt ++$TRAVIS_SCALA_VERSION clean coverage test coverageReport
-- if [ "$TRAVIS_SCALA_VERSION" = "2.12.1" ]; then
-    sbt "docs/tut";
-  fi
 
+script:
+- sbt ++$TRAVIS_SCALA_VERSION test:fastOptJS
+- sbt ++$TRAVIS_SCALA_VERSION orgScriptCI
 
 after_success:
 - sbt ++$TRAVIS_SCALA_VERSION orgAfterCISuccess

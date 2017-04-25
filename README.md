@@ -71,7 +71,7 @@ def loadUser[F[_]]
 }
 ```
 
-## freestyle in the wild
+## Freestyle in the wild
 
 If you wish to add your library here please consider a PR to include it in the list below.
 
