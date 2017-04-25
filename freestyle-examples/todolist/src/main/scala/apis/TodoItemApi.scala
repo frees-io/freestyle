@@ -35,7 +35,9 @@ import freestyle.implicits._
 import freestyle.doobie._
 import freestyle.doobie.implicits._
 
-import algebras._
+import freestyle.http.finch._
+
+import modules._
 
 trait TodoItemApi {
   implicit val xa = DriverManagerTransactor[Task](
@@ -49,24 +51,25 @@ trait TodoItemApi {
 
   val resetTodoItem: Endpoint[Int] =
     post("items" :: "reset") {
-      Ok(todoItemDao.init[TodoListModule.Op].exec[Task].unsafeRunSync.toOption.get)
+      Ok(todoItemDao.init[Persistence.Op].exec[Task].unsafeRunSync.toOption.get)
+//      todoItemDao.init[Persistence.Op].exec[Task].map(Ok(_))
     }
 
   val getTodoItem: Endpoint[Option[TodoItem]] =
     get("items" :: int) { id: Int =>
-      Ok(todoItemDao.get[TodoListModule.Op](id).exec[Task].unsafeRunSync.toOption.get)
+      Ok(todoItemDao.get[Persistence.Op](id).exec[Task].unsafeRunSync.toOption.get)
     }
 
   val getTodoItems: Endpoint[List[TodoItem]] =
     get("items") {
-      Ok(todoItemDao.list[TodoListModule.Op].exec[Task].unsafeRunSync.toOption.get)
+      Ok(todoItemDao.list[Persistence.Op].exec[Task].unsafeRunSync.toOption.get)
     }
 
   val insertTodoItem: Endpoint[Int] =
     post("items" :: param("item")) { item: String =>
       Ok(
         todoItemDao
-          .insert[TodoListModule.Op](TodoItem(0, item))
+          .insert[Persistence.Op](TodoItem(0, item))
           .exec[Task]
           .unsafeRunSync
           .toOption
@@ -77,7 +80,7 @@ trait TodoItemApi {
     put("items" :: int :: param("item")) { (id: Int, item: String) =>
       Ok(
         todoItemDao
-          .update[TodoListModule.Op](TodoItem(id, item))
+          .update[Persistence.Op](TodoItem(id, item))
           .exec[Task]
           .unsafeRunSync
           .toOption
@@ -86,7 +89,7 @@ trait TodoItemApi {
 
   val deleteTodoItem: Endpoint[Int] =
     delete("items" :: int) { id: Int =>
-      Ok(todoItemDao.delete[TodoListModule.Op](id).exec[Task].unsafeRunSync.toOption.get)
+      Ok(todoItemDao.delete[Persistence.Op](id).exec[Task].unsafeRunSync.toOption.get)
     }
 
   val todoItemApi = (resetTodoItem :+: getTodoItem :+: getTodoItems :+: insertTodoItem :+: updateTodoItem :+: deleteTodoItem)

@@ -75,50 +75,48 @@ object TodoItemRepository {
 }
 
 class TodoItemDao {
-  import algebras._
+  import modules._
 
   val todoItemRepository = TodoItemRepository.instance
 
-  def drop[F[_]: DoobieM](implicit todoItemModule: TodoListModule[F]): FreeS[F, Int] =
+  def drop[F[_]: DoobieM](implicit persistence: Persistence[F]): FreeS[F, Int] =
     for {
       rows <- todoItemRepository.drop.liftFS[F]
     } yield rows
 
-  def create[F[_]: DoobieM](implicit todoItemModule: TodoListModule[F]): FreeS[F, Int] =
+  def create[F[_]: DoobieM](implicit persistence: Persistence[F]): FreeS[F, Int] =
     for {
       rows <- todoItemRepository.create.liftFS[F]
     } yield rows
 
-  def init[F[_]: DoobieM](implicit todoItemModule: TodoListModule[F]): FreeS[F, Int] =
+  def init[F[_]: DoobieM](implicit persistence: Persistence[F]): FreeS[F, Int] =
     for {
       drops   <- drop
       creates <- create
     } yield drops + creates
 
   def get[F[_]: DoobieM](id: Int)(
-      implicit todoItemModule: TodoListModule[F]): FreeS[F, Option[TodoItem]] =
+      implicit persistence: Persistence[F]): FreeS[F, Option[TodoItem]] =
     for {
       todoItem <- todoItemRepository.get(id).liftFS[F]
     } yield todoItem
 
-  def insert[F[_]: DoobieM](input: TodoItem)(
-      implicit todoItemModule: TodoListModule[F]): FreeS[F, Int] =
+  def insert[F[_]: DoobieM](input: TodoItem)(implicit persistence: Persistence[F]): FreeS[F, Int] =
     for {
       rows <- todoItemRepository.insert(input).liftFS[F]
     } yield rows
 
-  def list[F[_]: DoobieM](implicit todoItemModule: TodoListModule[F]): FreeS[F, List[TodoItem]] =
+  def list[F[_]: DoobieM](implicit persistence: Persistence[F]): FreeS[F, List[TodoItem]] =
     for {
       todoItems <- todoItemRepository.list.liftFS[F]
     } yield todoItems
 
-  def update[F[_]: DoobieM](input: TodoItem)(
-      implicit todoItemModule: TodoListModule[F]): FreeS[F, Int] =
+  def update[F[_]: DoobieM](input: TodoItem)(implicit persistence: Persistence[F]): FreeS[F, Int] =
     for {
       rows <- todoItemRepository.update(input).liftFS[F]
     } yield rows
 
-  def delete[F[_]: DoobieM](id: Int)(implicit todoItemModule: TodoListModule[F]): FreeS[F, Int] =
+  def delete[F[_]: DoobieM](id: Int)(implicit persistence: Persistence[F]): FreeS[F, Int] =
     for {
       rows <- todoItemRepository.delete(id).liftFS[F]
     } yield rows

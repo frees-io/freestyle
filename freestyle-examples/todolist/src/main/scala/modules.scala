@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package algebras
+package modules
 
 import freestyle._
 import freestyle.implicits._
@@ -23,6 +23,6 @@ import freestyle.doobie._
 import freestyle.doobie.implicits._
 
 @module
-trait TodoListModule[F[_]] {
+trait Persistence[F[_]] {
   val doobieM: DoobieM[F]
 }
