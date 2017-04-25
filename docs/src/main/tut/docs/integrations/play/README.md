@@ -10,9 +10,13 @@ Freestyle programs are easy to use as a result of a Play Framework Action with t
 
 To enable this integration you can depend on _freestyle-http-play_:
 
+[comment]: # (Start Replace)
+
 ```scala
 libraryDependencies += "com.47deg" %% "freestyle-http-play" % "0.1.0"
 ```
+
+[comment]: # (End Replace)
 
 The regular imports for working with Freestyle and Cats:
 
