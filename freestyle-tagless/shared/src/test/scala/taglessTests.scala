@@ -66,16 +66,6 @@ class taglessTests extends WordSpec with Matchers {
       program[App.Op].exec[Option] shouldBe Option(6)
     }
 
-    "blow up the stack when interpreted to stack unsafe monads" in {
-      assertThrows[StackOverflowError] {
-        SOProgram[Option](0)
-      }
-    }
-
-    "remain stack safe when interpreted to stack safe monads" in {
-      SOProgram[Free[Option, ?]](0).exec[Option] shouldBe Option(iterations)
-    }
-
   }
 
 }
