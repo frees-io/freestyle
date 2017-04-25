@@ -6,6 +6,7 @@ import sbtorgpolicies.OrgPoliciesKeys.orgBadgeListSetting
 import sbtorgpolicies.OrgPoliciesPlugin
 import sbtorgpolicies.OrgPoliciesPlugin.autoImport._
 import sbtorgpolicies.model._
+import sbtorgpolicies.runnable.SetSetting
 import sbtorgpolicies.templates.badges._
 import sbtorgpolicies.runnable.syntax._
 import scoverage.ScoverageKeys
@@ -61,7 +62,13 @@ object ProjectPlugin extends AutoPlugin {
         ScalaJSBadge.apply
       ),
       orgSupportedScalaJSVersion := Some("0.6.15"),
-      orgScriptTaskListSetting ++= List(
+      orgScriptTaskListSetting := List(
+        orgValidateFiles.asRunnableItem,
+        (clean in Global).asRunnableItemFull,
+        SetSetting(coverageEnabled in Global, true).asRunnableItem,
+        (compile in Compile).asRunnableItemFull,
+        (test in Test).asRunnableItemFull,
+        (ScoverageKeys.coverageReport in Test).asRunnableItemFull,
         (ScoverageKeys.coverageAggregate in Test).asRunnableItemFull
       ) ++ guard(scalaBinaryVersion.value == "2.12")(
         (tut in ProjectRef(file("."), "docs")).asRunnableItem),
@@ -69,6 +76,7 @@ object ProjectPlugin extends AutoPlugin {
       scalacOptions ++= scalacAdvancedOptions,
       scalacOptions ~= (_ filterNot (_ == "-Yliteral-types")),
       parallelExecution in Test := false,
-      compileOrder in Compile := CompileOrder.JavaThenScala
+      compileOrder in Compile := CompileOrder.JavaThenScala,
+      coverageFailOnMinimum := false
     ) ++ scalaMacroDependencies
 }
