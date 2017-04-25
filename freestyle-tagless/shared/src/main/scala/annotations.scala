@@ -16,8 +16,6 @@
 
 package freestyle
 
-import cats.Monad
-
 import scala.annotation.{StaticAnnotation, compileTimeOnly}
 
 @compileTimeOnly("enable macro paradise to expand @tagless macro annotations")
@@ -26,33 +24,5 @@ class tagless extends StaticAnnotation {
 }
 
 trait TaglessEffectLike[F[_]] {
-  self =>
   final type FS[A] = F[A]
 }
-
-/**
-  * A tagless operation interpreted when a `H` Handler is provided
-  */
-trait Alg[H[_[_]], A] {
-  self =>
-
-  import cats.implicits._
-
-  def apply[M[_] : Monad](implicit handler: H[M]): M[A]
-
-  def exec[M[_] : Monad](implicit handler: H[M]): M[A] = apply[M]
-
-  def map[B](f: A => B): Alg[H, B] = new Alg[H, B] {
-    def apply[F[_] : Monad](implicit handler: H[F]): F[B] = self[F].map(f)
-  }
-
-  def flatMap[B](f: A => Alg[H, B]): Alg[H, B] =
-    new Alg[H, B] {
-      def apply[F[_] : Monad](implicit handler: H[F]): F[B] = self[F].flatMap(f(_)[F])
-    }
-
-}
-
-
-
-

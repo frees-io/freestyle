@@ -24,12 +24,8 @@ object taglessImpl {
     import c.universe._
     import c.universe.internal.reificationSupport._
 
-    /* Macro Hygiene: we first declare a long list of fresh names for term and types. */
-    val OP = TypeName("Op") // Root trait of the Effect ADT
-    val MM = freshTypeName("MM$") // MM Target of the Handler's natural Transformation
-    val LL = freshTypeName("LL$") // LL is the target of the Lifter's Injection
-    val AA = freshTypeName("AA$") // AA is the parameter inside type applications
-    val inj = freshTermName("toInj")
+    /* Macro Hygiene: we first declare a list of fresh names for term and types. */
+    val MM = freshTypeName("MM$") // MM Target of the Handler's target M[_]
 
     def fail(msg: String) = c.abort(c.enclosingPosition, msg)
 
@@ -76,6 +72,20 @@ object taglessImpl {
 
       val params: List[ValDef] = reqDef.vparamss.flatten
 
+      def freeDef: DefDef =
+        if (params.isEmpty)
+          q"def $reqImpl[..$tparams]: FS[$Res]"
+        else
+          q"def $reqImpl[..$tparams](..$params): FS[$Res]"
+
+      def freeHandlerDef(H: TermName, RT: TypeName): DefDef = {
+        val args = params.map(_.name)
+        if (params.isEmpty)
+          q"def $reqImpl[..$tparams]: $RT[$Res] = $H.${reqDef.name}(..$args)"
+        else
+          q"def $reqImpl[..$tparams](..$params): $RT[$Res] = $H.${reqDef.name}(..$args)"
+      }
+
       def traitDef(FF: TypeName): DefDef =
         if (params.isEmpty)
           q"def $reqImpl[..$tparams]: $FF[$Res]"
@@ -84,25 +94,9 @@ object taglessImpl {
 
       def handlerDef: DefDef =
         if (params.isEmpty)
-          q"def $reqImpl[..$tparams]: $LL[$Res]"
+          q"def $reqImpl[..$tparams]: $MM[$Res]"
         else
-          q"def $reqImpl[..$tparams](..$params): $LL[$Res]"
-
-      def raiser(Eff: TypeName): DefDef = {
-        val injected = {
-          /*filter: if !v.mods.hasFlag(Flag.IMPLICIT)*/
-          val args = params.map(_.name)
-          val ev =  freshTermName("ev$")
-          //q"FreeS.inject[$OP, $LL]( $ReqC[..${tparams.map(_.name)} ](..$args) )"
-          q"""new _root_.freestyle.Alg[TFHandler, $Res] {
-                def apply[$LL[_]: _root_.cats.Monad](implicit $ev: TFHandler[$LL]): $LL[$Res] = $ev.${reqDef.name}(..$args)
-             }
-            """
-        }
-
-        val tpt = reqDef.tpt.asInstanceOf[AppliedTypeTree]
-        q"def ${reqDef.name}[..$tparams](...${reqDef.vparamss}): _root_.freestyle.Alg[TFHandler, $Res] = $injected"
-      }
+          q"def $reqImpl[..$tparams](..$params): $MM[$Res]"
 
     }
 
@@ -121,32 +115,25 @@ object taglessImpl {
       val TTs = effectTrait.tparams
       val tns = TTs.map(_.name)
       val ev = freshTermName("ev$")
-      val ii = freshTermName("ii$")
-      val fa = freshTermName("fa$")
+      val hh = freshTermName("hh$")
+      val stackSafeHandler = freshTermName("stackSafeHandler$")
 
       q"""
         object ${Eff.toTermName} {
 
-          type Op[A] = MonadSupportToFreeS.Op[A]
-
-          trait TFHandler[$LL[_], ..$TTs] extends $Eff[$LL, ..$tns] {
+          trait Handler[$MM[_], ..$TTs] extends $Eff[$MM, ..$tns] {
             ..${requests.map(_.handlerDef)}
           }
 
-          @free trait MonadSupportToFreeS {
-            def toFreeS[A](m : _root_.freestyle.Alg[TFHandler, A]) : FS[A]
+          @_root_.freestyle.free trait StackSafe {
+            ..${requests.map(_.freeDef)}
           }
 
-          implicit def freesHandler[M[_]: Monad](implicit taglessHandler: TFHandler[M]) : MonadSupportToFreeS.Handler[M] = new MonadSupportToFreeS.Handler[M] {
-            def toFreeS[A](m : _root_.freestyle.Alg[TFHandler, A]) : M[A] = m.exec[M]
+          implicit def $stackSafeHandler[$MM[_]: _root_.cats.Monad](implicit $hh: Handler[$MM]): StackSafe.Handler[$MM] = new StackSafe.Handler[$MM] {
+            ..${requests.map(_.freeHandlerDef(hh, MM))}
           }
 
-          implicit def toFreeS[F[_], A](alg: _root_.freestyle.Alg[TFHandler, A])(implicit MS : MonadSupportToFreeS[F]): FreeS[F, A] =
-            MS.toFreeS[A](alg)
-
-          ..${requests.map(_.raiser(Eff))}
-
-          def apply[$LL[_], ..$TTs](implicit $ev: $Eff[$LL, ..$tns]): $Eff[$LL, ..$tns] = $ev
+          def apply[$MM[_], ..$TTs](implicit $ev: $Eff[$MM, ..$tns]): $Eff[$MM, ..$tns] = $ev
 
         }
       """

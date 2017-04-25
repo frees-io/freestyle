@@ -16,7 +16,7 @@
 
 package freestyle
 
-import cats.{Applicative, Monad}
+import cats.{ Applicative, Monad }
 import cats.arrow.FunctionK
 import cats.data.Coproduct
 import cats.free.{Free, FreeApplicative, Inject}

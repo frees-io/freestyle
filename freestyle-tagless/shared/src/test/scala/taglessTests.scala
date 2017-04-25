@@ -19,66 +19,144 @@ import freestyle.implicits._
 import org.scalatest.{Matchers, WordSpec}
 import cats._
 import cats.implicits._
+import algebras._
+import cats.arrow.FunctionK
+import handlers._
+import modules._
+import utils._
 
-object taglessAlg {
+class taglessTests extends WordSpec with Matchers {
+
+  "Tagless final algebras" should {
+
+    "combine with other tagless algebras" in {
+
+      def program[F[_] : Monad : TG1 : TG2] = {
+        import cats.implicits._
+        val a1 = TG1[F]
+        val a2 = TG2[F]
+        for {
+          a <- a1.x(1)
+          b <- a1.y(1)
+          c <- a2.x2(1)
+          d <- a2.y2(1)
+        } yield a + b + c + d
+      }
+      program[Option] shouldBe Option(4)
+    }
+
+    "combine with FreeS monadic comprehensions" in {
+
+      def program[F[_] : F1: TG1.StackSafe : TG2.StackSafe]: FreeS[F, Int] = {
+        val tg1 = TG1.StackSafe[F]
+        val tg2 = TG2.StackSafe[F]
+        val fs = F1[F]
+        val x : FreeS[F, Int] = for {
+          a <- fs.a(1)
+          tg2a <- tg2.x2(1)
+          b <- fs.b(1)
+          x <- tg1.x(1)
+          tg2b <- tg2.y2(1)
+          y <- tg1.y(1)
+        } yield a + b + x + y + tg2a + tg2b
+        x
+      }
+      import TG1._
+      program[App.Op].exec[Option] shouldBe Option(6)
+    }
+
+    "blow up the stack when interpreted to stack unsafe monads" in {
+      assertThrows[StackOverflowError] {
+        SOProgram[Option](0)
+      }
+    }
+
+    "remain stack safe when interpreted to stack safe monads" in {
+      SOProgram[FreeS[Option, ?]](0).exec[Option] shouldBe Option(iterations)
+    }
+
+  }
+
+}
+
+object algebras {
 
   @tagless
   trait TG1 {
     def x(a: Int): FS[Int]
+
     def y(a: Int): FS[Int]
   }
 
-  implicit val optionHandler1: TG1.TFHandler[Option] = new TG1.TFHandler[Option] {
-    def x(a: Int): Option[Int] = Some(a)
-    def y(a: Int): Option[Int] = Some(a)
+  @tagless
+  trait TG2 {
+    def x2(a: Int): FS[Int]
+
+    def y2(a: Int): FS[Int]
   }
-
-}
-
-object freeAlg {
 
   @free
   trait F1 {
     def a(a: Int): FS[Int]
-    def b(a: Int): FS[Int]
-  }
 
-  implicit val optionHandler1: F1.Handler[Option] = new F1.Handler[Option] {
-    def a(a: Int): Option[Int] = Some(a)
-    def b(a: Int): Option[Int] = Some(a)
+    def b(a: Int): FS[Int]
   }
 
 }
 
-class taglessTests extends WordSpec with Matchers {
+object handlers  {
 
-  import freeAlg._, taglessAlg._
+  import algebras._
+
+  implicit val optionHandler1: TG1.Handler[Option] = new TG1.Handler[Option] {
+    def x(a: Int): Option[Int] = Some(a)
+
+    def y(a: Int): Option[Int] = Some(a)
+  }
+
+  implicit val stackSafeOptionHandler1: TG1.Handler[FreeS[Option, ?]] = new TG1.Handler[FreeS[Option, ?]] {
+    def x(a: Int): FreeS[Option, Int] = FreeS.liftFA(Some(a))
+
+    def y(a: Int): FreeS[Option, Int] = FreeS.liftFA(Some(a))
+  }
+
+  implicit val optionHandler2: TG2.Handler[Option] = new TG2.Handler[Option] {
+    def x2(a: Int): Option[Int] = Some(a)
+
+    def y2(a: Int): Option[Int] = Some(a)
+  }
+
+  implicit val f1OptionHandler1: F1.Handler[Option] = new F1.Handler[Option] {
+    def a(a: Int): Option[Int] = Some(a)
+
+    def b(a: Int): Option[Int] = Some(a)
+  }
+
+  implicit def mIdentity[F[_]]: F ~> F = FunctionK.id[F]
+
+}
+
+object modules {
+
+  import algebras._
 
   @module trait App[F[_]] {
-    val f1 : F1[F]
-    val ag : TG1.MonadSupportToFreeS[F]
+    val f1: F1[F]
+    val tg1: TG1.StackSafe[F]
+    val tg2: TG2.StackSafe[F]
   }
 
+}
 
-  "the @tagless annotation" should {
+object utils {
 
-    "compile" in {
+  import algebras._
 
-      def program[F[_] : F1: TG1.MonadSupportToFreeS]: FreeS[F, Int] = {
-        val s = TG1
-        val f = F1[F]
-        for {
-          a <- f.a(1)
-          b <- f.b(1)
-          x <- s.x(1)
-          y <- s.y(1)
-        } yield a + b + x + y
-      }
-      import TG1._
-      program[App.Op].exec[Option] shouldBe Option(4)
+  val iterations = 1000
 
-    }
-
-  }
+  def SOProgram[F[_] : Monad : TG1](i: Int): F[Int] = for {
+    j <- TG1[F].x(i + 1)
+    z <- if (j < iterations) SOProgram[F](j) else Monad[F].pure(j)
+  } yield z
 
 }

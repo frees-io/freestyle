@@ -16,7 +16,7 @@
 
 package freestyle
 
-import scala.annotation.{StaticAnnotation, compileTimeOnly}
+import scala.annotation.{compileTimeOnly, StaticAnnotation}
 import scala.language.experimental.macros
 
 @compileTimeOnly("enable macro paradise to expand @free macro annotations")
