@@ -152,7 +152,7 @@ object utils {
 
   import algebras._
 
-  val iterations = 1000
+  val iterations = 50000
 
   def SOProgram[F[_] : Monad : TG1](i: Int): F[Int] = for {
     j <- TG1[F].x(i + 1)
