@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+package todo
+package definitions
 package models
 
 case class TodoItem(id: Int, item: String)

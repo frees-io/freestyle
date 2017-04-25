@@ -14,15 +14,17 @@
  * limitations under the License.
  */
 
-package modules
+package todo
+package http
 
-import freestyle._
-import freestyle.implicits._
+import com.twitter.finagle.Http
+import com.twitter.util.Await
+import todo.http.apis.Api
+import io.circe.generic.auto._
+import io.finch.circe._
 
-import freestyle.doobie._
-import freestyle.doobie.implicits._
+import todo.definitions.TodoApp
 
-@module
-trait Persistence[F[_]] {
-  val doobieM: DoobieM[F]
+object TodoListApp extends App {
+  Await.ready(Http.server.serve(":8081", implicitly[Api[TodoApp.Op]].endpoints.toService))
 }

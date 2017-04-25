@@ -14,21 +14,12 @@
  * limitations under the License.
  */
 
-package apis
+package todo
+package definitions
+package models
 
-import io.finch._
-import models.Pong
+case class Pong(time: Long)
 
-trait GenericApi {
-  val ping: Endpoint[Pong] =
-    get("ping") {
-      Ok(Pong.current)
-    }
-
-  val hello: Endpoint[String] =
-    get("hello") {
-      Ok("Hello World")
-    }
-
-  val genericApi = (hello :+: ping)
+object Pong {
+  def current: Pong = Pong(System.currentTimeMillis() / 1000L)
 }

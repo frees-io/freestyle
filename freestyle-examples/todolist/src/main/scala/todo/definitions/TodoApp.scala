@@ -14,12 +14,13 @@
  * limitations under the License.
  */
 
-package apis
+package todo
+package definitions
 
-class Api extends GenericApi with TodoItemApi {
-  val api = genericApi :+: todoItemApi
-}
+import freestyle._
+import persistence.Persistence
 
-object Api {
-  implicit def instance = new Api
+@module
+trait TodoApp[F[_]] {
+  val persistence: Persistence[F]
 }
