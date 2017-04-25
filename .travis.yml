@@ -1,5 +1,9 @@
 language: scala
 
+dist: precise
+
+sudo: required
+
 scala:
 - 2.11.11
 - 2.12.2
@@ -20,6 +24,7 @@ install:
 - gem install jekyll -v 3.2.1
 
 script:
+- sbt ++$TRAVIS_SCALA_VERSION test:fastOptJS
 - sbt ++$TRAVIS_SCALA_VERSION orgScriptCI
 
 after_success:
