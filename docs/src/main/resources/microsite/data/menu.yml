@@ -18,6 +18,9 @@ options:
      - title: Modules
        url: docs/core/modules/
 
+     - title: Tagless Final
+       url: docs/core/tagless/
+
   - title: Effects
     url: docs/effects/
 
