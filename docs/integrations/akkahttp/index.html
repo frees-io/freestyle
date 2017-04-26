@@ -261,7 +261,7 @@ which a <code class="highlighter-rouge">Marshaller</code> <em>magnet</em> exists
 // &lt;console&gt;:23: warning: Unused import
 // import freestyle.implicits._
 //                            ^
-// app: UserApp.To[UserApp.Op] = UserApp$To@58e4012b
+// app: UserApp.To[UserApp.Op] = UserApp$To@44c91c75
 </span></code></pre>
 </div>
 
@@ -375,7 +375,7 @@ and (2) an interpreter of the algebra to a suitable domain, which for this examp
 // &lt;console&gt;:28: warning: Unused import
 // import cats.Id
 //             ^
-// userMarshaller: akka.http.scaladsl.marshalling.ToEntityMarshaller[User] = akka.http.scaladsl.marshalling.Marshaller$$anon$1@1b25e7b6
+// userMarshaller: akka.http.scaladsl.marshalling.ToEntityMarshaller[User] = akka.http.scaladsl.marshalling.Marshaller$$anon$1@6e5d5a15
 </span>
 <span class="k">implicit</span> <span class="k">val</span> <span class="n">handler</span><span class="k">:</span> <span class="kt">UserApp.Handler</span><span class="o">[</span><span class="kt">Id</span><span class="o">]</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">UserApp</span><span class="o">.</span><span class="nc">Handler</span><span class="o">[</span><span class="kt">Id</span><span class="o">]</span> <span class="o">{</span>
   <span class="k">private</span><span class="o">[</span><span class="kt">this</span><span class="o">]</span> <span class="k">val</span> <span class="n">users</span><span class="k">:</span> <span class="kt">Map</span><span class="o">[</span><span class="kt">Int</span>, <span class="kt">User</span><span class="o">]</span> <span class="k">=</span> <span class="nc">Map</span><span class="o">(</span> <span class="mi">1</span> <span class="o">-&gt;</span> <span class="nc">User</span><span class="o">(</span><span class="s">"foo"</span><span class="o">)</span> <span class="o">)</span>
@@ -417,7 +417,7 @@ and (2) an interpreter of the algebra to a suitable domain, which for this examp
 // &lt;console&gt;:30: warning: Unused import
 // import userMarshaller
 //                                                              ^
-// handler: UserApp.Handler[cats.Id] = $anon$1@4e8c4981
+// handler: UserApp.Handler[cats.Id] = $anon$1@7d4516b1
 </span></code></pre>
 </div>
 
@@ -681,7 +681,7 @@ and (2) an interpreter of the algebra to a suitable domain, which for this examp
 // &lt;console&gt;:34: warning: Unused import
 // import _root_.akka.http.scaladsl.marshalling.{Marshaller, ToEntityMarshaller}
 //                                                           ^
-// route: akka.http.scaladsl.server.Route = akka.http.scaladsl.server.directives.BasicDirectives$$Lambda$3517/1556686288@5bf22ace
+// route: akka.http.scaladsl.server.Route = akka.http.scaladsl.server.directives.BasicDirectives$$Lambda$3532/321716756@5c3a004e
 </span></code></pre>
 </div>
 

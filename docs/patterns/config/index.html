@@ -90,7 +90,7 @@ The current implementation exposes the most important combinators found in <a hr
 // &lt;console&gt;:19: warning: Unused import
 // import cats.implicits._
 //                       ^
-// issuesServiceHandler: IssuesService.Handler[scala.util.Try] = $anon$1@49550925
+// issuesServiceHandler: IssuesService.Handler[scala.util.Try] = $anon$1@20885e2a
 </span></code></pre>
 </div>
 
@@ -148,9 +148,9 @@ derived from using different algebras:</p>
 //                                          ^
 // import freestyle.config.implicits._
 </span>
-<span class="nd">@module</span> <span class="k">trait</span> <span class="nc">App</span><span class="o">[</span><span class="kt">F</span><span class="o">[</span><span class="k">_</span><span class="o">]]</span> <span class="o">{</span>
-  <span class="k">val</span> <span class="n">issuesService</span><span class="k">:</span> <span class="kt">IssuesService</span><span class="o">[</span><span class="kt">F</span><span class="o">]</span>
-  <span class="k">val</span> <span class="n">config</span><span class="k">:</span> <span class="kt">ConfigM</span><span class="o">[</span><span class="kt">F</span><span class="o">]</span>
+<span class="nd">@module</span> <span class="k">trait</span> <span class="nc">App</span> <span class="o">{</span>
+  <span class="k">val</span> <span class="n">issuesService</span><span class="k">:</span> <span class="kt">IssuesService</span>
+  <span class="k">val</span> <span class="n">config</span><span class="k">:</span> <span class="kt">ConfigM</span>
 <span class="o">}</span>
 <span class="c1">// &lt;console&gt;:13: warning: Unused import
 // import freestyle.implicits._

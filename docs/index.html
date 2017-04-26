@@ -76,9 +76,9 @@
 <p>Freestyle algebras can be combined into <code class="highlighter-rouge">@module</code> definitions which provide aggregation and unification over the
 parametrization of Free programs.</p>
 
-<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="nd">@module</span> <span class="k">trait</span> <span class="nc">Application</span><span class="o">[</span><span class="kt">F</span><span class="o">[</span><span class="k">_</span><span class="o">]]</span> <span class="o">{</span>
-  <span class="k">val</span> <span class="n">validation</span><span class="k">:</span> <span class="kt">Validation</span><span class="o">[</span><span class="kt">F</span><span class="o">]</span>
-  <span class="k">val</span> <span class="n">interaction</span><span class="k">:</span> <span class="kt">Interaction</span><span class="o">[</span><span class="kt">F</span><span class="o">]</span>
+<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="nd">@module</span> <span class="k">trait</span> <span class="nc">Application</span> <span class="o">{</span>
+  <span class="k">val</span> <span class="n">validation</span><span class="k">:</span> <span class="kt">Validation</span>
+  <span class="k">val</span> <span class="n">interaction</span><span class="k">:</span> <span class="kt">Interaction</span>
 <span class="o">}</span>
 <span class="c1">// &lt;console&gt;:13: warning: Unused import
 // import freestyle.implicits._
@@ -158,7 +158,7 @@ parametrization of Free programs.</p>
 // &lt;console&gt;:13: warning: Unused import
 // import freestyle.implicits._
 //                            ^
-// validationHandler: Validation.Handler[scala.concurrent.Future] = $anon$1@4234cc7f
+// validationHandler: Validation.Handler[scala.concurrent.Future] = $anon$1@7aa45fd5
 </span>
 <span class="k">implicit</span> <span class="k">val</span> <span class="n">interactionHandler</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">Interaction</span><span class="o">.</span><span class="nc">Handler</span><span class="o">[</span><span class="kt">Future</span><span class="o">]</span> <span class="o">{</span>
   <span class="k">override</span> <span class="k">def</span> <span class="n">tell</span><span class="o">(</span><span class="n">s</span><span class="k">:</span> <span class="kt">String</span><span class="o">)</span><span class="k">:</span> <span class="kt">Future</span><span class="o">[</span><span class="kt">Unit</span><span class="o">]</span> <span class="k">=</span> <span class="nc">Future</span><span class="o">.</span><span class="n">successful</span><span class="o">(</span><span class="n">println</span><span class="o">(</span><span class="n">s</span><span class="o">))</span>
@@ -176,7 +176,7 @@ parametrization of Free programs.</p>
 // &lt;console&gt;:18: warning: Unused import
 // import validationHandler
 //                                             ^
-// interactionHandler: Interaction.Handler[scala.concurrent.Future] = $anon$1@469fdf7e
+// interactionHandler: Interaction.Handler[scala.concurrent.Future] = $anon$1@363df585
 </span></code></pre>
 </div>
 

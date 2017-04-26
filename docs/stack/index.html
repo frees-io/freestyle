@@ -107,17 +107,17 @@ capabilities to fail, to read from our <code class="highlighter-rouge">Config</c
   <span class="k">val</span> <span class="n">rd</span> <span class="k">=</span> <span class="n">reader</span><span class="o">[</span><span class="kt">Config</span><span class="o">]</span>
   <span class="k">val</span> <span class="n">cacheP</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">KeyValueProvider</span><span class="o">[</span><span class="kt">CustomerId</span>, <span class="kt">Customer</span><span class="o">]</span>
 
-  <span class="nd">@module</span> <span class="k">trait</span> <span class="nc">Persistence</span><span class="o">[</span><span class="kt">F</span><span class="o">[</span><span class="k">_</span><span class="o">]]</span> <span class="o">{</span>
-    <span class="k">val</span> <span class="n">customer</span><span class="k">:</span> <span class="kt">algebras.CustomerPersistence</span><span class="o">[</span><span class="kt">F</span><span class="o">]</span>
-    <span class="k">val</span> <span class="n">stock</span><span class="k">:</span> <span class="kt">algebras.StockPersistence</span><span class="o">[</span><span class="kt">F</span><span class="o">]</span>
+  <span class="nd">@module</span> <span class="k">trait</span> <span class="nc">Persistence</span> <span class="o">{</span>
+    <span class="k">val</span> <span class="n">customer</span><span class="k">:</span> <span class="kt">algebras.CustomerPersistence</span>
+    <span class="k">val</span> <span class="n">stock</span><span class="k">:</span> <span class="kt">algebras.StockPersistence</span>
   <span class="o">}</span>
 
-  <span class="nd">@module</span> <span class="k">trait</span> <span class="nc">App</span><span class="o">[</span><span class="kt">F</span><span class="o">[</span><span class="k">_</span><span class="o">]]</span> <span class="o">{</span>
-    <span class="k">val</span> <span class="n">persistence</span><span class="k">:</span> <span class="kt">Persistence</span><span class="o">[</span><span class="kt">F</span><span class="o">]</span>
+  <span class="nd">@module</span> <span class="k">trait</span> <span class="nc">App</span> <span class="o">{</span>
+    <span class="k">val</span> <span class="n">persistence</span><span class="k">:</span> <span class="kt">Persistence</span>
 
-    <span class="k">val</span> <span class="n">errorM</span><span class="k">:</span> <span class="kt">ErrorM</span><span class="o">[</span><span class="kt">F</span><span class="o">]</span>
-    <span class="k">val</span> <span class="n">cacheM</span><span class="k">:</span> <span class="kt">cacheP.CacheM</span><span class="o">[</span><span class="kt">F</span><span class="o">]</span>
-    <span class="k">val</span> <span class="n">readerM</span><span class="k">:</span> <span class="kt">rd.ReaderM</span><span class="o">[</span><span class="kt">F</span><span class="o">]</span>
+    <span class="k">val</span> <span class="n">errorM</span><span class="k">:</span> <span class="kt">ErrorM</span>
+    <span class="k">val</span> <span class="n">cacheM</span><span class="k">:</span> <span class="kt">cacheP.CacheM</span>
+    <span class="k">val</span> <span class="n">readerM</span><span class="k">:</span> <span class="kt">rd.ReaderM</span>
   <span class="o">}</span>
 <span class="o">}</span>
 <span class="c1">// &lt;console&gt;:13: warning: Unused import
@@ -703,7 +703,7 @@ capabilities to fail, to read from our <code class="highlighter-rouge">Config</c
 // &lt;console&gt;:37: warning: Unused import
 // import _root_.fs2.interop.cats._
 //                                ^
-// customerPersistencteHandler: algebras.CustomerPersistence.Handler[Stack] = $anon$1@65d380a0
+// customerPersistencteHandler: algebras.CustomerPersistence.Handler[Stack] = $anon$1@16692f51
 </span>
 <span class="k">implicit</span> <span class="k">val</span> <span class="n">stockPersistencteHandler</span><span class="k">:</span> <span class="kt">StockPersistence.Handler</span><span class="o">[</span><span class="kt">Stack</span><span class="o">]</span> <span class="k">=</span>
   <span class="k">new</span> <span class="nc">StockPersistence</span><span class="o">.</span><span class="nc">Handler</span><span class="o">[</span><span class="kt">Stack</span><span class="o">]</span> <span class="o">{</span>
@@ -758,7 +758,7 @@ capabilities to fail, to read from our <code class="highlighter-rouge">Config</c
 // &lt;console&gt;:42: warning: Unused import
 // import customerPersistencteHandler
 //                                                                                      ^
-// stockPersistencteHandler: algebras.StockPersistence.Handler[Stack] = $anon$1@3d089665
+// stockPersistencteHandler: algebras.StockPersistence.Handler[Stack] = $anon$1@54ec876f
 </span></code></pre>
 </div>
 
@@ -1015,7 +1015,7 @@ capabilities to fail, to read from our <code class="highlighter-rouge">Config</c
 // &lt;console&gt;:46: warning: Unused import
 // import freestyle.cache.KeyValueMap
 //                        ^
-// freestyleHasherCustomerId: freestyle.cache.hashmap.Hasher[CustomerId] = freestyle.cache.hashmap.Hasher$$anon$1@2506655
+// freestyleHasherCustomerId: freestyle.cache.hashmap.Hasher[CustomerId] = freestyle.cache.hashmap.Hasher$$anon$1@45c15338
 </span>
 <span class="k">implicit</span> <span class="k">val</span> <span class="n">cacheHandler</span><span class="k">:</span> <span class="kt">cacheP.CacheM.Handler</span><span class="o">[</span><span class="kt">Stack</span><span class="o">]</span> <span class="k">=</span> <span class="o">{</span>
   <span class="k">val</span> <span class="n">rawMap</span><span class="k">:</span> <span class="kt">KeyValueMap</span><span class="o">[</span><span class="kt">Id</span>, <span class="kt">CustomerId</span>, <span class="kt">Customer</span><span class="o">]</span> <span class="k">=</span>
@@ -1070,7 +1070,7 @@ capabilities to fail, to read from our <code class="highlighter-rouge">Config</c
 // &lt;console&gt;:44: warning: Unused import
 // import stockPersistencteHandler
 //                                                                                      ^
-// cacheHandler: modules.cacheP.CacheM.Handler[Stack] = freestyle.cache.KeyValueProvider$implicits$CacheHandler@632e0153
+// cacheHandler: modules.cacheP.CacheM.Handler[Stack] = freestyle.cache.KeyValueProvider$implicits$CacheHandler@6c3cec03
 </span></code></pre>
 </div>
 
@@ -1493,7 +1493,7 @@ capabilities to fail, to read from our <code class="highlighter-rouge">Config</c
 // &lt;console&gt;:47: warning: Unused import
 // import freestyleHasherCustomerId
 //                                                                                              ^
-// result: Stack[String] = Kleisli(cats.data.Kleisli$$Lambda$2231/2134510214@344be2ff)
+// result: Stack[String] = Kleisli(cats.data.Kleisli$$Lambda$2237/260666701@6727f985)
 </span></code></pre>
 </div>
 

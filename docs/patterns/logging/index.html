@@ -81,7 +81,7 @@ The JVM handler interpreter is based on the <a href="https://github.com/Verizon/
 // &lt;console&gt;:19: warning: Unused import
 // import cats.implicits._
 //                       ^
-// customerServiceHandler: CustomerService.Handler[scala.util.Try] = $anon$1@385d4840
+// customerServiceHandler: CustomerService.Handler[scala.util.Try] = $anon$1@3e16a087
 </span></code></pre>
 </div>
 
@@ -139,9 +139,9 @@ derived from using different algebras:</p>
 //                                              ^
 // import freestyle.loggingJVM.implicits._
 </span>
-<span class="nd">@module</span> <span class="k">trait</span> <span class="nc">App</span><span class="o">[</span><span class="kt">F</span><span class="o">[</span><span class="k">_</span><span class="o">]]</span> <span class="o">{</span>
-  <span class="k">val</span> <span class="n">customerService</span><span class="k">:</span> <span class="kt">CustomerService</span><span class="o">[</span><span class="kt">F</span><span class="o">]</span>
-  <span class="k">val</span> <span class="n">log</span><span class="k">:</span> <span class="kt">LoggingM</span><span class="o">[</span><span class="kt">F</span><span class="o">]</span>
+<span class="nd">@module</span> <span class="k">trait</span> <span class="nc">App</span> <span class="o">{</span>
+  <span class="k">val</span> <span class="n">customerService</span><span class="k">:</span> <span class="kt">CustomerService</span>
+  <span class="k">val</span> <span class="n">log</span><span class="k">:</span> <span class="kt">LoggingM</span>
 <span class="o">}</span>
 <span class="c1">// &lt;console&gt;:13: warning: Unused import
 // import freestyle.implicits._

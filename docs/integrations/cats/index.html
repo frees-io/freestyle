@@ -84,7 +84,7 @@
 // &lt;console&gt;:11: warning: Unused import
 // import freestyle._
 //                  ^
-// idHandler: Calc.Handler[cats.Id] = $anon$1@5a6c97d9
+// idHandler: Calc.Handler[cats.Id] = $anon$1@3e8980e5
 </span></code></pre>
 </div>
 
@@ -156,7 +156,7 @@
 // &lt;console&gt;:15: warning: Unused import
 // import idHandler
 //                                     ^
-// futureHandler: Calc.Handler[scala.concurrent.Future] = $anon$1@43e0e9ec
+// futureHandler: Calc.Handler[scala.concurrent.Future] = $anon$1@d6d1681
 </span></code></pre>
 </div>
 
@@ -187,7 +187,7 @@
 // &lt;console&gt;:18: warning: Unused import
 // import futureHandler
 //                                     ^
-// incrPar: Int =&gt; freestyle.FreeS.Par[Calc.Op,Int] = $$Lambda$3961/852827888@3e295da2
+// incrPar: Int =&gt; freestyle.FreeS.Par[Calc.Op,Int] = $$Lambda$3979/264069335@247f3ece
 </span>
 <span class="k">val</span> <span class="n">incrSeq</span><span class="k">:</span> <span class="kt">Int</span> <span class="o">=&gt;</span> <span class="nc">FreeS</span><span class="o">[</span><span class="kt">Calc.Op</span>, <span class="kt">Int</span><span class="o">]</span> <span class="k">=</span>
   <span class="n">incrPar</span><span class="o">.</span><span class="n">andThen</span><span class="o">(</span><span class="k">_</span><span class="o">.</span><span class="n">freeS</span><span class="o">)</span>
@@ -212,7 +212,7 @@
 // &lt;console&gt;:18: warning: Unused import
 // import futureHandler
 //                                     ^
-// incrSeq: Int =&gt; freestyle.FreeS[Calc.Op,Int] = scala.Function1$$Lambda$2238/1855290252@b48e31f
+// incrSeq: Int =&gt; freestyle.FreeS[Calc.Op,Int] = scala.Function1$$Lambda$2244/1092701048@7fff028
 </span></code></pre>
 </div>
 
@@ -641,7 +641,7 @@
 // &lt;console&gt;:26: warning: Unused import
 // import freestyle.nondeterminism._
 //                                 ^
-// time: 2217
+// time: 2191
 // res3: List[Int] = List(2, 3, 4, 5, 6, 7, 8, 9, 10)
 </span>
 <span class="k">val</span> <span class="n">futSeq</span> <span class="k">=</span> <span class="n">traversingSeq</span><span class="o">.</span><span class="n">exec</span><span class="o">[</span><span class="kt">Future</span><span class="o">]</span>
@@ -699,7 +699,7 @@
 // &lt;console&gt;:26: warning: Unused import
 // import freestyle.nondeterminism._
 //                                 ^
-// time: 4224
+// time: 4232
 // res4: List[Int] = List(2, 3, 4, 5, 6, 7, 8, 9, 10)
 </span></code></pre>
 </div>
@@ -917,7 +917,7 @@
 // &lt;console&gt;:26: warning: Unused import
 // import freestyle.nondeterminism._
 //                                 ^
-// time: 239
+// time: 336
 // res6: Int = 5
 </span>
 <span class="k">val</span> <span class="n">futPar2</span> <span class="k">=</span> <span class="n">incrParSum</span><span class="o">.</span><span class="n">exec</span><span class="o">[</span><span class="kt">Future</span><span class="o">]</span>
@@ -975,7 +975,7 @@
 // &lt;console&gt;:26: warning: Unused import
 // import freestyle.nondeterminism._
 //                                 ^
-// time: 235
+// time: 250
 // res7: Int = 5
 </span></code></pre>
 </div>
@@ -1167,7 +1167,7 @@
 // &lt;console&gt;:29: warning: Unused import
 // import scala.concurrent.duration.Duration
 //                                  ^
-// readerHandler: Calc.Handler[WithConfig] = $anon$1@782ac10a
+// readerHandler: Calc.Handler[WithConfig] = $anon$1@665ac68b
 </span></code></pre>
 </div>
 
@@ -1210,7 +1210,7 @@
 // &lt;console&gt;:30: warning: Unused import
 // import cats.data.Reader
 //                  ^
-// configTraversing: WithConfig[List[Int]] = Kleisli(cats.data.KleisliInstances4$$anon$3$$Lambda$3995/2017251519@41df5bdc)
+// configTraversing: WithConfig[List[Int]] = Kleisli(cats.data.KleisliInstances4$$anon$3$$Lambda$4013/1091331162@30660211)
 </span>
 <span class="k">val</span> <span class="n">configIncrSum</span>    <span class="k">=</span> <span class="n">incrParSum</span><span class="o">.</span><span class="n">exec</span><span class="o">[</span><span class="kt">WithConfig</span><span class="o">]</span>
 <span class="c1">// &lt;console&gt;:9: warning: Unused import
@@ -1249,7 +1249,7 @@
 // &lt;console&gt;:30: warning: Unused import
 // import cats.data.Reader
 //                  ^
-// configIncrSum: WithConfig[Int] = Kleisli(cats.data.KleisliInstances4$$anon$3$$Lambda$3995/2017251519@39b31636)
+// configIncrSum: WithConfig[Int] = Kleisli(cats.data.KleisliInstances4$$anon$3$$Lambda$4013/1091331162@1c5f5a33)
 </span>
 <span class="k">val</span> <span class="n">cfg</span> <span class="k">=</span> <span class="nc">Config</span><span class="o">(</span><span class="mi">1000</span><span class="o">)</span>
 <span class="c1">// &lt;console&gt;:9: warning: Unused import
