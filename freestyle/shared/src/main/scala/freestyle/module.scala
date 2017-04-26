@@ -16,7 +16,6 @@
 
 package freestyle
 
-import scala.reflect.internal._
 import scala.reflect.macros.whitebox.Context
 
 trait FreeModuleLike
@@ -29,8 +28,6 @@ object openUnion {
 
     import c.universe._
     import c.universe.internal.reificationSupport._
-
-    def fail(msg: String) = c.abort(c.enclosingPosition, msg)
 
     /* This method takes as input the `ClassSymbol` of the `@module`-annotated `trait` and computes the list
      *  of _algebras_ (`@free`-annotated `trait`s) used, directly or transitively, by the `@module`.
@@ -92,7 +89,16 @@ object openUnion {
     //ugly hack because, as String,  it does not typecheck, early which we need for types to be in scope
     val parsed     = coproducts.map( cop => c.parse(cop.toString))
 
-    c.Expr[Any](q"new { ..$parsed }")
+    val expr = if (algebras.length >= 2)
+      q"""new {
+        import _root_.cats.data.Coproduct
+        ..$parsed
+      }"""
+    else
+      q"""new {
+        ..$parsed
+      }"""
+    c.Expr[Any](expr)
   }
 
 }
@@ -143,8 +149,6 @@ object moduleImpl {
 
       q"""
         object ${mod.toTermName} {
-
-          import _root_.cats.data.Coproduct
 
           val $xx = openUnion.apply(this)
 
