@@ -1,7 +1,7 @@
 ---
 layout: docs
 title: Tagless Final
-permalink: /docs/core/algebras/
+permalink: /docs/core/tagless/
 ---
 
 # Tagless Final
