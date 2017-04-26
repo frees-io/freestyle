@@ -266,7 +266,7 @@ lazy val httpPlay = (project in file("http/play"))
   .settings(
     parallelExecution in Test := false,
     libraryDependencies ++= Seq(
-      %%("play") % "test",
+      %%("play")      % "test",
       %%("play-test") % "test"
     ) ++ commonDeps
   )
@@ -278,14 +278,6 @@ addCommandAlias("validate", "; +clean ; +test; makeMicrosite")
 pgpPassphrase := Some(getEnvVar("PGP_PASSPHRASE").getOrElse("").toCharArray)
 pgpPublicRing := file(s"$gpgFolder/pubring.gpg")
 pgpSecretRing := file(s"$gpgFolder/secring.gpg")
-
-orgAfterCISuccessTaskListSetting := List(
-  orgCreateFiles.toOrgTask,
-  orgCommitPolicyFiles.toOrgTask,
-  depUpdateDependencyIssues.toOrgTask,
-  (publishMicrosite in docs).toOrgTask,
-  orgPublishReleaseTask.toOrgTask(allModulesScope = true, crossScalaVersionsScope = true)
-)
 
 lazy val freestyleModules: Seq[ProjectReference] = Seq(
   freestyleJVM,

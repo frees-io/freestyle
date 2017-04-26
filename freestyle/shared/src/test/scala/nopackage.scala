@@ -28,7 +28,7 @@ import freestyle._
   def rhino(prompt: String): FS[String]
 }
 
-@module trait Age[F[_]] {
-  val logitech: Logitech[F]
-  val asia: Asia[F]
+@module trait Age {
+  val logitech: Logitech
+  val asia: Asia
 }

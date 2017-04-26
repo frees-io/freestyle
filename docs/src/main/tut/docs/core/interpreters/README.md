@@ -105,9 +105,9 @@ implicit def logHandler: Log.Handler[KVStoreState] =
 Before we create a program combining all operations, let’s consider both `KVStore` and `Log` as part of a module in our application:
 
 ```tut:book
-@module trait Backend[F[_]] {
-  val store: KVStore[F]
-  val log: Log[F]
+@module trait Backend {
+  val store: KVStore
+  val log: Log
 }
 ```
 

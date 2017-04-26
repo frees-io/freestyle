@@ -68,9 +68,9 @@ object algebras {
     }
 
   @module
-  trait App[F[_]] {
-    val nonConfig: NonConfig[F]
-    val configM: ConfigM[F]
+  trait App {
+    val nonConfig: NonConfig
+    val configM: ConfigM
   }
 
   val app = App[App.Op]

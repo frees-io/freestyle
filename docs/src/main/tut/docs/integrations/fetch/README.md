@@ -45,9 +45,9 @@ Then, make sure to include the Fetch algebra `FetchM` in your application:
 import freestyle.fetch._
 import freestyle.fetch.implicits._
 
-@module trait App[F[_]] {
-  val interact: Interact[F]
-  val fetches: FetchM[F]
+@module trait App {
+  val interact: Interact
+  val fetches: FetchM
 }
 ```
 

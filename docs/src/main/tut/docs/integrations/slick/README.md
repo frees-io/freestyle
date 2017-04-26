@@ -79,9 +79,9 @@ Only using `SlickM` is not exactly useful in this case as it just adds an extra 
   def subtract(a: Int, b: Int): FS[Int]
 }
 
-@module trait Example[F[_]] {
-  val slickM: SlickM[F]
-  val calc: Calc[F]
+@module trait Example {
+  val slickM: SlickM
+  val calc: Calc
 }
 ```
 

@@ -10,9 +10,13 @@ A Freestyle program can easily be used with [http4s](http://http4s.org/).
 
 You can add the _freestyle-http4s_ module as follows:
 
+[comment]: # (Start Replace)
+
 ```scala
 libraryDependencies += "com.47deg" %% "freestyle-http-http4s" % "0.1.0"
 ```
+
+[comment]: # (End Replace)
 
 Note that Freestyle only supports the http4s version based on Cats and FS2.
 

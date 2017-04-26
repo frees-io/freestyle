@@ -543,9 +543,9 @@ object collision {
   val rd = reader[Config]
 
   @module
-  trait AppX[F[_]] {
-    val stateM: st.StateM[F]
-    val readerM: rd.ReaderM[F]
+  trait AppX {
+    val stateM: st.StateM
+    val readerM: rd.ReaderM
   }
 
   @free
@@ -569,21 +569,21 @@ object collision {
   }
 
   @module
-  trait X[F[_]] {
-    val a: B[F]
-    val b: C[F]
+  trait X {
+    val a: B
+    val b: C
   }
 
   @module
-  trait Y[F[_]] {
-    val c: C[F]
-    val d: D[F]
+  trait Y {
+    val c: C
+    val d: D
   }
 
   @module
-  trait Z[F[_]] {
-    val x: X[F]
-    val y: Y[F]
+  trait Z {
+    val x: X
+    val y: Y
   }
 
 }

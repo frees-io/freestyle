@@ -26,9 +26,9 @@ import freestyle._
   def get(id: UserId): FS[User]
 }
 
-@module trait Persistence[F[_]] {
-  val database: Database[F]
-  val cache: Cache[F]
+@module trait Persistence {
+  val database: Database
+  val cache: Cache
 }
 ```
 
@@ -71,7 +71,7 @@ def loadUser[F[_]]
 }
 ```
 
-## freestyle in the wild
+## Freestyle in the wild
 
 If you wish to add your library here please consider a PR to include it in the list below.
 

@@ -20,6 +20,8 @@ To use the project, add the following to your build.sbt:
 addCompilerPlugin("org.scalamacros" % "paradise" % "2.1.0" cross CrossVersion.full)
 ```
 
+[comment]: # (Start Replace)
+
 For Scala.jvm
 
 ```scala
@@ -31,6 +33,8 @@ For Scala.js
 ```scala
 libraryDependencies += "com.47deg" %%% "freestyle" % "0.1.0"
 ```
+
+[comment]: # (End Replace)
 
 ## Algebras
 
@@ -61,9 +65,9 @@ Freestyle algebras can be combined into `@module` definitions which provide aggr
 parametrization of Free programs.
 
 ```tut:book
-@module trait Application[F[_]] {
-  val validation: Validation[F]
-  val interaction: Interaction[F]
+@module trait Application {
+  val validation: Validation
+  val interaction: Interaction
 }
 ```
 

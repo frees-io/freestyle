@@ -11,9 +11,13 @@ The current implementation exposes the most important combinators found in [Type
 
 In order to enable this integration, you can depend on _freestyle-config_:
 
+[comment]: # (Start Replace)
+
 ```scala
 libraryDependencies += "com.47deg" %% "freestyle-config" % "0.1.0"
 ```
+
+[comment]: # (End Replace)
 
 ### Operations
 
@@ -81,9 +85,9 @@ derived from using different algebras:
 import freestyle.config._
 import freestyle.config.implicits._
 
-@module trait App[F[_]] {
-  val issuesService: IssuesService[F]
-  val config: ConfigM[F]
+@module trait App {
+  val issuesService: IssuesService
+  val config: ConfigM
 }
 ```
 

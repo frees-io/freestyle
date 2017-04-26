@@ -27,6 +27,8 @@ We can use such a callback based (asynchronous) API in freestyle by using the _f
 
 To use the _freestyle-async_ module you need to include one of the following dependencies:
 
+[comment]: # (Start Replace)
+
 ```scala
 libraryDependencies += "com.47deg" %% "freestyle-async" % "0.1.0"
 
@@ -36,6 +38,8 @@ libraryDependencies += "com.47deg" %% "freestyle-async-monix" % "0.1.0"
 // and if you want to use FS2's Task:
 libraryDependencies += "com.47deg" %% "freestyle-async-fs2" % "0.1.0"
 ```
+
+[comment]: # (End Replace)
 
 The standard freestyle imports:
 
