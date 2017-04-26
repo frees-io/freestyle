@@ -17,12 +17,15 @@
 package todo
 package runtime
 
-import cats.arrow.FunctionK
 import cats.~>
 import com.twitter.util.{Future, Promise}
 import doobie.imports._
 import fs2.Task
 import todo.definitions.persistence.{H2TodoItemRepositoryHandler, TodoItemRepository}
+import todo.definitions.TodoApp
+
+import freestyle.implicits._
+import freestyle.doobie.implicits._
 
 object implicits {
 
@@ -37,7 +40,7 @@ object implicits {
     new H2TodoItemRepositoryHandler
 
   implicit val connectionIO2Task: ConnectionIO ~> Task =
-    λ[FunctionK[ConnectionIO, Task]](_.transact(xa))
+    λ[ConnectionIO ~> Task](_.transact(xa))
 
   implicit val task2Future: Task ~> Future = new (Task ~> Future) {
     override def apply[A](fa: Task[A]): Future[A] = {
@@ -46,5 +49,11 @@ object implicits {
       promise
     }
   }
+
+  implicit val todoRepoTaskHandler: TodoItemRepository.Op ~> Task =
+    todoRepositoryHandler andThen connectionIO2Task
+
+  implicit val futureHandler: TodoApp.Op ~> Future =
+    implicitly[TodoApp.Op ~> Task] andThen task2Future
 
 }

@@ -17,14 +17,29 @@
 package todo
 package http
 
-import com.twitter.finagle.Http
+import com.twitter.finagle.{Http, Service}
+import com.twitter.finagle.http.{Request, Response}
+import com.twitter.server.TwitterServer
 import com.twitter.util.Await
-import todo.http.apis.Api
 import io.circe.generic.auto._
 import io.finch.circe._
 
 import todo.definitions.TodoApp
+import todo.http.apis.Api
+import todo.runtime.implicits._
 
-object TodoListApp extends App {
-  Await.ready(Http.server.serve(":8081", implicitly[Api[TodoApp.Op]].endpoints.toService))
+object TodoListApp extends TwitterServer {
+
+  val service: Service[Request, Response] = Api.instance[TodoApp.Op].endpoints.toService
+
+  def main(): Unit = {
+    val server = Http.server.withAdmissionControl
+      .concurrencyLimit(maxConcurrentRequests = 10, maxWaiters = 10)
+      .serve(":8081", service)
+
+    onExit { server.close() }
+
+    Await.ready(server)
+  }
+
 }

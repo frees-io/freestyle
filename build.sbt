@@ -268,11 +268,13 @@ lazy val todolistExample = (project in file("freestyle-examples/todolist"))
   .dependsOn(httpFinch)
   .dependsOn(fs2JVM)
   .settings(name := "freestyle-examples-todolist")
+  .settings(noPublishSettings)
   .settings(
     libraryDependencies ++= Seq(
       %%("circe-generic"),
       %%("doobie-h2-cats"),
-      "com.github.finagle" %% "finch-circe" % "0.14.0"
+      "com.github.finagle" %% "finch-circe" % "0.14.0",
+      "com.twitter" %% "twitter-server" % "1.29.0"
     ) ++ commonDeps
   )
 

@@ -18,25 +18,28 @@ package todo
 package http
 package apis
 
+import cats.~>
+import com.twitter.util.Future
 import io.finch._
-import todo.definitions.models.TodoItem
-import todo.definitions.persistence._
 import freestyle._
 import freestyle.implicits._
 import freestyle.http.finch._
 
+import todo.definitions.models.TodoItem
+import todo.definitions.persistence._
 import todo.runtime.implicits._
 
-class TodoItemApi[F[_]](implicit repo: TodoItemRepository[F]) {
+class TodoItemApi[F[_]](implicit repo: TodoItemRepository[F], handler: F ~> Future) {
 
   val resetTodoItem: Endpoint[Int] =
     post("items" :: "reset") {
       repo.init.map(Ok(_))
     }
 
-  val getTodoItem: Endpoint[Option[TodoItem]] =
+  // val getTodoItem: Endpoint[Option[TodoItem]] =
+  val getTodoItem: Endpoint[TodoItem] =
     get("items" :: int) { id: Int =>
-      repo.get(id).map(_.fold(NotFound(new NoSuchElementException))(Ok(_)))
+      repo.get(id).map(_.fold[Output[TodoItem]](NotFound(new NoSuchElementException))(Ok(_)))
     }
 
   val getTodoItems: Endpoint[List[TodoItem]] =
@@ -63,6 +66,8 @@ class TodoItemApi[F[_]](implicit repo: TodoItemRepository[F]) {
 }
 
 object TodoItemApi {
-  implicit def instance[F[_]](implicit repo: TodoItemRepository[F]): TodoItemApi[F] =
+  implicit def instance[F[_]](
+      implicit repo: TodoItemRepository[F],
+      handler: F ~> Future): TodoItemApi[F] =
     new TodoItemApi[F]
 }
