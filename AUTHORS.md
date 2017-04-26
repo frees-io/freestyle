@@ -16,6 +16,7 @@ These are the people that have contributed to the Freestyle project:
 * Ana Mª Marquez <[anamariamv](https://github.com/anamariamv)>
 * Diego Esteban Alonso Blas <[diesalbla](https://github.com/diesalbla)>
 * Domingo Valera <[dominv](https://github.com/dominv)>
+* Fede Fernández <[fedefernandez](https://github.com/fedefernandez)>
 * Francisco Diaz <[franciscodr](https://github.com/franciscodr)>
 * Giovanni Ruggiero <[gruggiero](https://github.com/gruggiero)>
 * Javi Pacheco <[javipacheco](https://github.com/javipacheco)>
