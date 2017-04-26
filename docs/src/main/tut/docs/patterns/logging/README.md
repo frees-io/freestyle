@@ -75,9 +75,9 @@ derived from using different algebras:
 import freestyle.logging._
 import freestyle.loggingJVM.implicits._
 
-@module trait App[F[_]] {
-  val customerService: CustomerService[F]
-  val log: LoggingM[F]
+@module trait App {
+  val customerService: CustomerService
+  val log: LoggingM
 }
 ```
 

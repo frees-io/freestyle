@@ -83,9 +83,9 @@ object algebras {
     }
 
   @module
-  trait App[F[_]] {
-    val nonDoobie: NonDoobie[F]
-    val doobieM: DoobieM[F]
+  trait App {
+    val nonDoobie: NonDoobie
+    val doobieM: DoobieM
   }
 
   val app = App[App.Op]

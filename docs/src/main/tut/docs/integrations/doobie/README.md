@@ -76,9 +76,9 @@ Only using `DoobieM` is not exactly useful however, as it just adds an extra lev
   def subtract(a: Int, b: Int): FS[Int]
 }
 
-@module trait Example[F[_]] {
-  val doobieM: DoobieM[F]
-  val calc: Calc[F]
+@module trait Example {
+  val doobieM: DoobieM
+  val calc: Calc
 }
 ```
 

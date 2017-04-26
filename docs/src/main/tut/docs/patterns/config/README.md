@@ -85,9 +85,9 @@ derived from using different algebras:
 import freestyle.config._
 import freestyle.config.implicits._
 
-@module trait App[F[_]] {
-  val issuesService: IssuesService[F]
-  val config: ConfigM[F]
+@module trait App {
+  val issuesService: IssuesService
+  val config: ConfigM
 }
 ```
 

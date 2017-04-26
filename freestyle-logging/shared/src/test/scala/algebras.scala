@@ -33,9 +33,9 @@ object algebras {
     }
 
   @module
-  trait App[F[_]] {
-    val nonLogging: NonLogging[F]
-    val loggingM: LoggingM[F]
+  trait App {
+    val nonLogging: NonLogging
+    val loggingM: LoggingM
   }
 
   val app = App[App.Op]

@@ -65,9 +65,9 @@ Freestyle algebras can be combined into `@module` definitions which provide aggr
 parametrization of Free programs.
 
 ```tut:book
-@module trait Application[F[_]] {
-  val validation: Validation[F]
-  val interaction: Interaction[F]
+@module trait Application {
+  val validation: Validation
+  val interaction: Interaction
 }
 ```
 
