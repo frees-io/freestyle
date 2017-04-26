@@ -131,10 +131,10 @@ object modules {
 
   import algebras._
 
-  @module trait App[F[_]] {
-    val f1: F1[F]
-    val tg1: TG1.StackSafe[F]
-    val tg2: TG2.StackSafe[F]
+  @module trait App {
+    val f1: F1
+    val tg1: TG1.StackSafe
+    val tg2: TG2.StackSafe
   }
 
 }
