@@ -61,6 +61,9 @@ lazy val docs = (project in file("docs"))
       %("h2") % "test"
     )
   )
+  .settings(
+    tutScalacOptions ~= (_ filterNot Set("-Ywarn-unused-import", "-Xlint").contains)
+  )
   .enablePlugins(MicrositesPlugin)
 
 lazy val monix = (crossProject in file("freestyle-monix"))
