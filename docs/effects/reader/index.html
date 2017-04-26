@@ -15,133 +15,31 @@ for any runtime <code class="highlighter-rouge">M[_]</code> used in its interpre
 <p><code class="highlighter-rouge">ask</code> simply returns the entire environment in its current state.</p>
 
 <div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">freestyle._</span>
-<span class="c1">// &lt;console&gt;:12: warning: Unused import
-//        import freestyle._
-//                         ^
-// import freestyle._
+<span class="c1">// import freestyle._
 </span>
 <span class="k">import</span> <span class="nn">freestyle.implicits._</span>
-<span class="c1">// &lt;console&gt;:10: warning: Unused import
-// import freestyle._
-//                  ^
-// &lt;console&gt;:15: warning: Unused import
-//        import freestyle.implicits._
-//                                   ^
-// import freestyle.implicits._
+<span class="c1">// import freestyle.implicits._
 </span>
 <span class="k">import</span> <span class="nn">freestyle.effects.reader</span>
-<span class="c1">// &lt;console&gt;:10: warning: Unused import
-// import freestyle._
-//                  ^
-// &lt;console&gt;:13: warning: Unused import
-// import freestyle.implicits._
-//                            ^
-// &lt;console&gt;:18: warning: Unused import
-//        import freestyle.effects.reader
-//                                 ^
-// import freestyle.effects.reader
+<span class="c1">// import freestyle.effects.reader
 </span>
 <span class="k">import</span> <span class="nn">cats.data.Reader</span>
-<span class="c1">// &lt;console&gt;:10: warning: Unused import
-// import freestyle._
-//                  ^
-// &lt;console&gt;:13: warning: Unused import
-// import freestyle.implicits._
-//                            ^
-// &lt;console&gt;:15: warning: Unused import
-// import freestyle.effects.reader
-//                          ^
-// &lt;console&gt;:19: warning: Unused import
-//        import cats.data.Reader
-//                         ^
-// import cats.data.Reader
+<span class="c1">// import cats.data.Reader
 </span>
 <span class="k">import</span> <span class="nn">cats.implicits._</span>
-<span class="c1">// &lt;console&gt;:10: warning: Unused import
-// import freestyle._
-//                  ^
-// &lt;console&gt;:13: warning: Unused import
-// import freestyle.implicits._
-//                            ^
-// &lt;console&gt;:15: warning: Unused import
-// import freestyle.effects.reader
-//                          ^
-// &lt;console&gt;:16: warning: Unused import
-// import cats.data.Reader
-//                  ^
-// &lt;console&gt;:20: warning: Unused import
-//        import cats.implicits._
-//                              ^
-// import cats.implicits._
+<span class="c1">// import cats.implicits._
 </span>
 <span class="k">case</span> <span class="k">class</span> <span class="nc">Config</span><span class="o">(</span><span class="n">n</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span>
-<span class="c1">// &lt;console&gt;:10: warning: Unused import
-// import freestyle._
-//                  ^
-// &lt;console&gt;:13: warning: Unused import
-// import freestyle.implicits._
-//                            ^
-// &lt;console&gt;:15: warning: Unused import
-// import freestyle.effects.reader
-//                          ^
-// &lt;console&gt;:16: warning: Unused import
-// import cats.data.Reader
-//                  ^
-// &lt;console&gt;:18: warning: Unused import
-// import cats.implicits._
-//                       ^
-// defined class Config
+<span class="c1">// defined class Config
 </span>
 <span class="k">type</span> <span class="kt">ConfigEnv</span><span class="o">[</span><span class="kt">A</span><span class="o">]</span> <span class="k">=</span> <span class="nc">Reader</span><span class="o">[</span><span class="kt">Config</span>, <span class="kt">A</span><span class="o">]</span>
-<span class="c1">// &lt;console&gt;:10: warning: Unused import
-// import freestyle._
-//                  ^
-// &lt;console&gt;:13: warning: Unused import
-// import freestyle.implicits._
-//                            ^
-// &lt;console&gt;:15: warning: Unused import
-// import freestyle.effects.reader
-//                          ^
-// &lt;console&gt;:18: warning: Unused import
-// import cats.implicits._
-//                       ^
-// defined type alias ConfigEnv
+<span class="c1">// defined type alias ConfigEnv
 </span>
 <span class="k">val</span> <span class="n">rd</span> <span class="k">=</span> <span class="n">reader</span><span class="o">[</span><span class="kt">Config</span><span class="o">]</span>
-<span class="c1">// &lt;console&gt;:10: warning: Unused import
-// import freestyle._
-//                  ^
-// &lt;console&gt;:13: warning: Unused import
-// import freestyle.implicits._
-//                            ^
-// &lt;console&gt;:16: warning: Unused import
-// import cats.data.Reader
-//                  ^
-// &lt;console&gt;:18: warning: Unused import
-// import cats.implicits._
-//                       ^
-// rd: freestyle.effects.reader.EnvironmentProvider[Config] = freestyle.effects.reader$EnvironmentProvider@4284a2db
+<span class="c1">// rd: freestyle.effects.reader.EnvironmentProvider[Config] = freestyle.effects.reader$EnvironmentProvider@d2b69f8
 </span>
 <span class="k">import</span> <span class="nn">rd.implicits._</span>
-<span class="c1">// &lt;console&gt;:10: warning: Unused import
-// import freestyle._
-//                  ^
-// &lt;console&gt;:13: warning: Unused import
-// import freestyle.implicits._
-//                            ^
-// &lt;console&gt;:15: warning: Unused import
-// import freestyle.effects.reader
-//                          ^
-// &lt;console&gt;:16: warning: Unused import
-// import cats.data.Reader
-//                  ^
-// &lt;console&gt;:18: warning: Unused import
-// import cats.implicits._
-//                       ^
-// &lt;console&gt;:24: warning: Unused import
-//        import rd.implicits._
-//                            ^
-// import rd.implicits._
+<span class="c1">// import rd.implicits._
 </span>
 <span class="k">def</span> <span class="n">programAsk</span><span class="o">[</span><span class="kt">F</span><span class="o">[</span><span class="k">_</span><span class="o">]</span><span class="kt">:</span> <span class="kt">rd.ReaderM</span><span class="o">]</span> <span class="k">=</span>
   <span class="k">for</span> <span class="o">{</span>
@@ -149,28 +47,10 @@ for any runtime <code class="highlighter-rouge">M[_]</code> used in its interpre
     <span class="n">c</span> <span class="k">&lt;-</span> <span class="n">rd</span><span class="o">.</span><span class="nc">ReaderM</span><span class="o">[</span><span class="kt">F</span><span class="o">].</span><span class="n">ask</span>
     <span class="k">_</span> <span class="k">&lt;-</span> <span class="mf">1.</span><span class="n">pure</span><span class="o">[</span><span class="kt">FreeS</span><span class="o">[</span><span class="kt">F</span>, <span class="kt">?</span><span class="o">]]</span>
   <span class="o">}</span> <span class="k">yield</span> <span class="n">c</span>
-<span class="c1">// &lt;console&gt;:15: warning: Unused import
-// import freestyle.effects.reader
-//                          ^
-// &lt;console&gt;:16: warning: Unused import
-// import cats.data.Reader
-//                  ^
-// &lt;console&gt;:22: warning: Unused import
-// import rd.implicits._
-//                     ^
-// programAsk: [F[_]](implicit evidence$1: rd.ReaderM[F])cats.free.Free[[β$0$]cats.free.FreeApplicative[F,β$0$],Config]
+<span class="c1">// programAsk: [F[_]](implicit evidence$1: rd.ReaderM[F])cats.free.Free[[β$0$]cats.free.FreeApplicative[F,β$0$],Config]
 </span>
 <span class="n">programAsk</span><span class="o">[</span><span class="kt">rd.ReaderM.Op</span><span class="o">].</span><span class="n">exec</span><span class="o">[</span><span class="kt">ConfigEnv</span><span class="o">].</span><span class="n">run</span><span class="o">(</span><span class="nc">Config</span><span class="o">(</span><span class="n">n</span> <span class="k">=</span> <span class="mi">10</span><span class="o">))</span>
-<span class="c1">// &lt;console&gt;:15: warning: Unused import
-// import freestyle.effects.reader
-//                          ^
-// &lt;console&gt;:16: warning: Unused import
-// import cats.data.Reader
-//                  ^
-// &lt;console&gt;:18: warning: Unused import
-// import cats.implicits._
-//                       ^
-// res0: cats.Id[Config] = Config(10)
+<span class="c1">// res0: cats.Id[Config] = Config(10)
 </span></code></pre>
 </div>
 
@@ -184,28 +64,10 @@ for any runtime <code class="highlighter-rouge">M[_]</code> used in its interpre
     <span class="n">b</span> <span class="k">&lt;-</span> <span class="n">rd</span><span class="o">.</span><span class="nc">ReaderM</span><span class="o">[</span><span class="kt">F</span><span class="o">].</span><span class="n">reader</span><span class="o">(</span><span class="k">_</span><span class="o">.</span><span class="n">n</span><span class="o">)</span>
     <span class="n">c</span> <span class="k">&lt;-</span> <span class="mf">1.</span><span class="n">pure</span><span class="o">[</span><span class="kt">FreeS</span><span class="o">[</span><span class="kt">F</span>, <span class="kt">?</span><span class="o">]]</span>
   <span class="o">}</span> <span class="k">yield</span> <span class="n">a</span> <span class="o">+</span> <span class="n">b</span> <span class="o">+</span> <span class="n">c</span>
-<span class="c1">// &lt;console&gt;:15: warning: Unused import
-// import freestyle.effects.reader
-//                          ^
-// &lt;console&gt;:16: warning: Unused import
-// import cats.data.Reader
-//                  ^
-// &lt;console&gt;:22: warning: Unused import
-// import rd.implicits._
-//                     ^
-// programReader: [F[_]](implicit evidence$1: rd.ReaderM[F])cats.free.Free[[β$0$]cats.free.FreeApplicative[F,β$0$],Int]
+<span class="c1">// programReader: [F[_]](implicit evidence$1: rd.ReaderM[F])cats.free.Free[[β$0$]cats.free.FreeApplicative[F,β$0$],Int]
 </span>
 <span class="n">programReader</span><span class="o">[</span><span class="kt">rd.ReaderM.Op</span><span class="o">].</span><span class="n">exec</span><span class="o">[</span><span class="kt">ConfigEnv</span><span class="o">].</span><span class="n">run</span><span class="o">(</span><span class="nc">Config</span><span class="o">(</span><span class="n">n</span> <span class="k">=</span> <span class="mi">1</span><span class="o">))</span>
-<span class="c1">// &lt;console&gt;:15: warning: Unused import
-// import freestyle.effects.reader
-//                          ^
-// &lt;console&gt;:16: warning: Unused import
-// import cats.data.Reader
-//                  ^
-// &lt;console&gt;:18: warning: Unused import
-// import cats.implicits._
-//                       ^
-// res1: cats.Id[Int] = 3
+<span class="c1">// res1: cats.Id[Int] = 3
 </span></code></pre>
 </div>
 </section></div></div></div></div><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script><script src="/highlight/highlight.pack.js"></script><script>hljs.configure({

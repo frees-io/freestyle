@@ -33,38 +33,23 @@
 <p>In the example below we will define two algebras with intermixed sequential and parallel computations.</p>
 
 <div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">freestyle._</span>
-<span class="c1">// &lt;console&gt;:12: warning: Unused import
-//        import freestyle._
-//                         ^
-// import freestyle._
+<span class="c1">// import freestyle._
 </span>
 <span class="k">import</span> <span class="nn">freestyle.implicits._</span>
-<span class="c1">// &lt;console&gt;:10: warning: Unused import
-// import freestyle._
-//                  ^
-// &lt;console&gt;:15: warning: Unused import
-//        import freestyle.implicits._
-//                                   ^
-// import freestyle.implicits._
+<span class="c1">// import freestyle.implicits._
 </span>
 <span class="nd">@free</span> <span class="k">trait</span> <span class="nc">Validation</span> <span class="o">{</span>
   <span class="k">def</span> <span class="n">minSize</span><span class="o">(</span><span class="n">s</span><span class="k">:</span> <span class="kt">String</span><span class="o">,</span> <span class="n">n</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span><span class="k">:</span> <span class="kt">FS</span><span class="o">[</span><span class="kt">Boolean</span><span class="o">]</span>
   <span class="k">def</span> <span class="n">hasNumber</span><span class="o">(</span><span class="n">s</span><span class="k">:</span> <span class="kt">String</span><span class="o">)</span><span class="k">:</span> <span class="kt">FS</span><span class="o">[</span><span class="kt">Boolean</span><span class="o">]</span>
 <span class="o">}</span>
-<span class="c1">// &lt;console&gt;:13: warning: Unused import
-// import freestyle.implicits._
-//                            ^
-// defined trait Validation
+<span class="c1">// defined trait Validation
 // defined object Validation
 </span>
 <span class="nd">@free</span> <span class="k">trait</span> <span class="nc">Interaction</span> <span class="o">{</span>
   <span class="k">def</span> <span class="n">tell</span><span class="o">(</span><span class="n">msg</span><span class="k">:</span> <span class="kt">String</span><span class="o">)</span><span class="k">:</span> <span class="kt">FS</span><span class="o">[</span><span class="kt">Unit</span><span class="o">]</span>
   <span class="k">def</span> <span class="n">ask</span><span class="o">(</span><span class="n">prompt</span><span class="k">:</span> <span class="kt">String</span><span class="o">)</span><span class="k">:</span> <span class="kt">FS</span><span class="o">[</span><span class="kt">String</span><span class="o">]</span>
 <span class="o">}</span>
-<span class="c1">// &lt;console&gt;:13: warning: Unused import
-// import freestyle.implicits._
-//                            ^
-// defined trait Interaction
+<span class="c1">// defined trait Interaction
 // defined object Interaction
 </span></code></pre>
 </div>
@@ -80,10 +65,7 @@ parametrization of Free programs.</p>
   <span class="k">val</span> <span class="n">validation</span><span class="k">:</span> <span class="kt">Validation</span>
   <span class="k">val</span> <span class="n">interaction</span><span class="k">:</span> <span class="kt">Interaction</span>
 <span class="o">}</span>
-<span class="c1">// &lt;console&gt;:13: warning: Unused import
-// import freestyle.implicits._
-//                            ^
-// defined trait Application
+<span class="c1">// defined trait Application
 // defined object Application
 </span></code></pre>
 </div>
@@ -122,61 +104,22 @@ parametrization of Free programs.</p>
 <p>In order to run programs we need interpreters. We define interpreters providing implementations for the operations defined in our algebras.</p>
 
 <div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">scala.concurrent.ExecutionContext.Implicits.global</span>
-<span class="c1">// &lt;console&gt;:10: warning: Unused import
-// import freestyle._
-//                  ^
-// &lt;console&gt;:13: warning: Unused import
-// import freestyle.implicits._
-//                            ^
-// &lt;console&gt;:18: warning: Unused import
-//        import scala.concurrent.ExecutionContext.Implicits.global
-//                                                           ^
-// import scala.concurrent.ExecutionContext.Implicits.global
+<span class="c1">// import scala.concurrent.ExecutionContext.Implicits.global
 </span>
 <span class="k">import</span> <span class="nn">scala.concurrent.Future</span>
-<span class="c1">// &lt;console&gt;:10: warning: Unused import
-// import freestyle._
-//                  ^
-// &lt;console&gt;:13: warning: Unused import
-// import freestyle.implicits._
-//                            ^
-// &lt;console&gt;:15: warning: Unused import
-// import scala.concurrent.ExecutionContext.Implicits.global
-//                                                    ^
-// &lt;console&gt;:19: warning: Unused import
-//        import scala.concurrent.Future
-//                                ^
-// import scala.concurrent.Future
+<span class="c1">// import scala.concurrent.Future
 </span>
 <span class="k">implicit</span> <span class="k">val</span> <span class="n">validationHandler</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">Validation</span><span class="o">.</span><span class="nc">Handler</span><span class="o">[</span><span class="kt">Future</span><span class="o">]</span> <span class="o">{</span>
   <span class="k">override</span> <span class="k">def</span> <span class="n">minSize</span><span class="o">(</span><span class="n">s</span><span class="k">:</span> <span class="kt">String</span><span class="o">,</span> <span class="n">n</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span><span class="k">:</span> <span class="kt">Future</span><span class="o">[</span><span class="kt">Boolean</span><span class="o">]</span> <span class="k">=</span> <span class="nc">Future</span><span class="o">(</span><span class="n">s</span><span class="o">.</span><span class="n">size</span> <span class="o">&gt;=</span> <span class="n">n</span><span class="o">)</span>
   <span class="k">override</span> <span class="k">def</span> <span class="n">hasNumber</span><span class="o">(</span><span class="n">s</span><span class="k">:</span> <span class="kt">String</span><span class="o">)</span><span class="k">:</span> <span class="kt">Future</span><span class="o">[</span><span class="kt">Boolean</span><span class="o">]</span> <span class="k">=</span> <span class="nc">Future</span><span class="o">(</span><span class="n">s</span><span class="o">.</span><span class="n">exists</span><span class="o">(</span><span class="n">c</span> <span class="k">=&gt;</span> <span class="s">"0123456789"</span><span class="o">.</span><span class="n">contains</span><span class="o">(</span><span class="n">c</span><span class="o">)))</span>
 <span class="o">}</span>
-<span class="c1">// &lt;console&gt;:10: warning: Unused import
-// import freestyle._
-//                  ^
-// &lt;console&gt;:13: warning: Unused import
-// import freestyle.implicits._
-//                            ^
-// validationHandler: Validation.Handler[scala.concurrent.Future] = $anon$1@7aa45fd5
+<span class="c1">// validationHandler: Validation.Handler[scala.concurrent.Future] = $anon$1@30def9df
 </span>
 <span class="k">implicit</span> <span class="k">val</span> <span class="n">interactionHandler</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">Interaction</span><span class="o">.</span><span class="nc">Handler</span><span class="o">[</span><span class="kt">Future</span><span class="o">]</span> <span class="o">{</span>
   <span class="k">override</span> <span class="k">def</span> <span class="n">tell</span><span class="o">(</span><span class="n">s</span><span class="k">:</span> <span class="kt">String</span><span class="o">)</span><span class="k">:</span> <span class="kt">Future</span><span class="o">[</span><span class="kt">Unit</span><span class="o">]</span> <span class="k">=</span> <span class="nc">Future</span><span class="o">.</span><span class="n">successful</span><span class="o">(</span><span class="n">println</span><span class="o">(</span><span class="n">s</span><span class="o">))</span>
   <span class="k">override</span> <span class="k">def</span> <span class="n">ask</span><span class="o">(</span><span class="n">s</span><span class="k">:</span> <span class="kt">String</span><span class="o">)</span><span class="k">:</span> <span class="kt">Future</span><span class="o">[</span><span class="kt">String</span><span class="o">]</span> <span class="k">=</span> <span class="nc">Future</span><span class="o">.</span><span class="n">successful</span> <span class="o">{</span> <span class="n">println</span><span class="o">(</span><span class="n">s</span><span class="o">);</span> <span class="s">"This could have been user input 1"</span> <span class="o">}</span>
 <span class="o">}</span>
-<span class="c1">// &lt;console&gt;:10: warning: Unused import
-// import freestyle._
-//                  ^
-// &lt;console&gt;:13: warning: Unused import
-// import freestyle.implicits._
-//                            ^
-// &lt;console&gt;:16: warning: Unused import
-// import scala.concurrent.ExecutionContext.Implicits.global
-//                                                    ^
-// &lt;console&gt;:18: warning: Unused import
-// import validationHandler
-//                                             ^
-// interactionHandler: Interaction.Handler[scala.concurrent.Future] = $anon$1@363df585
+<span class="c1">// interactionHandler: Interaction.Handler[scala.concurrent.Future] = $anon$1@6ae6ef0a
 </span></code></pre>
 </div>
 
@@ -185,118 +128,19 @@ parametrization of Free programs.</p>
 <p>At this point we can run our pure programs at the edge of the world.</p>
 
 <div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">cats.implicits._</span>
-<span class="c1">// &lt;console&gt;:10: warning: Unused import
-// import freestyle._
-//                  ^
-// &lt;console&gt;:13: warning: Unused import
-// import freestyle.implicits._
-//                            ^
-// &lt;console&gt;:15: warning: Unused import
-// import scala.concurrent.ExecutionContext.Implicits.global
-//                                                    ^
-// &lt;console&gt;:16: warning: Unused import
-// import scala.concurrent.Future
-//                         ^
-// &lt;console&gt;:17: warning: Unused import
-// import validationHandler
-//                                             ^
-// &lt;console&gt;:18: warning: Unused import
-// import interactionHandler
-//                                              ^
-// &lt;console&gt;:22: warning: Unused import
-//        import cats.implicits._
-//                              ^
-// import cats.implicits._
+<span class="c1">// import cats.implicits._
 </span>
 <span class="k">import</span> <span class="nn">scala.concurrent.duration.Duration</span>
-<span class="c1">// &lt;console&gt;:10: warning: Unused import
-// import freestyle._
-//                  ^
-// &lt;console&gt;:13: warning: Unused import
-// import freestyle.implicits._
-//                            ^
-// &lt;console&gt;:15: warning: Unused import
-// import scala.concurrent.ExecutionContext.Implicits.global
-//                                                    ^
-// &lt;console&gt;:16: warning: Unused import
-// import scala.concurrent.Future
-//                         ^
-// &lt;console&gt;:17: warning: Unused import
-// import validationHandler
-//                                             ^
-// &lt;console&gt;:18: warning: Unused import
-// import interactionHandler
-//                                              ^
-// &lt;console&gt;:20: warning: Unused import
-// import cats.implicits._
-//                       ^
-// &lt;console&gt;:25: warning: Unused import
-//        import scala.concurrent.duration.Duration
-//                                         ^
-// import scala.concurrent.duration.Duration
+<span class="c1">// import scala.concurrent.duration.Duration
 </span>
 <span class="k">import</span> <span class="nn">scala.concurrent.Await</span>
-<span class="c1">// &lt;console&gt;:10: warning: Unused import
-// import freestyle._
-//                  ^
-// &lt;console&gt;:13: warning: Unused import
-// import freestyle.implicits._
-//                            ^
-// &lt;console&gt;:15: warning: Unused import
-// import scala.concurrent.ExecutionContext.Implicits.global
-//                                                    ^
-// &lt;console&gt;:16: warning: Unused import
-// import scala.concurrent.Future
-//                         ^
-// &lt;console&gt;:17: warning: Unused import
-// import validationHandler
-//                                             ^
-// &lt;console&gt;:18: warning: Unused import
-// import interactionHandler
-//                                              ^
-// &lt;console&gt;:20: warning: Unused import
-// import cats.implicits._
-//                       ^
-// &lt;console&gt;:22: warning: Unused import
-// import scala.concurrent.duration.Duration
-//                                  ^
-// &lt;console&gt;:26: warning: Unused import
-//        import scala.concurrent.Await
-//                                ^
-// import scala.concurrent.Await
+<span class="c1">// import scala.concurrent.Await
 </span>
 <span class="k">val</span> <span class="n">futureValue</span> <span class="k">=</span> <span class="n">program</span><span class="o">[</span><span class="kt">Application.Op</span><span class="o">].</span><span class="n">exec</span><span class="o">[</span><span class="kt">Future</span><span class="o">]</span>
-<span class="c1">// &lt;console&gt;:24: warning: Unused import
-// import scala.concurrent.duration.Duration
-//                                  ^
-// &lt;console&gt;:25: warning: Unused import
-// import scala.concurrent.Await
-//                         ^
-// Give me something with at least 3 chars and a number on it
+<span class="c1">// Give me something with at least 3 chars and a number on it
 // futureValue: scala.concurrent.Future[Unit] = Future(&lt;not completed&gt;)
 </span>
 <span class="nc">Await</span><span class="o">.</span><span class="n">result</span><span class="o">(</span><span class="n">futureValue</span><span class="o">,</span> <span class="nc">Duration</span><span class="o">.</span><span class="nc">Inf</span><span class="o">)</span> <span class="c1">//blocking only for demo purposes. Don't do this at home.
-// &lt;console&gt;:10: warning: Unused import
-// import freestyle._
-//                  ^
-// &lt;console&gt;:13: warning: Unused import
-// import freestyle.implicits._
-//                            ^
-// &lt;console&gt;:15: warning: Unused import
-// import scala.concurrent.ExecutionContext.Implicits.global
-//                                                    ^
-// &lt;console&gt;:16: warning: Unused import
-// import scala.concurrent.Future
-//                         ^
-// &lt;console&gt;:17: warning: Unused import
-// import validationHandler
-//                                             ^
-// &lt;console&gt;:18: warning: Unused import
-// import interactionHandler
-//                                              ^
-// &lt;console&gt;:20: warning: Unused import
-// import cats.implicits._
-//                       ^
 // awesomesauce!
 </span></code></pre>
 </div>

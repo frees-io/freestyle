@@ -51,37 +51,13 @@ The JVM handler interpreter is based on the <a href="https://github.com/Verizon/
 <div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="nd">@free</span> <span class="k">trait</span> <span class="nc">CustomerService</span> <span class="o">{</span>
   <span class="k">def</span> <span class="n">customers</span><span class="k">:</span> <span class="kt">FS</span><span class="o">[</span><span class="kt">List</span><span class="o">[</span><span class="kt">String</span><span class="o">]]</span>
 <span class="o">}</span>
-<span class="c1">// &lt;console&gt;:13: warning: Unused import
-// import freestyle.implicits._
-//                            ^
-// &lt;console&gt;:16: warning: Unused import
-// import cats._
-//             ^
-// &lt;console&gt;:19: warning: Unused import
-// import cats.implicits._
-//                       ^
-// &lt;console&gt;:21: warning: Unused import
-// import scala.util.Try
-//                   ^
-// defined trait CustomerService
+<span class="c1">// defined trait CustomerService
 // defined object CustomerService
 </span>
 <span class="k">implicit</span> <span class="k">val</span> <span class="n">customerServiceHandler</span><span class="k">:</span> <span class="kt">CustomerService.Handler</span><span class="o">[</span><span class="kt">Try</span><span class="o">]</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">CustomerService</span><span class="o">.</span><span class="nc">Handler</span><span class="o">[</span><span class="kt">Try</span><span class="o">]</span> <span class="o">{</span>
   <span class="k">def</span> <span class="n">customers</span><span class="k">:</span> <span class="kt">Try</span><span class="o">[</span><span class="kt">List</span><span class="o">[</span><span class="kt">String</span><span class="o">]]</span> <span class="k">=</span> <span class="nc">Try</span><span class="o">(</span><span class="nc">List</span><span class="o">(</span><span class="s">"John"</span><span class="o">,</span> <span class="s">"Jane"</span><span class="o">,</span> <span class="s">"Luis"</span><span class="o">))</span>
 <span class="o">}</span>
-<span class="c1">// &lt;console&gt;:10: warning: Unused import
-// import freestyle._
-//                  ^
-// &lt;console&gt;:13: warning: Unused import
-// import freestyle.implicits._
-//                            ^
-// &lt;console&gt;:16: warning: Unused import
-// import cats._
-//             ^
-// &lt;console&gt;:19: warning: Unused import
-// import cats.implicits._
-//                       ^
-// customerServiceHandler: CustomerService.Handler[scala.util.Try] = $anon$1@3e16a087
+<span class="c1">// customerServiceHandler: CustomerService.Handler[scala.util.Try] = $anon$1@2821d9f0
 </span></code></pre>
 </div>
 
@@ -89,79 +65,16 @@ The JVM handler interpreter is based on the <a href="https://github.com/Verizon/
 derived from using different algebras:</p>
 
 <div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">freestyle.logging._</span>
-<span class="c1">// &lt;console&gt;:10: warning: Unused import
-// import freestyle._
-//                  ^
-// &lt;console&gt;:13: warning: Unused import
-// import freestyle.implicits._
-//                            ^
-// &lt;console&gt;:16: warning: Unused import
-// import cats._
-//             ^
-// &lt;console&gt;:19: warning: Unused import
-// import cats.implicits._
-//                       ^
-// &lt;console&gt;:21: warning: Unused import
-// import scala.util.Try
-//                   ^
-// &lt;console&gt;:22: warning: Unused import
-// import customerServiceHandler
-//                                                             ^
-// &lt;console&gt;:26: warning: Unused import
-//        import freestyle.logging._
-//                                 ^
-// import freestyle.logging._
+<span class="c1">// import freestyle.logging._
 </span>
 <span class="k">import</span> <span class="nn">freestyle.loggingJVM.implicits._</span>
-<span class="c1">// &lt;console&gt;:10: warning: Unused import
-// import freestyle._
-//                  ^
-// &lt;console&gt;:13: warning: Unused import
-// import freestyle.implicits._
-//                            ^
-// &lt;console&gt;:16: warning: Unused import
-// import cats._
-//             ^
-// &lt;console&gt;:19: warning: Unused import
-// import cats.implicits._
-//                       ^
-// &lt;console&gt;:21: warning: Unused import
-// import scala.util.Try
-//                   ^
-// &lt;console&gt;:22: warning: Unused import
-// import customerServiceHandler
-//                                                             ^
-// &lt;console&gt;:24: warning: Unused import
-// import freestyle.logging._
-//                          ^
-// &lt;console&gt;:29: warning: Unused import
-//        import freestyle.loggingJVM.implicits._
-//                                              ^
-// import freestyle.loggingJVM.implicits._
+<span class="c1">// import freestyle.loggingJVM.implicits._
 </span>
 <span class="nd">@module</span> <span class="k">trait</span> <span class="nc">App</span> <span class="o">{</span>
   <span class="k">val</span> <span class="n">customerService</span><span class="k">:</span> <span class="kt">CustomerService</span>
   <span class="k">val</span> <span class="n">log</span><span class="k">:</span> <span class="kt">LoggingM</span>
 <span class="o">}</span>
-<span class="c1">// &lt;console&gt;:13: warning: Unused import
-// import freestyle.implicits._
-//                            ^
-// &lt;console&gt;:16: warning: Unused import
-// import cats._
-//             ^
-// &lt;console&gt;:19: warning: Unused import
-// import cats.implicits._
-//                       ^
-// &lt;console&gt;:21: warning: Unused import
-// import scala.util.Try
-//                   ^
-// &lt;console&gt;:24: warning: Unused import
-// import customerServiceHandler
-//                                                             ^
-// &lt;console&gt;:29: warning: Unused import
-// import freestyle.loggingJVM.implicits._
-//                                       ^
-// defined trait App
+<span class="c1">// defined trait App
 // defined object App
 </span></code></pre>
 </div>
@@ -173,37 +86,13 @@ derived from using different algebras:</p>
     <span class="n">customers</span> <span class="k">&lt;-</span> <span class="n">app</span><span class="o">.</span><span class="n">customerService</span><span class="o">.</span><span class="n">customers</span>
 	<span class="k">_</span> <span class="k">&lt;-</span> <span class="n">app</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="o">(</span><span class="n">s</span><span class="s">"found customers: $customers"</span><span class="o">)</span>
   <span class="o">}</span> <span class="k">yield</span> <span class="o">()</span>
-<span class="c1">// &lt;console&gt;:13: warning: Unused import
-// import freestyle.implicits._
-//                            ^
-// &lt;console&gt;:16: warning: Unused import
-// import cats._
-//             ^
-// &lt;console&gt;:21: warning: Unused import
-// import scala.util.Try
-//                   ^
-// &lt;console&gt;:22: warning: Unused import
-// import customerServiceHandler
-//                                                             ^
-// &lt;console&gt;:24: warning: Unused import
-// import freestyle.logging._
-//                          ^
-// &lt;console&gt;:27: warning: Unused import
-// import freestyle.loggingJVM.implicits._
-//                                       ^
-// program: [F[_]](implicit app: App[F])freestyle.FreeS[F,Unit]
+<span class="c1">// program: [F[_]](implicit app: App[F])freestyle.FreeS[F,Unit]
 </span></code></pre>
 </div>
 
 <p>Once we have a program, we can interpret it to our desired runtime, in this case, <code class="highlighter-rouge">scala.util.Try</code>:</p>
 
-<div class="highlighter-rouge"><pre class="highlight"><code>&lt;console&gt;:16: warning: Unused import
-import cats._
-            ^
-&lt;console&gt;:24: warning: Unused import
-import freestyle.logging._
-                         ^
-res1: scala.util.Try[Unit] = Success(())
+<div class="highlighter-rouge"><pre class="highlight"><code>res1: scala.util.Try[Unit] = Success(())
 </code></pre>
 </div>
 

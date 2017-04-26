@@ -14,64 +14,19 @@ your target runtime </code>M[_]`.</p>
 will short circuit.</p>
 
 <div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">freestyle._</span>
-<span class="c1">// &lt;console&gt;:12: warning: Unused import
-//        import freestyle._
-//                         ^
-// import freestyle._
+<span class="c1">// import freestyle._
 </span>
 <span class="k">import</span> <span class="nn">freestyle.implicits._</span>
-<span class="c1">// &lt;console&gt;:10: warning: Unused import
-// import freestyle._
-//                  ^
-// &lt;console&gt;:15: warning: Unused import
-//        import freestyle.implicits._
-//                                   ^
-// import freestyle.implicits._
+<span class="c1">// import freestyle.implicits._
 </span>
 <span class="k">import</span> <span class="nn">freestyle.effects.option._</span>
-<span class="c1">// &lt;console&gt;:10: warning: Unused import
-// import freestyle._
-//                  ^
-// &lt;console&gt;:13: warning: Unused import
-// import freestyle.implicits._
-//                            ^
-// &lt;console&gt;:18: warning: Unused import
-//        import freestyle.effects.option._
-//                                        ^
-// import freestyle.effects.option._
+<span class="c1">// import freestyle.effects.option._
 </span>
 <span class="k">import</span> <span class="nn">freestyle.effects.option.implicits._</span>
-<span class="c1">// &lt;console&gt;:10: warning: Unused import
-// import freestyle._
-//                  ^
-// &lt;console&gt;:13: warning: Unused import
-// import freestyle.implicits._
-//                            ^
-// &lt;console&gt;:16: warning: Unused import
-// import freestyle.effects.option._
-//                                 ^
-// &lt;console&gt;:21: warning: Unused import
-//        import freestyle.effects.option.implicits._
-//                                                  ^
-// import freestyle.effects.option.implicits._
+<span class="c1">// import freestyle.effects.option.implicits._
 </span>
 <span class="k">import</span> <span class="nn">cats.implicits._</span>
-<span class="c1">// &lt;console&gt;:10: warning: Unused import
-// import freestyle._
-//                  ^
-// &lt;console&gt;:13: warning: Unused import
-// import freestyle.implicits._
-//                            ^
-// &lt;console&gt;:16: warning: Unused import
-// import freestyle.effects.option._
-//                                 ^
-// &lt;console&gt;:19: warning: Unused import
-// import freestyle.effects.option.implicits._
-//                                           ^
-// &lt;console&gt;:24: warning: Unused import
-//        import cats.implicits._
-//                              ^
-// import cats.implicits._
+<span class="c1">// import cats.implicits._
 </span>
 <span class="k">def</span> <span class="n">programNone</span><span class="o">[</span><span class="kt">F</span><span class="o">[</span><span class="k">_</span><span class="o">]</span><span class="kt">:</span> <span class="kt">OptionM</span><span class="o">]</span> <span class="k">=</span>
   <span class="k">for</span> <span class="o">{</span>
@@ -79,10 +34,7 @@ will short circuit.</p>
     <span class="n">b</span> <span class="k">&lt;-</span> <span class="nc">OptionM</span><span class="o">[</span><span class="kt">F</span><span class="o">].</span><span class="n">option</span><span class="o">[</span><span class="kt">Int</span><span class="o">](</span><span class="nc">None</span><span class="o">)</span>
     <span class="n">c</span> <span class="k">&lt;-</span> <span class="mf">1.</span><span class="n">pure</span><span class="o">[</span><span class="kt">FreeS</span><span class="o">[</span><span class="kt">F</span>, <span class="kt">?</span><span class="o">]]</span>
   <span class="o">}</span> <span class="k">yield</span> <span class="n">a</span> <span class="o">+</span> <span class="n">b</span> <span class="o">+</span> <span class="n">c</span>
-<span class="c1">// &lt;console&gt;:19: warning: Unused import
-// import freestyle.effects.option.implicits._
-//                                           ^
-// programNone: [F[_]](implicit evidence$1: freestyle.effects.option.OptionM[F])cats.free.Free[[β$0$]cats.free.FreeApplicative[F,β$0$],Int]
+<span class="c1">// programNone: [F[_]](implicit evidence$1: freestyle.effects.option.OptionM[F])cats.free.Free[[β$0$]cats.free.FreeApplicative[F,β$0$],Int]
 </span>
 <span class="n">programNone</span><span class="o">[</span><span class="kt">OptionM.Op</span><span class="o">].</span><span class="n">exec</span><span class="o">[</span><span class="kt">Option</span><span class="o">]</span>
 <span class="c1">// res0: Option[Int] = None
@@ -98,10 +50,7 @@ normally.</p>
     <span class="n">b</span> <span class="k">&lt;-</span> <span class="nc">OptionM</span><span class="o">[</span><span class="kt">F</span><span class="o">].</span><span class="n">option</span><span class="o">(</span><span class="nc">Some</span><span class="o">(</span><span class="mi">1</span><span class="o">))</span>
     <span class="n">c</span> <span class="k">&lt;-</span> <span class="mf">1.</span><span class="n">pure</span><span class="o">[</span><span class="kt">FreeS</span><span class="o">[</span><span class="kt">F</span>, <span class="kt">?</span><span class="o">]]</span>
   <span class="o">}</span> <span class="k">yield</span> <span class="n">a</span> <span class="o">+</span> <span class="n">b</span> <span class="o">+</span> <span class="n">c</span>
-<span class="c1">// &lt;console&gt;:19: warning: Unused import
-// import freestyle.effects.option.implicits._
-//                                           ^
-// programSome: [F[_]](implicit evidence$1: freestyle.effects.option.OptionM[F])cats.free.Free[[β$0$]cats.free.FreeApplicative[F,β$0$],Int]
+<span class="c1">// programSome: [F[_]](implicit evidence$1: freestyle.effects.option.OptionM[F])cats.free.Free[[β$0$]cats.free.FreeApplicative[F,β$0$],Int]
 </span>
 <span class="n">programSome</span><span class="o">[</span><span class="kt">OptionM.Op</span><span class="o">].</span><span class="n">exec</span><span class="o">[</span><span class="kt">Option</span><span class="o">]</span>
 <span class="c1">// res1: Option[Int] = Some(3)
@@ -119,10 +68,7 @@ care.</p>
     <span class="n">b</span> <span class="k">&lt;-</span> <span class="nc">OptionM</span><span class="o">[</span><span class="kt">F</span><span class="o">].</span><span class="n">none</span><span class="o">[</span><span class="kt">Int</span><span class="o">]</span>
     <span class="n">c</span> <span class="k">&lt;-</span> <span class="mf">1.</span><span class="n">pure</span><span class="o">[</span><span class="kt">FreeS</span><span class="o">[</span><span class="kt">F</span>, <span class="kt">?</span><span class="o">]]</span>
   <span class="o">}</span> <span class="k">yield</span> <span class="n">a</span> <span class="o">+</span> <span class="n">b</span> <span class="o">+</span> <span class="n">c</span>
-<span class="c1">// &lt;console&gt;:19: warning: Unused import
-// import freestyle.effects.option.implicits._
-//                                           ^
-// programNone2: [F[_]](implicit evidence$1: freestyle.effects.option.OptionM[F])cats.free.Free[[β$0$]cats.free.FreeApplicative[F,β$0$],Int]
+<span class="c1">// programNone2: [F[_]](implicit evidence$1: freestyle.effects.option.OptionM[F])cats.free.Free[[β$0$]cats.free.FreeApplicative[F,β$0$],Int]
 </span>
 <span class="n">programNone2</span><span class="o">[</span><span class="kt">OptionM.Op</span><span class="o">].</span><span class="n">exec</span><span class="o">[</span><span class="kt">Option</span><span class="o">]</span>
 <span class="c1">// res2: Option[Int] = None

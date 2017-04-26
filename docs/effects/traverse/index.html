@@ -10,79 +10,22 @@ The target runtime <code class="highlighter-rouge">M[_]</code> requires a <code 
 <p><code class="highlighter-rouge">fromTraversable</code> allows lifting of any <code class="highlighter-rouge">G[_]: Foldable</code> into the context of <code class="highlighter-rouge">FreeS</code></p>
 
 <div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">freestyle._</span>
-<span class="c1">// &lt;console&gt;:12: warning: Unused import
-//        import freestyle._
-//                         ^
-// import freestyle._
+<span class="c1">// import freestyle._
 </span>
 <span class="k">import</span> <span class="nn">freestyle.implicits._</span>
-<span class="c1">// &lt;console&gt;:10: warning: Unused import
-// import freestyle._
-//                  ^
-// &lt;console&gt;:15: warning: Unused import
-//        import freestyle.implicits._
-//                                   ^
-// import freestyle.implicits._
+<span class="c1">// import freestyle.implicits._
 </span>
 <span class="k">import</span> <span class="nn">freestyle.effects._</span>
-<span class="c1">// &lt;console&gt;:10: warning: Unused import
-// import freestyle._
-//                  ^
-// &lt;console&gt;:13: warning: Unused import
-// import freestyle.implicits._
-//                            ^
-// &lt;console&gt;:18: warning: Unused import
-//        import freestyle.effects._
-//                                 ^
-// import freestyle.effects._
+<span class="c1">// import freestyle.effects._
 </span>
 <span class="k">import</span> <span class="nn">cats.implicits._</span>
-<span class="c1">// &lt;console&gt;:10: warning: Unused import
-// import freestyle._
-//                  ^
-// &lt;console&gt;:13: warning: Unused import
-// import freestyle.implicits._
-//                            ^
-// &lt;console&gt;:16: warning: Unused import
-// import freestyle.effects._
-//                          ^
-// &lt;console&gt;:21: warning: Unused import
-//        import cats.implicits._
-//                              ^
-// import cats.implicits._
+<span class="c1">// import cats.implicits._
 </span>
 <span class="k">val</span> <span class="n">list</span> <span class="k">=</span> <span class="n">traverse</span><span class="o">[</span><span class="kt">List</span><span class="o">]</span>
-<span class="c1">// &lt;console&gt;:10: warning: Unused import
-// import freestyle._
-//                  ^
-// &lt;console&gt;:13: warning: Unused import
-// import freestyle.implicits._
-//                            ^
-// &lt;console&gt;:19: warning: Unused import
-// import cats.implicits._
-//                       ^
-// list: freestyle.effects.traverse.TraverseProvider[List] = freestyle.effects.traverse$TraverseProvider@4e1ae30a
+<span class="c1">// list: freestyle.effects.traverse.TraverseProvider[List] = freestyle.effects.traverse$TraverseProvider@7b74435
 </span>
 <span class="k">import</span> <span class="nn">list._</span><span class="o">,</span> <span class="n">list</span><span class="o">.</span><span class="n">implicits</span><span class="o">.</span><span class="k">_</span>
-<span class="c1">// &lt;console&gt;:10: warning: Unused import
-// import freestyle._
-//                  ^
-// &lt;console&gt;:13: warning: Unused import
-// import freestyle.implicits._
-//                            ^
-// &lt;console&gt;:16: warning: Unused import
-// import freestyle.effects._
-//                          ^
-// &lt;console&gt;:19: warning: Unused import
-// import cats.implicits._
-//                       ^
-// &lt;console&gt;:25: warning: Unused import
-//        import list._, list.implicits._
-//                    ^
-// &lt;console&gt;:25: warning: Unused import
-//        import list._, list.implicits._
-//                                      ^
-// import list._
+<span class="c1">// import list._
 // import list.implicits._
 </span>
 <span class="k">def</span> <span class="n">programTraverse</span><span class="o">[</span><span class="kt">F</span><span class="o">[</span><span class="k">_</span><span class="o">]</span><span class="kt">:</span> <span class="kt">TraverseM</span><span class="o">]</span> <span class="k">=</span>
@@ -90,19 +33,10 @@ The target runtime <code class="highlighter-rouge">M[_]</code> requires a <code 
     <span class="n">a</span> <span class="k">&lt;-</span> <span class="nc">TraverseM</span><span class="o">[</span><span class="kt">F</span><span class="o">].</span><span class="n">fromTraversable</span><span class="o">(</span><span class="mi">1</span> <span class="o">::</span> <span class="mi">2</span> <span class="o">::</span> <span class="mi">3</span> <span class="o">::</span> <span class="nc">Nil</span><span class="o">)</span>
     <span class="n">b</span> <span class="k">&lt;-</span> <span class="o">(</span><span class="n">a</span> <span class="o">+</span> <span class="mi">1</span><span class="o">).</span><span class="n">pure</span><span class="o">[</span><span class="kt">FreeS</span><span class="o">[</span><span class="kt">F</span>, <span class="kt">?</span><span class="o">]]</span>
   <span class="o">}</span> <span class="k">yield</span> <span class="n">b</span>
-<span class="c1">// &lt;console&gt;:16: warning: Unused import
-// import freestyle.effects._
-//                          ^
-// &lt;console&gt;:26: warning: Unused import
-// import list.implicits._
-//                       ^
-// programTraverse: [F[_]](implicit evidence$1: list.TraverseM[F])cats.free.Free[[β$0$]cats.free.FreeApplicative[F,β$0$],Int]
+<span class="c1">// programTraverse: [F[_]](implicit evidence$1: list.TraverseM[F])cats.free.Free[[β$0$]cats.free.FreeApplicative[F,β$0$],Int]
 </span>
 <span class="n">programTraverse</span><span class="o">[</span><span class="kt">TraverseM.Op</span><span class="o">].</span><span class="n">exec</span><span class="o">[</span><span class="kt">List</span><span class="o">]</span>
-<span class="c1">// &lt;console&gt;:16: warning: Unused import
-// import freestyle.effects._
-//                          ^
-// res0: List[Int] = List(2, 3, 4)
+<span class="c1">// res0: List[Int] = List(2, 3, 4)
 </span></code></pre>
 </div>
 
@@ -119,19 +53,10 @@ is implemented.</p>
     <span class="n">b</span> <span class="k">&lt;-</span> <span class="o">(</span><span class="n">a</span> <span class="o">+</span> <span class="mi">1</span><span class="o">).</span><span class="n">pure</span><span class="o">[</span><span class="kt">FreeS</span><span class="o">[</span><span class="kt">F</span>, <span class="kt">?</span><span class="o">]]</span>
     <span class="n">c</span> <span class="k">&lt;-</span> <span class="o">(</span><span class="n">b</span> <span class="o">+</span> <span class="mi">1</span><span class="o">).</span><span class="n">pure</span><span class="o">[</span><span class="kt">FreeS</span><span class="o">[</span><span class="kt">F</span>, <span class="kt">?</span><span class="o">]]</span>
   <span class="o">}</span> <span class="k">yield</span> <span class="n">c</span>
-<span class="c1">// &lt;console&gt;:16: warning: Unused import
-// import freestyle.effects._
-//                          ^
-// &lt;console&gt;:26: warning: Unused import
-// import list.implicits._
-//                       ^
-// programEmpty: [F[_]](implicit evidence$1: list.TraverseM[F])cats.free.Free[[β$0$]cats.free.FreeApplicative[F,β$0$],Int]
+<span class="c1">// programEmpty: [F[_]](implicit evidence$1: list.TraverseM[F])cats.free.Free[[β$0$]cats.free.FreeApplicative[F,β$0$],Int]
 </span>
 <span class="n">programEmpty</span><span class="o">[</span><span class="kt">TraverseM.Op</span><span class="o">].</span><span class="n">exec</span><span class="o">[</span><span class="kt">List</span><span class="o">]</span>
-<span class="c1">// &lt;console&gt;:16: warning: Unused import
-// import freestyle.effects._
-//                          ^
-// res1: List[Int] = List()
+<span class="c1">// res1: List[Int] = List()
 </span></code></pre>
 </div>
 </section></div></div></div></div><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script><script src="/highlight/highlight.pack.js"></script><script>hljs.configure({

@@ -7,16 +7,10 @@
 <p>A trait or abstract class annotated with <code class="highlighter-rouge">@free</code> is all you need to create your first algebra with Freestyle:</p>
 
 <div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">freestyle._</span>
-<span class="c1">// &lt;console&gt;:12: warning: Unused import
-//        import freestyle._
-//                         ^
-// import freestyle._
+<span class="c1">// import freestyle._
 </span>
 <span class="k">case</span> <span class="k">class</span> <span class="nc">User</span><span class="o">(</span><span class="n">id</span><span class="k">:</span> <span class="kt">Long</span><span class="o">,</span> <span class="n">name</span><span class="k">:</span> <span class="kt">String</span><span class="o">)</span>
-<span class="c1">// &lt;console&gt;:10: warning: Unused import
-// import freestyle._
-//                  ^
-// defined class User
+<span class="c1">// defined class User
 </span>
 <span class="nd">@free</span> <span class="k">trait</span> <span class="nc">UserRepository</span> <span class="o">{</span>
   <span class="k">def</span> <span class="n">get</span><span class="o">(</span><span class="n">id</span><span class="k">:</span> <span class="kt">Long</span><span class="o">)</span><span class="k">:</span> <span class="kt">FS</span><span class="o">[</span><span class="kt">User</span><span class="o">]</span>
@@ -31,44 +25,17 @@
 <p>This is similar to the simplified manual encoding below:</p>
 
 <div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">freestyle.</span><span class="o">{</span><span class="nc">FreeS</span><span class="o">,</span> <span class="nc">EffectLike</span><span class="o">}</span>
-<span class="c1">// &lt;console&gt;:10: warning: Unused import
-// import freestyle._
-//                  ^
-// &lt;console&gt;:15: warning: Unused import
-//        import freestyle.{FreeS, EffectLike}
-//                          ^
-// &lt;console&gt;:15: warning: Unused import
-//        import freestyle.{FreeS, EffectLike}
-//                                 ^
-// import freestyle.{FreeS, EffectLike}
+<span class="c1">// import freestyle.{FreeS, EffectLike}
 </span>
 <span class="k">case</span> <span class="k">class</span> <span class="nc">User</span><span class="o">(</span><span class="n">id</span><span class="k">:</span> <span class="kt">Long</span><span class="o">,</span> <span class="n">name</span><span class="k">:</span> <span class="kt">String</span><span class="o">)</span>
-<span class="c1">// &lt;console&gt;:10: warning: Unused import
-// import freestyle._
-//                  ^
-// &lt;console&gt;:12: warning: Unused import
-// import freestyle.{FreeS, EffectLike}
-//                   ^
-// &lt;console&gt;:12: warning: Unused import
-// import freestyle.{FreeS, EffectLike}
-//                          ^
-// defined class User
+<span class="c1">// defined class User
 </span>
 <span class="k">trait</span> <span class="nc">UserRepository</span><span class="o">[</span><span class="kt">F</span><span class="o">[</span><span class="k">_</span><span class="o">]]</span> <span class="nc">extends</span> <span class="n">freestyle</span><span class="o">.</span><span class="nc">EffectLike</span><span class="o">[</span><span class="kt">F</span><span class="o">]</span> <span class="o">{</span>
   <span class="k">def</span> <span class="n">get</span><span class="o">(</span><span class="n">id</span><span class="k">:</span> <span class="kt">Long</span><span class="o">)</span><span class="k">:</span> <span class="kt">FS</span><span class="o">[</span><span class="kt">User</span><span class="o">]</span>
   <span class="k">def</span> <span class="n">save</span><span class="o">(</span><span class="n">user</span><span class="k">:</span> <span class="kt">User</span><span class="o">)</span><span class="k">:</span> <span class="kt">FS</span><span class="o">[</span><span class="kt">User</span><span class="o">]</span>
   <span class="k">def</span> <span class="n">getAll</span><span class="o">(</span><span class="n">filter</span><span class="k">:</span> <span class="kt">String</span><span class="o">)</span><span class="k">:</span> <span class="kt">FS</span><span class="o">[</span><span class="kt">List</span><span class="o">[</span><span class="kt">User</span><span class="o">]]</span>
 <span class="o">}</span>
-<span class="c1">// &lt;console&gt;:10: warning: Unused import
-// import freestyle._
-//                  ^
-// &lt;console&gt;:12: warning: Unused import
-// import freestyle.{FreeS, EffectLike}
-//                   ^
-// &lt;console&gt;:12: warning: Unused import
-// import freestyle.{FreeS, EffectLike}
-//                          ^
-// defined trait UserRepository
+<span class="c1">// defined trait UserRepository
 // warning: previously defined object UserRepository is not a companion to trait UserRepository.
 // Companions must be defined together; you may wish to use :paste mode for this.
 </span>
@@ -112,16 +79,7 @@
   <span class="o">}</span>
 
 <span class="o">}</span>
-<span class="c1">// &lt;console&gt;:10: warning: Unused import
-// import freestyle._
-//                  ^
-// &lt;console&gt;:12: warning: Unused import
-// import freestyle.{FreeS, EffectLike}
-//                   ^
-// &lt;console&gt;:12: warning: Unused import
-// import freestyle.{FreeS, EffectLike}
-//                          ^
-// defined object UserRepository
+<span class="c1">// defined object UserRepository
 // warning: previously defined trait UserRepository is not a companion to object UserRepository.
 // Companions must be defined together; you may wish to use :paste mode for this.
 </span></code></pre>
@@ -147,47 +105,17 @@ This effectively enables implicits based Dependency Injection where you may choo
 using the implicits scoping rules to place different implementations where appropriate.</p>
 
 <div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">val</span> <span class="n">userRepository</span> <span class="k">=</span> <span class="nc">UserRepository</span><span class="o">[</span><span class="kt">UserRepository.Op</span><span class="o">]</span>
-<span class="c1">// &lt;console&gt;:10: warning: Unused import
-// import freestyle._
-//                  ^
-// &lt;console&gt;:12: warning: Unused import
-// import freestyle.{FreeS, EffectLike}
-//                   ^
-// &lt;console&gt;:12: warning: Unused import
-// import freestyle.{FreeS, EffectLike}
-//                          ^
-// userRepository: UserRepository[UserRepository.Op] = UserRepository$To@2700c5db
+<span class="c1">// userRepository: UserRepository[UserRepository.Op] = UserRepository$To@3a670e50
 </span></code></pre>
 </div>
 
 <div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">def</span> <span class="n">myService</span><span class="o">[</span><span class="kt">F</span><span class="o">[</span><span class="k">_</span><span class="o">]](</span><span class="k">implicit</span> <span class="n">userRepository</span><span class="k">:</span> <span class="kt">UserRepository</span><span class="o">[</span><span class="kt">F</span><span class="o">])</span> <span class="k">=</span> <span class="o">???</span>
-<span class="c1">// &lt;console&gt;:10: warning: Unused import
-// import freestyle._
-//                  ^
-// &lt;console&gt;:12: warning: Unused import
-// import freestyle.{FreeS, EffectLike}
-//                   ^
-// &lt;console&gt;:12: warning: Unused import
-// import freestyle.{FreeS, EffectLike}
-//                          ^
-// &lt;console&gt;:17: warning: parameter value userRepository in method myService is never used
-//        def myService[F[_]](implicit userRepository: UserRepository[F]) = ???
-//                                     ^
-// myService: [F[_]](implicit userRepository: UserRepository[F])Nothing
+<span class="c1">// myService: [F[_]](implicit userRepository: UserRepository[F])Nothing
 </span></code></pre>
 </div>
 
 <div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">def</span> <span class="n">myService2</span><span class="o">[</span><span class="kt">F</span><span class="o">[</span><span class="k">_</span><span class="o">]</span><span class="kt">:</span> <span class="kt">UserRepository</span><span class="o">]</span> <span class="k">=</span> <span class="o">???</span>
-<span class="c1">// &lt;console&gt;:10: warning: Unused import
-// import freestyle._
-//                  ^
-// &lt;console&gt;:12: warning: Unused import
-// import freestyle.{FreeS, EffectLike}
-//                   ^
-// &lt;console&gt;:12: warning: Unused import
-// import freestyle.{FreeS, EffectLike}
-//                          ^
-// myService2: [F[_]](implicit evidence$1: UserRepository[F])Nothing
+<span class="c1">// myService2: [F[_]](implicit evidence$1: UserRepository[F])Nothing
 </span></code></pre>
 </div>
 
@@ -197,88 +125,31 @@ using the implicits scoping rules to place different implementations where appro
 You may use this to manually build <code class="highlighter-rouge">Coproduct</code> types which will serve in the parametrization of your application and code as in the example below:</p>
 
 <div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">cats.data.Coproduct</span>
-<span class="c1">// &lt;console&gt;:10: warning: Unused import
-// import freestyle._
-//                  ^
-// &lt;console&gt;:12: warning: Unused import
-// import freestyle.{FreeS, EffectLike}
-//                   ^
-// &lt;console&gt;:12: warning: Unused import
-// import freestyle.{FreeS, EffectLike}
-//                          ^
-// &lt;console&gt;:16: warning: Unused import
-//        import cats.data.Coproduct
-//                         ^
-// import cats.data.Coproduct
+<span class="c1">// import cats.data.Coproduct
 </span>
 <span class="nd">@free</span> <span class="k">trait</span> <span class="nc">Service1</span><span class="o">{</span>
   <span class="k">def</span> <span class="n">x</span><span class="o">(</span><span class="n">n</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span><span class="k">:</span> <span class="kt">FS</span><span class="o">[</span><span class="kt">Int</span><span class="o">]</span>
 <span class="o">}</span>
-<span class="c1">// &lt;console&gt;:12: warning: Unused import
-// import freestyle.{FreeS, EffectLike}
-//                   ^
-// &lt;console&gt;:12: warning: Unused import
-// import freestyle.{FreeS, EffectLike}
-//                          ^
-// &lt;console&gt;:13: warning: Unused import
-// import cats.data.Coproduct
-//                  ^
-// defined trait Service1
+<span class="c1">// defined trait Service1
 // defined object Service1
 </span>
 <span class="nd">@free</span> <span class="k">trait</span> <span class="nc">Service2</span><span class="o">{</span>
   <span class="k">def</span> <span class="n">y</span><span class="o">(</span><span class="n">n</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span><span class="k">:</span> <span class="kt">FS</span><span class="o">[</span><span class="kt">Int</span><span class="o">]</span>
 <span class="o">}</span>
-<span class="c1">// &lt;console&gt;:12: warning: Unused import
-// import freestyle.{FreeS, EffectLike}
-//                   ^
-// &lt;console&gt;:12: warning: Unused import
-// import freestyle.{FreeS, EffectLike}
-//                          ^
-// &lt;console&gt;:13: warning: Unused import
-// import cats.data.Coproduct
-//                  ^
-// defined trait Service2
+<span class="c1">// defined trait Service2
 // defined object Service2
 </span>
 <span class="nd">@free</span> <span class="k">trait</span> <span class="nc">Service3</span><span class="o">{</span>
   <span class="k">def</span> <span class="n">z</span><span class="o">(</span><span class="n">n</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span><span class="k">:</span> <span class="kt">FS</span><span class="o">[</span><span class="kt">Int</span><span class="o">]</span>
 <span class="o">}</span>
-<span class="c1">// &lt;console&gt;:12: warning: Unused import
-// import freestyle.{FreeS, EffectLike}
-//                   ^
-// &lt;console&gt;:12: warning: Unused import
-// import freestyle.{FreeS, EffectLike}
-//                          ^
-// &lt;console&gt;:13: warning: Unused import
-// import cats.data.Coproduct
-//                  ^
-// defined trait Service3
+<span class="c1">// defined trait Service3
 // defined object Service3
 </span>
 <span class="k">type</span> <span class="kt">C1</span><span class="o">[</span><span class="kt">A</span><span class="o">]</span> <span class="k">=</span> <span class="nc">Coproduct</span><span class="o">[</span><span class="kt">Service1.Op</span>, <span class="kt">Service2.Op</span>, <span class="kt">A</span><span class="o">]</span>
-<span class="c1">// &lt;console&gt;:10: warning: Unused import
-// import freestyle._
-//                  ^
-// &lt;console&gt;:12: warning: Unused import
-// import freestyle.{FreeS, EffectLike}
-//                   ^
-// &lt;console&gt;:12: warning: Unused import
-// import freestyle.{FreeS, EffectLike}
-//                          ^
-// defined type alias C1
+<span class="c1">// defined type alias C1
 </span>
 <span class="k">type</span> <span class="kt">Module</span><span class="o">[</span><span class="kt">A</span><span class="o">]</span> <span class="k">=</span> <span class="nc">Coproduct</span><span class="o">[</span><span class="kt">Service3.Op</span>, <span class="kt">C1</span>, <span class="kt">A</span><span class="o">]</span>
-<span class="c1">// &lt;console&gt;:10: warning: Unused import
-// import freestyle._
-//                  ^
-// &lt;console&gt;:12: warning: Unused import
-// import freestyle.{FreeS, EffectLike}
-//                   ^
-// &lt;console&gt;:12: warning: Unused import
-// import freestyle.{FreeS, EffectLike}
-//                          ^
-// defined type alias Module
+<span class="c1">// defined type alias Module
 </span></code></pre>
 </div>
 

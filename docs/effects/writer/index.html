@@ -14,118 +14,28 @@ for any runtime <code class="highlighter-rouge">M[_]</code> used in its interpre
 <p><code class="highlighter-rouge">writer</code> sets a tuple with the current accumulator value and returning value</p>
 
 <div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">freestyle._</span>
-<span class="c1">// &lt;console&gt;:12: warning: Unused import
-//        import freestyle._
-//                         ^
-// import freestyle._
+<span class="c1">// import freestyle._
 </span>
 <span class="k">import</span> <span class="nn">freestyle.implicits._</span>
-<span class="c1">// &lt;console&gt;:10: warning: Unused import
-// import freestyle._
-//                  ^
-// &lt;console&gt;:15: warning: Unused import
-//        import freestyle.implicits._
-//                                   ^
-// import freestyle.implicits._
+<span class="c1">// import freestyle.implicits._
 </span>
 <span class="k">import</span> <span class="nn">freestyle.effects.writer</span>
-<span class="c1">// &lt;console&gt;:10: warning: Unused import
-// import freestyle._
-//                  ^
-// &lt;console&gt;:13: warning: Unused import
-// import freestyle.implicits._
-//                            ^
-// &lt;console&gt;:18: warning: Unused import
-//        import freestyle.effects.writer
-//                                 ^
-// import freestyle.effects.writer
+<span class="c1">// import freestyle.effects.writer
 </span>
 <span class="k">import</span> <span class="nn">cats.data.Writer</span>
-<span class="c1">// &lt;console&gt;:10: warning: Unused import
-// import freestyle._
-//                  ^
-// &lt;console&gt;:13: warning: Unused import
-// import freestyle.implicits._
-//                            ^
-// &lt;console&gt;:15: warning: Unused import
-// import freestyle.effects.writer
-//                          ^
-// &lt;console&gt;:19: warning: Unused import
-//        import cats.data.Writer
-//                         ^
-// import cats.data.Writer
+<span class="c1">// import cats.data.Writer
 </span>
 <span class="k">import</span> <span class="nn">cats.implicits._</span>
-<span class="c1">// &lt;console&gt;:10: warning: Unused import
-// import freestyle._
-//                  ^
-// &lt;console&gt;:13: warning: Unused import
-// import freestyle.implicits._
-//                            ^
-// &lt;console&gt;:15: warning: Unused import
-// import freestyle.effects.writer
-//                          ^
-// &lt;console&gt;:16: warning: Unused import
-// import cats.data.Writer
-//                  ^
-// &lt;console&gt;:20: warning: Unused import
-//        import cats.implicits._
-//                              ^
-// import cats.implicits._
+<span class="c1">// import cats.implicits._
 </span>
 <span class="k">val</span> <span class="n">wr</span> <span class="k">=</span> <span class="n">writer</span><span class="o">[</span><span class="kt">List</span><span class="o">[</span><span class="kt">Int</span><span class="o">]]</span>
-<span class="c1">// &lt;console&gt;:10: warning: Unused import
-// import freestyle._
-//                  ^
-// &lt;console&gt;:13: warning: Unused import
-// import freestyle.implicits._
-//                            ^
-// &lt;console&gt;:16: warning: Unused import
-// import cats.data.Writer
-//                  ^
-// &lt;console&gt;:18: warning: Unused import
-// import cats.implicits._
-//                       ^
-// wr: freestyle.effects.writer.AccumulatorProvider[List[Int]] = freestyle.effects.writer$AccumulatorProvider@224cf7eb
+<span class="c1">// wr: freestyle.effects.writer.AccumulatorProvider[List[Int]] = freestyle.effects.writer$AccumulatorProvider@17f7c5cb
 </span>
 <span class="k">import</span> <span class="nn">wr.implicits._</span>
-<span class="c1">// &lt;console&gt;:10: warning: Unused import
-// import freestyle._
-//                  ^
-// &lt;console&gt;:13: warning: Unused import
-// import freestyle.implicits._
-//                            ^
-// &lt;console&gt;:15: warning: Unused import
-// import freestyle.effects.writer
-//                          ^
-// &lt;console&gt;:16: warning: Unused import
-// import cats.data.Writer
-//                  ^
-// &lt;console&gt;:18: warning: Unused import
-// import cats.implicits._
-//                       ^
-// &lt;console&gt;:24: warning: Unused import
-//        import wr.implicits._
-//                            ^
-// import wr.implicits._
+<span class="c1">// import wr.implicits._
 </span>
 <span class="k">type</span> <span class="kt">Logger</span><span class="o">[</span><span class="kt">A</span><span class="o">]</span> <span class="k">=</span> <span class="nc">Writer</span><span class="o">[</span><span class="kt">List</span><span class="o">[</span><span class="kt">Int</span><span class="o">]</span>, <span class="kt">A</span><span class="o">]</span>
-<span class="c1">// &lt;console&gt;:10: warning: Unused import
-// import freestyle._
-//                  ^
-// &lt;console&gt;:13: warning: Unused import
-// import freestyle.implicits._
-//                            ^
-// &lt;console&gt;:15: warning: Unused import
-// import freestyle.effects.writer
-//                          ^
-// &lt;console&gt;:18: warning: Unused import
-// import cats.implicits._
-//                       ^
-// &lt;console&gt;:22: warning: Unused import
-// import wr.implicits._
-//                     ^
-// defined type alias Logger
+<span class="c1">// defined type alias Logger
 </span>
 <span class="k">def</span> <span class="n">programWriter</span><span class="o">[</span><span class="kt">F</span><span class="o">[</span><span class="k">_</span><span class="o">]</span><span class="kt">:</span> <span class="kt">wr.WriterM</span><span class="o">]</span> <span class="k">=</span>
   <span class="k">for</span> <span class="o">{</span>
@@ -133,25 +43,10 @@ for any runtime <code class="highlighter-rouge">M[_]</code> used in its interpre
     <span class="n">b</span> <span class="k">&lt;-</span> <span class="n">wr</span><span class="o">.</span><span class="nc">WriterM</span><span class="o">[</span><span class="kt">F</span><span class="o">].</span><span class="n">writer</span><span class="o">((</span><span class="nc">Nil</span><span class="o">,</span> <span class="mi">1</span><span class="o">))</span>
     <span class="k">_</span> <span class="k">&lt;-</span> <span class="mf">1.</span><span class="n">pure</span><span class="o">[</span><span class="kt">FreeS</span><span class="o">[</span><span class="kt">F</span>, <span class="kt">?</span><span class="o">]]</span>
   <span class="o">}</span> <span class="k">yield</span> <span class="n">b</span>
-<span class="c1">// &lt;console&gt;:15: warning: Unused import
-// import freestyle.effects.writer
-//                          ^
-// &lt;console&gt;:16: warning: Unused import
-// import cats.data.Writer
-//                  ^
-// &lt;console&gt;:22: warning: Unused import
-// import wr.implicits._
-//                     ^
-// programWriter: [F[_]](implicit evidence$1: wr.WriterM[F])cats.free.Free[[β$0$]cats.free.FreeApplicative[F,β$0$],Int]
+<span class="c1">// programWriter: [F[_]](implicit evidence$1: wr.WriterM[F])cats.free.Free[[β$0$]cats.free.FreeApplicative[F,β$0$],Int]
 </span>
 <span class="n">programWriter</span><span class="o">[</span><span class="kt">wr.WriterM.Op</span><span class="o">].</span><span class="n">exec</span><span class="o">[</span><span class="kt">Logger</span><span class="o">].</span><span class="n">run</span>
-<span class="c1">// &lt;console&gt;:15: warning: Unused import
-// import freestyle.effects.writer
-//                          ^
-// &lt;console&gt;:16: warning: Unused import
-// import cats.data.Writer
-//                  ^
-// res0: cats.Id[(List[Int], Int)] = (List(),1)
+<span class="c1">// res0: cats.Id[(List[Int], Int)] = (List(),1)
 </span></code></pre>
 </div>
 
@@ -166,25 +61,10 @@ for any runtime <code class="highlighter-rouge">M[_]</code> used in its interpre
     <span class="n">c</span> <span class="k">&lt;-</span> <span class="n">wr</span><span class="o">.</span><span class="nc">WriterM</span><span class="o">[</span><span class="kt">F</span><span class="o">].</span><span class="n">tell</span><span class="o">(</span><span class="nc">List</span><span class="o">(</span><span class="mi">1</span><span class="o">))</span>
     <span class="k">_</span> <span class="k">&lt;-</span> <span class="mf">1.</span><span class="n">pure</span><span class="o">[</span><span class="kt">FreeS</span><span class="o">[</span><span class="kt">F</span>, <span class="kt">?</span><span class="o">]]</span>
   <span class="o">}</span> <span class="k">yield</span> <span class="n">b</span>
-<span class="c1">// &lt;console&gt;:15: warning: Unused import
-// import freestyle.effects.writer
-//                          ^
-// &lt;console&gt;:16: warning: Unused import
-// import cats.data.Writer
-//                  ^
-// &lt;console&gt;:22: warning: Unused import
-// import wr.implicits._
-//                     ^
-// programTell: [F[_]](implicit evidence$1: wr.WriterM[F])cats.free.Free[[β$0$]cats.free.FreeApplicative[F,β$0$],Int]
+<span class="c1">// programTell: [F[_]](implicit evidence$1: wr.WriterM[F])cats.free.Free[[β$0$]cats.free.FreeApplicative[F,β$0$],Int]
 </span>
 <span class="n">programTell</span><span class="o">[</span><span class="kt">wr.WriterM.Op</span><span class="o">].</span><span class="n">exec</span><span class="o">[</span><span class="kt">Logger</span><span class="o">].</span><span class="n">run</span>
-<span class="c1">// &lt;console&gt;:15: warning: Unused import
-// import freestyle.effects.writer
-//                          ^
-// &lt;console&gt;:16: warning: Unused import
-// import cats.data.Writer
-//                  ^
-// res1: cats.Id[(List[Int], Int)] = (List(1, 1),1)
+<span class="c1">// res1: cats.Id[(List[Int], Int)] = (List(1, 1),1)
 </span></code></pre>
 </div>
 </section></div></div></div></div><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script><script src="/highlight/highlight.pack.js"></script><script>hljs.configure({

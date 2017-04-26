@@ -7,10 +7,7 @@
 <p>We’ll start by creating a simple algebra for our application for printing messages on the screen:</p>
 
 <div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">freestyle._</span>
-<span class="c1">// &lt;console&gt;:12: warning: Unused import
-//        import freestyle._
-//                         ^
-// import freestyle._
+<span class="c1">// import freestyle._
 </span>
 <span class="nd">@free</span> <span class="k">trait</span> <span class="nc">Interact</span> <span class="o">{</span>
   <span class="k">def</span> <span class="n">tell</span><span class="o">(</span><span class="n">msg</span><span class="k">:</span> <span class="kt">String</span><span class="o">)</span><span class="k">:</span> <span class="kt">FS</span><span class="o">[</span><span class="kt">Unit</span><span class="o">]</span>
@@ -23,70 +20,22 @@
 <p>Then, make sure to include the streams algebra <code class="highlighter-rouge">StreamM</code> in your application:</p>
 
 <div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">freestyle._</span>
-<span class="c1">// &lt;console&gt;:10: warning: Unused import
-// import freestyle._
-//                  ^
-// &lt;console&gt;:15: warning: Unused import
-//        import freestyle._
-//                         ^
-// import freestyle._
+<span class="c1">// import freestyle._
 </span>
 <span class="k">import</span> <span class="nn">freestyle.implicits._</span>
-<span class="c1">// &lt;console&gt;:10: warning: Unused import
-// import freestyle._
-//                  ^
-// &lt;console&gt;:13: warning: Unused import
-// import freestyle._
-//                  ^
-// &lt;console&gt;:18: warning: Unused import
-//        import freestyle.implicits._
-//                                   ^
-// import freestyle.implicits._
+<span class="c1">// import freestyle.implicits._
 </span>
 <span class="k">import</span> <span class="nn">freestyle.fs2._</span>
-<span class="c1">// &lt;console&gt;:10: warning: Unused import
-// import freestyle._
-//                  ^
-// &lt;console&gt;:13: warning: Unused import
-// import freestyle._
-//                  ^
-// &lt;console&gt;:16: warning: Unused import
-// import freestyle.implicits._
-//                            ^
-// &lt;console&gt;:21: warning: Unused import
-//        import freestyle.fs2._
-//                             ^
-// import freestyle.fs2._
+<span class="c1">// import freestyle.fs2._
 </span>
 <span class="k">import</span> <span class="nn">freestyle.fs2.implicits._</span>
-<span class="c1">// &lt;console&gt;:10: warning: Unused import
-// import freestyle._
-//                  ^
-// &lt;console&gt;:13: warning: Unused import
-// import freestyle._
-//                  ^
-// &lt;console&gt;:16: warning: Unused import
-// import freestyle.implicits._
-//                            ^
-// &lt;console&gt;:19: warning: Unused import
-// import freestyle.fs2._
-//                      ^
-// &lt;console&gt;:24: warning: Unused import
-//        import freestyle.fs2.implicits._
-//                                       ^
-// import freestyle.fs2.implicits._
+<span class="c1">// import freestyle.fs2.implicits._
 </span>
 <span class="nd">@module</span> <span class="k">trait</span> <span class="nc">App</span> <span class="o">{</span>
   <span class="k">val</span> <span class="n">interact</span><span class="k">:</span> <span class="kt">Interact</span>
   <span class="k">val</span> <span class="n">streams</span><span class="k">:</span> <span class="kt">StreamM</span>
 <span class="o">}</span>
-<span class="c1">// &lt;console&gt;:18: warning: Unused import
-// import freestyle.implicits._
-//                            ^
-// &lt;console&gt;:24: warning: Unused import
-// import freestyle.fs2.implicits._
-//                                ^
-// defined trait App
+<span class="c1">// defined trait App
 // defined object App
 </span></code></pre>
 </div>
@@ -94,25 +43,7 @@
 <p>Now that we’ve got our <code class="highlighter-rouge">Interact</code> algebra and <code class="highlighter-rouge">StreamM</code> in our app, we’re ready to write the first program:</p>
 
 <div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">_root_.fs2.Stream</span>
-<span class="c1">// &lt;console&gt;:10: warning: Unused import
-// import freestyle._
-//                  ^
-// &lt;console&gt;:13: warning: Unused import
-// import freestyle._
-//                  ^
-// &lt;console&gt;:16: warning: Unused import
-// import freestyle.implicits._
-//                            ^
-// &lt;console&gt;:19: warning: Unused import
-// import freestyle.fs2._
-//                      ^
-// &lt;console&gt;:22: warning: Unused import
-// import freestyle.fs2.implicits._
-//                                ^
-// &lt;console&gt;:27: warning: Unused import
-//        import _root_.fs2.Stream
-//                          ^
-// import _root_.fs2.Stream
+<span class="c1">// import _root_.fs2.Stream
 </span>
 <span class="k">def</span> <span class="n">program</span><span class="o">[</span><span class="kt">F</span><span class="o">[</span><span class="k">_</span><span class="o">]](</span>
   <span class="k">implicit</span> <span class="n">app</span><span class="k">:</span> <span class="kt">App</span><span class="o">[</span><span class="kt">F</span><span class="o">]</span>
@@ -121,47 +52,14 @@
 	<span class="n">x</span> <span class="k">&lt;-</span> <span class="n">app</span><span class="o">.</span><span class="n">streams</span><span class="o">.</span><span class="n">runLog</span><span class="o">(</span><span class="nc">Stream</span><span class="o">.</span><span class="n">emits</span><span class="o">(</span><span class="nc">List</span><span class="o">(</span><span class="mi">1</span><span class="o">,</span> <span class="mi">2</span><span class="o">,</span> <span class="mi">3</span><span class="o">)))</span>
 	<span class="k">_</span> <span class="k">&lt;-</span> <span class="n">app</span><span class="o">.</span><span class="n">interact</span><span class="o">.</span><span class="n">tell</span><span class="o">(</span><span class="n">s</span><span class="s">"Result: ${x}"</span><span class="o">)</span>
   <span class="o">}</span> <span class="k">yield</span> <span class="n">x</span>
-<span class="c1">// &lt;console&gt;:10: warning: Unused import
-// import freestyle._
-//                  ^
-// &lt;console&gt;:16: warning: Unused import
-// import freestyle.implicits._
-//                            ^
-// &lt;console&gt;:19: warning: Unused import
-// import freestyle.fs2._
-//                      ^
-// &lt;console&gt;:22: warning: Unused import
-// import freestyle.fs2.implicits._
-//                                ^
-// program: [F[_]](implicit app: App[F])freestyle.FreeS[F,Vector[Int]]
+<span class="c1">// program: [F[_]](implicit app: App[F])freestyle.FreeS[F,Vector[Int]]
 </span></code></pre>
 </div>
 
 <p>To run it, we need to create an implicit interpreter for our <code class="highlighter-rouge">Interact</code> algebra:</p>
 
 <div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">cats._</span>
-<span class="c1">// &lt;console&gt;:10: warning: Unused import
-// import freestyle._
-//                  ^
-// &lt;console&gt;:13: warning: Unused import
-// import freestyle._
-//                  ^
-// &lt;console&gt;:16: warning: Unused import
-// import freestyle.implicits._
-//                            ^
-// &lt;console&gt;:19: warning: Unused import
-// import freestyle.fs2._
-//                      ^
-// &lt;console&gt;:22: warning: Unused import
-// import freestyle.fs2.implicits._
-//                                ^
-// &lt;console&gt;:24: warning: Unused import
-// import _root_.fs2.Stream
-//                   ^
-// &lt;console&gt;:28: warning: Unused import
-//        import cats._
-//                    ^
-// import cats._
+<span class="c1">// import cats._
 </span>
 <span class="k">implicit</span> <span class="k">def</span> <span class="n">interactInterp</span><span class="o">[</span><span class="kt">F</span><span class="o">[</span><span class="k">_</span><span class="o">]](</span>
   <span class="k">implicit</span> <span class="nc">ME</span><span class="k">:</span> <span class="kt">MonadError</span><span class="o">[</span><span class="kt">F</span>, <span class="kt">Throwable</span><span class="o">]</span>
@@ -171,182 +69,26 @@
     <span class="nc">ME</span><span class="o">.</span><span class="n">pure</span><span class="o">(())</span>
   <span class="o">}</span>
 <span class="o">}</span>
-<span class="c1">// &lt;console&gt;:10: warning: Unused import
-// import freestyle._
-//                  ^
-// &lt;console&gt;:14: warning: Unused import
-// import freestyle._
-//                  ^
-// &lt;console&gt;:17: warning: Unused import
-// import freestyle.implicits._
-//                            ^
-// &lt;console&gt;:20: warning: Unused import
-// import freestyle.fs2._
-//                      ^
-// &lt;console&gt;:23: warning: Unused import
-// import freestyle.fs2.implicits._
-//                                ^
-// &lt;console&gt;:25: warning: Unused import
-// import _root_.fs2.Stream
-//                   ^
-// interactInterp: [F[_]](implicit ME: cats.MonadError[F,Throwable])Interact.Handler[F]
+<span class="c1">// interactInterp: [F[_]](implicit ME: cats.MonadError[F,Throwable])Interact.Handler[F]
 </span></code></pre>
 </div>
 
 <p>And now we can run the program to a <code class="highlighter-rouge">Future</code>. Check how the stream’s value is printed to the console:</p>
 
 <div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">cats.instances.future._</span>
-<span class="c1">// &lt;console&gt;:10: warning: Unused import
-// import freestyle._
-//                  ^
-// &lt;console&gt;:13: warning: Unused import
-// import freestyle._
-//                  ^
-// &lt;console&gt;:16: warning: Unused import
-// import freestyle.implicits._
-//                            ^
-// &lt;console&gt;:19: warning: Unused import
-// import freestyle.fs2._
-//                      ^
-// &lt;console&gt;:22: warning: Unused import
-// import freestyle.fs2.implicits._
-//                                ^
-// &lt;console&gt;:24: warning: Unused import
-// import _root_.fs2.Stream
-//                   ^
-// &lt;console&gt;:26: warning: Unused import
-// import cats._
-//             ^
-// &lt;console&gt;:28: warning: Unused import
-// import interactInterp
-//                                                                              ^
-// &lt;console&gt;:32: warning: Unused import
-//        import cats.instances.future._
-//                                     ^
-// import cats.instances.future._
+<span class="c1">// import cats.instances.future._
 </span>
 <span class="k">import</span> <span class="nn">scala.concurrent._</span>
-<span class="c1">// &lt;console&gt;:10: warning: Unused import
-// import freestyle._
-//                  ^
-// &lt;console&gt;:13: warning: Unused import
-// import freestyle._
-//                  ^
-// &lt;console&gt;:16: warning: Unused import
-// import freestyle.implicits._
-//                            ^
-// &lt;console&gt;:19: warning: Unused import
-// import freestyle.fs2._
-//                      ^
-// &lt;console&gt;:22: warning: Unused import
-// import freestyle.fs2.implicits._
-//                                ^
-// &lt;console&gt;:24: warning: Unused import
-// import _root_.fs2.Stream
-//                   ^
-// &lt;console&gt;:26: warning: Unused import
-// import cats._
-//             ^
-// &lt;console&gt;:28: warning: Unused import
-// import interactInterp
-//                                                                              ^
-// &lt;console&gt;:30: warning: Unused import
-// import cats.instances.future._
-//                              ^
-// &lt;console&gt;:35: warning: Unused import
-//        import scala.concurrent._
-//                                ^
-// import scala.concurrent._
+<span class="c1">// import scala.concurrent._
 </span>
 <span class="k">import</span> <span class="nn">scala.concurrent.duration._</span>
-<span class="c1">// &lt;console&gt;:10: warning: Unused import
-// import freestyle._
-//                  ^
-// &lt;console&gt;:13: warning: Unused import
-// import freestyle._
-//                  ^
-// &lt;console&gt;:16: warning: Unused import
-// import freestyle.implicits._
-//                            ^
-// &lt;console&gt;:19: warning: Unused import
-// import freestyle.fs2._
-//                      ^
-// &lt;console&gt;:22: warning: Unused import
-// import freestyle.fs2.implicits._
-//                                ^
-// &lt;console&gt;:24: warning: Unused import
-// import _root_.fs2.Stream
-//                   ^
-// &lt;console&gt;:26: warning: Unused import
-// import cats._
-//             ^
-// &lt;console&gt;:28: warning: Unused import
-// import interactInterp
-//                                                                              ^
-// &lt;console&gt;:30: warning: Unused import
-// import cats.instances.future._
-//                              ^
-// &lt;console&gt;:33: warning: Unused import
-// import scala.concurrent._
-//                         ^
-// &lt;console&gt;:38: warning: Unused import
-//        import scala.concurrent.duration._
-//                                         ^
-// import scala.concurrent.duration._
+<span class="c1">// import scala.concurrent.duration._
 </span>
 <span class="k">import</span> <span class="nn">scala.concurrent.ExecutionContext.Implicits.global</span>
-<span class="c1">// &lt;console&gt;:10: warning: Unused import
-// import freestyle._
-//                  ^
-// &lt;console&gt;:13: warning: Unused import
-// import freestyle._
-//                  ^
-// &lt;console&gt;:16: warning: Unused import
-// import freestyle.implicits._
-//                            ^
-// &lt;console&gt;:19: warning: Unused import
-// import freestyle.fs2._
-//                      ^
-// &lt;console&gt;:22: warning: Unused import
-// import freestyle.fs2.implicits._
-//                                ^
-// &lt;console&gt;:24: warning: Unused import
-// import _root_.fs2.Stream
-//                   ^
-// &lt;console&gt;:26: warning: Unused import
-// import cats._
-//             ^
-// &lt;console&gt;:28: warning: Unused import
-// import interactInterp
-//                                                                              ^
-// &lt;console&gt;:30: warning: Unused import
-// import cats.instances.future._
-//                              ^
-// &lt;console&gt;:33: warning: Unused import
-// import scala.concurrent._
-//                         ^
-// &lt;console&gt;:36: warning: Unused import
-// import scala.concurrent.duration._
-//                                  ^
-// &lt;console&gt;:41: warning: Unused import
-//        import scala.concurrent.ExecutionContext.Implicits.global
-//                                                           ^
-// import scala.concurrent.ExecutionContext.Implicits.global
+<span class="c1">// import scala.concurrent.ExecutionContext.Implicits.global
 </span>
 <span class="nc">Await</span><span class="o">.</span><span class="n">result</span><span class="o">(</span><span class="n">program</span><span class="o">[</span><span class="kt">App.Op</span><span class="o">].</span><span class="n">exec</span><span class="o">[</span><span class="kt">Future</span><span class="o">],</span> <span class="nc">Duration</span><span class="o">.</span><span class="nc">Inf</span><span class="o">)</span>
-<span class="c1">// &lt;console&gt;:10: warning: Unused import
-// import freestyle._
-//                  ^
-// &lt;console&gt;:19: warning: Unused import
-// import freestyle.fs2._
-//                      ^
-// &lt;console&gt;:25: warning: Unused import
-// import _root_.fs2.Stream
-//                   ^
-// &lt;console&gt;:28: warning: Unused import
-// import cats._
-//             ^
-// Hello
+<span class="c1">// Hello
 // Result: Vector(1, 2, 3)
 // res0: Vector[Int] = Vector(1, 2, 3)
 </span></code></pre>
@@ -363,52 +105,10 @@
 <div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">def</span> <span class="n">program</span><span class="o">[</span><span class="kt">F</span><span class="o">[</span><span class="k">_</span><span class="o">]](</span>
   <span class="k">implicit</span> <span class="n">app</span><span class="k">:</span> <span class="kt">App</span><span class="o">[</span><span class="kt">F</span><span class="o">]</span>
 <span class="o">)</span><span class="k">:</span> <span class="kt">FreeS</span><span class="o">[</span><span class="kt">F</span>, <span class="kt">Vector</span><span class="o">[</span><span class="kt">Int</span><span class="o">]]</span> <span class="k">=</span> <span class="n">app</span><span class="o">.</span><span class="n">streams</span><span class="o">.</span><span class="n">runLog</span><span class="o">(</span><span class="nc">Stream</span><span class="o">.</span><span class="n">emit</span><span class="o">(</span><span class="mi">42</span><span class="o">))</span>
-<span class="c1">// &lt;console&gt;:10: warning: Unused import
-// import freestyle._
-//                  ^
-// &lt;console&gt;:16: warning: Unused import
-// import freestyle.implicits._
-//                            ^
-// &lt;console&gt;:19: warning: Unused import
-// import freestyle.fs2._
-//                      ^
-// &lt;console&gt;:22: warning: Unused import
-// import freestyle.fs2.implicits._
-//                                ^
-// &lt;console&gt;:28: warning: Unused import
-// import cats._
-//             ^
-// &lt;console&gt;:30: warning: Unused import
-// import interactInterp
-//                                                                              ^
-// &lt;console&gt;:32: warning: Unused import
-// import cats.instances.future._
-//                              ^
-// &lt;console&gt;:35: warning: Unused import
-// import scala.concurrent._
-//                         ^
-// &lt;console&gt;:38: warning: Unused import
-// import scala.concurrent.duration._
-//                                  ^
-// &lt;console&gt;:40: warning: Unused import
-// import scala.concurrent.ExecutionContext.Implicits.global
-//                                                    ^
-// program: [F[_]](implicit app: App[F])freestyle.FreeS[F,Vector[Int]]
+<span class="c1">// program: [F[_]](implicit app: App[F])freestyle.FreeS[F,Vector[Int]]
 </span>
 <span class="nc">Await</span><span class="o">.</span><span class="n">result</span><span class="o">(</span><span class="n">program</span><span class="o">[</span><span class="kt">App.Op</span><span class="o">].</span><span class="n">exec</span><span class="o">[</span><span class="kt">Future</span><span class="o">],</span> <span class="nc">Duration</span><span class="o">.</span><span class="nc">Inf</span><span class="o">)</span>
-<span class="c1">// &lt;console&gt;:10: warning: Unused import
-// import freestyle._
-//                  ^
-// &lt;console&gt;:19: warning: Unused import
-// import freestyle.fs2._
-//                      ^
-// &lt;console&gt;:25: warning: Unused import
-// import _root_.fs2.Stream
-//                   ^
-// &lt;console&gt;:27: warning: Unused import
-// import cats._
-//             ^
-// res1: Vector[Int] = Vector(42)
+<span class="c1">// res1: Vector[Int] = Vector(42)
 </span></code></pre>
 </div>
 
@@ -417,37 +117,7 @@
 <p>We can run a fold over a stream too; let’s create a stream with a series of numbers. We use a type provided by <code class="highlighter-rouge">freestyle-fs2</code> as the effect type for the stream (<code class="highlighter-rouge">Eff</code>), this allows the final stream effect type to be decided when running the program:</p>
 
 <div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">val</span> <span class="n">aStream</span><span class="k">:</span> <span class="kt">Stream</span><span class="o">[</span><span class="kt">Eff</span>, <span class="kt">Int</span><span class="o">]</span> <span class="k">=</span> <span class="nc">Stream</span><span class="o">.</span><span class="n">emits</span><span class="o">(</span><span class="mi">0</span> <span class="n">until</span> <span class="mi">10</span><span class="o">)</span>
-<span class="c1">// &lt;console&gt;:10: warning: Unused import
-// import freestyle._
-//                  ^
-// &lt;console&gt;:13: warning: Unused import
-// import freestyle._
-//                  ^
-// &lt;console&gt;:16: warning: Unused import
-// import freestyle.implicits._
-//                            ^
-// &lt;console&gt;:22: warning: Unused import
-// import freestyle.fs2.implicits._
-//                                ^
-// &lt;console&gt;:26: warning: Unused import
-// import cats._
-//             ^
-// &lt;console&gt;:28: warning: Unused import
-// import interactInterp
-//                                                                              ^
-// &lt;console&gt;:30: warning: Unused import
-// import cats.instances.future._
-//                              ^
-// &lt;console&gt;:33: warning: Unused import
-// import scala.concurrent._
-//                         ^
-// &lt;console&gt;:36: warning: Unused import
-// import scala.concurrent.duration._
-//                                  ^
-// &lt;console&gt;:38: warning: Unused import
-// import scala.concurrent.ExecutionContext.Implicits.global
-//                                                    ^
-// aStream: fs2.Stream[freestyle.fs2.Eff,Int] = Segment(Emit(Chunk(0, 1, 2, 3, 4, 5, 6, 7, 8, 9)))
+<span class="c1">// aStream: fs2.Stream[freestyle.fs2.Eff,Int] = Segment(Emit(Chunk(0, 1, 2, 3, 4, 5, 6, 7, 8, 9)))
 </span></code></pre>
 </div>
 
@@ -456,55 +126,10 @@
 <div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">def</span> <span class="n">program</span><span class="o">[</span><span class="kt">F</span><span class="o">[</span><span class="k">_</span><span class="o">]](</span>
   <span class="k">implicit</span> <span class="n">app</span><span class="k">:</span> <span class="kt">App</span><span class="o">[</span><span class="kt">F</span><span class="o">]</span>
 <span class="o">)</span><span class="k">:</span> <span class="kt">FreeS</span><span class="o">[</span><span class="kt">F</span>, <span class="kt">Int</span><span class="o">]</span> <span class="k">=</span> <span class="n">app</span><span class="o">.</span><span class="n">streams</span><span class="o">.</span><span class="n">runFold</span><span class="o">(</span><span class="mi">0</span><span class="o">,</span> <span class="o">(</span><span class="n">x</span><span class="k">:</span> <span class="kt">Int</span><span class="o">,</span> <span class="n">y</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span> <span class="k">=&gt;</span> <span class="n">x</span> <span class="o">+</span> <span class="n">y</span><span class="o">)(</span><span class="n">aStream</span><span class="o">)</span>
-<span class="c1">// &lt;console&gt;:10: warning: Unused import
-// import freestyle._
-//                  ^
-// &lt;console&gt;:16: warning: Unused import
-// import freestyle.implicits._
-//                            ^
-// &lt;console&gt;:19: warning: Unused import
-// import freestyle.fs2._
-//                      ^
-// &lt;console&gt;:22: warning: Unused import
-// import freestyle.fs2.implicits._
-//                                ^
-// &lt;console&gt;:26: warning: Unused import
-// import _root_.fs2.Stream
-//                   ^
-// &lt;console&gt;:28: warning: Unused import
-// import cats._
-//             ^
-// &lt;console&gt;:30: warning: Unused import
-// import interactInterp
-//                                                                              ^
-// &lt;console&gt;:32: warning: Unused import
-// import cats.instances.future._
-//                              ^
-// &lt;console&gt;:35: warning: Unused import
-// import scala.concurrent._
-//                         ^
-// &lt;console&gt;:38: warning: Unused import
-// import scala.concurrent.duration._
-//                                  ^
-// &lt;console&gt;:40: warning: Unused import
-// import scala.concurrent.ExecutionContext.Implicits.global
-//                                                    ^
-// program: [F[_]](implicit app: App[F])freestyle.FreeS[F,Int]
+<span class="c1">// program: [F[_]](implicit app: App[F])freestyle.FreeS[F,Int]
 </span>
 <span class="nc">Await</span><span class="o">.</span><span class="n">result</span><span class="o">(</span><span class="n">program</span><span class="o">[</span><span class="kt">App.Op</span><span class="o">].</span><span class="n">exec</span><span class="o">[</span><span class="kt">Future</span><span class="o">],</span> <span class="nc">Duration</span><span class="o">.</span><span class="nc">Inf</span><span class="o">)</span>
-<span class="c1">// &lt;console&gt;:10: warning: Unused import
-// import freestyle._
-//                  ^
-// &lt;console&gt;:19: warning: Unused import
-// import freestyle.fs2._
-//                      ^
-// &lt;console&gt;:25: warning: Unused import
-// import _root_.fs2.Stream
-//                   ^
-// &lt;console&gt;:27: warning: Unused import
-// import cats._
-//             ^
-// res2: Int = 45
+<span class="c1">// res2: Int = 45
 </span></code></pre>
 </div>
 
@@ -515,55 +140,10 @@
 <div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">def</span> <span class="n">program</span><span class="o">[</span><span class="kt">F</span><span class="o">[</span><span class="k">_</span><span class="o">]](</span>
   <span class="k">implicit</span> <span class="n">app</span><span class="k">:</span> <span class="kt">App</span><span class="o">[</span><span class="kt">F</span><span class="o">]</span>
 <span class="o">)</span><span class="k">:</span> <span class="kt">FreeS</span><span class="o">[</span><span class="kt">F</span>, <span class="kt">Option</span><span class="o">[</span><span class="kt">Int</span><span class="o">]]</span> <span class="k">=</span> <span class="n">app</span><span class="o">.</span><span class="n">streams</span><span class="o">.</span><span class="n">runLast</span><span class="o">(</span><span class="n">aStream</span><span class="o">)</span>
-<span class="c1">// &lt;console&gt;:10: warning: Unused import
-// import freestyle._
-//                  ^
-// &lt;console&gt;:16: warning: Unused import
-// import freestyle.implicits._
-//                            ^
-// &lt;console&gt;:19: warning: Unused import
-// import freestyle.fs2._
-//                      ^
-// &lt;console&gt;:22: warning: Unused import
-// import freestyle.fs2.implicits._
-//                                ^
-// &lt;console&gt;:26: warning: Unused import
-// import _root_.fs2.Stream
-//                   ^
-// &lt;console&gt;:28: warning: Unused import
-// import cats._
-//             ^
-// &lt;console&gt;:30: warning: Unused import
-// import interactInterp
-//                                                                              ^
-// &lt;console&gt;:32: warning: Unused import
-// import cats.instances.future._
-//                              ^
-// &lt;console&gt;:35: warning: Unused import
-// import scala.concurrent._
-//                         ^
-// &lt;console&gt;:38: warning: Unused import
-// import scala.concurrent.duration._
-//                                  ^
-// &lt;console&gt;:40: warning: Unused import
-// import scala.concurrent.ExecutionContext.Implicits.global
-//                                                    ^
-// program: [F[_]](implicit app: App[F])freestyle.FreeS[F,Option[Int]]
+<span class="c1">// program: [F[_]](implicit app: App[F])freestyle.FreeS[F,Option[Int]]
 </span>
 <span class="nc">Await</span><span class="o">.</span><span class="n">result</span><span class="o">(</span><span class="n">program</span><span class="o">[</span><span class="kt">App.Op</span><span class="o">].</span><span class="n">exec</span><span class="o">[</span><span class="kt">Future</span><span class="o">],</span> <span class="nc">Duration</span><span class="o">.</span><span class="nc">Inf</span><span class="o">)</span>
-<span class="c1">// &lt;console&gt;:10: warning: Unused import
-// import freestyle._
-//                  ^
-// &lt;console&gt;:19: warning: Unused import
-// import freestyle.fs2._
-//                      ^
-// &lt;console&gt;:25: warning: Unused import
-// import _root_.fs2.Stream
-//                   ^
-// &lt;console&gt;:27: warning: Unused import
-// import cats._
-//             ^
-// res3: Option[Int] = Some(9)
+<span class="c1">// res3: Option[Int] = Some(9)
 </span></code></pre>
 </div>
 
@@ -574,146 +154,14 @@
 <p>Here is an example borrowed from the <code class="highlighter-rouge">fs2</code> README of a fahrenheit to celsius converter process. In order for an IO stream to be able to run in a free program, we need to use <code class="highlighter-rouge">Eff</code> as the effect type for the stream:</p>
 
 <div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">_root_.fs2.</span><span class="o">{</span><span class="n">io</span><span class="o">,</span> <span class="n">text</span><span class="o">}</span>
-<span class="c1">// &lt;console&gt;:10: warning: Unused import
-// import freestyle._
-//                  ^
-// &lt;console&gt;:13: warning: Unused import
-// import freestyle._
-//                  ^
-// &lt;console&gt;:16: warning: Unused import
-// import freestyle.implicits._
-//                            ^
-// &lt;console&gt;:19: warning: Unused import
-// import freestyle.fs2._
-//                      ^
-// &lt;console&gt;:22: warning: Unused import
-// import freestyle.fs2.implicits._
-//                                ^
-// &lt;console&gt;:24: warning: Unused import
-// import _root_.fs2.Stream
-//                   ^
-// &lt;console&gt;:26: warning: Unused import
-// import cats._
-//             ^
-// &lt;console&gt;:28: warning: Unused import
-// import interactInterp
-//                                                                              ^
-// &lt;console&gt;:30: warning: Unused import
-// import cats.instances.future._
-//                              ^
-// &lt;console&gt;:33: warning: Unused import
-// import scala.concurrent._
-//                         ^
-// &lt;console&gt;:36: warning: Unused import
-// import scala.concurrent.duration._
-//                                  ^
-// &lt;console&gt;:38: warning: Unused import
-// import scala.concurrent.ExecutionContext.Implicits.global
-//                                                    ^
-// &lt;console&gt;:42: warning: Unused import
-//        import _root_.fs2.{io, text}
-//                           ^
-// &lt;console&gt;:42: warning: Unused import
-//        import _root_.fs2.{io, text}
-//                               ^
-// import _root_.fs2.{io, text}
+<span class="c1">// import _root_.fs2.{io, text}
 </span>
 <span class="k">import</span> <span class="nn">java.nio.file.Paths</span>
-<span class="c1">// &lt;console&gt;:10: warning: Unused import
-// import freestyle._
-//                  ^
-// &lt;console&gt;:13: warning: Unused import
-// import freestyle._
-//                  ^
-// &lt;console&gt;:16: warning: Unused import
-// import freestyle.implicits._
-//                            ^
-// &lt;console&gt;:19: warning: Unused import
-// import freestyle.fs2._
-//                      ^
-// &lt;console&gt;:22: warning: Unused import
-// import freestyle.fs2.implicits._
-//                                ^
-// &lt;console&gt;:24: warning: Unused import
-// import _root_.fs2.Stream
-//                   ^
-// &lt;console&gt;:26: warning: Unused import
-// import cats._
-//             ^
-// &lt;console&gt;:28: warning: Unused import
-// import interactInterp
-//                                                                              ^
-// &lt;console&gt;:30: warning: Unused import
-// import cats.instances.future._
-//                              ^
-// &lt;console&gt;:33: warning: Unused import
-// import scala.concurrent._
-//                         ^
-// &lt;console&gt;:36: warning: Unused import
-// import scala.concurrent.duration._
-//                                  ^
-// &lt;console&gt;:38: warning: Unused import
-// import scala.concurrent.ExecutionContext.Implicits.global
-//                                                    ^
-// &lt;console&gt;:39: warning: Unused import
-// import _root_.fs2.{io, text}
-//                    ^
-// &lt;console&gt;:39: warning: Unused import
-// import _root_.fs2.{io, text}
-//                        ^
-// &lt;console&gt;:43: warning: Unused import
-//        import java.nio.file.Paths
-//                             ^
-// import java.nio.file.Paths
+<span class="c1">// import java.nio.file.Paths
 </span>
 <span class="k">def</span> <span class="n">fahrenheitToCelsius</span><span class="o">(</span><span class="n">f</span><span class="k">:</span> <span class="kt">Double</span><span class="o">)</span><span class="k">:</span> <span class="kt">Double</span> <span class="o">=</span>
   <span class="o">(</span><span class="n">f</span> <span class="o">-</span> <span class="mf">32.0</span><span class="o">)</span> <span class="o">*</span> <span class="o">(</span><span class="mf">5.0</span><span class="o">/</span><span class="mf">9.0</span><span class="o">)</span>
-<span class="c1">// &lt;console&gt;:10: warning: Unused import
-// import freestyle._
-//                  ^
-// &lt;console&gt;:13: warning: Unused import
-// import freestyle._
-//                  ^
-// &lt;console&gt;:16: warning: Unused import
-// import freestyle.implicits._
-//                            ^
-// &lt;console&gt;:19: warning: Unused import
-// import freestyle.fs2._
-//                      ^
-// &lt;console&gt;:22: warning: Unused import
-// import freestyle.fs2.implicits._
-//                                ^
-// &lt;console&gt;:24: warning: Unused import
-// import _root_.fs2.Stream
-//                   ^
-// &lt;console&gt;:26: warning: Unused import
-// import cats._
-//             ^
-// &lt;console&gt;:28: warning: Unused import
-// import interactInterp
-//                                                                              ^
-// &lt;console&gt;:30: warning: Unused import
-// import cats.instances.future._
-//                              ^
-// &lt;console&gt;:33: warning: Unused import
-// import scala.concurrent._
-//                         ^
-// &lt;console&gt;:36: warning: Unused import
-// import scala.concurrent.duration._
-//                                  ^
-// &lt;console&gt;:38: warning: Unused import
-// import scala.concurrent.ExecutionContext.Implicits.global
-//                                                    ^
-// &lt;console&gt;:39: warning: Unused import
-// import _root_.fs2.{io, text}
-//                    ^
-// &lt;console&gt;:39: warning: Unused import
-// import _root_.fs2.{io, text}
-//                        ^
-// &lt;console&gt;:40: warning: Unused import
-// import java.nio.file.Paths
-//                      ^
-// fahrenheitToCelsius: (f: Double)Double
+<span class="c1">// fahrenheitToCelsius: (f: Double)Double
 </span>
 <span class="k">val</span> <span class="n">converter</span><span class="k">:</span> <span class="kt">Stream</span><span class="o">[</span><span class="kt">Eff</span>, <span class="kt">Unit</span><span class="o">]</span> <span class="k">=</span> <span class="o">{</span>
   <span class="n">io</span><span class="o">.</span><span class="n">file</span><span class="o">.</span><span class="n">readAll</span><span class="o">[</span><span class="kt">Eff</span><span class="o">](</span><span class="nc">Paths</span><span class="o">.</span><span class="n">get</span><span class="o">(</span><span class="s">"testdata/fahrenheit.txt"</span><span class="o">),</span> <span class="mi">4096</span><span class="o">)</span>
@@ -725,37 +173,7 @@
     <span class="o">.</span><span class="n">through</span><span class="o">(</span><span class="n">text</span><span class="o">.</span><span class="n">utf8Encode</span><span class="o">)</span>
     <span class="o">.</span><span class="n">through</span><span class="o">(</span><span class="n">io</span><span class="o">.</span><span class="n">file</span><span class="o">.</span><span class="n">writeAll</span><span class="o">(</span><span class="nc">Paths</span><span class="o">.</span><span class="n">get</span><span class="o">(</span><span class="s">"testdata/celsius.txt"</span><span class="o">)))</span>
 <span class="o">}</span>
-<span class="c1">// &lt;console&gt;:10: warning: Unused import
-// import freestyle._
-//                  ^
-// &lt;console&gt;:13: warning: Unused import
-// import freestyle._
-//                  ^
-// &lt;console&gt;:16: warning: Unused import
-// import freestyle.implicits._
-//                            ^
-// &lt;console&gt;:22: warning: Unused import
-// import freestyle.fs2.implicits._
-//                                ^
-// &lt;console&gt;:26: warning: Unused import
-// import cats._
-//             ^
-// &lt;console&gt;:28: warning: Unused import
-// import interactInterp
-//                                                                              ^
-// &lt;console&gt;:30: warning: Unused import
-// import cats.instances.future._
-//                              ^
-// &lt;console&gt;:33: warning: Unused import
-// import scala.concurrent._
-//                         ^
-// &lt;console&gt;:36: warning: Unused import
-// import scala.concurrent.duration._
-//                                  ^
-// &lt;console&gt;:38: warning: Unused import
-// import scala.concurrent.ExecutionContext.Implicits.global
-//                                                    ^
-// converter: fs2.Stream[freestyle.fs2.Eff,Unit] = evalScope(&lt;scope&gt;).flatMap(&lt;function1&gt;)
+<span class="c1">// converter: fs2.Stream[freestyle.fs2.Eff,Unit] = evalScope(&lt;scope&gt;).flatMap(&lt;function1&gt;)
 </span></code></pre>
 </div>
 
@@ -767,73 +185,10 @@
  <span class="k">_</span> <span class="k">&lt;-</span> <span class="n">app</span><span class="o">.</span><span class="n">interact</span><span class="o">.</span><span class="n">tell</span><span class="o">(</span><span class="s">"Converting from farenheit to celsius"</span><span class="o">)</span>
  <span class="k">_</span> <span class="k">&lt;-</span> <span class="n">app</span><span class="o">.</span><span class="n">streams</span><span class="o">.</span><span class="n">run</span><span class="o">(</span><span class="n">converter</span><span class="o">)</span>
 <span class="o">}</span> <span class="k">yield</span> <span class="o">()</span>
-<span class="c1">// &lt;console&gt;:10: warning: Unused import
-// import freestyle._
-//                  ^
-// &lt;console&gt;:16: warning: Unused import
-// import freestyle.implicits._
-//                            ^
-// &lt;console&gt;:19: warning: Unused import
-// import freestyle.fs2._
-//                      ^
-// &lt;console&gt;:22: warning: Unused import
-// import freestyle.fs2.implicits._
-//                                ^
-// &lt;console&gt;:26: warning: Unused import
-// import _root_.fs2.Stream
-//                   ^
-// &lt;console&gt;:28: warning: Unused import
-// import cats._
-//             ^
-// &lt;console&gt;:30: warning: Unused import
-// import interactInterp
-//                                                                              ^
-// &lt;console&gt;:32: warning: Unused import
-// import cats.instances.future._
-//                              ^
-// &lt;console&gt;:35: warning: Unused import
-// import scala.concurrent._
-//                         ^
-// &lt;console&gt;:38: warning: Unused import
-// import scala.concurrent.duration._
-//                                  ^
-// &lt;console&gt;:40: warning: Unused import
-// import scala.concurrent.ExecutionContext.Implicits.global
-//                                                    ^
-// &lt;console&gt;:41: warning: Unused import
-// import _root_.fs2.{io, text}
-//                    ^
-// &lt;console&gt;:41: warning: Unused import
-// import _root_.fs2.{io, text}
-//                        ^
-// &lt;console&gt;:42: warning: Unused import
-// import java.nio.file.Paths
-//                      ^
-// program: [F[_]](implicit app: App[F])freestyle.FreeS[F,Unit]
+<span class="c1">// program: [F[_]](implicit app: App[F])freestyle.FreeS[F,Unit]
 </span>
 <span class="nc">Await</span><span class="o">.</span><span class="n">result</span><span class="o">(</span><span class="n">program</span><span class="o">[</span><span class="kt">App.Op</span><span class="o">].</span><span class="n">exec</span><span class="o">[</span><span class="kt">Future</span><span class="o">],</span> <span class="nc">Duration</span><span class="o">.</span><span class="nc">Inf</span><span class="o">)</span>
-<span class="c1">// &lt;console&gt;:10: warning: Unused import
-// import freestyle._
-//                  ^
-// &lt;console&gt;:19: warning: Unused import
-// import freestyle.fs2._
-//                      ^
-// &lt;console&gt;:25: warning: Unused import
-// import _root_.fs2.Stream
-//                   ^
-// &lt;console&gt;:27: warning: Unused import
-// import cats._
-//             ^
-// &lt;console&gt;:40: warning: Unused import
-// import _root_.fs2.{io, text}
-//                    ^
-// &lt;console&gt;:40: warning: Unused import
-// import _root_.fs2.{io, text}
-//                        ^
-// &lt;console&gt;:41: warning: Unused import
-// import java.nio.file.Paths
-//                      ^
-// Converting from farenheit to celsius
+<span class="c1">// Converting from farenheit to celsius
 </span></code></pre>
 </div>
 

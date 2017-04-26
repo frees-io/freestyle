@@ -25,97 +25,25 @@ For the same reason, it poses no type constraint on <code class="highlighter-rou
 <p>The following code snippet shows how to import and use the operations from the Cache algebra inside a program.</p>
 
 <div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">freestyle._</span>
-<span class="c1">// &lt;console&gt;:12: warning: Unused import
-//        import freestyle._
-//                         ^
-// import freestyle._
+<span class="c1">// import freestyle._
 </span>
 <span class="k">import</span> <span class="nn">freestyle.implicits._</span>
-<span class="c1">// &lt;console&gt;:10: warning: Unused import
-// import freestyle._
-//                  ^
-// &lt;console&gt;:15: warning: Unused import
-//        import freestyle.implicits._
-//                                   ^
-// import freestyle.implicits._
+<span class="c1">// import freestyle.implicits._
 </span>
 <span class="k">import</span> <span class="nn">freestyle.cache._</span>
-<span class="c1">// &lt;console&gt;:10: warning: Unused import
-// import freestyle._
-//                  ^
-// &lt;console&gt;:13: warning: Unused import
-// import freestyle.implicits._
-//                            ^
-// &lt;console&gt;:18: warning: Unused import
-//        import freestyle.cache._
-//                               ^
-// import freestyle.cache._
+<span class="c1">// import freestyle.cache._
 </span>
 <span class="k">import</span> <span class="nn">cats.implicits._</span>
-<span class="c1">// &lt;console&gt;:10: warning: Unused import
-// import freestyle._
-//                  ^
-// &lt;console&gt;:13: warning: Unused import
-// import freestyle.implicits._
-//                            ^
-// &lt;console&gt;:16: warning: Unused import
-// import freestyle.cache._
-//                        ^
-// &lt;console&gt;:21: warning: Unused import
-//        import cats.implicits._
-//                              ^
-// import cats.implicits._
+<span class="c1">// import cats.implicits._
 </span>
 <span class="k">val</span> <span class="n">prov</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">KeyValueProvider</span><span class="o">[</span><span class="kt">Char</span>, <span class="kt">Int</span><span class="o">]</span>
-<span class="c1">// &lt;console&gt;:10: warning: Unused import
-// import freestyle._
-//                  ^
-// &lt;console&gt;:13: warning: Unused import
-// import freestyle.implicits._
-//                            ^
-// &lt;console&gt;:19: warning: Unused import
-// import cats.implicits._
-//                       ^
-// prov: freestyle.cache.KeyValueProvider[Char,Int] = freestyle.cache.KeyValueProvider@65e0802d
+<span class="c1">// prov: freestyle.cache.KeyValueProvider[Char,Int] = freestyle.cache.KeyValueProvider@4fa17fc6
 </span>
 <span class="k">import</span> <span class="nn">prov.CacheM</span>
-<span class="c1">// &lt;console&gt;:10: warning: Unused import
-// import freestyle._
-//                  ^
-// &lt;console&gt;:13: warning: Unused import
-// import freestyle.implicits._
-//                            ^
-// &lt;console&gt;:16: warning: Unused import
-// import freestyle.cache._
-//                        ^
-// &lt;console&gt;:19: warning: Unused import
-// import cats.implicits._
-//                       ^
-// &lt;console&gt;:25: warning: Unused import
-//        import prov.CacheM
-//                    ^
-// import prov.CacheM
+<span class="c1">// import prov.CacheM
 </span>
 <span class="k">import</span> <span class="nn">prov.implicits._</span>
-<span class="c1">// &lt;console&gt;:10: warning: Unused import
-// import freestyle._
-//                  ^
-// &lt;console&gt;:13: warning: Unused import
-// import freestyle.implicits._
-//                            ^
-// &lt;console&gt;:16: warning: Unused import
-// import freestyle.cache._
-//                        ^
-// &lt;console&gt;:19: warning: Unused import
-// import cats.implicits._
-//                       ^
-// &lt;console&gt;:22: warning: Unused import
-// import prov.CacheM
-//             ^
-// &lt;console&gt;:26: warning: Unused import
-//        import prov.implicits._
-//                              ^
-// import prov.implicits._
+<span class="c1">// import prov.implicits._
 </span>
 <span class="k">def</span> <span class="n">loadFrom</span><span class="o">[</span><span class="kt">F</span><span class="o">[</span><span class="k">_</span><span class="o">]</span><span class="kt">:</span> <span class="kt">prov.CacheM</span><span class="o">]</span> <span class="k">=</span> <span class="o">{</span>
   <span class="k">for</span> <span class="o">{</span>
@@ -124,13 +52,7 @@ For the same reason, it poses no type constraint on <code class="highlighter-rou
     <span class="n">c</span> <span class="k">&lt;-</span> <span class="mf">1.</span><span class="n">pure</span><span class="o">[</span><span class="kt">FreeS</span><span class="o">[</span><span class="kt">F</span>, <span class="kt">?</span><span class="o">]]</span>
   <span class="o">}</span> <span class="k">yield</span> <span class="n">a</span> <span class="o">+</span> <span class="n">b</span><span class="o">.</span><span class="n">getOrElse</span><span class="o">(</span><span class="mi">0</span><span class="o">)</span> <span class="o">+</span> <span class="n">c</span>
 <span class="o">}</span>
-<span class="c1">// &lt;console&gt;:16: warning: Unused import
-// import freestyle.cache._
-//                        ^
-// &lt;console&gt;:24: warning: Unused import
-// import prov.implicits._
-//                       ^
-// loadFrom: [F[_]](implicit evidence$1: prov.CacheM[F])cats.free.Free[[β$0$]cats.free.FreeApplicative[F,β$0$],Int]
+<span class="c1">// loadFrom: [F[_]](implicit evidence$1: prov.CacheM[F])cats.free.Free[[β$0$]cats.free.FreeApplicative[F,β$0$],Int]
 </span></code></pre>
 </div>
 

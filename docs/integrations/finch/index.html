@@ -26,10 +26,7 @@
 <div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="nd">@free</span> <span class="k">trait</span> <span class="nc">Calc</span> <span class="o">{</span>
   <span class="k">def</span> <span class="n">gcd</span><span class="o">(</span><span class="n">a</span><span class="k">:</span> <span class="kt">Int</span><span class="o">,</span> <span class="n">b</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span><span class="k">:</span> <span class="kt">FS</span><span class="o">[</span><span class="kt">Int</span><span class="o">]</span>
 <span class="o">}</span>
-<span class="c1">// &lt;console&gt;:13: warning: Unused import
-// import freestyle.implicits._
-//                            ^
-// defined trait Calc
+<span class="c1">// defined trait Calc
 // defined object Calc
 </span></code></pre>
 </div>
@@ -38,72 +35,30 @@
 
 <div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">def</span> <span class="n">gcd</span><span class="o">(</span><span class="n">a</span><span class="k">:</span> <span class="kt">Int</span><span class="o">,</span> <span class="n">b</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span><span class="k">:</span> <span class="kt">Int</span> <span class="o">=</span>
   <span class="k">if</span> <span class="o">(</span><span class="n">b</span> <span class="o">==</span> <span class="mi">0</span><span class="o">)</span> <span class="n">a</span><span class="o">.</span><span class="n">abs</span> <span class="k">else</span> <span class="n">gcd</span><span class="o">(</span><span class="n">b</span><span class="o">,</span> <span class="n">a</span> <span class="o">%</span> <span class="n">b</span><span class="o">)</span>
-<span class="c1">// &lt;console&gt;:10: warning: Unused import
-// import freestyle._
-//                  ^
-// &lt;console&gt;:13: warning: Unused import
-// import freestyle.implicits._
-//                            ^
-// gcd: (a: Int, b: Int)Int
+<span class="c1">// gcd: (a: Int, b: Int)Int
 </span></code></pre>
 </div>
 
 <p>A version returning a twitter <code class="highlighter-rouge">Future</code>:</p>
 
 <div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">com.twitter.util.Future</span>
-<span class="c1">// &lt;console&gt;:10: warning: Unused import
-// import freestyle._
-//                  ^
-// &lt;console&gt;:13: warning: Unused import
-// import freestyle.implicits._
-//                            ^
-// &lt;console&gt;:18: warning: Unused import
-//        import com.twitter.util.Future
-//                                ^
-// import com.twitter.util.Future
+<span class="c1">// import com.twitter.util.Future
 </span>
 <span class="k">def</span> <span class="n">gcdFuture</span><span class="o">(</span><span class="n">a</span><span class="k">:</span> <span class="kt">Int</span><span class="o">,</span> <span class="n">b</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span><span class="k">:</span> <span class="kt">Future</span><span class="o">[</span><span class="kt">Int</span><span class="o">]</span> <span class="k">=</span>
   <span class="nc">Future</span><span class="o">.</span><span class="n">value</span><span class="o">(</span><span class="n">gcd</span><span class="o">(</span><span class="n">a</span><span class="o">,</span> <span class="n">b</span><span class="o">))</span>
-<span class="c1">// &lt;console&gt;:10: warning: Unused import
-// import freestyle._
-//                  ^
-// &lt;console&gt;:13: warning: Unused import
-// import freestyle.implicits._
-//                            ^
-// gcdFuture: (a: Int, b: Int)com.twitter.util.Future[Int]
+<span class="c1">// gcdFuture: (a: Int, b: Int)com.twitter.util.Future[Int]
 </span></code></pre>
 </div>
 
 <p>We can now create a <code class="highlighter-rouge">Calc.Handler[Future]</code>:</p>
 
 <div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">io.catbird.util._</span>
-<span class="c1">// &lt;console&gt;:10: warning: Unused import
-// import freestyle._
-//                  ^
-// &lt;console&gt;:13: warning: Unused import
-// import freestyle.implicits._
-//                            ^
-// &lt;console&gt;:15: warning: Unused import
-// import com.twitter.util.Future
-//                         ^
-// &lt;console&gt;:19: warning: Unused import
-//        import io.catbird.util._
-//                               ^
-// import io.catbird.util._
+<span class="c1">// import io.catbird.util._
 </span>
 <span class="k">implicit</span> <span class="k">val</span> <span class="n">futureHandler</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">Calc</span><span class="o">.</span><span class="nc">Handler</span><span class="o">[</span><span class="kt">Future</span><span class="o">]</span> <span class="o">{</span>
   <span class="k">def</span> <span class="n">gcd</span><span class="o">(</span><span class="n">a</span><span class="k">:</span> <span class="kt">Int</span><span class="o">,</span> <span class="n">b</span><span class="k">:</span><span class="kt">Int</span><span class="o">)</span><span class="k">:</span> <span class="kt">Future</span><span class="o">[</span><span class="kt">Int</span><span class="o">]</span> <span class="k">=</span> <span class="n">gcdFuture</span><span class="o">(</span><span class="n">a</span><span class="o">,</span> <span class="n">b</span><span class="o">)</span>
 <span class="o">}</span>
-<span class="c1">// &lt;console&gt;:10: warning: Unused import
-// import freestyle._
-//                  ^
-// &lt;console&gt;:13: warning: Unused import
-// import freestyle.implicits._
-//                            ^
-// &lt;console&gt;:19: warning: Unused import
-// import io.catbird.util._
-//                        ^
-// futureHandler: Calc.Handler[com.twitter.util.Future] = $anon$1@744ec208
+<span class="c1">// futureHandler: Calc.Handler[com.twitter.util.Future] = $anon$1@39259718
 </span></code></pre>
 </div>
 
@@ -120,224 +75,41 @@
 <p>We can use a freestyle program within <code class="highlighter-rouge">Endpoint#apply</code>:</p>
 
 <div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="n">cats</span><span class="o">.</span><span class="nc">Monad</span><span class="o">[</span><span class="kt">Future</span><span class="o">]</span>
-<span class="c1">// &lt;console&gt;:10: warning: Unused import
-// import freestyle._
-//                  ^
-// &lt;console&gt;:13: warning: Unused import
-// import freestyle.implicits._
-//                            ^
-// &lt;console&gt;:19: warning: Unused import
-// import futureHandler
-//                                                     ^
-// &lt;console&gt;:21: warning: Unused import
-// import freestyle.http.finch._
-//                             ^
-// &lt;console&gt;:24: warning: Unused import
-// import io.finch._
-//                 ^
-// &lt;console&gt;:26: warning: Unused import
-// import shapeless.$colon$colon
-//                  ^
-// res2: cats.Monad[com.twitter.util.Future] = io.catbird.util.FutureInstances$$anon$1@690f511a
+<span class="c1">// res2: cats.Monad[com.twitter.util.Future] = io.catbird.util.FutureInstances$$anon$1@1319d974
 </span>
 <span class="k">val</span> <span class="n">gcdEndpointTwo</span> <span class="k">=</span> <span class="n">get</span><span class="o">(</span><span class="n">int</span> <span class="o">::</span> <span class="n">int</span><span class="o">)</span> <span class="o">{</span> <span class="o">(</span><span class="n">a</span><span class="k">:</span> <span class="kt">Int</span><span class="o">,</span> <span class="n">b</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span> <span class="k">=&gt;</span>
   <span class="nc">Calc</span><span class="o">[</span><span class="kt">Calc.Op</span><span class="o">].</span><span class="n">gcd</span><span class="o">(</span><span class="n">a</span><span class="o">,</span> <span class="n">b</span><span class="o">).</span><span class="n">map</span><span class="o">(</span><span class="nc">Ok</span><span class="o">(</span><span class="k">_</span><span class="o">))</span>
 <span class="o">}</span>
-<span class="c1">// &lt;console&gt;:10: warning: Unused import
-// import freestyle._
-//                  ^
-// &lt;console&gt;:13: warning: Unused import
-// import freestyle.implicits._
-//                            ^
-// &lt;console&gt;:16: warning: Unused import
-// import com.twitter.util.Future
-//                         ^
-// &lt;console&gt;:18: warning: Unused import
-// import io.catbird.util._
-//                        ^
-// &lt;console&gt;:27: warning: Unused import
-// import shapeless.$colon$colon
-//                  ^
-// gcdEndpointTwo: io.finch.Endpoint[Int] = GET /:int :: :int
+<span class="c1">// gcdEndpointTwo: io.finch.Endpoint[Int] = GET /:int :: :int
 </span>
 <span class="k">val</span> <span class="n">gcdEndpointOne</span> <span class="k">=</span> <span class="n">get</span><span class="o">(</span><span class="n">int</span><span class="o">)</span> <span class="o">{</span> <span class="o">(</span><span class="n">a</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span> <span class="k">=&gt;</span>
   <span class="nc">Calc</span><span class="o">[</span><span class="kt">Calc.Op</span><span class="o">].</span><span class="n">gcd</span><span class="o">(</span><span class="n">a</span><span class="o">,</span> <span class="mi">12</span><span class="o">).</span><span class="n">map</span><span class="o">(</span><span class="nc">Ok</span><span class="o">(</span><span class="k">_</span><span class="o">))</span>
 <span class="o">}</span>
-<span class="c1">// &lt;console&gt;:10: warning: Unused import
-// import freestyle._
-//                  ^
-// &lt;console&gt;:16: warning: Unused import
-// import com.twitter.util.Future
-//                         ^
-// &lt;console&gt;:27: warning: Unused import
-// import shapeless.$colon$colon
-//                  ^
-// gcdEndpointOne: io.finch.Endpoint[Int] = GET /:int
+<span class="c1">// gcdEndpointOne: io.finch.Endpoint[Int] = GET /:int
 </span>
 <span class="k">val</span> <span class="n">gcdEndpointZero</span> <span class="k">=</span> <span class="n">get</span><span class="o">(/)</span> <span class="o">{</span>
   <span class="nc">Calc</span><span class="o">[</span><span class="kt">Calc.Op</span><span class="o">].</span><span class="n">gcd</span><span class="o">(</span><span class="mi">2209</span><span class="o">,</span> <span class="mi">94</span><span class="o">).</span><span class="n">map</span><span class="o">(</span><span class="nc">Ok</span><span class="o">(</span><span class="k">_</span><span class="o">))</span>
 <span class="o">}</span>
-<span class="c1">// &lt;console&gt;:10: warning: Unused import
-// import freestyle._
-//                  ^
-// &lt;console&gt;:13: warning: Unused import
-// import freestyle.implicits._
-//                            ^
-// &lt;console&gt;:16: warning: Unused import
-// import com.twitter.util.Future
-//                         ^
-// &lt;console&gt;:18: warning: Unused import
-// import io.catbird.util._
-//                        ^
-// &lt;console&gt;:27: warning: Unused import
-// import shapeless.$colon$colon
-//                  ^
-// gcdEndpointZero: io.finch.Endpoint[Int] = GET /
+<span class="c1">// gcdEndpointZero: io.finch.Endpoint[Int] = GET /
 </span></code></pre>
 </div>
 
 <p>We can combine the three endpoints and check the responses if we access the three endpoints:</p>
 
 <div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">shapeless.</span><span class="o">:+:</span>
-<span class="c1">// &lt;console&gt;:10: warning: Unused import
-// import freestyle._
-//                  ^
-// &lt;console&gt;:13: warning: Unused import
-// import freestyle.implicits._
-//                            ^
-// &lt;console&gt;:15: warning: Unused import
-// import com.twitter.util.Future
-//                         ^
-// &lt;console&gt;:17: warning: Unused import
-// import io.catbird.util._
-//                        ^
-// &lt;console&gt;:19: warning: Unused import
-// import futureHandler
-//                                                     ^
-// &lt;console&gt;:21: warning: Unused import
-// import freestyle.http.finch._
-//                             ^
-// &lt;console&gt;:24: warning: Unused import
-// import io.finch._
-//                 ^
-// &lt;console&gt;:26: warning: Unused import
-// import shapeless.$colon$colon
-//                  ^
-// &lt;console&gt;:30: warning: Unused import
-//        import shapeless.:+:
-//                         ^
-// import shapeless.$colon$plus$colon
+<span class="c1">// import shapeless.$colon$plus$colon
 </span>
 <span class="k">val</span> <span class="n">endpoint</span> <span class="k">=</span> <span class="n">gcdEndpointTwo</span> <span class="o">:+:</span> <span class="n">gcdEndpointOne</span> <span class="o">:+:</span> <span class="n">gcdEndpointZero</span>
-<span class="c1">// &lt;console&gt;:10: warning: Unused import
-// import freestyle._
-//                  ^
-// &lt;console&gt;:13: warning: Unused import
-// import freestyle.implicits._
-//                            ^
-// &lt;console&gt;:15: warning: Unused import
-// import com.twitter.util.Future
-//                         ^
-// &lt;console&gt;:17: warning: Unused import
-// import io.catbird.util._
-//                        ^
-// &lt;console&gt;:19: warning: Unused import
-// import futureHandler
-//                                                     ^
-// &lt;console&gt;:21: warning: Unused import
-// import freestyle.http.finch._
-//                             ^
-// &lt;console&gt;:24: warning: Unused import
-// import io.finch._
-//                 ^
-// &lt;console&gt;:26: warning: Unused import
-// import shapeless.$colon$colon
-//                  ^
-// &lt;console&gt;:30: warning: Unused import
-// import shapeless.$colon$plus$colon
-//                  ^
-// endpoint: io.finch.Endpoint[Int :+: Int :+: Int :+: shapeless.CNil] = (GET /:int :: :int :+: (GET /:int :+: GET /))
+<span class="c1">// endpoint: io.finch.Endpoint[Int :+: Int :+: Int :+: shapeless.CNil] = (GET /:int :: :int :+: (GET /:int :+: GET /))
 </span>
 <span class="n">endpoint</span><span class="o">(</span><span class="nc">Input</span><span class="o">.</span><span class="n">get</span><span class="o">(</span><span class="s">"/83/2671"</span><span class="o">)).</span><span class="n">awaitValueUnsafe</span><span class="o">()</span>
-<span class="c1">// &lt;console&gt;:10: warning: Unused import
-// import freestyle._
-//                  ^
-// &lt;console&gt;:13: warning: Unused import
-// import freestyle.implicits._
-//                            ^
-// &lt;console&gt;:15: warning: Unused import
-// import com.twitter.util.Future
-//                         ^
-// &lt;console&gt;:17: warning: Unused import
-// import io.catbird.util._
-//                        ^
-// &lt;console&gt;:19: warning: Unused import
-// import futureHandler
-//                                                     ^
-// &lt;console&gt;:21: warning: Unused import
-// import freestyle.http.finch._
-//                             ^
-// &lt;console&gt;:26: warning: Unused import
-// import shapeless.$colon$colon
-//                  ^
-// &lt;console&gt;:27: warning: Unused import
-// import shapeless.$colon$plus$colon
-//                  ^
-// res3: Option[Int :+: Int :+: Int :+: shapeless.CNil] = Some(Inl(1))
+<span class="c1">// res3: Option[Int :+: Int :+: Int :+: shapeless.CNil] = Some(Inl(1))
 </span>
 <span class="n">endpoint</span><span class="o">(</span><span class="nc">Input</span><span class="o">.</span><span class="n">get</span><span class="o">(</span><span class="s">"/30"</span><span class="o">)).</span><span class="n">awaitValueUnsafe</span><span class="o">()</span>
-<span class="c1">// &lt;console&gt;:10: warning: Unused import
-// import freestyle._
-//                  ^
-// &lt;console&gt;:13: warning: Unused import
-// import freestyle.implicits._
-//                            ^
-// &lt;console&gt;:15: warning: Unused import
-// import com.twitter.util.Future
-//                         ^
-// &lt;console&gt;:17: warning: Unused import
-// import io.catbird.util._
-//                        ^
-// &lt;console&gt;:19: warning: Unused import
-// import futureHandler
-//                                                     ^
-// &lt;console&gt;:21: warning: Unused import
-// import freestyle.http.finch._
-//                             ^
-// &lt;console&gt;:26: warning: Unused import
-// import shapeless.$colon$colon
-//                  ^
-// &lt;console&gt;:27: warning: Unused import
-// import shapeless.$colon$plus$colon
-//                  ^
-// res4: Option[Int :+: Int :+: Int :+: shapeless.CNil] = Some(Inr(Inl(6)))
+<span class="c1">// res4: Option[Int :+: Int :+: Int :+: shapeless.CNil] = Some(Inr(Inl(6)))
 </span>
 <span class="n">endpoint</span><span class="o">(</span><span class="nc">Input</span><span class="o">.</span><span class="n">get</span><span class="o">(</span><span class="s">"/"</span><span class="o">)).</span><span class="n">awaitValueUnsafe</span><span class="o">()</span>
-<span class="c1">// &lt;console&gt;:10: warning: Unused import
-// import freestyle._
-//                  ^
-// &lt;console&gt;:13: warning: Unused import
-// import freestyle.implicits._
-//                            ^
-// &lt;console&gt;:15: warning: Unused import
-// import com.twitter.util.Future
-//                         ^
-// &lt;console&gt;:17: warning: Unused import
-// import io.catbird.util._
-//                        ^
-// &lt;console&gt;:19: warning: Unused import
-// import futureHandler
-//                                                     ^
-// &lt;console&gt;:21: warning: Unused import
-// import freestyle.http.finch._
-//                             ^
-// &lt;console&gt;:26: warning: Unused import
-// import shapeless.$colon$colon
-//                  ^
-// &lt;console&gt;:27: warning: Unused import
-// import shapeless.$colon$plus$colon
-//                  ^
-// res5: Option[Int :+: Int :+: Int :+: shapeless.CNil] = Some(Inr(Inr(Inl(47))))
+<span class="c1">// res5: Option[Int :+: Int :+: Int :+: shapeless.CNil] = Some(Inr(Inr(Inl(47))))
 </span></code></pre>
 </div>
 </section></div></div></div></div><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script><script src="/highlight/highlight.pack.js"></script><script>hljs.configure({

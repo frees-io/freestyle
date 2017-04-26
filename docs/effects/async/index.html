@@ -55,51 +55,21 @@ where something went wrong.</p>
   <span class="nc">AsyncM</span><span class="o">[</span><span class="kt">F</span><span class="o">].</span><span class="n">async</span><span class="o">[</span><span class="kt">List</span><span class="o">[</span><span class="kt">Book</span><span class="o">]]</span> <span class="o">{</span> <span class="n">cb</span> <span class="k">=&gt;</span>
     <span class="n">lib</span><span class="o">.</span><span class="n">findBooks</span><span class="o">(</span><span class="n">author</span><span class="o">)({</span> <span class="n">books</span> <span class="k">=&gt;</span> <span class="n">cb</span><span class="o">(</span><span class="nc">Right</span><span class="o">(</span><span class="n">books</span><span class="o">))</span> <span class="o">},</span> <span class="o">{</span> <span class="n">error</span> <span class="k">=&gt;</span> <span class="n">cb</span><span class="o">(</span><span class="nc">Left</span><span class="o">(</span><span class="n">error</span><span class="o">))</span> <span class="o">})</span>
   <span class="o">}</span>
-<span class="c1">// &lt;console&gt;:18: warning: Unused import
-// import freestyle.implicits._
-//                            ^
-// &lt;console&gt;:24: warning: Unused import
-// import freestyle.async.implicits._
-//                                  ^
-// sortedBooks: [F[_]](lib: LibraryAPI)(author: Author)(implicit evidence$1: freestyle.async.AsyncM[F])freestyle.FreeS[F,List[Book]]
+<span class="c1">// sortedBooks: [F[_]](lib: LibraryAPI)(author: Author)(implicit evidence$1: freestyle.async.AsyncM[F])freestyle.FreeS[F,List[Book]]
 </span></code></pre>
 </div>
 
 <p>A simple demo implementation for the <code class="highlighter-rouge">LibararyAPI</code> :</p>
 
 <div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">case</span> <span class="k">class</span> <span class="nc">NoBooksFound</span><span class="o">(</span><span class="n">author</span><span class="k">:</span> <span class="kt">Author</span><span class="o">)</span> <span class="k">extends</span> <span class="nc">Exception</span><span class="o">(</span><span class="n">s</span><span class="s">"No books found from ${author.name}"</span><span class="o">)</span>
-<span class="c1">// &lt;console&gt;:12: warning: Unused import
-// import freestyle._
-//                  ^
-// &lt;console&gt;:15: warning: Unused import
-// import freestyle.implicits._
-//                            ^
-// &lt;console&gt;:18: warning: Unused import
-// import freestyle.async._
-//                        ^
-// &lt;console&gt;:21: warning: Unused import
-// import freestyle.async.implicits._
-//                                  ^
-// defined class NoBooksFound
+<span class="c1">// defined class NoBooksFound
 </span>
 <span class="k">object</span> <span class="nc">Library</span> <span class="k">extends</span> <span class="nc">LibraryAPI</span> <span class="o">{</span>
   <span class="k">def</span> <span class="n">findBooks</span><span class="o">(</span><span class="n">author</span><span class="k">:</span> <span class="kt">Author</span><span class="o">)(</span><span class="n">withBooks</span><span class="k">:</span> <span class="kt">List</span><span class="o">[</span><span class="kt">Book</span><span class="o">]</span> <span class="k">=&gt;</span> <span class="nc">Unit</span><span class="o">,</span> <span class="n">error</span><span class="k">:</span> <span class="kt">Throwable</span> <span class="o">=&gt;</span> <span class="nc">Unit</span><span class="o">)</span><span class="k">:</span> <span class="kt">Unit</span> <span class="o">=</span>
     <span class="k">if</span> <span class="o">(</span><span class="n">author</span><span class="o">.</span><span class="n">name</span><span class="o">.</span><span class="n">toLowerCase</span> <span class="o">==</span> <span class="s">"dickens"</span><span class="o">)</span> <span class="n">error</span><span class="o">(</span><span class="nc">NoBooksFound</span><span class="o">(</span><span class="n">author</span><span class="o">))</span>
     <span class="k">else</span> <span class="n">withBooks</span><span class="o">(</span><span class="nc">Book</span><span class="o">(</span><span class="s">"The Old Man and the Sea"</span><span class="o">,</span> <span class="mi">1951</span><span class="o">)</span> <span class="o">::</span> <span class="nc">Book</span><span class="o">(</span><span class="s">"1984"</span><span class="o">,</span> <span class="mi">1948</span><span class="o">)</span> <span class="o">::</span> <span class="nc">Book</span><span class="o">(</span><span class="s">"On the Road"</span><span class="o">,</span> <span class="mi">1957</span><span class="o">)</span> <span class="o">::</span> <span class="nc">Nil</span><span class="o">)</span>
 <span class="o">}</span>
-<span class="c1">// &lt;console&gt;:15: warning: Unused import
-// import freestyle._
-//                  ^
-// &lt;console&gt;:18: warning: Unused import
-// import freestyle.implicits._
-//                            ^
-// &lt;console&gt;:21: warning: Unused import
-// import freestyle.async._
-//                        ^
-// &lt;console&gt;:24: warning: Unused import
-// import freestyle.async.implicits._
-//                                  ^
-// defined object Library
+<span class="c1">// defined object Library
 </span></code></pre>
 </div>
 
@@ -107,43 +77,13 @@ where something went wrong.</p>
 
 <div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">val</span> <span class="n">getSorted</span><span class="k">:</span> <span class="kt">Author</span> <span class="o">=&gt;</span> <span class="nc">FreeS</span><span class="o">[</span><span class="kt">AsyncM.Op</span>, <span class="kt">List</span><span class="o">[</span><span class="kt">Book</span><span class="o">]]</span> <span class="k">=</span>
   <span class="n">sortedBooks</span><span class="o">[</span><span class="kt">AsyncM.Op</span><span class="o">](</span><span class="nc">Library</span><span class="o">)</span> <span class="k">_</span>
-<span class="c1">// &lt;console&gt;:17: warning: Unused import
-// import freestyle.implicits._
-//                            ^
-// &lt;console&gt;:23: warning: Unused import
-// import freestyle.async.implicits._
-//                                  ^
-// getSorted: Author =&gt; freestyle.FreeS[freestyle.async.AsyncM.Op,List[Book]] = $$Lambda$5050/612614778@1b473fcc
+<span class="c1">// getSorted: Author =&gt; freestyle.FreeS[freestyle.async.AsyncM.Op,List[Book]] = $$Lambda$4990/605595246@11490055
 </span>
 <span class="k">val</span> <span class="n">dickensBooks</span> <span class="k">=</span> <span class="n">getSorted</span><span class="o">(</span><span class="nc">Author</span><span class="o">(</span><span class="s">"Dickens"</span><span class="o">))</span>
-<span class="c1">// &lt;console&gt;:12: warning: Unused import
-// import freestyle._
-//                  ^
-// &lt;console&gt;:15: warning: Unused import
-// import freestyle.implicits._
-//                            ^
-// &lt;console&gt;:18: warning: Unused import
-// import freestyle.async._
-//                        ^
-// &lt;console&gt;:21: warning: Unused import
-// import freestyle.async.implicits._
-//                                  ^
-// dickensBooks: freestyle.FreeS[freestyle.async.AsyncM.Op,List[Book]] = Free(...)
+<span class="c1">// dickensBooks: freestyle.FreeS[freestyle.async.AsyncM.Op,List[Book]] = Free(...)
 </span>
 <span class="k">val</span> <span class="n">otherBooks</span>   <span class="k">=</span> <span class="n">getSorted</span><span class="o">(</span><span class="nc">Author</span><span class="o">(</span><span class="s">"HemingwayOrwellKerouac"</span><span class="o">))</span>
-<span class="c1">// &lt;console&gt;:12: warning: Unused import
-// import freestyle._
-//                  ^
-// &lt;console&gt;:15: warning: Unused import
-// import freestyle.implicits._
-//                            ^
-// &lt;console&gt;:18: warning: Unused import
-// import freestyle.async._
-//                        ^
-// &lt;console&gt;:21: warning: Unused import
-// import freestyle.async.implicits._
-//                                  ^
-// otherBooks: freestyle.FreeS[freestyle.async.AsyncM.Op,List[Book]] = Free(...)
+<span class="c1">// otherBooks: freestyle.FreeS[freestyle.async.AsyncM.Op,List[Book]] = Free(...)
 </span></code></pre>
 </div>
 
@@ -154,279 +94,33 @@ where something went wrong.</p>
 </ul>
 
 <div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">freestyle.asyncFs2.implicits._</span>
-<span class="c1">// &lt;console&gt;:10: warning: Unused import
-// import freestyle._
-//                  ^
-// &lt;console&gt;:13: warning: Unused import
-// import freestyle.implicits._
-//                            ^
-// &lt;console&gt;:16: warning: Unused import
-// import freestyle.async._
-//                        ^
-// &lt;console&gt;:19: warning: Unused import
-// import freestyle.async.implicits._
-//                                  ^
-// &lt;console&gt;:24: warning: Unused import
-//        import freestyle.asyncFs2.implicits._
-//                                            ^
-// import freestyle.asyncFs2.implicits._
+<span class="c1">// import freestyle.asyncFs2.implicits._
 </span>
 <span class="k">import</span> <span class="nn">scala.concurrent.</span><span class="o">{</span><span class="nc">Await</span><span class="o">,</span> <span class="nc">ExecutionContext</span><span class="o">}</span>
-<span class="c1">// &lt;console&gt;:10: warning: Unused import
-// import freestyle._
-//                  ^
-// &lt;console&gt;:13: warning: Unused import
-// import freestyle.implicits._
-//                            ^
-// &lt;console&gt;:16: warning: Unused import
-// import freestyle.async._
-//                        ^
-// &lt;console&gt;:19: warning: Unused import
-// import freestyle.async.implicits._
-//                                  ^
-// &lt;console&gt;:22: warning: Unused import
-// import freestyle.asyncFs2.implicits._
-//                                     ^
-// &lt;console&gt;:27: warning: Unused import
-//        import scala.concurrent.{Await, ExecutionContext}
-//                                 ^
-// &lt;console&gt;:27: warning: Unused import
-//        import scala.concurrent.{Await, ExecutionContext}
-//                                        ^
-// import scala.concurrent.{Await, ExecutionContext}
+<span class="c1">// import scala.concurrent.{Await, ExecutionContext}
 </span>
 <span class="k">import</span> <span class="nn">scala.concurrent.duration.Duration</span>
-<span class="c1">// &lt;console&gt;:10: warning: Unused import
-// import freestyle._
-//                  ^
-// &lt;console&gt;:13: warning: Unused import
-// import freestyle.implicits._
-//                            ^
-// &lt;console&gt;:16: warning: Unused import
-// import freestyle.async._
-//                        ^
-// &lt;console&gt;:19: warning: Unused import
-// import freestyle.async.implicits._
-//                                  ^
-// &lt;console&gt;:22: warning: Unused import
-// import freestyle.asyncFs2.implicits._
-//                                     ^
-// &lt;console&gt;:24: warning: Unused import
-// import scala.concurrent.{Await, ExecutionContext}
-//                          ^
-// &lt;console&gt;:24: warning: Unused import
-// import scala.concurrent.{Await, ExecutionContext}
-//                                 ^
-// &lt;console&gt;:28: warning: Unused import
-//        import scala.concurrent.duration.Duration
-//                                         ^
-// import scala.concurrent.duration.Duration
+<span class="c1">// import scala.concurrent.duration.Duration
 </span>
 <span class="k">import</span> <span class="nn">_root_.fs2.</span><span class="o">{</span><span class="nc">Strategy</span><span class="o">,</span> <span class="nc">Task</span> <span class="k">=&gt;</span> <span class="nc">Fs2Task</span><span class="o">}</span>
-<span class="c1">// &lt;console&gt;:10: warning: Unused import
-// import freestyle._
-//                  ^
-// &lt;console&gt;:13: warning: Unused import
-// import freestyle.implicits._
-//                            ^
-// &lt;console&gt;:16: warning: Unused import
-// import freestyle.async._
-//                        ^
-// &lt;console&gt;:19: warning: Unused import
-// import freestyle.async.implicits._
-//                                  ^
-// &lt;console&gt;:22: warning: Unused import
-// import freestyle.asyncFs2.implicits._
-//                                     ^
-// &lt;console&gt;:24: warning: Unused import
-// import scala.concurrent.{Await, ExecutionContext}
-//                          ^
-// &lt;console&gt;:24: warning: Unused import
-// import scala.concurrent.{Await, ExecutionContext}
-//                                 ^
-// &lt;console&gt;:25: warning: Unused import
-// import scala.concurrent.duration.Duration
-//                                  ^
-// &lt;console&gt;:29: warning: Unused import
-//        import _root_.fs2.{Strategy, Task =&gt; Fs2Task}
-//                           ^
-// &lt;console&gt;:29: warning: Unused import
-//        import _root_.fs2.{Strategy, Task =&gt; Fs2Task}
-//                                     ^
-// import _root_.fs2.{Strategy, Task=&gt;Fs2Task}
+<span class="c1">// import _root_.fs2.{Strategy, Task=&gt;Fs2Task}
 </span>
 <span class="k">import</span> <span class="nn">_root_.fs2.interop.cats._</span>
-<span class="c1">// &lt;console&gt;:10: warning: Unused import
-// import freestyle._
-//                  ^
-// &lt;console&gt;:13: warning: Unused import
-// import freestyle.implicits._
-//                            ^
-// &lt;console&gt;:16: warning: Unused import
-// import freestyle.async._
-//                        ^
-// &lt;console&gt;:19: warning: Unused import
-// import freestyle.async.implicits._
-//                                  ^
-// &lt;console&gt;:22: warning: Unused import
-// import freestyle.asyncFs2.implicits._
-//                                     ^
-// &lt;console&gt;:24: warning: Unused import
-// import scala.concurrent.{Await, ExecutionContext}
-//                          ^
-// &lt;console&gt;:24: warning: Unused import
-// import scala.concurrent.{Await, ExecutionContext}
-//                                 ^
-// &lt;console&gt;:25: warning: Unused import
-// import scala.concurrent.duration.Duration
-//                                  ^
-// &lt;console&gt;:26: warning: Unused import
-// import _root_.fs2.{Strategy, Task=&gt;Fs2Task}
-//                    ^
-// &lt;console&gt;:26: warning: Unused import
-// import _root_.fs2.{Strategy, Task=&gt;Fs2Task}
-//                              ^
-// &lt;console&gt;:30: warning: Unused import
-//        import _root_.fs2.interop.cats._
-//                                       ^
-// import _root_.fs2.interop.cats._
+<span class="c1">// import _root_.fs2.interop.cats._
 </span>
 <span class="k">implicit</span> <span class="k">val</span> <span class="n">strategy</span> <span class="k">=</span> <span class="nc">Strategy</span><span class="o">.</span><span class="n">fromExecutionContext</span><span class="o">(</span><span class="nc">ExecutionContext</span><span class="o">.</span><span class="nc">Implicits</span><span class="o">.</span><span class="n">global</span><span class="o">)</span>
-<span class="c1">// &lt;console&gt;:10: warning: Unused import
-// import freestyle._
-//                  ^
-// &lt;console&gt;:13: warning: Unused import
-// import freestyle.implicits._
-//                            ^
-// &lt;console&gt;:16: warning: Unused import
-// import freestyle.async._
-//                        ^
-// &lt;console&gt;:19: warning: Unused import
-// import freestyle.async.implicits._
-//                                  ^
-// &lt;console&gt;:22: warning: Unused import
-// import freestyle.asyncFs2.implicits._
-//                                     ^
-// &lt;console&gt;:24: warning: Unused import
-// import scala.concurrent.{Await, ExecutionContext}
-//                          ^
-// &lt;console&gt;:25: warning: Unused import
-// import scala.concurrent.duration.Duration
-//                                  ^
-// &lt;console&gt;:26: warning: Unused import
-// import _root_.fs2.{Strategy, Task=&gt;Fs2Task}
-//                              ^
-// &lt;console&gt;:28: warning: Unused import
-// import _root_.fs2.interop.cats._
-//                                ^
-// strategy: fs2.Strategy = Strategy
+<span class="c1">// strategy: fs2.Strategy = Strategy
 </span>
 <span class="k">val</span> <span class="n">fs2Task1</span> <span class="k">=</span> <span class="n">dickensBooks</span><span class="o">.</span><span class="n">exec</span><span class="o">[</span><span class="kt">Fs2Task</span><span class="o">]</span>
-<span class="c1">// &lt;console&gt;:16: warning: Unused import
-// import freestyle.async._
-//                        ^
-// &lt;console&gt;:25: warning: Unused import
-// import scala.concurrent.{Await, ExecutionContext}
-//                          ^
-// &lt;console&gt;:25: warning: Unused import
-// import scala.concurrent.{Await, ExecutionContext}
-//                                 ^
-// &lt;console&gt;:26: warning: Unused import
-// import scala.concurrent.duration.Duration
-//                                  ^
-// &lt;console&gt;:27: warning: Unused import
-// import _root_.fs2.{Strategy, Task=&gt;Fs2Task}
-//                    ^
-// fs2Task1: fs2.Task[List[Book]] = Task
+<span class="c1">// fs2Task1: fs2.Task[List[Book]] = Task
 </span>
 <span class="k">val</span> <span class="n">fs2Task2</span> <span class="k">=</span> <span class="n">otherBooks</span><span class="o">.</span><span class="n">exec</span><span class="o">[</span><span class="kt">Fs2Task</span><span class="o">]</span>
-<span class="c1">// &lt;console&gt;:16: warning: Unused import
-// import freestyle.async._
-//                        ^
-// &lt;console&gt;:25: warning: Unused import
-// import scala.concurrent.{Await, ExecutionContext}
-//                          ^
-// &lt;console&gt;:25: warning: Unused import
-// import scala.concurrent.{Await, ExecutionContext}
-//                                 ^
-// &lt;console&gt;:26: warning: Unused import
-// import scala.concurrent.duration.Duration
-//                                  ^
-// &lt;console&gt;:27: warning: Unused import
-// import _root_.fs2.{Strategy, Task=&gt;Fs2Task}
-//                    ^
-// fs2Task2: fs2.Task[List[Book]] = Task
+<span class="c1">// fs2Task2: fs2.Task[List[Book]] = Task
 </span></code></pre>
 </div>
 
 <div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="nc">Await</span><span class="o">.</span><span class="n">result</span><span class="o">(</span><span class="n">fs2Task1</span><span class="o">.</span><span class="n">unsafeRunAsyncFuture</span><span class="o">,</span> <span class="nc">Duration</span><span class="o">.</span><span class="nc">Inf</span><span class="o">)</span>
-<span class="c1">// &lt;console&gt;:10: warning: Unused import
-// import freestyle._
-//                  ^
-// &lt;console&gt;:13: warning: Unused import
-// import freestyle.implicits._
-//                            ^
-// &lt;console&gt;:16: warning: Unused import
-// import freestyle.async._
-//                        ^
-// &lt;console&gt;:19: warning: Unused import
-// import freestyle.async.implicits._
-//                                  ^
-// &lt;console&gt;:22: warning: Unused import
-// import freestyle.asyncFs2.implicits._
-//                                     ^
-// &lt;console&gt;:24: warning: Unused import
-// import scala.concurrent.{Await, ExecutionContext}
-//                                 ^
-// &lt;console&gt;:26: warning: Unused import
-// import _root_.fs2.{Strategy, Task=&gt;Fs2Task}
-//                    ^
-// &lt;console&gt;:26: warning: Unused import
-// import _root_.fs2.{Strategy, Task=&gt;Fs2Task}
-//                              ^
-// &lt;console&gt;:28: warning: Unused import
-// import _root_.fs2.interop.cats._
-//                                ^
-// &lt;console&gt;:30: warning: Unused import
-// import strategy
-//                                                                              ^
-// &lt;console&gt;:10: warning: Unused import
-// import freestyle._
-//                  ^
-// &lt;console&gt;:13: warning: Unused import
-// import freestyle.implicits._
-//                            ^
-// &lt;console&gt;:16: warning: Unused import
-// import freestyle.async._
-//                        ^
-// &lt;console&gt;:19: warning: Unused import
-// import freestyle.async.implicits._
-//                                  ^
-// &lt;console&gt;:22: warning: Unused import
-// import freestyle.asyncFs2.implicits._
-//                                     ^
-// &lt;console&gt;:24: warning: Unused import
-// import scala.concurrent.{Await, ExecutionContext}
-//                          ^
-// &lt;console&gt;:24: warning: Unused import
-// import scala.concurrent.{Await, ExecutionContext}
-//                                 ^
-// &lt;console&gt;:25: warning: Unused import
-// import scala.concurrent.duration.Duration
-//                                  ^
-// &lt;console&gt;:26: warning: Unused import
-// import _root_.fs2.{Strategy, Task=&gt;Fs2Task}
-//                    ^
-// &lt;console&gt;:26: warning: Unused import
-// import _root_.fs2.{Strategy, Task=&gt;Fs2Task}
-//                              ^
-// &lt;console&gt;:28: warning: Unused import
-// import _root_.fs2.interop.cats._
-//                                ^
-// &lt;console&gt;:30: warning: Unused import
-// import strategy
-//                                                                              ^
-// NoBooksFound: No books found from Dickens
+<span class="c1">// NoBooksFound: No books found from Dickens
 //   at Library$.findBooks(&lt;console&gt;:33)
 //   at .$anonfun$sortedBooks$1(&lt;console&gt;:31)
 //   at .$anonfun$sortedBooks$1$adapted(&lt;console&gt;:30)
@@ -441,37 +135,7 @@ where something went wrong.</p>
 </div>
 
 <div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="nc">Await</span><span class="o">.</span><span class="n">result</span><span class="o">(</span><span class="n">fs2Task2</span><span class="o">.</span><span class="n">unsafeRunAsyncFuture</span><span class="o">,</span> <span class="nc">Duration</span><span class="o">.</span><span class="nc">Inf</span><span class="o">)</span>
-<span class="c1">// &lt;console&gt;:10: warning: Unused import
-// import freestyle._
-//                  ^
-// &lt;console&gt;:13: warning: Unused import
-// import freestyle.implicits._
-//                            ^
-// &lt;console&gt;:16: warning: Unused import
-// import freestyle.async._
-//                        ^
-// &lt;console&gt;:19: warning: Unused import
-// import freestyle.async.implicits._
-//                                  ^
-// &lt;console&gt;:22: warning: Unused import
-// import freestyle.asyncFs2.implicits._
-//                                     ^
-// &lt;console&gt;:24: warning: Unused import
-// import scala.concurrent.{Await, ExecutionContext}
-//                                 ^
-// &lt;console&gt;:26: warning: Unused import
-// import _root_.fs2.{Strategy, Task=&gt;Fs2Task}
-//                    ^
-// &lt;console&gt;:26: warning: Unused import
-// import _root_.fs2.{Strategy, Task=&gt;Fs2Task}
-//                              ^
-// &lt;console&gt;:28: warning: Unused import
-// import _root_.fs2.interop.cats._
-//                                ^
-// &lt;console&gt;:30: warning: Unused import
-// import strategy
-//                                                                              ^
-// res1: List[Book] = List(Book(The Old Man and the Sea,1951), Book(1984,1948), Book(On the Road,1957))
+<span class="c1">// res1: List[Book] = List(Book(The Old Man and the Sea,1951), Book(1984,1948), Book(On the Road,1957))
 </span></code></pre>
 </div>
 
@@ -480,402 +144,30 @@ where something went wrong.</p>
 </ul>
 
 <div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">freestyle.asyncMonix.implicits._</span>
-<span class="c1">// &lt;console&gt;:10: warning: Unused import
-// import freestyle._
-//                  ^
-// &lt;console&gt;:13: warning: Unused import
-// import freestyle.implicits._
-//                            ^
-// &lt;console&gt;:16: warning: Unused import
-// import freestyle.async._
-//                        ^
-// &lt;console&gt;:19: warning: Unused import
-// import freestyle.async.implicits._
-//                                  ^
-// &lt;console&gt;:22: warning: Unused import
-// import freestyle.asyncFs2.implicits._
-//                                     ^
-// &lt;console&gt;:24: warning: Unused import
-// import scala.concurrent.{Await, ExecutionContext}
-//                          ^
-// &lt;console&gt;:24: warning: Unused import
-// import scala.concurrent.{Await, ExecutionContext}
-//                                 ^
-// &lt;console&gt;:25: warning: Unused import
-// import scala.concurrent.duration.Duration
-//                                  ^
-// &lt;console&gt;:26: warning: Unused import
-// import _root_.fs2.{Strategy, Task=&gt;Fs2Task}
-//                    ^
-// &lt;console&gt;:26: warning: Unused import
-// import _root_.fs2.{Strategy, Task=&gt;Fs2Task}
-//                              ^
-// &lt;console&gt;:28: warning: Unused import
-// import _root_.fs2.interop.cats._
-//                                ^
-// &lt;console&gt;:30: warning: Unused import
-// import strategy
-//                                                                              ^
-// &lt;console&gt;:34: warning: Unused import
-//        import freestyle.asyncMonix.implicits._
-//                                              ^
-// import freestyle.asyncMonix.implicits._
+<span class="c1">// import freestyle.asyncMonix.implicits._
 </span>
 <span class="k">import</span> <span class="nn">monix.eval.</span><span class="o">{</span><span class="nc">Task</span> <span class="k">=&gt;</span> <span class="nc">MonixTask</span><span class="o">}</span>
-<span class="c1">// &lt;console&gt;:10: warning: Unused import
-// import freestyle._
-//                  ^
-// &lt;console&gt;:13: warning: Unused import
-// import freestyle.implicits._
-//                            ^
-// &lt;console&gt;:16: warning: Unused import
-// import freestyle.async._
-//                        ^
-// &lt;console&gt;:19: warning: Unused import
-// import freestyle.async.implicits._
-//                                  ^
-// &lt;console&gt;:22: warning: Unused import
-// import freestyle.asyncFs2.implicits._
-//                                     ^
-// &lt;console&gt;:24: warning: Unused import
-// import scala.concurrent.{Await, ExecutionContext}
-//                          ^
-// &lt;console&gt;:24: warning: Unused import
-// import scala.concurrent.{Await, ExecutionContext}
-//                                 ^
-// &lt;console&gt;:25: warning: Unused import
-// import scala.concurrent.duration.Duration
-//                                  ^
-// &lt;console&gt;:26: warning: Unused import
-// import _root_.fs2.{Strategy, Task=&gt;Fs2Task}
-//                    ^
-// &lt;console&gt;:26: warning: Unused import
-// import _root_.fs2.{Strategy, Task=&gt;Fs2Task}
-//                              ^
-// &lt;console&gt;:28: warning: Unused import
-// import _root_.fs2.interop.cats._
-//                                ^
-// &lt;console&gt;:30: warning: Unused import
-// import strategy
-//                                                                              ^
-// &lt;console&gt;:32: warning: Unused import
-// import freestyle.asyncMonix.implicits._
-//                                       ^
-// &lt;console&gt;:37: warning: Unused import
-//        import monix.eval.{Task =&gt; MonixTask}
-//                           ^
-// import monix.eval.{Task=&gt;MonixTask}
+<span class="c1">// import monix.eval.{Task=&gt;MonixTask}
 </span>
 <span class="k">import</span> <span class="nn">monix.cats._</span>
-<span class="c1">// &lt;console&gt;:10: warning: Unused import
-// import freestyle._
-//                  ^
-// &lt;console&gt;:13: warning: Unused import
-// import freestyle.implicits._
-//                            ^
-// &lt;console&gt;:16: warning: Unused import
-// import freestyle.async._
-//                        ^
-// &lt;console&gt;:19: warning: Unused import
-// import freestyle.async.implicits._
-//                                  ^
-// &lt;console&gt;:22: warning: Unused import
-// import freestyle.asyncFs2.implicits._
-//                                     ^
-// &lt;console&gt;:24: warning: Unused import
-// import scala.concurrent.{Await, ExecutionContext}
-//                          ^
-// &lt;console&gt;:24: warning: Unused import
-// import scala.concurrent.{Await, ExecutionContext}
-//                                 ^
-// &lt;console&gt;:25: warning: Unused import
-// import scala.concurrent.duration.Duration
-//                                  ^
-// &lt;console&gt;:26: warning: Unused import
-// import _root_.fs2.{Strategy, Task=&gt;Fs2Task}
-//                    ^
-// &lt;console&gt;:26: warning: Unused import
-// import _root_.fs2.{Strategy, Task=&gt;Fs2Task}
-//                              ^
-// &lt;console&gt;:28: warning: Unused import
-// import _root_.fs2.interop.cats._
-//                                ^
-// &lt;console&gt;:30: warning: Unused import
-// import strategy
-//                                                                              ^
-// &lt;console&gt;:32: warning: Unused import
-// import freestyle.asyncMonix.implicits._
-//                                       ^
-// &lt;console&gt;:34: warning: Unused import
-// import monix.eval.{Task=&gt;MonixTask}
-//                    ^
-// &lt;console&gt;:38: warning: Unused import
-//        import monix.cats._
-//                          ^
-// import monix.cats._
+<span class="c1">// import monix.cats._
 </span>
 <span class="k">import</span> <span class="nn">monix.execution.Scheduler</span>
-<span class="c1">// &lt;console&gt;:10: warning: Unused import
-// import freestyle._
-//                  ^
-// &lt;console&gt;:13: warning: Unused import
-// import freestyle.implicits._
-//                            ^
-// &lt;console&gt;:16: warning: Unused import
-// import freestyle.async._
-//                        ^
-// &lt;console&gt;:19: warning: Unused import
-// import freestyle.async.implicits._
-//                                  ^
-// &lt;console&gt;:22: warning: Unused import
-// import freestyle.asyncFs2.implicits._
-//                                     ^
-// &lt;console&gt;:24: warning: Unused import
-// import scala.concurrent.{Await, ExecutionContext}
-//                          ^
-// &lt;console&gt;:24: warning: Unused import
-// import scala.concurrent.{Await, ExecutionContext}
-//                                 ^
-// &lt;console&gt;:25: warning: Unused import
-// import scala.concurrent.duration.Duration
-//                                  ^
-// &lt;console&gt;:26: warning: Unused import
-// import _root_.fs2.{Strategy, Task=&gt;Fs2Task}
-//                    ^
-// &lt;console&gt;:26: warning: Unused import
-// import _root_.fs2.{Strategy, Task=&gt;Fs2Task}
-//                              ^
-// &lt;console&gt;:28: warning: Unused import
-// import _root_.fs2.interop.cats._
-//                                ^
-// &lt;console&gt;:30: warning: Unused import
-// import strategy
-//                                                                              ^
-// &lt;console&gt;:32: warning: Unused import
-// import freestyle.asyncMonix.implicits._
-//                                       ^
-// &lt;console&gt;:34: warning: Unused import
-// import monix.eval.{Task=&gt;MonixTask}
-//                    ^
-// &lt;console&gt;:36: warning: Unused import
-// import monix.cats._
-//                   ^
-// &lt;console&gt;:41: warning: Unused import
-//        import monix.execution.Scheduler
-//                               ^
-// import monix.execution.Scheduler
+<span class="c1">// import monix.execution.Scheduler
 </span>
 <span class="k">implicit</span> <span class="k">val</span> <span class="n">executionContext</span> <span class="k">=</span> <span class="nc">Scheduler</span><span class="o">.</span><span class="nc">Implicits</span><span class="o">.</span><span class="n">global</span>
-<span class="c1">// &lt;console&gt;:10: warning: Unused import
-// import freestyle._
-//                  ^
-// &lt;console&gt;:13: warning: Unused import
-// import freestyle.implicits._
-//                            ^
-// &lt;console&gt;:16: warning: Unused import
-// import freestyle.async._
-//                        ^
-// &lt;console&gt;:19: warning: Unused import
-// import freestyle.async.implicits._
-//                                  ^
-// &lt;console&gt;:22: warning: Unused import
-// import freestyle.asyncFs2.implicits._
-//                                     ^
-// &lt;console&gt;:24: warning: Unused import
-// import scala.concurrent.{Await, ExecutionContext}
-//                          ^
-// &lt;console&gt;:24: warning: Unused import
-// import scala.concurrent.{Await, ExecutionContext}
-//                                 ^
-// &lt;console&gt;:25: warning: Unused import
-// import scala.concurrent.duration.Duration
-//                                  ^
-// &lt;console&gt;:26: warning: Unused import
-// import _root_.fs2.{Strategy, Task=&gt;Fs2Task}
-//                    ^
-// &lt;console&gt;:26: warning: Unused import
-// import _root_.fs2.{Strategy, Task=&gt;Fs2Task}
-//                              ^
-// &lt;console&gt;:28: warning: Unused import
-// import _root_.fs2.interop.cats._
-//                                ^
-// &lt;console&gt;:30: warning: Unused import
-// import strategy
-//                                                                              ^
-// &lt;console&gt;:32: warning: Unused import
-// import freestyle.asyncMonix.implicits._
-//                                       ^
-// &lt;console&gt;:34: warning: Unused import
-// import monix.eval.{Task=&gt;MonixTask}
-//                    ^
-// &lt;console&gt;:36: warning: Unused import
-// import monix.cats._
-//                   ^
-// executionContext: monix.execution.Scheduler = monix.execution.schedulers.AsyncScheduler@1c673627
+<span class="c1">// executionContext: monix.execution.Scheduler = monix.execution.schedulers.AsyncScheduler@63115a63
 </span>
 <span class="k">val</span> <span class="n">monixTask1</span> <span class="k">=</span> <span class="n">dickensBooks</span><span class="o">.</span><span class="n">exec</span><span class="o">[</span><span class="kt">MonixTask</span><span class="o">]</span>
-<span class="c1">// &lt;console&gt;:16: warning: Unused import
-// import freestyle.async._
-//                        ^
-// &lt;console&gt;:23: warning: Unused import
-// import freestyle.asyncFs2.implicits._
-//                                     ^
-// &lt;console&gt;:25: warning: Unused import
-// import scala.concurrent.{Await, ExecutionContext}
-//                          ^
-// &lt;console&gt;:25: warning: Unused import
-// import scala.concurrent.{Await, ExecutionContext}
-//                                 ^
-// &lt;console&gt;:26: warning: Unused import
-// import scala.concurrent.duration.Duration
-//                                  ^
-// &lt;console&gt;:27: warning: Unused import
-// import _root_.fs2.{Strategy, Task=&gt;Fs2Task}
-//                    ^
-// &lt;console&gt;:27: warning: Unused import
-// import _root_.fs2.{Strategy, Task=&gt;Fs2Task}
-//                              ^
-// &lt;console&gt;:31: warning: Unused import
-// import strategy
-//                                                                              ^
-// &lt;console&gt;:39: warning: Unused import
-// import monix.execution.Scheduler
-//                        ^
-// &lt;console&gt;:40: warning: Unused import
-// import executionContext
-//                                                                                              ^
-// monixTask1: monix.eval.Task[List[Book]] = Task.FlatMap(Task.Suspend(monix.eval.Task$$$Lambda$5088/708405693@234f9694), monix.eval.Task$$$Lambda$5089/1555535885@347c2c22)
+<span class="c1">// monixTask1: monix.eval.Task[List[Book]] = Task.FlatMap(Task.Suspend(monix.eval.Task$$$Lambda$5028/70051218@364b69bf), monix.eval.Task$$$Lambda$5029/1929544003@4b9a3ee9)
 </span>
 <span class="k">val</span> <span class="n">monixTask2</span> <span class="k">=</span> <span class="n">otherBooks</span><span class="o">.</span><span class="n">exec</span><span class="o">[</span><span class="kt">MonixTask</span><span class="o">]</span>
-<span class="c1">// &lt;console&gt;:16: warning: Unused import
-// import freestyle.async._
-//                        ^
-// &lt;console&gt;:23: warning: Unused import
-// import freestyle.asyncFs2.implicits._
-//                                     ^
-// &lt;console&gt;:25: warning: Unused import
-// import scala.concurrent.{Await, ExecutionContext}
-//                          ^
-// &lt;console&gt;:25: warning: Unused import
-// import scala.concurrent.{Await, ExecutionContext}
-//                                 ^
-// &lt;console&gt;:26: warning: Unused import
-// import scala.concurrent.duration.Duration
-//                                  ^
-// &lt;console&gt;:27: warning: Unused import
-// import _root_.fs2.{Strategy, Task=&gt;Fs2Task}
-//                    ^
-// &lt;console&gt;:27: warning: Unused import
-// import _root_.fs2.{Strategy, Task=&gt;Fs2Task}
-//                              ^
-// &lt;console&gt;:31: warning: Unused import
-// import strategy
-//                                                                              ^
-// &lt;console&gt;:39: warning: Unused import
-// import monix.execution.Scheduler
-//                        ^
-// &lt;console&gt;:40: warning: Unused import
-// import executionContext
-//                                                                                              ^
-// monixTask2: monix.eval.Task[List[Book]] = Task.FlatMap(Task.Suspend(monix.eval.Task$$$Lambda$5088/708405693@3ae2247c), monix.eval.Task$$$Lambda$5089/1555535885@a282810)
+<span class="c1">// monixTask2: monix.eval.Task[List[Book]] = Task.FlatMap(Task.Suspend(monix.eval.Task$$$Lambda$5028/70051218@6c889553), monix.eval.Task$$$Lambda$5029/1929544003@7f91710f)
 </span></code></pre>
 </div>
 
 <div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="nc">Await</span><span class="o">.</span><span class="n">result</span><span class="o">(</span><span class="n">monixTask1</span><span class="o">.</span><span class="n">runAsync</span><span class="o">,</span> <span class="nc">Duration</span><span class="o">.</span><span class="nc">Inf</span><span class="o">)</span>
-<span class="c1">// &lt;console&gt;:10: warning: Unused import
-// import freestyle._
-//                  ^
-// &lt;console&gt;:13: warning: Unused import
-// import freestyle.implicits._
-//                            ^
-// &lt;console&gt;:16: warning: Unused import
-// import freestyle.async._
-//                        ^
-// &lt;console&gt;:19: warning: Unused import
-// import freestyle.async.implicits._
-//                                  ^
-// &lt;console&gt;:22: warning: Unused import
-// import freestyle.asyncFs2.implicits._
-//                                     ^
-// &lt;console&gt;:24: warning: Unused import
-// import scala.concurrent.{Await, ExecutionContext}
-//                                 ^
-// &lt;console&gt;:26: warning: Unused import
-// import _root_.fs2.{Strategy, Task=&gt;Fs2Task}
-//                    ^
-// &lt;console&gt;:26: warning: Unused import
-// import _root_.fs2.{Strategy, Task=&gt;Fs2Task}
-//                              ^
-// &lt;console&gt;:28: warning: Unused import
-// import _root_.fs2.interop.cats._
-//                                ^
-// &lt;console&gt;:30: warning: Unused import
-// import strategy
-//                                                                              ^
-// &lt;console&gt;:32: warning: Unused import
-// import freestyle.asyncMonix.implicits._
-//                                       ^
-// &lt;console&gt;:34: warning: Unused import
-// import monix.eval.{Task=&gt;MonixTask}
-//                    ^
-// &lt;console&gt;:36: warning: Unused import
-// import monix.cats._
-//                   ^
-// &lt;console&gt;:38: warning: Unused import
-// import monix.execution.Scheduler
-//                        ^
-// &lt;console&gt;:10: warning: Unused import
-// import freestyle._
-//                  ^
-// &lt;console&gt;:13: warning: Unused import
-// import freestyle.implicits._
-//                            ^
-// &lt;console&gt;:16: warning: Unused import
-// import freestyle.async._
-//                        ^
-// &lt;console&gt;:19: warning: Unused import
-// import freestyle.async.implicits._
-//                                  ^
-// &lt;console&gt;:22: warning: Unused import
-// import freestyle.asyncFs2.implicits._
-//                                     ^
-// &lt;console&gt;:24: warning: Unused import
-// import scala.concurrent.{Await, ExecutionContext}
-//                          ^
-// &lt;console&gt;:24: warning: Unused import
-// import scala.concurrent.{Await, ExecutionContext}
-//                                 ^
-// &lt;console&gt;:25: warning: Unused import
-// import scala.concurrent.duration.Duration
-//                                  ^
-// &lt;console&gt;:26: warning: Unused import
-// import _root_.fs2.{Strategy, Task=&gt;Fs2Task}
-//                    ^
-// &lt;console&gt;:26: warning: Unused import
-// import _root_.fs2.{Strategy, Task=&gt;Fs2Task}
-//                              ^
-// &lt;console&gt;:28: warning: Unused import
-// import _root_.fs2.interop.cats._
-//                                ^
-// &lt;console&gt;:30: warning: Unused import
-// import strategy
-//                                                                              ^
-// &lt;console&gt;:32: warning: Unused import
-// import freestyle.asyncMonix.implicits._
-//                                       ^
-// &lt;console&gt;:34: warning: Unused import
-// import monix.eval.{Task=&gt;MonixTask}
-//                    ^
-// &lt;console&gt;:36: warning: Unused import
-// import monix.cats._
-//                   ^
-// &lt;console&gt;:38: warning: Unused import
-// import monix.execution.Scheduler
-//                        ^
-// &lt;console&gt;:39: warning: Unused import
-// import executionContext
-//                                                                                              ^
-// NoBooksFound: No books found from Dickens
+<span class="c1">// NoBooksFound: No books found from Dickens
 //   at Library$.findBooks(&lt;console&gt;:33)
 //   at .$anonfun$sortedBooks$1(&lt;console&gt;:31)
 //   at .$anonfun$sortedBooks$1$adapted(&lt;console&gt;:30)
@@ -889,49 +181,7 @@ where something went wrong.</p>
 </div>
 
 <div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="nc">Await</span><span class="o">.</span><span class="n">result</span><span class="o">(</span><span class="n">monixTask2</span><span class="o">.</span><span class="n">runAsync</span><span class="o">,</span> <span class="nc">Duration</span><span class="o">.</span><span class="nc">Inf</span><span class="o">)</span>
-<span class="c1">// &lt;console&gt;:10: warning: Unused import
-// import freestyle._
-//                  ^
-// &lt;console&gt;:13: warning: Unused import
-// import freestyle.implicits._
-//                            ^
-// &lt;console&gt;:16: warning: Unused import
-// import freestyle.async._
-//                        ^
-// &lt;console&gt;:19: warning: Unused import
-// import freestyle.async.implicits._
-//                                  ^
-// &lt;console&gt;:22: warning: Unused import
-// import freestyle.asyncFs2.implicits._
-//                                     ^
-// &lt;console&gt;:24: warning: Unused import
-// import scala.concurrent.{Await, ExecutionContext}
-//                                 ^
-// &lt;console&gt;:26: warning: Unused import
-// import _root_.fs2.{Strategy, Task=&gt;Fs2Task}
-//                    ^
-// &lt;console&gt;:26: warning: Unused import
-// import _root_.fs2.{Strategy, Task=&gt;Fs2Task}
-//                              ^
-// &lt;console&gt;:28: warning: Unused import
-// import _root_.fs2.interop.cats._
-//                                ^
-// &lt;console&gt;:30: warning: Unused import
-// import strategy
-//                                                                              ^
-// &lt;console&gt;:32: warning: Unused import
-// import freestyle.asyncMonix.implicits._
-//                                       ^
-// &lt;console&gt;:34: warning: Unused import
-// import monix.eval.{Task=&gt;MonixTask}
-//                    ^
-// &lt;console&gt;:36: warning: Unused import
-// import monix.cats._
-//                   ^
-// &lt;console&gt;:38: warning: Unused import
-// import monix.execution.Scheduler
-//                        ^
-// res3: List[Book] = List(Book(The Old Man and the Sea,1951), Book(1984,1948), Book(On the Road,1957))
+<span class="c1">// res3: List[Book] = List(Book(The Old Man and the Sea,1951), Book(1984,1948), Book(On the Road,1957))
 </span></code></pre>
 </div>
 
@@ -940,308 +190,23 @@ where something went wrong.</p>
 </ul>
 
 <div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">scala.concurrent.Future</span>
-<span class="c1">// &lt;console&gt;:10: warning: Unused import
-// import freestyle._
-//                  ^
-// &lt;console&gt;:13: warning: Unused import
-// import freestyle.implicits._
-//                            ^
-// &lt;console&gt;:16: warning: Unused import
-// import freestyle.async._
-//                        ^
-// &lt;console&gt;:19: warning: Unused import
-// import freestyle.async.implicits._
-//                                  ^
-// &lt;console&gt;:22: warning: Unused import
-// import freestyle.asyncFs2.implicits._
-//                                     ^
-// &lt;console&gt;:24: warning: Unused import
-// import scala.concurrent.{Await, ExecutionContext}
-//                          ^
-// &lt;console&gt;:24: warning: Unused import
-// import scala.concurrent.{Await, ExecutionContext}
-//                                 ^
-// &lt;console&gt;:25: warning: Unused import
-// import scala.concurrent.duration.Duration
-//                                  ^
-// &lt;console&gt;:26: warning: Unused import
-// import _root_.fs2.{Strategy, Task=&gt;Fs2Task}
-//                    ^
-// &lt;console&gt;:26: warning: Unused import
-// import _root_.fs2.{Strategy, Task=&gt;Fs2Task}
-//                              ^
-// &lt;console&gt;:28: warning: Unused import
-// import _root_.fs2.interop.cats._
-//                                ^
-// &lt;console&gt;:30: warning: Unused import
-// import strategy
-//                                                                              ^
-// &lt;console&gt;:32: warning: Unused import
-// import freestyle.asyncMonix.implicits._
-//                                       ^
-// &lt;console&gt;:34: warning: Unused import
-// import monix.eval.{Task=&gt;MonixTask}
-//                    ^
-// &lt;console&gt;:36: warning: Unused import
-// import monix.cats._
-//                   ^
-// &lt;console&gt;:38: warning: Unused import
-// import monix.execution.Scheduler
-//                        ^
-// &lt;console&gt;:39: warning: Unused import
-// import executionContext
-//                                                                                              ^
-// &lt;console&gt;:43: warning: Unused import
-//        import scala.concurrent.Future
-//                                ^
-// import scala.concurrent.Future
+<span class="c1">// import scala.concurrent.Future
 </span>
 <span class="c1">// import scala.concurrent.ExecutionContext.Implicits.global
 </span>
 <span class="k">import</span> <span class="nn">cats.implicits._</span>
-<span class="c1">// &lt;console&gt;:10: warning: Unused import
-// import freestyle._
-//                  ^
-// &lt;console&gt;:13: warning: Unused import
-// import freestyle.implicits._
-//                            ^
-// &lt;console&gt;:16: warning: Unused import
-// import freestyle.async._
-//                        ^
-// &lt;console&gt;:19: warning: Unused import
-// import freestyle.async.implicits._
-//                                  ^
-// &lt;console&gt;:22: warning: Unused import
-// import freestyle.asyncFs2.implicits._
-//                                     ^
-// &lt;console&gt;:24: warning: Unused import
-// import scala.concurrent.{Await, ExecutionContext}
-//                          ^
-// &lt;console&gt;:24: warning: Unused import
-// import scala.concurrent.{Await, ExecutionContext}
-//                                 ^
-// &lt;console&gt;:25: warning: Unused import
-// import scala.concurrent.duration.Duration
-//                                  ^
-// &lt;console&gt;:26: warning: Unused import
-// import _root_.fs2.{Strategy, Task=&gt;Fs2Task}
-//                    ^
-// &lt;console&gt;:26: warning: Unused import
-// import _root_.fs2.{Strategy, Task=&gt;Fs2Task}
-//                              ^
-// &lt;console&gt;:28: warning: Unused import
-// import _root_.fs2.interop.cats._
-//                                ^
-// &lt;console&gt;:30: warning: Unused import
-// import strategy
-//                                                                              ^
-// &lt;console&gt;:32: warning: Unused import
-// import freestyle.asyncMonix.implicits._
-//                                       ^
-// &lt;console&gt;:34: warning: Unused import
-// import monix.eval.{Task=&gt;MonixTask}
-//                    ^
-// &lt;console&gt;:36: warning: Unused import
-// import monix.cats._
-//                   ^
-// &lt;console&gt;:38: warning: Unused import
-// import monix.execution.Scheduler
-//                        ^
-// &lt;console&gt;:39: warning: Unused import
-// import executionContext
-//                                                                                              ^
-// &lt;console&gt;:40: warning: Unused import
-// import scala.concurrent.Future
-//                         ^
-// &lt;console&gt;:46: warning: Unused import
-//        import cats.implicits._
-//                              ^
-// import cats.implicits._
+<span class="c1">// import cats.implicits._
 </span>
 <span class="k">val</span> <span class="n">fut1</span> <span class="k">=</span> <span class="n">dickensBooks</span><span class="o">.</span><span class="n">exec</span><span class="o">[</span><span class="kt">Future</span><span class="o">]</span>
-<span class="c1">// &lt;console&gt;:16: warning: Unused import
-// import freestyle.async._
-//                        ^
-// &lt;console&gt;:23: warning: Unused import
-// import freestyle.asyncFs2.implicits._
-//                                     ^
-// &lt;console&gt;:25: warning: Unused import
-// import scala.concurrent.{Await, ExecutionContext}
-//                          ^
-// &lt;console&gt;:25: warning: Unused import
-// import scala.concurrent.{Await, ExecutionContext}
-//                                 ^
-// &lt;console&gt;:26: warning: Unused import
-// import scala.concurrent.duration.Duration
-//                                  ^
-// &lt;console&gt;:27: warning: Unused import
-// import _root_.fs2.{Strategy, Task=&gt;Fs2Task}
-//                    ^
-// &lt;console&gt;:27: warning: Unused import
-// import _root_.fs2.{Strategy, Task=&gt;Fs2Task}
-//                              ^
-// &lt;console&gt;:31: warning: Unused import
-// import strategy
-//                                                                              ^
-// &lt;console&gt;:33: warning: Unused import
-// import freestyle.asyncMonix.implicits._
-//                                       ^
-// &lt;console&gt;:35: warning: Unused import
-// import monix.eval.{Task=&gt;MonixTask}
-//                    ^
-// &lt;console&gt;:39: warning: Unused import
-// import monix.execution.Scheduler
-//                        ^
-// fut1: scala.concurrent.Future[List[Book]] = Future(&lt;not completed&gt;)
+<span class="c1">// fut1: scala.concurrent.Future[List[Book]] = Future(Failure(NoBooksFound: No books found from Dickens))
 </span>
 <span class="k">val</span> <span class="n">fut2</span> <span class="k">=</span> <span class="n">otherBooks</span><span class="o">.</span><span class="n">exec</span><span class="o">[</span><span class="kt">Future</span><span class="o">]</span>
-<span class="c1">// &lt;console&gt;:16: warning: Unused import
-// import freestyle.async._
-//                        ^
-// &lt;console&gt;:23: warning: Unused import
-// import freestyle.asyncFs2.implicits._
-//                                     ^
-// &lt;console&gt;:25: warning: Unused import
-// import scala.concurrent.{Await, ExecutionContext}
-//                          ^
-// &lt;console&gt;:25: warning: Unused import
-// import scala.concurrent.{Await, ExecutionContext}
-//                                 ^
-// &lt;console&gt;:26: warning: Unused import
-// import scala.concurrent.duration.Duration
-//                                  ^
-// &lt;console&gt;:27: warning: Unused import
-// import _root_.fs2.{Strategy, Task=&gt;Fs2Task}
-//                    ^
-// &lt;console&gt;:27: warning: Unused import
-// import _root_.fs2.{Strategy, Task=&gt;Fs2Task}
-//                              ^
-// &lt;console&gt;:31: warning: Unused import
-// import strategy
-//                                                                              ^
-// &lt;console&gt;:33: warning: Unused import
-// import freestyle.asyncMonix.implicits._
-//                                       ^
-// &lt;console&gt;:35: warning: Unused import
-// import monix.eval.{Task=&gt;MonixTask}
-//                    ^
-// &lt;console&gt;:39: warning: Unused import
-// import monix.execution.Scheduler
-//                        ^
-// fut2: scala.concurrent.Future[List[Book]] = Future(Success(List(Book(The Old Man and the Sea,1951), Book(1984,1948), Book(On the Road,1957))))
+<span class="c1">// fut2: scala.concurrent.Future[List[Book]] = Future(&lt;not completed&gt;)
 </span></code></pre>
 </div>
 
 <div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="nc">Await</span><span class="o">.</span><span class="n">result</span><span class="o">(</span><span class="n">fut1</span><span class="o">,</span> <span class="nc">Duration</span><span class="o">.</span><span class="nc">Inf</span><span class="o">)</span>
-<span class="c1">// &lt;console&gt;:10: warning: Unused import
-// import freestyle._
-//                  ^
-// &lt;console&gt;:13: warning: Unused import
-// import freestyle.implicits._
-//                            ^
-// &lt;console&gt;:16: warning: Unused import
-// import freestyle.async._
-//                        ^
-// &lt;console&gt;:19: warning: Unused import
-// import freestyle.async.implicits._
-//                                  ^
-// &lt;console&gt;:22: warning: Unused import
-// import freestyle.asyncFs2.implicits._
-//                                     ^
-// &lt;console&gt;:24: warning: Unused import
-// import scala.concurrent.{Await, ExecutionContext}
-//                                 ^
-// &lt;console&gt;:26: warning: Unused import
-// import _root_.fs2.{Strategy, Task=&gt;Fs2Task}
-//                    ^
-// &lt;console&gt;:26: warning: Unused import
-// import _root_.fs2.{Strategy, Task=&gt;Fs2Task}
-//                              ^
-// &lt;console&gt;:28: warning: Unused import
-// import _root_.fs2.interop.cats._
-//                                ^
-// &lt;console&gt;:30: warning: Unused import
-// import strategy
-//                                                                              ^
-// &lt;console&gt;:32: warning: Unused import
-// import freestyle.asyncMonix.implicits._
-//                                       ^
-// &lt;console&gt;:34: warning: Unused import
-// import monix.eval.{Task=&gt;MonixTask}
-//                    ^
-// &lt;console&gt;:36: warning: Unused import
-// import monix.cats._
-//                   ^
-// &lt;console&gt;:38: warning: Unused import
-// import monix.execution.Scheduler
-//                        ^
-// &lt;console&gt;:39: warning: Unused import
-// import executionContext
-//                                                                                              ^
-// &lt;console&gt;:40: warning: Unused import
-// import scala.concurrent.Future
-//                         ^
-// &lt;console&gt;:42: warning: Unused import
-// import cats.implicits._
-//                       ^
-// &lt;console&gt;:10: warning: Unused import
-// import freestyle._
-//                  ^
-// &lt;console&gt;:13: warning: Unused import
-// import freestyle.implicits._
-//                            ^
-// &lt;console&gt;:16: warning: Unused import
-// import freestyle.async._
-//                        ^
-// &lt;console&gt;:19: warning: Unused import
-// import freestyle.async.implicits._
-//                                  ^
-// &lt;console&gt;:22: warning: Unused import
-// import freestyle.asyncFs2.implicits._
-//                                     ^
-// &lt;console&gt;:24: warning: Unused import
-// import scala.concurrent.{Await, ExecutionContext}
-//                          ^
-// &lt;console&gt;:24: warning: Unused import
-// import scala.concurrent.{Await, ExecutionContext}
-//                                 ^
-// &lt;console&gt;:25: warning: Unused import
-// import scala.concurrent.duration.Duration
-//                                  ^
-// &lt;console&gt;:26: warning: Unused import
-// import _root_.fs2.{Strategy, Task=&gt;Fs2Task}
-//                    ^
-// &lt;console&gt;:26: warning: Unused import
-// import _root_.fs2.{Strategy, Task=&gt;Fs2Task}
-//                              ^
-// &lt;console&gt;:28: warning: Unused import
-// import _root_.fs2.interop.cats._
-//                                ^
-// &lt;console&gt;:30: warning: Unused import
-// import strategy
-//                                                                              ^
-// &lt;console&gt;:32: warning: Unused import
-// import freestyle.asyncMonix.implicits._
-//                                       ^
-// &lt;console&gt;:34: warning: Unused import
-// import monix.eval.{Task=&gt;MonixTask}
-//                    ^
-// &lt;console&gt;:36: warning: Unused import
-// import monix.cats._
-//                   ^
-// &lt;console&gt;:38: warning: Unused import
-// import monix.execution.Scheduler
-//                        ^
-// &lt;console&gt;:39: warning: Unused import
-// import executionContext
-//                                                                                              ^
-// &lt;console&gt;:40: warning: Unused import
-// import scala.concurrent.Future
-//                         ^
-// &lt;console&gt;:42: warning: Unused import
-// import cats.implicits._
-//                       ^
-// NoBooksFound: No books found from Dickens
+<span class="c1">// NoBooksFound: No books found from Dickens
 //   at Library$.findBooks(&lt;console&gt;:33)
 //   at .$anonfun$sortedBooks$1(&lt;console&gt;:31)
 //   at .$anonfun$sortedBooks$1$adapted(&lt;console&gt;:30)
@@ -1255,58 +220,7 @@ where something went wrong.</p>
 </div>
 
 <div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="nc">Await</span><span class="o">.</span><span class="n">result</span><span class="o">(</span><span class="n">fut2</span><span class="o">,</span> <span class="nc">Duration</span><span class="o">.</span><span class="nc">Inf</span><span class="o">)</span>
-<span class="c1">// &lt;console&gt;:10: warning: Unused import
-// import freestyle._
-//                  ^
-// &lt;console&gt;:13: warning: Unused import
-// import freestyle.implicits._
-//                            ^
-// &lt;console&gt;:16: warning: Unused import
-// import freestyle.async._
-//                        ^
-// &lt;console&gt;:19: warning: Unused import
-// import freestyle.async.implicits._
-//                                  ^
-// &lt;console&gt;:22: warning: Unused import
-// import freestyle.asyncFs2.implicits._
-//                                     ^
-// &lt;console&gt;:24: warning: Unused import
-// import scala.concurrent.{Await, ExecutionContext}
-//                                 ^
-// &lt;console&gt;:26: warning: Unused import
-// import _root_.fs2.{Strategy, Task=&gt;Fs2Task}
-//                    ^
-// &lt;console&gt;:26: warning: Unused import
-// import _root_.fs2.{Strategy, Task=&gt;Fs2Task}
-//                              ^
-// &lt;console&gt;:28: warning: Unused import
-// import _root_.fs2.interop.cats._
-//                                ^
-// &lt;console&gt;:30: warning: Unused import
-// import strategy
-//                                                                              ^
-// &lt;console&gt;:32: warning: Unused import
-// import freestyle.asyncMonix.implicits._
-//                                       ^
-// &lt;console&gt;:34: warning: Unused import
-// import monix.eval.{Task=&gt;MonixTask}
-//                    ^
-// &lt;console&gt;:36: warning: Unused import
-// import monix.cats._
-//                   ^
-// &lt;console&gt;:38: warning: Unused import
-// import monix.execution.Scheduler
-//                        ^
-// &lt;console&gt;:39: warning: Unused import
-// import executionContext
-//                                                                                              ^
-// &lt;console&gt;:40: warning: Unused import
-// import scala.concurrent.Future
-//                         ^
-// &lt;console&gt;:42: warning: Unused import
-// import cats.implicits._
-//                       ^
-// res7: List[Book] = List(Book(The Old Man and the Sea,1951), Book(1984,1948), Book(On the Road,1957))
+<span class="c1">// res7: List[Book] = List(Book(The Old Man and the Sea,1951), Book(1984,1948), Book(On the Road,1957))
 </span></code></pre>
 </div>
 </section></div></div></div></div><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script><script src="/highlight/highlight.pack.js"></script><script>hljs.configure({

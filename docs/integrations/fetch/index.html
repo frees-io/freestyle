@@ -5,31 +5,13 @@
 <p>Familiarity with fetch is assumed, take a look at the <a href="http://47deg.github.io/fetch/">Fetch documentation</a> if you haven’t before. We’ll use a trivial data source for the examples:</p>
 
 <div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">_root_.fetch._</span>
-<span class="c1">// &lt;console&gt;:12: warning: Unused import
-//        import _root_.fetch._
-//                            ^
-// import _root_.fetch._
+<span class="c1">// import _root_.fetch._
 </span>
 <span class="k">import</span> <span class="nn">_root_.fetch.implicits._</span>
-<span class="c1">// &lt;console&gt;:10: warning: Unused import
-// import _root_.fetch._
-//                     ^
-// &lt;console&gt;:15: warning: Unused import
-//        import _root_.fetch.implicits._
-//                                      ^
-// import _root_.fetch.implicits._
+<span class="c1">// import _root_.fetch.implicits._
 </span>
 <span class="k">import</span> <span class="nn">cats.data.NonEmptyList</span>
-<span class="c1">// &lt;console&gt;:10: warning: Unused import
-// import _root_.fetch._
-//                     ^
-// &lt;console&gt;:13: warning: Unused import
-// import _root_.fetch.implicits._
-//                               ^
-// &lt;console&gt;:18: warning: Unused import
-//        import cats.data.NonEmptyList
-//                         ^
-// import cats.data.NonEmptyList
+<span class="c1">// import cats.data.NonEmptyList
 </span>
 <span class="k">object</span> <span class="nc">OneSource</span> <span class="k">extends</span> <span class="nc">DataSource</span><span class="o">[</span><span class="kt">Int</span>, <span class="kt">Int</span><span class="o">]{</span>
  <span class="k">def</span> <span class="n">name</span> <span class="k">=</span> <span class="s">"One"</span>
@@ -39,73 +21,25 @@
  <span class="o">})</span>
  <span class="k">def</span> <span class="n">fetchMany</span><span class="o">(</span><span class="n">ids</span><span class="k">:</span> <span class="kt">NonEmptyList</span><span class="o">[</span><span class="kt">Int</span><span class="o">])</span><span class="k">:</span> <span class="kt">Query</span><span class="o">[</span><span class="kt">Map</span><span class="o">[</span><span class="kt">Int</span>, <span class="kt">Int</span><span class="o">]]</span> <span class="k">=</span> <span class="n">batchingNotSupported</span><span class="o">(</span><span class="n">ids</span><span class="o">)</span>
 <span class="o">}</span>
-<span class="c1">// &lt;console&gt;:13: warning: Unused import
-// import _root_.fetch.implicits._
-//                               ^
-// defined object OneSource
+<span class="c1">// defined object OneSource
 </span>
 <span class="k">def</span> <span class="n">fetchOne</span><span class="o">(</span><span class="n">x</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span><span class="k">:</span> <span class="kt">Fetch</span><span class="o">[</span><span class="kt">Int</span><span class="o">]</span> <span class="k">=</span> <span class="nc">Fetch</span><span class="o">(</span><span class="n">x</span><span class="o">)(</span><span class="nc">OneSource</span><span class="o">)</span>
-<span class="c1">// &lt;console&gt;:13: warning: Unused import
-// import _root_.fetch.implicits._
-//                               ^
-// &lt;console&gt;:15: warning: Unused import
-// import cats.data.NonEmptyList
-//                  ^
-// fetchOne: (x: Int)fetch.Fetch[Int]
+<span class="c1">// fetchOne: (x: Int)fetch.Fetch[Int]
 </span></code></pre>
 </div>
 
 <p>Let’s start by creating a simple algebra for our application for printing messages on the screen:</p>
 
 <div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">freestyle._</span>
-<span class="c1">// &lt;console&gt;:10: warning: Unused import
-// import _root_.fetch._
-//                     ^
-// &lt;console&gt;:13: warning: Unused import
-// import _root_.fetch.implicits._
-//                               ^
-// &lt;console&gt;:15: warning: Unused import
-// import cats.data.NonEmptyList
-//                  ^
-// &lt;console&gt;:19: warning: Unused import
-//        import freestyle._
-//                         ^
-// import freestyle._
+<span class="c1">// import freestyle._
 </span>
 <span class="k">import</span> <span class="nn">freestyle.implicits._</span>
-<span class="c1">// &lt;console&gt;:10: warning: Unused import
-// import _root_.fetch._
-//                     ^
-// &lt;console&gt;:13: warning: Unused import
-// import _root_.fetch.implicits._
-//                               ^
-// &lt;console&gt;:15: warning: Unused import
-// import cats.data.NonEmptyList
-//                  ^
-// &lt;console&gt;:17: warning: Unused import
-// import freestyle._
-//                  ^
-// &lt;console&gt;:22: warning: Unused import
-//        import freestyle.implicits._
-//                                   ^
-// import freestyle.implicits._
+<span class="c1">// import freestyle.implicits._
 </span>
 <span class="nd">@free</span> <span class="k">trait</span> <span class="nc">Interact</span> <span class="o">{</span>
   <span class="k">def</span> <span class="n">tell</span><span class="o">(</span><span class="n">msg</span><span class="k">:</span> <span class="kt">String</span><span class="o">)</span><span class="k">:</span> <span class="kt">FS</span><span class="o">[</span><span class="kt">Unit</span><span class="o">]</span>
 <span class="o">}</span>
-<span class="c1">// &lt;console&gt;:10: warning: Unused import
-// import _root_.fetch._
-//                     ^
-// &lt;console&gt;:13: warning: Unused import
-// import _root_.fetch.implicits._
-//                               ^
-// &lt;console&gt;:15: warning: Unused import
-// import cats.data.NonEmptyList
-//                  ^
-// &lt;console&gt;:20: warning: Unused import
-// import freestyle.implicits._
-//                            ^
-// defined trait Interact
+<span class="c1">// defined trait Interact
 // defined object Interact
 </span></code></pre>
 </div>
@@ -113,70 +47,16 @@
 <p>Then, make sure to include the Fetch algebra <code class="highlighter-rouge">FetchM</code> in your application:</p>
 
 <div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">freestyle.fetch._</span>
-<span class="c1">// &lt;console&gt;:10: warning: Unused import
-// import _root_.fetch._
-//                     ^
-// &lt;console&gt;:13: warning: Unused import
-// import _root_.fetch.implicits._
-//                               ^
-// &lt;console&gt;:15: warning: Unused import
-// import cats.data.NonEmptyList
-//                  ^
-// &lt;console&gt;:17: warning: Unused import
-// import freestyle._
-//                  ^
-// &lt;console&gt;:20: warning: Unused import
-// import freestyle.implicits._
-//                            ^
-// &lt;console&gt;:25: warning: Unused import
-//        import freestyle.fetch._
-//                               ^
-// import freestyle.fetch._
+<span class="c1">// import freestyle.fetch._
 </span>
 <span class="k">import</span> <span class="nn">freestyle.fetch.implicits._</span>
-<span class="c1">// &lt;console&gt;:10: warning: Unused import
-// import _root_.fetch._
-//                     ^
-// &lt;console&gt;:13: warning: Unused import
-// import _root_.fetch.implicits._
-//                               ^
-// &lt;console&gt;:15: warning: Unused import
-// import cats.data.NonEmptyList
-//                  ^
-// &lt;console&gt;:17: warning: Unused import
-// import freestyle._
-//                  ^
-// &lt;console&gt;:20: warning: Unused import
-// import freestyle.implicits._
-//                            ^
-// &lt;console&gt;:23: warning: Unused import
-// import freestyle.fetch._
-//                        ^
-// &lt;console&gt;:28: warning: Unused import
-//        import freestyle.fetch.implicits._
-//                                         ^
-// import freestyle.fetch.implicits._
+<span class="c1">// import freestyle.fetch.implicits._
 </span>
 <span class="nd">@module</span> <span class="k">trait</span> <span class="nc">App</span> <span class="o">{</span>
   <span class="k">val</span> <span class="n">interact</span><span class="k">:</span> <span class="kt">Interact</span>
   <span class="k">val</span> <span class="n">fetches</span><span class="k">:</span> <span class="kt">FetchM</span>
 <span class="o">}</span>
-<span class="c1">// &lt;console&gt;:10: warning: Unused import
-// import _root_.fetch._
-//                     ^
-// &lt;console&gt;:13: warning: Unused import
-// import _root_.fetch.implicits._
-//                               ^
-// &lt;console&gt;:15: warning: Unused import
-// import cats.data.NonEmptyList
-//                  ^
-// &lt;console&gt;:20: warning: Unused import
-// import freestyle.implicits._
-//                            ^
-// &lt;console&gt;:28: warning: Unused import
-// import freestyle.fetch.implicits._
-//                                  ^
-// defined trait App
+<span class="c1">// defined trait App
 // defined object App
 </span></code></pre>
 </div>
@@ -190,56 +70,14 @@
     <span class="n">x</span> <span class="k">&lt;-</span> <span class="n">app</span><span class="o">.</span><span class="n">fetches</span><span class="o">.</span><span class="n">runA</span><span class="o">(</span><span class="n">fetchOne</span><span class="o">(</span><span class="mi">1</span><span class="o">))</span>
     <span class="k">_</span> <span class="k">&lt;-</span> <span class="n">app</span><span class="o">.</span><span class="n">interact</span><span class="o">.</span><span class="n">tell</span><span class="o">(</span><span class="n">s</span><span class="s">"Result: ${x}"</span><span class="o">)</span>
   <span class="o">}</span> <span class="k">yield</span> <span class="n">x</span>
-<span class="c1">// &lt;console&gt;:10: warning: Unused import
-// import _root_.fetch._
-//                     ^
-// &lt;console&gt;:13: warning: Unused import
-// import _root_.fetch.implicits._
-//                               ^
-// &lt;console&gt;:15: warning: Unused import
-// import cats.data.NonEmptyList
-//                  ^
-// &lt;console&gt;:21: warning: Unused import
-// import freestyle.implicits._
-//                            ^
-// &lt;console&gt;:24: warning: Unused import
-// import freestyle.fetch._
-//                        ^
-// &lt;console&gt;:27: warning: Unused import
-// import freestyle.fetch.implicits._
-//                                  ^
-// program: [F[_]](implicit app: App[F])freestyle.FreeS[F,Int]
+<span class="c1">// program: [F[_]](implicit app: App[F])freestyle.FreeS[F,Int]
 </span></code></pre>
 </div>
 
 <p>To run this, we need to create an implicit interpreter for our <code class="highlighter-rouge">Interact</code> algebra:</p>
 
 <div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">cats.Monad</span>
-<span class="c1">// &lt;console&gt;:10: warning: Unused import
-// import _root_.fetch._
-//                     ^
-// &lt;console&gt;:13: warning: Unused import
-// import _root_.fetch.implicits._
-//                               ^
-// &lt;console&gt;:15: warning: Unused import
-// import cats.data.NonEmptyList
-//                  ^
-// &lt;console&gt;:17: warning: Unused import
-// import freestyle._
-//                  ^
-// &lt;console&gt;:20: warning: Unused import
-// import freestyle.implicits._
-//                            ^
-// &lt;console&gt;:23: warning: Unused import
-// import freestyle.fetch._
-//                        ^
-// &lt;console&gt;:26: warning: Unused import
-// import freestyle.fetch.implicits._
-//                                  ^
-// &lt;console&gt;:31: warning: Unused import
-//        import cats.Monad
-//                    ^
-// import cats.Monad
+<span class="c1">// import cats.Monad
 </span>
 <span class="k">implicit</span> <span class="k">def</span> <span class="n">interactInterp</span><span class="o">[</span><span class="kt">F</span><span class="o">[</span><span class="k">_</span><span class="o">]](</span>
   <span class="k">implicit</span> <span class="nc">ME</span><span class="k">:</span> <span class="kt">Monad</span><span class="o">[</span><span class="kt">F</span><span class="o">]</span>
@@ -249,155 +87,23 @@
     <span class="nc">ME</span><span class="o">.</span><span class="n">pure</span><span class="o">(())</span>
   <span class="o">}</span>
 <span class="o">}</span>
-<span class="c1">// &lt;console&gt;:10: warning: Unused import
-// import _root_.fetch._
-//                     ^
-// &lt;console&gt;:13: warning: Unused import
-// import _root_.fetch.implicits._
-//                               ^
-// &lt;console&gt;:15: warning: Unused import
-// import cats.data.NonEmptyList
-//                  ^
-// &lt;console&gt;:17: warning: Unused import
-// import freestyle._
-//                  ^
-// &lt;console&gt;:20: warning: Unused import
-// import freestyle.implicits._
-//                            ^
-// &lt;console&gt;:24: warning: Unused import
-// import freestyle.fetch._
-//                        ^
-// &lt;console&gt;:27: warning: Unused import
-// import freestyle.fetch.implicits._
-//                                  ^
-// interactInterp: [F[_]](implicit ME: cats.Monad[F])Interact.Handler[F]
+<span class="c1">// interactInterp: [F[_]](implicit ME: cats.Monad[F])Interact.Handler[F]
 </span></code></pre>
 </div>
 
 <p>Now we can run the program to a <code class="highlighter-rouge">Future</code>. Check how the result from the fetch is printed to the console:</p>
 
 <div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">scala.concurrent._</span>
-<span class="c1">// &lt;console&gt;:10: warning: Unused import
-// import _root_.fetch._
-//                     ^
-// &lt;console&gt;:13: warning: Unused import
-// import _root_.fetch.implicits._
-//                               ^
-// &lt;console&gt;:15: warning: Unused import
-// import cats.data.NonEmptyList
-//                  ^
-// &lt;console&gt;:17: warning: Unused import
-// import freestyle._
-//                  ^
-// &lt;console&gt;:20: warning: Unused import
-// import freestyle.implicits._
-//                            ^
-// &lt;console&gt;:23: warning: Unused import
-// import freestyle.fetch._
-//                        ^
-// &lt;console&gt;:26: warning: Unused import
-// import freestyle.fetch.implicits._
-//                                  ^
-// &lt;console&gt;:28: warning: Unused import
-// import cats.Monad
-//             ^
-// &lt;console&gt;:29: warning: Unused import
-// import interactInterp
-//                                                                              ^
-// &lt;console&gt;:33: warning: Unused import
-//        import scala.concurrent._
-//                                ^
-// import scala.concurrent._
+<span class="c1">// import scala.concurrent._
 </span>
 <span class="k">import</span> <span class="nn">scala.concurrent.duration._</span>
-<span class="c1">// &lt;console&gt;:10: warning: Unused import
-// import _root_.fetch._
-//                     ^
-// &lt;console&gt;:13: warning: Unused import
-// import _root_.fetch.implicits._
-//                               ^
-// &lt;console&gt;:15: warning: Unused import
-// import cats.data.NonEmptyList
-//                  ^
-// &lt;console&gt;:17: warning: Unused import
-// import freestyle._
-//                  ^
-// &lt;console&gt;:20: warning: Unused import
-// import freestyle.implicits._
-//                            ^
-// &lt;console&gt;:23: warning: Unused import
-// import freestyle.fetch._
-//                        ^
-// &lt;console&gt;:26: warning: Unused import
-// import freestyle.fetch.implicits._
-//                                  ^
-// &lt;console&gt;:28: warning: Unused import
-// import cats.Monad
-//             ^
-// &lt;console&gt;:29: warning: Unused import
-// import interactInterp
-//                                                                              ^
-// &lt;console&gt;:31: warning: Unused import
-// import scala.concurrent._
-//                         ^
-// &lt;console&gt;:36: warning: Unused import
-//        import scala.concurrent.duration._
-//                                         ^
-// import scala.concurrent.duration._
+<span class="c1">// import scala.concurrent.duration._
 </span>
 <span class="k">import</span> <span class="nn">scala.concurrent.ExecutionContext.Implicits.global</span>
-<span class="c1">// &lt;console&gt;:10: warning: Unused import
-// import _root_.fetch._
-//                     ^
-// &lt;console&gt;:13: warning: Unused import
-// import _root_.fetch.implicits._
-//                               ^
-// &lt;console&gt;:15: warning: Unused import
-// import cats.data.NonEmptyList
-//                  ^
-// &lt;console&gt;:17: warning: Unused import
-// import freestyle._
-//                  ^
-// &lt;console&gt;:20: warning: Unused import
-// import freestyle.implicits._
-//                            ^
-// &lt;console&gt;:23: warning: Unused import
-// import freestyle.fetch._
-//                        ^
-// &lt;console&gt;:26: warning: Unused import
-// import freestyle.fetch.implicits._
-//                                  ^
-// &lt;console&gt;:28: warning: Unused import
-// import cats.Monad
-//             ^
-// &lt;console&gt;:29: warning: Unused import
-// import interactInterp
-//                                                                              ^
-// &lt;console&gt;:31: warning: Unused import
-// import scala.concurrent._
-//                         ^
-// &lt;console&gt;:34: warning: Unused import
-// import scala.concurrent.duration._
-//                                  ^
-// &lt;console&gt;:39: warning: Unused import
-//        import scala.concurrent.ExecutionContext.Implicits.global
-//                                                           ^
-// import scala.concurrent.ExecutionContext.Implicits.global
+<span class="c1">// import scala.concurrent.ExecutionContext.Implicits.global
 </span>
 <span class="nc">Await</span><span class="o">.</span><span class="n">result</span><span class="o">(</span><span class="n">program</span><span class="o">[</span><span class="kt">App.Op</span><span class="o">].</span><span class="n">exec</span><span class="o">[</span><span class="kt">Future</span><span class="o">],</span> <span class="nc">Duration</span><span class="o">.</span><span class="nc">Inf</span><span class="o">)</span>
-<span class="c1">// &lt;console&gt;:10: warning: Unused import
-// import _root_.fetch._
-//                     ^
-// &lt;console&gt;:15: warning: Unused import
-// import cats.data.NonEmptyList
-//                  ^
-// &lt;console&gt;:23: warning: Unused import
-// import freestyle.fetch._
-//                        ^
-// &lt;console&gt;:30: warning: Unused import
-// import cats.Monad
-//             ^
-// Hello
+<span class="c1">// Hello
 // Fetching 1
 // Result: 1
 // res0: Int = 1
@@ -419,55 +125,10 @@
     <span class="n">x</span> <span class="k">&lt;-</span> <span class="n">app</span><span class="o">.</span><span class="n">fetches</span><span class="o">.</span><span class="n">runA</span><span class="o">(</span><span class="n">fetchOne</span><span class="o">(</span><span class="mi">1</span><span class="o">))</span>
     <span class="k">_</span> <span class="k">&lt;-</span> <span class="n">app</span><span class="o">.</span><span class="n">interact</span><span class="o">.</span><span class="n">tell</span><span class="o">(</span><span class="n">s</span><span class="s">"Result: ${x}"</span><span class="o">)</span>
   <span class="o">}</span> <span class="k">yield</span> <span class="n">x</span>
-<span class="c1">// &lt;console&gt;:10: warning: Unused import
-// import _root_.fetch._
-//                     ^
-// &lt;console&gt;:13: warning: Unused import
-// import _root_.fetch.implicits._
-//                               ^
-// &lt;console&gt;:15: warning: Unused import
-// import cats.data.NonEmptyList
-//                  ^
-// &lt;console&gt;:21: warning: Unused import
-// import freestyle.implicits._
-//                            ^
-// &lt;console&gt;:24: warning: Unused import
-// import freestyle.fetch._
-//                        ^
-// &lt;console&gt;:27: warning: Unused import
-// import freestyle.fetch.implicits._
-//                                  ^
-// &lt;console&gt;:31: warning: Unused import
-// import cats.Monad
-//             ^
-// &lt;console&gt;:32: warning: Unused import
-// import interactInterp
-//                                                                              ^
-// &lt;console&gt;:34: warning: Unused import
-// import scala.concurrent._
-//                         ^
-// &lt;console&gt;:37: warning: Unused import
-// import scala.concurrent.duration._
-//                                  ^
-// &lt;console&gt;:39: warning: Unused import
-// import scala.concurrent.ExecutionContext.Implicits.global
-//                                                    ^
-// program: [F[_]](implicit app: App[F])freestyle.FreeS[F,Int]
+<span class="c1">// program: [F[_]](implicit app: App[F])freestyle.FreeS[F,Int]
 </span>
 <span class="nc">Await</span><span class="o">.</span><span class="n">result</span><span class="o">(</span><span class="n">program</span><span class="o">[</span><span class="kt">App.Op</span><span class="o">].</span><span class="n">exec</span><span class="o">[</span><span class="kt">Future</span><span class="o">],</span> <span class="nc">Duration</span><span class="o">.</span><span class="nc">Inf</span><span class="o">)</span>
-<span class="c1">// &lt;console&gt;:10: warning: Unused import
-// import _root_.fetch._
-//                     ^
-// &lt;console&gt;:15: warning: Unused import
-// import cats.data.NonEmptyList
-//                  ^
-// &lt;console&gt;:23: warning: Unused import
-// import freestyle.fetch._
-//                        ^
-// &lt;console&gt;:29: warning: Unused import
-// import cats.Monad
-//             ^
-// Hello
+<span class="c1">// Hello
 // Fetching 1
 // Result: 1
 // res1: Int = 1
@@ -483,52 +144,10 @@
     <span class="n">x</span> <span class="k">&lt;-</span> <span class="n">app</span><span class="o">.</span><span class="n">fetches</span><span class="o">.</span><span class="n">runAWithCache</span><span class="o">(</span><span class="n">fetchOne</span><span class="o">(</span><span class="mi">1</span><span class="o">),</span> <span class="nc">InMemoryCache</span><span class="o">.</span><span class="n">empty</span><span class="o">)</span>
     <span class="k">_</span> <span class="k">&lt;-</span> <span class="n">app</span><span class="o">.</span><span class="n">interact</span><span class="o">.</span><span class="n">tell</span><span class="o">(</span><span class="n">s</span><span class="s">"Result: ${x}"</span><span class="o">)</span>
   <span class="o">}</span> <span class="k">yield</span> <span class="n">x</span>
-<span class="c1">// &lt;console&gt;:13: warning: Unused import
-// import _root_.fetch.implicits._
-//                               ^
-// &lt;console&gt;:15: warning: Unused import
-// import cats.data.NonEmptyList
-//                  ^
-// &lt;console&gt;:21: warning: Unused import
-// import freestyle.implicits._
-//                            ^
-// &lt;console&gt;:24: warning: Unused import
-// import freestyle.fetch._
-//                        ^
-// &lt;console&gt;:27: warning: Unused import
-// import freestyle.fetch.implicits._
-//                                  ^
-// &lt;console&gt;:31: warning: Unused import
-// import cats.Monad
-//             ^
-// &lt;console&gt;:32: warning: Unused import
-// import interactInterp
-//                                                                              ^
-// &lt;console&gt;:34: warning: Unused import
-// import scala.concurrent._
-//                         ^
-// &lt;console&gt;:37: warning: Unused import
-// import scala.concurrent.duration._
-//                                  ^
-// &lt;console&gt;:39: warning: Unused import
-// import scala.concurrent.ExecutionContext.Implicits.global
-//                                                    ^
-// program: [F[_]](implicit app: App[F])freestyle.FreeS[F,Int]
+<span class="c1">// program: [F[_]](implicit app: App[F])freestyle.FreeS[F,Int]
 </span>
 <span class="nc">Await</span><span class="o">.</span><span class="n">result</span><span class="o">(</span><span class="n">program</span><span class="o">[</span><span class="kt">App.Op</span><span class="o">].</span><span class="n">exec</span><span class="o">[</span><span class="kt">Future</span><span class="o">],</span> <span class="nc">Duration</span><span class="o">.</span><span class="nc">Inf</span><span class="o">)</span>
-<span class="c1">// &lt;console&gt;:10: warning: Unused import
-// import _root_.fetch._
-//                     ^
-// &lt;console&gt;:15: warning: Unused import
-// import cats.data.NonEmptyList
-//                  ^
-// &lt;console&gt;:23: warning: Unused import
-// import freestyle.fetch._
-//                        ^
-// &lt;console&gt;:29: warning: Unused import
-// import cats.Monad
-//             ^
-// Hello
+<span class="c1">// Hello
 // Fetching 1
 // Result: 1
 // res2: Int = 1
@@ -546,55 +165,13 @@
     <span class="n">env</span> <span class="k">&lt;-</span> <span class="n">app</span><span class="o">.</span><span class="n">fetches</span><span class="o">.</span><span class="n">runE</span><span class="o">(</span><span class="n">fetchOne</span><span class="o">(</span><span class="mi">1</span><span class="o">))</span>
     <span class="k">_</span> <span class="k">&lt;-</span> <span class="n">app</span><span class="o">.</span><span class="n">interact</span><span class="o">.</span><span class="n">tell</span><span class="o">(</span><span class="n">s</span><span class="s">"Result: ${env}"</span><span class="o">)</span>
   <span class="o">}</span> <span class="k">yield</span> <span class="n">env</span>
-<span class="c1">// &lt;console&gt;:13: warning: Unused import
-// import _root_.fetch.implicits._
-//                               ^
-// &lt;console&gt;:15: warning: Unused import
-// import cats.data.NonEmptyList
-//                  ^
-// &lt;console&gt;:21: warning: Unused import
-// import freestyle.implicits._
-//                            ^
-// &lt;console&gt;:24: warning: Unused import
-// import freestyle.fetch._
-//                        ^
-// &lt;console&gt;:27: warning: Unused import
-// import freestyle.fetch.implicits._
-//                                  ^
-// &lt;console&gt;:31: warning: Unused import
-// import cats.Monad
-//             ^
-// &lt;console&gt;:32: warning: Unused import
-// import interactInterp
-//                                                                              ^
-// &lt;console&gt;:34: warning: Unused import
-// import scala.concurrent._
-//                         ^
-// &lt;console&gt;:37: warning: Unused import
-// import scala.concurrent.duration._
-//                                  ^
-// &lt;console&gt;:39: warning: Unused import
-// import scala.concurrent.ExecutionContext.Implicits.global
-//                                                    ^
-// program: [F[_]](implicit app: App[F])freestyle.FreeS[F,fetch.FetchEnv]
+<span class="c1">// program: [F[_]](implicit app: App[F])freestyle.FreeS[F,fetch.FetchEnv]
 </span>
 <span class="nc">Await</span><span class="o">.</span><span class="n">result</span><span class="o">(</span><span class="n">program</span><span class="o">[</span><span class="kt">App.Op</span><span class="o">].</span><span class="n">exec</span><span class="o">[</span><span class="kt">Future</span><span class="o">],</span> <span class="nc">Duration</span><span class="o">.</span><span class="nc">Inf</span><span class="o">)</span>
-<span class="c1">// &lt;console&gt;:10: warning: Unused import
-// import _root_.fetch._
-//                     ^
-// &lt;console&gt;:15: warning: Unused import
-// import cats.data.NonEmptyList
-//                  ^
-// &lt;console&gt;:23: warning: Unused import
-// import freestyle.fetch._
-//                        ^
-// &lt;console&gt;:29: warning: Unused import
-// import cats.Monad
-//             ^
-// Hello
+<span class="c1">// Hello
 // Fetching 1
-// Result: FetchEnv(InMemoryCache(Map((One,1) -&gt; 1)),Queue(Round(InMemoryCache(Map()),FetchOne(1,One),1,1486660459476,1486660875057)))
-// res3: fetch.FetchEnv = FetchEnv(InMemoryCache(Map((One,1) -&gt; 1)),Queue(Round(InMemoryCache(Map()),FetchOne(1,One),1,1486660459476,1486660875057)))
+// Result: FetchEnv(InMemoryCache(Map((One,1) -&gt; 1)),Queue(Round(InMemoryCache(Map()),FetchOne(1,One),1,1497523490961,1497523697476)))
+// res3: fetch.FetchEnv = FetchEnv(InMemoryCache(Map((One,1) -&gt; 1)),Queue(Round(InMemoryCache(Map()),FetchOne(1,One),1,1497523490961,1497523697476)))
 </span></code></pre>
 </div>
 
@@ -607,55 +184,13 @@
     <span class="n">env</span> <span class="k">&lt;-</span> <span class="n">app</span><span class="o">.</span><span class="n">fetches</span><span class="o">.</span><span class="n">runEWithCache</span><span class="o">(</span><span class="n">fetchOne</span><span class="o">(</span><span class="mi">1</span><span class="o">),</span> <span class="nc">InMemoryCache</span><span class="o">.</span><span class="n">empty</span><span class="o">)</span>
     <span class="k">_</span> <span class="k">&lt;-</span> <span class="n">app</span><span class="o">.</span><span class="n">interact</span><span class="o">.</span><span class="n">tell</span><span class="o">(</span><span class="n">s</span><span class="s">"Result: ${env}"</span><span class="o">)</span>
   <span class="o">}</span> <span class="k">yield</span> <span class="n">env</span>
-<span class="c1">// &lt;console&gt;:13: warning: Unused import
-// import _root_.fetch.implicits._
-//                               ^
-// &lt;console&gt;:15: warning: Unused import
-// import cats.data.NonEmptyList
-//                  ^
-// &lt;console&gt;:21: warning: Unused import
-// import freestyle.implicits._
-//                            ^
-// &lt;console&gt;:24: warning: Unused import
-// import freestyle.fetch._
-//                        ^
-// &lt;console&gt;:27: warning: Unused import
-// import freestyle.fetch.implicits._
-//                                  ^
-// &lt;console&gt;:31: warning: Unused import
-// import cats.Monad
-//             ^
-// &lt;console&gt;:32: warning: Unused import
-// import interactInterp
-//                                                                              ^
-// &lt;console&gt;:34: warning: Unused import
-// import scala.concurrent._
-//                         ^
-// &lt;console&gt;:37: warning: Unused import
-// import scala.concurrent.duration._
-//                                  ^
-// &lt;console&gt;:39: warning: Unused import
-// import scala.concurrent.ExecutionContext.Implicits.global
-//                                                    ^
-// program: [F[_]](implicit app: App[F])freestyle.FreeS[F,fetch.FetchEnv]
+<span class="c1">// program: [F[_]](implicit app: App[F])freestyle.FreeS[F,fetch.FetchEnv]
 </span>
 <span class="nc">Await</span><span class="o">.</span><span class="n">result</span><span class="o">(</span><span class="n">program</span><span class="o">[</span><span class="kt">App.Op</span><span class="o">].</span><span class="n">exec</span><span class="o">[</span><span class="kt">Future</span><span class="o">],</span> <span class="nc">Duration</span><span class="o">.</span><span class="nc">Inf</span><span class="o">)</span>
-<span class="c1">// &lt;console&gt;:10: warning: Unused import
-// import _root_.fetch._
-//                     ^
-// &lt;console&gt;:15: warning: Unused import
-// import cats.data.NonEmptyList
-//                  ^
-// &lt;console&gt;:23: warning: Unused import
-// import freestyle.fetch._
-//                        ^
-// &lt;console&gt;:29: warning: Unused import
-// import cats.Monad
-//             ^
-// Hello
+<span class="c1">// Hello
 // Fetching 1
-// Result: FetchEnv(InMemoryCache(Map((One,1) -&gt; 1)),Queue(Round(InMemoryCache(Map()),FetchOne(1,One),1,1487305783244,1487306135642)))
-// res4: fetch.FetchEnv = FetchEnv(InMemoryCache(Map((One,1) -&gt; 1)),Queue(Round(InMemoryCache(Map()),FetchOne(1,One),1,1487305783244,1487306135642)))
+// Result: FetchEnv(InMemoryCache(Map((One,1) -&gt; 1)),Queue(Round(InMemoryCache(Map()),FetchOne(1,One),1,1498228531873,1498228776700)))
+// res4: fetch.FetchEnv = FetchEnv(InMemoryCache(Map((One,1) -&gt; 1)),Queue(Round(InMemoryCache(Map()),FetchOne(1,One),1,1498228531873,1498228776700)))
 </span></code></pre>
 </div>
 
@@ -671,55 +206,13 @@
     <span class="o">(</span><span class="n">env</span><span class="o">,</span> <span class="n">x</span><span class="o">)</span> <span class="k">=</span> <span class="n">r</span>
     <span class="k">_</span> <span class="k">&lt;-</span> <span class="n">app</span><span class="o">.</span><span class="n">interact</span><span class="o">.</span><span class="n">tell</span><span class="o">(</span><span class="n">s</span><span class="s">"Result: ${env}"</span><span class="o">)</span>
   <span class="o">}</span> <span class="k">yield</span> <span class="n">env</span>
-<span class="c1">// &lt;console&gt;:13: warning: Unused import
-// import _root_.fetch.implicits._
-//                               ^
-// &lt;console&gt;:15: warning: Unused import
-// import cats.data.NonEmptyList
-//                  ^
-// &lt;console&gt;:21: warning: Unused import
-// import freestyle.implicits._
-//                            ^
-// &lt;console&gt;:24: warning: Unused import
-// import freestyle.fetch._
-//                        ^
-// &lt;console&gt;:27: warning: Unused import
-// import freestyle.fetch.implicits._
-//                                  ^
-// &lt;console&gt;:31: warning: Unused import
-// import cats.Monad
-//             ^
-// &lt;console&gt;:32: warning: Unused import
-// import interactInterp
-//                                                                              ^
-// &lt;console&gt;:34: warning: Unused import
-// import scala.concurrent._
-//                         ^
-// &lt;console&gt;:37: warning: Unused import
-// import scala.concurrent.duration._
-//                                  ^
-// &lt;console&gt;:39: warning: Unused import
-// import scala.concurrent.ExecutionContext.Implicits.global
-//                                                    ^
-// program: [F[_]](implicit app: App[F])freestyle.FreeS[F,fetch.FetchEnv]
+<span class="c1">// program: [F[_]](implicit app: App[F])freestyle.FreeS[F,fetch.FetchEnv]
 </span>
 <span class="nc">Await</span><span class="o">.</span><span class="n">result</span><span class="o">(</span><span class="n">program</span><span class="o">[</span><span class="kt">App.Op</span><span class="o">].</span><span class="n">exec</span><span class="o">[</span><span class="kt">Future</span><span class="o">],</span> <span class="nc">Duration</span><span class="o">.</span><span class="nc">Inf</span><span class="o">)</span>
-<span class="c1">// &lt;console&gt;:10: warning: Unused import
-// import _root_.fetch._
-//                     ^
-// &lt;console&gt;:15: warning: Unused import
-// import cats.data.NonEmptyList
-//                  ^
-// &lt;console&gt;:23: warning: Unused import
-// import freestyle.fetch._
-//                        ^
-// &lt;console&gt;:29: warning: Unused import
-// import cats.Monad
-//             ^
-// Hello
+<span class="c1">// Hello
 // Fetching 1
-// Result: FetchEnv(InMemoryCache(Map((One,1) -&gt; 1)),Queue(Round(InMemoryCache(Map()),FetchOne(1,One),1,1488079082484,1488079459684)))
-// res5: fetch.FetchEnv = FetchEnv(InMemoryCache(Map((One,1) -&gt; 1)),Queue(Round(InMemoryCache(Map()),FetchOne(1,One),1,1488079082484,1488079459684)))
+// Result: FetchEnv(InMemoryCache(Map((One,1) -&gt; 1)),Queue(Round(InMemoryCache(Map()),FetchOne(1,One),1,1498998249412,1498998486051)))
+// res5: fetch.FetchEnv = FetchEnv(InMemoryCache(Map((One,1) -&gt; 1)),Queue(Round(InMemoryCache(Map()),FetchOne(1,One),1,1498998249412,1498998486051)))
 </span></code></pre>
 </div>
 
@@ -733,55 +226,13 @@
 	<span class="o">(</span><span class="n">env</span><span class="o">,</span> <span class="n">x</span><span class="o">)</span> <span class="k">=</span> <span class="n">r</span>
 	<span class="k">_</span> <span class="k">&lt;-</span> <span class="n">app</span><span class="o">.</span><span class="n">interact</span><span class="o">.</span><span class="n">tell</span><span class="o">(</span><span class="n">s</span><span class="s">"Result: ${env}"</span><span class="o">)</span>
   <span class="o">}</span> <span class="k">yield</span> <span class="n">env</span>
-<span class="c1">// &lt;console&gt;:13: warning: Unused import
-// import _root_.fetch.implicits._
-//                               ^
-// &lt;console&gt;:15: warning: Unused import
-// import cats.data.NonEmptyList
-//                  ^
-// &lt;console&gt;:21: warning: Unused import
-// import freestyle.implicits._
-//                            ^
-// &lt;console&gt;:24: warning: Unused import
-// import freestyle.fetch._
-//                        ^
-// &lt;console&gt;:27: warning: Unused import
-// import freestyle.fetch.implicits._
-//                                  ^
-// &lt;console&gt;:31: warning: Unused import
-// import cats.Monad
-//             ^
-// &lt;console&gt;:32: warning: Unused import
-// import interactInterp
-//                                                                              ^
-// &lt;console&gt;:34: warning: Unused import
-// import scala.concurrent._
-//                         ^
-// &lt;console&gt;:37: warning: Unused import
-// import scala.concurrent.duration._
-//                                  ^
-// &lt;console&gt;:39: warning: Unused import
-// import scala.concurrent.ExecutionContext.Implicits.global
-//                                                    ^
-// program: [F[_]](implicit app: App[F])freestyle.FreeS[F,fetch.FetchEnv]
+<span class="c1">// program: [F[_]](implicit app: App[F])freestyle.FreeS[F,fetch.FetchEnv]
 </span>
 <span class="nc">Await</span><span class="o">.</span><span class="n">result</span><span class="o">(</span><span class="n">program</span><span class="o">[</span><span class="kt">App.Op</span><span class="o">].</span><span class="n">exec</span><span class="o">[</span><span class="kt">Future</span><span class="o">],</span> <span class="nc">Duration</span><span class="o">.</span><span class="nc">Inf</span><span class="o">)</span>
-<span class="c1">// &lt;console&gt;:10: warning: Unused import
-// import _root_.fetch._
-//                     ^
-// &lt;console&gt;:15: warning: Unused import
-// import cats.data.NonEmptyList
-//                  ^
-// &lt;console&gt;:23: warning: Unused import
-// import freestyle.fetch._
-//                        ^
-// &lt;console&gt;:29: warning: Unused import
-// import cats.Monad
-//             ^
-// Hello
+<span class="c1">// Hello
 // Fetching 1
-// Result: FetchEnv(InMemoryCache(Map((One,1) -&gt; 1)),Queue(Round(InMemoryCache(Map()),FetchOne(1,One),1,1488841067627,1488841475602)))
-// res6: fetch.FetchEnv = FetchEnv(InMemoryCache(Map((One,1) -&gt; 1)),Queue(Round(InMemoryCache(Map()),FetchOne(1,One),1,1488841067627,1488841475602)))
+// Result: FetchEnv(InMemoryCache(Map((One,1) -&gt; 1)),Queue(Round(InMemoryCache(Map()),FetchOne(1,One),1,1499779422361,1499779624541)))
+// res6: fetch.FetchEnv = FetchEnv(InMemoryCache(Map((One,1) -&gt; 1)),Queue(Round(InMemoryCache(Map()),FetchOne(1,One),1,1499779422361,1499779624541)))
 </span></code></pre>
 </div>
 
@@ -799,55 +250,10 @@
 	<span class="k">_</span> <span class="k">&lt;-</span> <span class="n">app</span><span class="o">.</span><span class="n">interact</span><span class="o">.</span><span class="n">tell</span><span class="o">(</span><span class="n">s</span><span class="s">"Result: ${x}"</span><span class="o">)</span>
 	<span class="n">y</span> <span class="k">&lt;-</span> <span class="n">app</span><span class="o">.</span><span class="n">fetches</span><span class="o">.</span><span class="n">runA</span><span class="o">(</span><span class="n">fetchOne</span><span class="o">(</span><span class="mi">1</span><span class="o">))</span>
   <span class="o">}</span> <span class="k">yield</span> <span class="n">x</span> <span class="o">+</span> <span class="n">y</span>
-<span class="c1">// &lt;console&gt;:10: warning: Unused import
-// import _root_.fetch._
-//                     ^
-// &lt;console&gt;:13: warning: Unused import
-// import _root_.fetch.implicits._
-//                               ^
-// &lt;console&gt;:15: warning: Unused import
-// import cats.data.NonEmptyList
-//                  ^
-// &lt;console&gt;:21: warning: Unused import
-// import freestyle.implicits._
-//                            ^
-// &lt;console&gt;:24: warning: Unused import
-// import freestyle.fetch._
-//                        ^
-// &lt;console&gt;:27: warning: Unused import
-// import freestyle.fetch.implicits._
-//                                  ^
-// &lt;console&gt;:31: warning: Unused import
-// import cats.Monad
-//             ^
-// &lt;console&gt;:32: warning: Unused import
-// import interactInterp
-//                                                                              ^
-// &lt;console&gt;:34: warning: Unused import
-// import scala.concurrent._
-//                         ^
-// &lt;console&gt;:37: warning: Unused import
-// import scala.concurrent.duration._
-//                                  ^
-// &lt;console&gt;:39: warning: Unused import
-// import scala.concurrent.ExecutionContext.Implicits.global
-//                                                    ^
-// program: [F[_]](implicit app: App[F])freestyle.FreeS[F,Int]
+<span class="c1">// program: [F[_]](implicit app: App[F])freestyle.FreeS[F,Int]
 </span>
 <span class="nc">Await</span><span class="o">.</span><span class="n">result</span><span class="o">(</span><span class="n">program</span><span class="o">[</span><span class="kt">App.Op</span><span class="o">].</span><span class="n">exec</span><span class="o">[</span><span class="kt">Future</span><span class="o">],</span> <span class="nc">Duration</span><span class="o">.</span><span class="nc">Inf</span><span class="o">)</span>
-<span class="c1">// &lt;console&gt;:10: warning: Unused import
-// import _root_.fetch._
-//                     ^
-// &lt;console&gt;:15: warning: Unused import
-// import cats.data.NonEmptyList
-//                  ^
-// &lt;console&gt;:23: warning: Unused import
-// import freestyle.fetch._
-//                        ^
-// &lt;console&gt;:29: warning: Unused import
-// import cats.Monad
-//             ^
-// Hello
+<span class="c1">// Hello
 // Fetching 1
 // Result: 1
 // Fetching 1
@@ -866,55 +272,10 @@
 	<span class="k">_</span> <span class="k">&lt;-</span> <span class="n">app</span><span class="o">.</span><span class="n">interact</span><span class="o">.</span><span class="n">tell</span><span class="o">(</span><span class="n">s</span><span class="s">"Result: ${x}"</span><span class="o">)</span>
 	<span class="n">y</span> <span class="k">&lt;-</span> <span class="n">app</span><span class="o">.</span><span class="n">fetches</span><span class="o">.</span><span class="n">runAWithCache</span><span class="o">(</span><span class="n">fetchOne</span><span class="o">(</span><span class="mi">1</span><span class="o">),</span> <span class="n">env</span><span class="o">.</span><span class="n">cache</span><span class="o">)</span>
   <span class="o">}</span> <span class="k">yield</span> <span class="n">x</span> <span class="o">+</span> <span class="n">y</span>
-<span class="c1">// &lt;console&gt;:10: warning: Unused import
-// import _root_.fetch._
-//                     ^
-// &lt;console&gt;:13: warning: Unused import
-// import _root_.fetch.implicits._
-//                               ^
-// &lt;console&gt;:15: warning: Unused import
-// import cats.data.NonEmptyList
-//                  ^
-// &lt;console&gt;:21: warning: Unused import
-// import freestyle.implicits._
-//                            ^
-// &lt;console&gt;:24: warning: Unused import
-// import freestyle.fetch._
-//                        ^
-// &lt;console&gt;:27: warning: Unused import
-// import freestyle.fetch.implicits._
-//                                  ^
-// &lt;console&gt;:31: warning: Unused import
-// import cats.Monad
-//             ^
-// &lt;console&gt;:32: warning: Unused import
-// import interactInterp
-//                                                                              ^
-// &lt;console&gt;:34: warning: Unused import
-// import scala.concurrent._
-//                         ^
-// &lt;console&gt;:37: warning: Unused import
-// import scala.concurrent.duration._
-//                                  ^
-// &lt;console&gt;:39: warning: Unused import
-// import scala.concurrent.ExecutionContext.Implicits.global
-//                                                    ^
-// program: [F[_]](implicit app: App[F])freestyle.FreeS[F,Int]
+<span class="c1">// program: [F[_]](implicit app: App[F])freestyle.FreeS[F,Int]
 </span>
 <span class="nc">Await</span><span class="o">.</span><span class="n">result</span><span class="o">(</span><span class="n">program</span><span class="o">[</span><span class="kt">App.Op</span><span class="o">].</span><span class="n">exec</span><span class="o">[</span><span class="kt">Future</span><span class="o">],</span> <span class="nc">Duration</span><span class="o">.</span><span class="nc">Inf</span><span class="o">)</span>
-<span class="c1">// &lt;console&gt;:10: warning: Unused import
-// import _root_.fetch._
-//                     ^
-// &lt;console&gt;:15: warning: Unused import
-// import cats.data.NonEmptyList
-//                  ^
-// &lt;console&gt;:23: warning: Unused import
-// import freestyle.fetch._
-//                        ^
-// &lt;console&gt;:29: warning: Unused import
-// import cats.Monad
-//             ^
-// Hello
+<span class="c1">// Hello
 // Fetching 1
 // Result: 1
 // res8: Int = 2

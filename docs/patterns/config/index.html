@@ -60,37 +60,13 @@ The current implementation exposes the most important combinators found in <a hr
 <div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="nd">@free</span> <span class="k">trait</span> <span class="nc">IssuesService</span> <span class="o">{</span>
   <span class="k">def</span> <span class="n">states</span><span class="k">:</span> <span class="kt">FS</span><span class="o">[</span><span class="kt">List</span><span class="o">[</span><span class="kt">String</span><span class="o">]]</span>
 <span class="o">}</span>
-<span class="c1">// &lt;console&gt;:13: warning: Unused import
-// import freestyle.implicits._
-//                            ^
-// &lt;console&gt;:16: warning: Unused import
-// import cats._
-//             ^
-// &lt;console&gt;:19: warning: Unused import
-// import cats.implicits._
-//                       ^
-// &lt;console&gt;:21: warning: Unused import
-// import scala.util.Try
-//                   ^
-// defined trait IssuesService
+<span class="c1">// defined trait IssuesService
 // defined object IssuesService
 </span>
 <span class="k">implicit</span> <span class="k">val</span> <span class="n">issuesServiceHandler</span><span class="k">:</span> <span class="kt">IssuesService.Handler</span><span class="o">[</span><span class="kt">Try</span><span class="o">]</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">IssuesService</span><span class="o">.</span><span class="nc">Handler</span><span class="o">[</span><span class="kt">Try</span><span class="o">]</span> <span class="o">{</span>
   <span class="k">def</span> <span class="n">states</span><span class="k">:</span> <span class="kt">Try</span><span class="o">[</span><span class="kt">List</span><span class="o">[</span><span class="kt">String</span><span class="o">]]</span> <span class="k">=</span> <span class="nc">Try</span><span class="o">(</span><span class="nc">List</span><span class="o">(</span><span class="s">"open"</span><span class="o">,</span> <span class="s">"reverted"</span><span class="o">,</span> <span class="s">"in progress"</span><span class="o">,</span> <span class="s">"closed"</span><span class="o">))</span>
 <span class="o">}</span>
-<span class="c1">// &lt;console&gt;:10: warning: Unused import
-// import freestyle._
-//                  ^
-// &lt;console&gt;:13: warning: Unused import
-// import freestyle.implicits._
-//                            ^
-// &lt;console&gt;:16: warning: Unused import
-// import cats._
-//             ^
-// &lt;console&gt;:19: warning: Unused import
-// import cats.implicits._
-//                       ^
-// issuesServiceHandler: IssuesService.Handler[scala.util.Try] = $anon$1@20885e2a
+<span class="c1">// issuesServiceHandler: IssuesService.Handler[scala.util.Try] = $anon$1@27af62f8
 </span></code></pre>
 </div>
 
@@ -98,79 +74,16 @@ The current implementation exposes the most important combinators found in <a hr
 derived from using different algebras:</p>
 
 <div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">freestyle.config._</span>
-<span class="c1">// &lt;console&gt;:10: warning: Unused import
-// import freestyle._
-//                  ^
-// &lt;console&gt;:13: warning: Unused import
-// import freestyle.implicits._
-//                            ^
-// &lt;console&gt;:16: warning: Unused import
-// import cats._
-//             ^
-// &lt;console&gt;:19: warning: Unused import
-// import cats.implicits._
-//                       ^
-// &lt;console&gt;:21: warning: Unused import
-// import scala.util.Try
-//                   ^
-// &lt;console&gt;:22: warning: Unused import
-// import issuesServiceHandler
-//                                                             ^
-// &lt;console&gt;:26: warning: Unused import
-//        import freestyle.config._
-//                                ^
-// import freestyle.config._
+<span class="c1">// import freestyle.config._
 </span>
 <span class="k">import</span> <span class="nn">freestyle.config.implicits._</span>
-<span class="c1">// &lt;console&gt;:10: warning: Unused import
-// import freestyle._
-//                  ^
-// &lt;console&gt;:13: warning: Unused import
-// import freestyle.implicits._
-//                            ^
-// &lt;console&gt;:16: warning: Unused import
-// import cats._
-//             ^
-// &lt;console&gt;:19: warning: Unused import
-// import cats.implicits._
-//                       ^
-// &lt;console&gt;:21: warning: Unused import
-// import scala.util.Try
-//                   ^
-// &lt;console&gt;:22: warning: Unused import
-// import issuesServiceHandler
-//                                                             ^
-// &lt;console&gt;:24: warning: Unused import
-// import freestyle.config._
-//                         ^
-// &lt;console&gt;:29: warning: Unused import
-//        import freestyle.config.implicits._
-//                                          ^
-// import freestyle.config.implicits._
+<span class="c1">// import freestyle.config.implicits._
 </span>
 <span class="nd">@module</span> <span class="k">trait</span> <span class="nc">App</span> <span class="o">{</span>
   <span class="k">val</span> <span class="n">issuesService</span><span class="k">:</span> <span class="kt">IssuesService</span>
   <span class="k">val</span> <span class="n">config</span><span class="k">:</span> <span class="kt">ConfigM</span>
 <span class="o">}</span>
-<span class="c1">// &lt;console&gt;:13: warning: Unused import
-// import freestyle.implicits._
-//                            ^
-// &lt;console&gt;:16: warning: Unused import
-// import cats._
-//             ^
-// &lt;console&gt;:19: warning: Unused import
-// import cats.implicits._
-//                       ^
-// &lt;console&gt;:21: warning: Unused import
-// import scala.util.Try
-//                   ^
-// &lt;console&gt;:24: warning: Unused import
-// import issuesServiceHandler
-//                                                             ^
-// &lt;console&gt;:29: warning: Unused import
-// import freestyle.config.implicits._
-//                                   ^
-// defined trait App
+<span class="c1">// defined trait App
 // defined object App
 </span></code></pre>
 </div>
@@ -183,38 +96,14 @@ derived from using different algebras:</p>
 	<span class="n">config</span> <span class="k">&lt;-</span> <span class="n">app</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">load</span>
 	<span class="n">disallowedStates</span> <span class="k">=</span> <span class="n">config</span><span class="o">.</span><span class="n">stringList</span><span class="o">(</span><span class="s">"disallowedStates"</span><span class="o">)</span>
   <span class="o">}</span> <span class="k">yield</span> <span class="n">currentStates</span><span class="o">.</span><span class="n">filterNot</span><span class="o">(</span><span class="n">disallowedStates</span><span class="o">.</span><span class="n">contains</span><span class="o">)</span>
-<span class="c1">// &lt;console&gt;:13: warning: Unused import
-// import freestyle.implicits._
-//                            ^
-// &lt;console&gt;:16: warning: Unused import
-// import cats._
-//             ^
-// &lt;console&gt;:21: warning: Unused import
-// import scala.util.Try
-//                   ^
-// &lt;console&gt;:22: warning: Unused import
-// import issuesServiceHandler
-//                                                             ^
-// &lt;console&gt;:24: warning: Unused import
-// import freestyle.config._
-//                         ^
-// &lt;console&gt;:27: warning: Unused import
-// import freestyle.config.implicits._
-//                                   ^
-// filteredStates: [F[_]](implicit app: App[F])freestyle.FreeS[F,List[String]]
+<span class="c1">// filteredStates: [F[_]](implicit app: App[F])freestyle.FreeS[F,List[String]]
 </span></code></pre>
 </div>
 
 <p>Once we have a program we can interpret it to our desired runtime, in this case <code class="highlighter-rouge">scala.util.Try</code>:</p>
 
 <div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="n">filteredStates</span><span class="o">[</span><span class="kt">App.Op</span><span class="o">].</span><span class="n">exec</span><span class="o">[</span><span class="kt">Try</span><span class="o">]</span>
-<span class="c1">// &lt;console&gt;:16: warning: Unused import
-// import cats._
-//             ^
-// &lt;console&gt;:24: warning: Unused import
-// import freestyle.config._
-//                         ^
-// res1: scala.util.Try[List[String]] = Success(List(open, in progress))
+<span class="c1">// res1: scala.util.Try[List[String]] = Success(List(open, in progress))
 </span></code></pre>
 </div>
 
