@@ -10,7 +10,7 @@ Algebraic Data Types are the foundation used to define `Free` based applications
 
 When you build an algebra with Freestyle, you only need to concentrate on the API that you want to be exposed as abstract smart constructors, without worrying how they will be implemented.
 
-A trait or abstract class annotated with `@free` is all you need to create your first algebra with Freestyle:
+A trait or abstract class annotated with `@free` or [`@tagless`](../tagless/) is all you need to create your first algebra with Freestyle:
 
 ```tut:book
 import freestyle._

@@ -38,6 +38,7 @@ trait Interpreters {
   implicit def catsFreeRightInjectInstanceLazy[F[_], G[_], H[_]](
       implicit I: Lazy[Inject[F, G]]): Inject[F, Coproduct[H, G, ?]] =
     Inject.catsFreeRightInjectInstance(I.value)
+
 }
 
 trait FreeSInstances {
