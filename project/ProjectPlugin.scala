@@ -74,7 +74,7 @@ object ProjectPlugin extends AutoPlugin {
         (tut in ProjectRef(file("."), "docs")).asRunnableItem),
       resolvers += Resolver.sonatypeRepo("snapshots"),
       scalacOptions ++= scalacAdvancedOptions,
-      scalacOptions ~= (_ filterNot (_ == "-Yliteral-types")),
+      scalacOptions ~= (_ filterNot Set("-Yliteral-types", "-Xlint").contains),
       parallelExecution in Test := false,
       compileOrder in Compile := CompileOrder.JavaThenScala,
       coverageFailOnMinimum := false
