@@ -39,8 +39,6 @@ trait Interpreters {
       implicit I: Lazy[Inject[F, G]]): Inject[F, Coproduct[H, G, ?]] =
     Inject.catsFreeRightInjectInstance(I.value)
 
-  implicit def functionKIdentity[F[_]]: FunctionK[F, F] = FunctionK.id[F]
-
 }
 
 trait FreeSInstances {
