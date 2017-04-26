@@ -127,6 +127,8 @@ implicit val interactionHandlerStackSafe = new Interaction.Handler[Free[Try, ?]]
 We can now safely invoke our program in a stack safe way running it to `Free[Try, ?]` first then to `Try`
 
 ```tut.book
+import cats.arrow.FunctionK
+
 implicit def functionKIdentity[F[_]]: FunctionK[F, F] = FunctionK.id[F]
 
 program[Free[Try, ?]].exec[Try]
