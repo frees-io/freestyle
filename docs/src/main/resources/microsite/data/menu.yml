@@ -85,7 +85,7 @@ options:
         url: docs/integrations/play
 
       - title: Monix
-        url: TODO.html
+        url: docs/integrations/monix
 
       - title: Fetch
         url: docs/integrations/fetch
