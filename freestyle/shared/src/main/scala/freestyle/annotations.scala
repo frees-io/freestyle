@@ -17,11 +17,15 @@
 package freestyle
 
 import scala.annotation.{compileTimeOnly, StaticAnnotation}
+// Uncomment [FS-73] lines and comment the rest to switch this macro to scalameta
+import scala.meta._
+import freestyle.scalameta.freeImplMeta
 import scala.language.experimental.macros
 
 @compileTimeOnly("enable macro paradise to expand @free macro annotations")
 class free extends StaticAnnotation {
   def macroTransform(annottees: Any*): Any = macro freeImpl.free
+  //[FS-73] inline def apply(defn: Any): Any = meta { freeImplMeta.free(defn) }
 }
 
 @compileTimeOnly("enable macro paradise to expand @module macro annotations")
