@@ -139,14 +139,13 @@ object freeImpl {
       q"""
         object ${Eff.toTermName} {
 
-          import _root_.cats.arrow.FunctionK
           import _root_.cats.free.Inject
-          import _root_.freestyle.FreeS
+          import _root_.freestyle.{ FreeS, FSHandler}
 
           sealed trait $OP[$AA] extends scala.Product with java.io.Serializable
           ..${requests.map( _.mkRequestClass(TTs))}
 
-          trait Handler[$MM[_], ..$TTs] extends FunctionK[$OP, $MM] {
+          trait Handler[$MM[_], ..$TTs] extends FSHandler[$OP, $MM] {
             ..${requests.map( _.handlerDef )}
 
             override def apply[$AA]($fa: $OP[$AA]): $MM[$AA] = $fa match {
