@@ -48,6 +48,11 @@ object ProjectPlugin extends AutoPlugin {
     lazy val commonDeps: Seq[ModuleID] = Seq(%%("scalatest") % "test")
   }
 
+  lazy val enableScalaMeta: Seq[Def.Setting[_]] = Seq(
+    addCompilerPlugin("org.scalameta" % "paradise" % "3.0.0-M8" cross CrossVersion.full),
+    libraryDependencies += "org.scalameta" %% "scalameta" % "1.7.0" % Provided,
+    scalacOptions += "-Xplugin-require:macroparadise"
+  )
   override def projectSettings: Seq[Def.Setting[_]] =
     Seq(
       description := "A Cohesive & Pragmatic Framework of FP centric Scala libraries",
@@ -79,5 +84,6 @@ object ProjectPlugin extends AutoPlugin {
       parallelExecution in Test := false,
       compileOrder in Compile := CompileOrder.JavaThenScala,
       coverageFailOnMinimum := false
-    ) ++ scalaMacroDependencies
+    ) ++ scalaMacroDependencies  ++ enableScalaMeta
+
 }
