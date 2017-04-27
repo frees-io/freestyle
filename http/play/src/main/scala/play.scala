@@ -16,12 +16,8 @@
 
 package freestyle.http
 
-import freestyle._
-
-import cats.Monad
-import cats.arrow.FunctionK
 import cats.instances.future._
-
+import freestyle._
 import scala.concurrent.{ExecutionContext, Future}
 
 package play {
@@ -31,10 +27,15 @@ package play {
     implicit def seqToFuture[F[_], A](prog: FreeS[F, A])(
         implicit I: ParInterpreter[F, Future],
         EC: ExecutionContext
+    ): Future[A] = prog.parExec[Future]
+
+    implicit def parSeqToFuture[F[_], A](prog: FreeS[F, A])(
+        implicit I: FSHandler[F, Future],
+        EC: ExecutionContext
     ): Future[A] = prog.exec[Future]
 
     implicit def parToFuture[F[_], A](prog: FreeS.Par[F, A])(
-        implicit I: FunctionK[F, Future],
+        implicit I: FSHandler[F, Future],
         EC: ExecutionContext
     ): Future[A] = prog.exec[Future]
 

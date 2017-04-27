@@ -17,11 +17,9 @@
 package freestyle
 
 import cats.{ Applicative, Monad }
-import cats.arrow.FunctionK
 import cats.data.Coproduct
 import cats.free.{Free, FreeApplicative, Inject}
 import shapeless.Lazy
-
 
 trait Interpreters {
 
@@ -29,10 +27,6 @@ trait Interpreters {
       implicit fm: FSHandler[F, M],
       gm: Lazy[FSHandler[G, M]]): FSHandler[Coproduct[F, G, ?], M] =
     fm or gm.value
-
-  implicit def interpretAp[F[_], M[_]: Monad](
-      implicit fInterpreter: FSHandler[F, M]): FSHandler[FreeApplicative[F, ?], M] =
-    λ[FunctionK[FreeApplicative[F, ?], M]](_.foldMap(fInterpreter))
 
   // workaround for https://github.com/typelevel/cats/issues/1505
   implicit def catsFreeRightInjectInstanceLazy[F[_], G[_], H[_]](

@@ -18,6 +18,7 @@ package freestyle.cache
 
 import cats.arrow.FunctionK
 import cats.{~>, Applicative, Id}
+import freestyle.FSHandler
 import freestyle.cache.hashmap._
 import org.scalatest.{BeforeAndAfterEach, Suite}
 
@@ -29,12 +30,12 @@ trait CacheTestContext extends BeforeAndAfterEach { self: Suite =>
   private[this] implicit val rawMap: KeyValueMap[Id, String, Int] =
     new ConcurrentHashMapWrapper[Id, String, Int]
 
-  private[this] implicit val idInt: Id ~> Id = FunctionK.id[Id]
+  private[this] implicit val idHandler: FSHandler[Id, Id] = FunctionK.id[Id]
 
   protected[this] final val provider = new KeyValueProvider[String, Int]
 
   protected[this] implicit val interpret: provider.CacheM.Handler[Id] =
-    provider.implicits.cacheHandler(rawMap, idInt)
+    provider.implicits.cacheHandler(rawMap, idHandler)
 
   override def beforeEach = rawMap.clear
 

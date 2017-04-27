@@ -104,9 +104,11 @@ class moduleTests extends WordSpec with Matchers {
       import freestyle.implicits._
       import interps.{optionHandler1, optionHandler2}
       "implicitly[FunctionK[M1.Op, Option]]" should compile
+      "implicitly[FSHandler[M1.Op, Option]]" should compile
     }
 
     "[onion] find a FunctionK[Module.Op, ?] providing there is existing ones for it's smart constructors" in {
+      "implicitly[FSHandler[O1.Op, Option]]" should compile
       "implicitly[FunctionK[O1.Op, Option]]" should compile
     }
 

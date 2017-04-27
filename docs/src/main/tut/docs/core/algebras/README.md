@@ -63,7 +63,7 @@ object UserRepository {
 
   def apply[L[_]](implicit c: UserRepository[L]): UserRepository[L] = c
 
-  trait Handler[M[_]] extends FunctionK[Op, M] {
+  trait Handler[M[_]] extends FSHandler[Op, M] {
 
     protected[this] def get(id: Long): M[User]
     protected[this] def save(user: User): M[User]
