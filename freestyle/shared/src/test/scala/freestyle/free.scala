@@ -26,6 +26,18 @@ class freeTests extends WordSpec with Matchers {
 
     import freestyle.implicits._
 
+    "be accepted if applied to an empty trait" in {
+      "@free trait Foo" shouldNot compile
+    }
+
+    "be accepted if applied to a trait with a request" in {
+      "@free trait Foo { def bar(x:Int): FS[Int] }" should compile
+    }
+
+    "be accepted if applied to an abstract class with requests" in {
+      "@free abstract class Foo { def bar(x:Int): FS[Int] }" should compile
+    }
+
     "be rejected if applied to a non-abstract class" in {
       """@free class Foo { val x: Int}""" shouldNot compile
     }

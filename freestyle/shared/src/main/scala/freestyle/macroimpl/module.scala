@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package freestyle
+package freestyle.macroimpl
 
 import scala.annotation.tailrec
 import scala.reflect.macros.whitebox.Context
@@ -43,7 +43,7 @@ final class moduleImpl(val c: Context) {
 
   private[this] lazy val tpnme_EMPTY_PACKAGE_NAME = termNames.EMPTY_PACKAGE_NAME.toTypeName
 
-  private[this] lazy val FreeModuleLike = typeOf[freestyle.FreeModuleLike].typeSymbol
+  private[this] lazy val FreeModuleLike = typeOf[freestyle.macroimpl.FreeModuleLike].typeSymbol
   private[this] lazy val Coproduct      = typeOf[cats.data.Coproduct[Nothing, Nothing, _]].typeSymbol
   private[this] lazy val CopK           = typeOf[iota.CopK[_, _]].typeSymbol
   private[this] lazy val KNil           = typeOf[iota.KNil].typeSymbol
@@ -94,7 +94,7 @@ final class moduleImpl(val c: Context) {
       case q"$mods val $name: $tpt[..$args]" => q"$mods val $name: $tpt[$FF, ..$args]"
       case x => x
     }
-    val parentTrees = parents ++ List(tq"_root_.freestyle.FreeModuleLike", tq"_root_.freestyle.EffectLike[$FF]")
+    val parentTrees = parents ++ List(tq"_root_.freestyle.macroimpl.FreeModuleLike", tq"_root_.freestyle.macroimpl.EffectLike[$FF]")
     ClassDef(mods, name, FFtypeConstructor :: tparams,
       Template(parentTrees, self, body0)).validNel
   }

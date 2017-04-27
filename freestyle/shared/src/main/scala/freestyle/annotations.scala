@@ -17,15 +17,19 @@
 package freestyle
 
 import scala.annotation.{compileTimeOnly, StaticAnnotation}
-import scala.language.experimental.macros
+import freestyle.macroimpl.{ freeImpl, moduleImpl }
 
 @compileTimeOnly("enable macro paradise to expand @free macro annotations")
 class free extends StaticAnnotation {
-  def macroTransform(annottees: Any*): Any = macro freeImpl.free
+  import scala.meta._
+
+  inline def apply(defn: Any): Any = meta { freeImpl.free(defn) }
 }
 
 @compileTimeOnly("enable macro paradise to expand @module macro annotations")
 class module extends StaticAnnotation {
+  import scala.language.experimental.macros
+
   def macroTransform(annottees: Any*): Any = macro moduleImpl.impl
 }
 
