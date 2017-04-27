@@ -16,8 +16,8 @@
 
 package freestyle.http
 
-import freestyle._
 import cats.instances.future._
+import freestyle._
 import scala.concurrent.{ExecutionContext, Future}
 
 package play {
@@ -25,6 +25,11 @@ package play {
   object implicits {
 
     implicit def seqToFuture[F[_], A](prog: FreeS[F, A])(
+        implicit I: ParInterpreter[F, Future],
+        EC: ExecutionContext
+    ): Future[A] = prog.parExec[Future]
+
+    implicit def parSeqToFuture[F[_], A](prog: FreeS[F, A])(
         implicit I: FSHandler[F, Future],
         EC: ExecutionContext
     ): Future[A] = prog.exec[Future]
