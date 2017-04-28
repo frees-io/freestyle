@@ -69,7 +69,8 @@ object ProjectPlugin extends AutoPlugin {
         (compile in Compile).asRunnableItemFull,
         (test in Test).asRunnableItemFull,
         (ScoverageKeys.coverageReport in Test).asRunnableItemFull,
-        (ScoverageKeys.coverageAggregate in Test).asRunnableItemFull
+        (ScoverageKeys.coverageAggregate in Test).asRunnableItemFull,
+        SetSetting(coverageEnabled in Global, false).asRunnableItem
       ) ++ guard(scalaBinaryVersion.value == "2.12")(
         (tut in ProjectRef(file("."), "docs")).asRunnableItem),
       resolvers += Resolver.sonatypeRepo("snapshots"),
