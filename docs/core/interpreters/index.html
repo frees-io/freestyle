@@ -50,7 +50,7 @@ member in your algebras companion.</p>
   <span class="k">def</span> <span class="n">delete</span><span class="o">(</span><span class="n">key</span><span class="k">:</span> <span class="kt">String</span><span class="o">)</span><span class="k">:</span> <span class="kt">KVStoreState</span><span class="o">[</span><span class="kt">Unit</span><span class="o">]</span> <span class="k">=</span>
     <span class="nc">State</span><span class="o">.</span><span class="n">modify</span><span class="o">(</span><span class="k">_</span> <span class="o">-</span> <span class="n">key</span><span class="o">)</span>
 <span class="o">}</span>
-<span class="c1">// kvStoreHandler: KVStore.Handler[KVStoreState] = $anon$1@6cda5604
+<span class="c1">// kvStoreHandler: KVStore.Handler[KVStoreState] = $anon$1@56083590
 </span></code></pre>
 </div>
 
@@ -147,7 +147,7 @@ below:</p>
 <span class="c1">// import freestyle.implicits._
 </span>
 <span class="n">program</span><span class="o">[</span><span class="kt">Backend.Op</span><span class="o">].</span><span class="n">exec</span><span class="o">[</span><span class="kt">KVStoreState</span><span class="o">]</span>
-<span class="c1">// res0: KVStoreState[Option[Int]] = cats.data.StateT@8040822
+<span class="c1">// res0: KVStoreState[Option[Int]] = cats.data.StateT@740acf25
 </span></code></pre>
 </div>
 
