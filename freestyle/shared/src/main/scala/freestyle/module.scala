@@ -98,6 +98,7 @@ object openUnion {
       q"""new {
         ..$parsed
       }"""
+
     c.Expr[Any](expr)
   }
 
@@ -108,6 +109,10 @@ object moduleImpl {
   def impl(c: Context)(annottees: c.Expr[Any]*): c.universe.Tree = {
     import c.universe._
     import c.universe.internal.reificationSupport._
+
+    // debug option to show generated trees before returning
+    lazy val showTrees =
+      !c.inferImplicitValue(typeOf[debug.optionTypes.ShowTrees], true).isEmpty
 
     def fail(msg: String) = c.abort(c.enclosingPosition, msg)
 
@@ -169,7 +174,7 @@ object moduleImpl {
     val noCompanion = "The trait or class annotated with `@module` must have no companion object."
 
     // The main part
-    annottees match {
+    val res = annottees match {
       case Expr(cls: ClassDef) :: Nil =>
         if (cls.mods.hasFlag(Flag.TRAIT | Flag.ABSTRACT)) {
           q"""
@@ -182,5 +187,9 @@ object moduleImpl {
 
       case _ => fail( s"$invalid. $abstractOnly")
     }
+
+    if (showTrees)
+      c.echo(c.enclosingPosition, s"generated tree:\n${showCode(res)}")
+    res
   }
 }

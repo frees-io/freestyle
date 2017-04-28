@@ -39,6 +39,10 @@ object freeImpl {
     val AA = freshTypeName("AA$") // AA is the parameter inside type applications
     val inj = freshTermName("toInj")
 
+    // debug option to show generated trees before returning
+    lazy val showTrees =
+      !c.inferImplicitValue(typeOf[debug.optionTypes.ShowTrees], true).isEmpty
+
     def fail(msg: String) = c.abort(c.enclosingPosition, msg)
 
     // Messages of error
@@ -167,6 +171,9 @@ object freeImpl {
       """
     }
 
-    gen()
+    val res = gen()
+    if (showTrees)
+      c.echo(c.enclosingPosition, s"generated tree:\n${showCode(res)}")
+    res
   }
 }
