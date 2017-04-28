@@ -131,22 +131,11 @@ package object freestyle {
       fa.foldMap(handler)
   }
 
-  /**
-   * Syntax functions for any F[A]
-   */
-  implicit class ParLift[F[_], A](private val fa: F[A]) extends AnyVal {
-
-    /**
-     * Lift an F[A] into a FreeS[F, A]
-     */
-    def freeS: FreeS[F, A] = FreeS.liftFA(fa)
-  }
-
   implicit class FreeSLiftSyntax[G[_], A](ga: G[A]) {
     def liftFS[F[_]](implicit L: FreeSLift[F, G]): FreeS[F, A]        = L.liftFS(ga)
     def liftFSPar[F[_]](implicit L: FreeSLift[F, G]): FreeS.Par[F, A] = L.liftFSPar(ga)
   }
 
-  implicit def freeSPar2Seq[F[_], A](fa: FreeS.Par[F, A]): FreeS[F, A] = fa.freeS
+  implicit def freeSPar2Seq[F[_], A](fa: FreeS.Par[F, A]): FreeS[F, A] = FreeS.liftPar(fa)
 
 }
