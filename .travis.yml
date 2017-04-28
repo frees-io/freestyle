@@ -37,7 +37,6 @@ cache:
   - $HOME/.sbt/boot/scala*
   - $HOME/.sbt/cache
   - $HOME/.sbt/launchers
-  - $HOME/.ivy2
   - $HOME/.coursier
 
 before_cache:
