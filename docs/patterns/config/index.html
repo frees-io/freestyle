@@ -66,7 +66,7 @@ The current implementation exposes the most important combinators found in <a hr
 <span class="k">implicit</span> <span class="k">val</span> <span class="n">issuesServiceHandler</span><span class="k">:</span> <span class="kt">IssuesService.Handler</span><span class="o">[</span><span class="kt">Try</span><span class="o">]</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">IssuesService</span><span class="o">.</span><span class="nc">Handler</span><span class="o">[</span><span class="kt">Try</span><span class="o">]</span> <span class="o">{</span>
   <span class="k">def</span> <span class="n">states</span><span class="k">:</span> <span class="kt">Try</span><span class="o">[</span><span class="kt">List</span><span class="o">[</span><span class="kt">String</span><span class="o">]]</span> <span class="k">=</span> <span class="nc">Try</span><span class="o">(</span><span class="nc">List</span><span class="o">(</span><span class="s">"open"</span><span class="o">,</span> <span class="s">"reverted"</span><span class="o">,</span> <span class="s">"in progress"</span><span class="o">,</span> <span class="s">"closed"</span><span class="o">))</span>
 <span class="o">}</span>
-<span class="c1">// issuesServiceHandler: IssuesService.Handler[scala.util.Try] = $anon$1@48bf8baf
+<span class="c1">// issuesServiceHandler: IssuesService.Handler[scala.util.Try] = $anon$1@361d6097
 </span></code></pre>
 </div>
 

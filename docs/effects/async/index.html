@@ -77,7 +77,7 @@ where something went wrong.</p>
 
 <div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">val</span> <span class="n">getSorted</span><span class="k">:</span> <span class="kt">Author</span> <span class="o">=&gt;</span> <span class="nc">FreeS</span><span class="o">[</span><span class="kt">AsyncM.Op</span>, <span class="kt">List</span><span class="o">[</span><span class="kt">Book</span><span class="o">]]</span> <span class="k">=</span>
   <span class="n">sortedBooks</span><span class="o">[</span><span class="kt">AsyncM.Op</span><span class="o">](</span><span class="nc">Library</span><span class="o">)</span> <span class="k">_</span>
-<span class="c1">// getSorted: Author =&gt; freestyle.FreeS[freestyle.async.AsyncM.Op,List[Book]] = $$Lambda$5303/795158624@5a8b37a8
+<span class="c1">// getSorted: Author =&gt; freestyle.FreeS[freestyle.async.AsyncM.Op,List[Book]] = $$Lambda$5303/1335874537@4ce8c1c6
 </span>
 <span class="k">val</span> <span class="n">dickensBooks</span> <span class="k">=</span> <span class="n">getSorted</span><span class="o">(</span><span class="nc">Author</span><span class="o">(</span><span class="s">"Dickens"</span><span class="o">))</span>
 <span class="c1">// dickensBooks: freestyle.FreeS[freestyle.async.AsyncM.Op,List[Book]] = Free(...)
@@ -156,13 +156,13 @@ where something went wrong.</p>
 <span class="c1">// import monix.execution.Scheduler
 </span>
 <span class="k">implicit</span> <span class="k">val</span> <span class="n">executionContext</span> <span class="k">=</span> <span class="nc">Scheduler</span><span class="o">.</span><span class="nc">Implicits</span><span class="o">.</span><span class="n">global</span>
-<span class="c1">// executionContext: monix.execution.Scheduler = monix.execution.schedulers.AsyncScheduler@44bf0bdc
+<span class="c1">// executionContext: monix.execution.Scheduler = monix.execution.schedulers.AsyncScheduler@25201367
 </span>
 <span class="k">val</span> <span class="n">monixTask1</span> <span class="k">=</span> <span class="n">dickensBooks</span><span class="o">.</span><span class="n">exec</span><span class="o">[</span><span class="kt">MonixTask</span><span class="o">]</span>
-<span class="c1">// monixTask1: monix.eval.Task[List[Book]] = Task.FlatMap(Task.Suspend(monix.eval.Task$$$Lambda$5331/991315125@238c6a9b), monix.eval.Task$$$Lambda$5332/819221157@38a8e0f2)
+<span class="c1">// monixTask1: monix.eval.Task[List[Book]] = Task.FlatMap(Task.Suspend(monix.eval.Task$$$Lambda$5331/1185536429@7b92643d), monix.eval.Task$$$Lambda$5332/989105375@6ec2af4e)
 </span>
 <span class="k">val</span> <span class="n">monixTask2</span> <span class="k">=</span> <span class="n">otherBooks</span><span class="o">.</span><span class="n">exec</span><span class="o">[</span><span class="kt">MonixTask</span><span class="o">]</span>
-<span class="c1">// monixTask2: monix.eval.Task[List[Book]] = Task.FlatMap(Task.Suspend(monix.eval.Task$$$Lambda$5331/991315125@25239bed), monix.eval.Task$$$Lambda$5332/819221157@13a2689c)
+<span class="c1">// monixTask2: monix.eval.Task[List[Book]] = Task.FlatMap(Task.Suspend(monix.eval.Task$$$Lambda$5331/1185536429@4a128b70), monix.eval.Task$$$Lambda$5332/989105375@64d9cd54)
 </span></code></pre>
 </div>
 
@@ -198,7 +198,7 @@ where something went wrong.</p>
 <span class="c1">// import cats.implicits._
 </span>
 <span class="k">val</span> <span class="n">fut1</span> <span class="k">=</span> <span class="n">dickensBooks</span><span class="o">.</span><span class="n">exec</span><span class="o">[</span><span class="kt">Future</span><span class="o">]</span>
-<span class="c1">// fut1: scala.concurrent.Future[List[Book]] = Future(Failure(NoBooksFound: No books found from Dickens))
+<span class="c1">// fut1: scala.concurrent.Future[List[Book]] = Future(&lt;not completed&gt;)
 </span>
 <span class="k">val</span> <span class="n">fut2</span> <span class="k">=</span> <span class="n">otherBooks</span><span class="o">.</span><span class="n">exec</span><span class="o">[</span><span class="kt">Future</span><span class="o">]</span>
 <span class="c1">// fut2: scala.concurrent.Future[List[Book]] = Future(&lt;not completed&gt;)
