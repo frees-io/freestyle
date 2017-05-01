@@ -1,0 +1,174 @@
+<html><head><meta charset="utf-8" /><meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" /><title>Freestyle</title><meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="description" content="A Cohesive &amp; Pragmatic Framework of FP centric Scala libraries" /><meta name="author" content="47 Degrees" /><meta name="og:image" content="/img/poster.png" /><meta name="og:title" content="Freestyle" /><meta name="og:site_name" content="Freestyle" /><meta name="og:url" content="https://47deg.github.io/freestyle/" /><meta name="og:type" content="website" /><meta name="og:description" content="A Cohesive &amp; Pragmatic Framework of FP centric Scala libraries" /><meta name="twitter:image" content="/img/poster.png" /><meta name="twitter:card" content="summary_large_image" /><meta name="twitter:site" content="" /><meta name="kazari-dependencies" content="" /><meta name="kazari-resolvers" content="" /><link rel="icon" type="image/png" href="/img/favicon.png" /><link rel="icon" type="image/png" sizes="16x16" href="/img/favicon16x16.png" /><link rel="icon" type="image/png" sizes="24x24" href="/img/favicon24x24.png" /><link rel="icon" type="image/png" sizes="32x32" href="/img/favicon32x32.png" /><link rel="icon" type="image/png" sizes="48x48" href="/img/favicon48x48.png" /><link rel="icon" type="image/png" sizes="57x57" href="/img/favicon57x57.png" /><link rel="icon" type="image/png" sizes="60x60" href="/img/favicon60x60.png" /><link rel="icon" type="image/png" sizes="64x64" href="/img/favicon64x64.png" /><link rel="icon" type="image/png" sizes="70x70" href="/img/favicon70x70.png" /><link rel="icon" type="image/png" sizes="72x72" href="/img/favicon72x72.png" /><link rel="icon" type="image/png" sizes="76x76" href="/img/favicon76x76.png" /><link rel="icon" type="image/png" sizes="96x96" href="/img/favicon96x96.png" /><link rel="icon" type="image/png" sizes="114x114" href="/img/favicon114x114.png" /><link rel="icon" type="image/png" sizes="120x120" href="/img/favicon120x120.png" /><link rel="icon" type="image/png" sizes="128x128" href="/img/favicon128x128.png" /><link rel="icon" type="image/png" sizes="144x144" href="/img/favicon144x144.png" /><link rel="icon" type="image/png" sizes="150x150" href="/img/favicon150x150.png" /><link rel="icon" type="image/png" sizes="152x152" href="/img/favicon152x152.png" /><link rel="icon" type="image/png" sizes="196x196" href="/img/favicon196x196.png" /><link rel="icon" type="image/png" sizes="310x310" href="/img/favicon310x310.png" /><link rel="icon" type="image/png" sizes="310x150" href="/img/favicon310x150.png" /><link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" /><link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" /><link rel="stylesheet" href="/highlight/styles/dracula.css" /><link rel="stylesheet" href="/css/style.css" /><link rel="stylesheet" href="/css/palette.css" /><link rel="stylesheet" href="/css/codemirror.css" /><link rel="stylesheet" href="/css/kazari-style.css" /><link rel="stylesheet" href="/css/solarized-dark.css" /><link rel="stylesheet" href="/css/dracula.css" /><link rel="stylesheet" href="/css/custom.css" /></head><body class="docs"><div id="wrapper"><div id="sidebar-wrapper"><ul id="sidebar" class="sidebar-nav"><li class="sidebar-brand"><a href="/" class="brand"><div class="brand-wrapper"><span>Freestyle</span></div></a></li> <li><a href="/docs/" class="">Quick Start</a></li> <li><a href="/" class="">Core Concepts</a> <ul class="sub_section"> <li><a href="/docs/core/algebras/" class="">Algebras</a></li> <li><a href="/docs/core/interpreters/" class=" active ">Handlers</a></li> <li><a href="/docs/core/parallelism/" class="">Parallelism</a></li> <li><a href="/docs/core/modules/" class="">Modules</a></li> <li><a href="/docs/core/tagless/" class="">Tagless Final</a></li></ul></li> <li><a href="/docs/effects/" class="">Effects</a> <ul class="sub_section"> <li><a href="/docs/effects/error" class="">Error</a></li> <li><a href="/docs/effects/either" class="">Either</a></li> <li><a href="/docs/effects/option" class="">Option</a></li> <li><a href="/docs/effects/reader" class="">Reader</a></li> <li><a href="/docs/effects/writer" class="">Writer</a></li> <li><a href="/docs/effects/state" class="">State</a></li> <li><a href="/docs/effects/traverse" class="">Traverse</a></li> <li><a href="/docs/effects/validation" class="">Validation</a></li> <li><a href="/docs/effects/async" class="">Async Callbacks</a></li></ul></li> <li><a href="/docs/stack/" class="">Example Target Stack</a></li> <li><a href="/TODO.html" class="">Patterns</a> <ul class="sub_section"> <li><a href="/docs/effects/Cache/" class="">Cache</a></li> <li><a href="/TODO.html" class="">Dependency Injection</a></li> <li><a href="/docs/patterns/config" class="">Configuration</a></li> <li><a href="/docs/patterns/logging" class="">Logging</a></li></ul></li> <li><a href="/docs/integrations" class="">Integrations</a> <ul class="sub_section"> <li><a href="/docs/integrations/cats" class="">Cats</a></li> <li><a href="/docs/integrations/play" class="">Play Framework</a></li> <li><a href="/docs/integrations/monix" class="">Monix</a></li> <li><a href="/docs/integrations/fetch" class="">Fetch</a></li> <li><a href="/docs/integrations/fs2" class="">FS2</a></li> <li><a href="/docs/integrations/doobie" class="">Doobie</a></li> <li><a href="/docs/integrations/slick" class="">Slick</a></li> <li><a href="/docs/integrations/akkahttp" class="">Akka HTTP</a></li> <li><a href="/docs/integrations/finch" class="">Finch</a></li> <li><a href="/docs/integrations/http4s" class="">http4s</a></li></ul></li> <li><a href="/docs/related/" class="">Related Work</a> <ul class="sub_section"> <li><a href="/docs/related/#bibliography" class="">Bibliography</a></li> <li><a href="/docs/related/#Scala" class="">Scala Libraries</a></li></ul></li></ul></div><div id="page-content-wrapper"><div class="nav"><div class="container-fluid"><div class="row"><div class="col-lg-12"><div class="action-menu pull-left clearfix"><a href="#menu-toggle" id="menu-toggle"><i class="fa fa-bars" aria-hidden="true"></i></a></div><ul class="pull-right"><li id="gh-eyes-item" class="hidden-xs"><a href="https://github.com/47deg/freestyle"><i class="fa fa-eye"></i><span>WATCH<span id="eyes" class="label label-default">--</span></span></a></li><li id="gh-stars-item" class="hidden-xs"><a href="https://github.com/47deg/freestyle"><i class="fa fa-star-o"></i><span>STARS<span id="stars" class="label label-default">--</span></span></a></li><li><a href="#" onclick="shareSiteTwitter('Freestyle A Cohesive &amp; Pragmatic Framework of FP centric Scala libraries');"><i class="fa fa-twitter"></i></a></li><li><a href="#" onclick="shareSiteFacebook('Freestyle A Cohesive &amp; Pragmatic Framework of FP centric Scala libraries');"><i class="fa fa-facebook"></i></a></li><li><a href="#" onclick="shareSiteGoogle();"><i class="fa fa-google-plus"></i></a></li></ul></div></div></div></div><div id="content" data-github-owner="47deg" data-github-repo="freestyle"><div class="content-wrapper"><section><h1 id="handlers">Handlers</h1>
+
+<p>Freestyle empowers programs whose runtime can easily be overridden via implicit evidence.</p>
+
+<p>As part of its design, Freestyle is compatible with <code class="highlighter-rouge">Free</code> and the traditional patterns around it. Apps built with Freestyle give developers the freedom to choose automatic or manual algebras, modules, and interpreters, and intermix them as you see fit in applications based on the desired encoding.</p>
+
+<h2 id="implementation">Implementation</h2>
+
+<p>Freestyle automatically generates an abstract definition of an interpreter for each one of the
+algebras annotated with <code class="highlighter-rouge">@free</code>.
+This allows you to build the proper runtime definitions for your algebras by simply extending the <code class="highlighter-rouge">Handler[M[_]]</code>
+member in your algebras companion.</p>
+
+<p>Consider the following algebra adapted to Freestyle from the <a href="http://typelevel.org/cats/datatypes/freemonad.html">Typelevel Cats Free monads examples</a>:</p>
+
+<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">freestyle._</span>
+<span class="c1">// import freestyle._
+</span>
+<span class="k">import</span> <span class="nn">cats.implicits._</span>
+<span class="c1">// import cats.implicits._
+</span>
+<span class="nd">@free</span> <span class="k">trait</span> <span class="nc">KVStore</span> <span class="o">{</span>
+  <span class="k">def</span> <span class="n">put</span><span class="o">[</span><span class="kt">A</span><span class="o">](</span><span class="n">key</span><span class="k">:</span> <span class="kt">String</span><span class="o">,</span> <span class="n">value</span><span class="k">:</span> <span class="kt">A</span><span class="o">)</span><span class="k">:</span> <span class="kt">FS</span><span class="o">[</span><span class="kt">Unit</span><span class="o">]</span>
+  <span class="k">def</span> <span class="n">get</span><span class="o">[</span><span class="kt">A</span><span class="o">](</span><span class="n">key</span><span class="k">:</span> <span class="kt">String</span><span class="o">)</span><span class="k">:</span> <span class="kt">FS</span><span class="o">[</span><span class="kt">Option</span><span class="o">[</span><span class="kt">A</span><span class="o">]]</span>
+  <span class="k">def</span> <span class="n">delete</span><span class="o">(</span><span class="n">key</span><span class="k">:</span> <span class="kt">String</span><span class="o">)</span><span class="k">:</span> <span class="kt">FS</span><span class="o">[</span><span class="kt">Unit</span><span class="o">]</span>
+  <span class="k">def</span> <span class="n">update</span><span class="o">[</span><span class="kt">A</span><span class="o">](</span><span class="n">key</span><span class="k">:</span> <span class="kt">String</span><span class="o">,</span> <span class="n">f</span><span class="k">:</span> <span class="kt">A</span> <span class="o">=&gt;</span> <span class="n">A</span><span class="o">)</span><span class="k">:</span> <span class="kt">FS.Seq</span><span class="o">[</span><span class="kt">Unit</span><span class="o">]</span> <span class="k">=</span>
+    <span class="n">get</span><span class="o">[</span><span class="kt">A</span><span class="o">](</span><span class="n">key</span><span class="o">).</span><span class="n">freeS</span> <span class="n">flatMap</span> <span class="o">{</span>
+      <span class="k">case</span> <span class="nc">Some</span><span class="o">(</span><span class="n">a</span><span class="o">)</span> <span class="k">=&gt;</span> <span class="n">put</span><span class="o">[</span><span class="kt">A</span><span class="o">](</span><span class="n">key</span><span class="o">,</span> <span class="n">f</span><span class="o">(</span><span class="n">a</span><span class="o">)).</span><span class="n">freeS</span>
+      <span class="k">case</span> <span class="nc">None</span> <span class="k">=&gt;</span> <span class="o">().</span><span class="n">pure</span><span class="o">[</span><span class="kt">FS.Seq</span><span class="o">]</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+<span class="c1">// defined trait KVStore
+// defined object KVStore
+</span></code></pre>
+</div>
+
+<p>To define a runtime interpreter for this, we simply extend <code class="highlighter-rouge">KVStore.Handler[M[_]]</code> and implement its abstract members:</p>
+
+<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">cats.data.State</span>
+<span class="c1">// import cats.data.State
+</span>
+<span class="k">type</span> <span class="kt">KVStoreState</span><span class="o">[</span><span class="kt">A</span><span class="o">]</span> <span class="k">=</span> <span class="nc">State</span><span class="o">[</span><span class="kt">Map</span><span class="o">[</span><span class="kt">String</span>, <span class="kt">Any</span><span class="o">]</span>, <span class="kt">A</span><span class="o">]</span>
+<span class="c1">// defined type alias KVStoreState
+</span>
+<span class="k">implicit</span> <span class="k">val</span> <span class="n">kvStoreHandler</span><span class="k">:</span> <span class="kt">KVStore.Handler</span><span class="o">[</span><span class="kt">KVStoreState</span><span class="o">]</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">KVStore</span><span class="o">.</span><span class="nc">Handler</span><span class="o">[</span><span class="kt">KVStoreState</span><span class="o">]</span> <span class="o">{</span>
+  <span class="k">def</span> <span class="n">put</span><span class="o">[</span><span class="kt">A</span><span class="o">](</span><span class="n">key</span><span class="k">:</span> <span class="kt">String</span><span class="o">,</span> <span class="n">value</span><span class="k">:</span> <span class="kt">A</span><span class="o">)</span><span class="k">:</span> <span class="kt">KVStoreState</span><span class="o">[</span><span class="kt">Unit</span><span class="o">]</span> <span class="k">=</span>
+    <span class="nc">State</span><span class="o">.</span><span class="n">modify</span><span class="o">(</span><span class="k">_</span><span class="o">.</span><span class="n">updated</span><span class="o">(</span><span class="n">key</span><span class="o">,</span> <span class="n">value</span><span class="o">))</span>
+  <span class="k">def</span> <span class="n">get</span><span class="o">[</span><span class="kt">A</span><span class="o">](</span><span class="n">key</span><span class="k">:</span> <span class="kt">String</span><span class="o">)</span><span class="k">:</span> <span class="kt">KVStoreState</span><span class="o">[</span><span class="kt">Option</span><span class="o">[</span><span class="kt">A</span><span class="o">]]</span> <span class="k">=</span>
+    <span class="nc">State</span><span class="o">.</span><span class="n">inspect</span><span class="o">(</span><span class="k">_</span><span class="o">.</span><span class="n">get</span><span class="o">(</span><span class="n">key</span><span class="o">).</span><span class="n">map</span><span class="o">(</span><span class="k">_</span><span class="o">.</span><span class="n">asInstanceOf</span><span class="o">[</span><span class="kt">A</span><span class="o">]))</span>
+  <span class="k">def</span> <span class="n">delete</span><span class="o">(</span><span class="n">key</span><span class="k">:</span> <span class="kt">String</span><span class="o">)</span><span class="k">:</span> <span class="kt">KVStoreState</span><span class="o">[</span><span class="kt">Unit</span><span class="o">]</span> <span class="k">=</span>
+    <span class="nc">State</span><span class="o">.</span><span class="n">modify</span><span class="o">(</span><span class="k">_</span> <span class="o">-</span> <span class="n">key</span><span class="o">)</span>
+<span class="o">}</span>
+<span class="c1">// kvStoreHandler: KVStore.Handler[KVStoreState] = $anon$1@7df545c4
+</span></code></pre>
+</div>
+
+<p>As you may have noticed, instead of implementing a Natural transformation <code class="highlighter-rouge">F ~&gt; M</code>, we implement methods that closely resemble each one of the smart constructors in our <code class="highlighter-rouge">@free</code> algebras in Freestyle. This is not an imposition but rather a convenience as the resulting instances are still Natural Transformations.</p>
+
+<p>In the example above, <code class="highlighter-rouge">KVStore.Handler[M[_]]</code> is already a Natural transformation of type <code class="highlighter-rouge">KVStore.Op ~&gt; KVStoreState</code> in which its
+<code class="highlighter-rouge">apply</code> function automatically delegates each step to the abstract method that you are implementing as part of the Handler.</p>
+
+<p>Alternatively, if you would rather implement a natural transformation by hand, you can still do that by choosing not to implement
+<code class="highlighter-rouge">KVStore.Handler[M[_]]</code> and providing one like so:</p>
+
+<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">cats.</span><span class="o">~&gt;</span>
+<span class="c1">// import cats.$tilde$greater
+</span>
+<span class="k">implicit</span> <span class="k">def</span> <span class="n">manualKvStoreHandler</span><span class="k">:</span> <span class="kt">KVStore.Op</span> <span class="kt">~&gt;</span> <span class="kt">KVStoreState</span> <span class="o">=</span> 
+  <span class="k">new</span> <span class="o">(</span><span class="nc">KVStore</span><span class="o">.</span><span class="nc">Op</span> <span class="o">~&gt;</span> <span class="nc">KVStoreState</span><span class="o">)</span> <span class="o">{</span>
+    <span class="k">def</span> <span class="n">apply</span><span class="o">[</span><span class="kt">A</span><span class="o">](</span><span class="n">fa</span><span class="k">:</span> <span class="kt">KVStore.Op</span><span class="o">[</span><span class="kt">A</span><span class="o">])</span><span class="k">:</span> <span class="kt">KVStoreState</span><span class="o">[</span><span class="kt">A</span><span class="o">]</span> <span class="k">=</span>
+      <span class="n">fa</span> <span class="k">match</span> <span class="o">{</span>
+        <span class="k">case</span> <span class="nc">KVStore</span><span class="o">.</span><span class="nc">PutOP</span><span class="o">(</span><span class="n">key</span><span class="o">,</span> <span class="n">value</span><span class="o">)</span> <span class="k">=&gt;</span>
+          <span class="nc">State</span><span class="o">.</span><span class="n">modify</span><span class="o">(</span><span class="k">_</span><span class="o">.</span><span class="n">updated</span><span class="o">(</span><span class="n">key</span><span class="o">,</span> <span class="n">value</span><span class="o">))</span>
+        <span class="k">case</span> <span class="nc">KVStore</span><span class="o">.</span><span class="nc">GetOP</span><span class="o">(</span><span class="n">key</span><span class="o">)</span> <span class="k">=&gt;</span>
+          <span class="nc">State</span><span class="o">.</span><span class="n">inspect</span><span class="o">(</span><span class="k">_</span><span class="o">.</span><span class="n">get</span><span class="o">(</span><span class="n">key</span><span class="o">).</span><span class="n">map</span><span class="o">(</span><span class="k">_</span><span class="o">.</span><span class="n">asInstanceOf</span><span class="o">[</span><span class="kt">A</span><span class="o">]))</span>
+        <span class="k">case</span> <span class="nc">KVStore</span><span class="o">.</span><span class="nc">DeleteOP</span><span class="o">(</span><span class="n">key</span><span class="o">)</span> <span class="k">=&gt;</span>
+          <span class="nc">State</span><span class="o">.</span><span class="n">modify</span><span class="o">(</span><span class="k">_</span> <span class="o">-</span> <span class="n">key</span><span class="o">)</span>
+      <span class="o">}</span>
+<span class="o">}</span>
+<span class="c1">// manualKvStoreHandler: KVStore.Op ~&gt; KVStoreState
+</span></code></pre>
+</div>
+
+<h2 id="composition">Composition</h2>
+
+<p>Freestyle performs automatic composition of interpreters by providing the implicit machinery necessary to derive a Module interpreter
+by the evidence of it’s algebras’ interpreters.
+To illustrate interpreter composition, let’s define a new algebra <code class="highlighter-rouge">Log</code> which we will compose with our <code class="highlighter-rouge">KVStore</code> operations:</p>
+
+<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="nd">@free</span> <span class="k">trait</span> <span class="nc">Log</span> <span class="o">{</span>
+  <span class="k">def</span> <span class="n">info</span><span class="o">(</span><span class="n">msg</span><span class="k">:</span> <span class="kt">String</span><span class="o">)</span><span class="k">:</span> <span class="kt">FS</span><span class="o">[</span><span class="kt">Unit</span><span class="o">]</span>
+  <span class="k">def</span> <span class="n">warn</span><span class="o">(</span><span class="n">msg</span><span class="k">:</span> <span class="kt">String</span><span class="o">)</span><span class="k">:</span> <span class="kt">FS</span><span class="o">[</span><span class="kt">Unit</span><span class="o">]</span>
+<span class="o">}</span>
+<span class="c1">// defined trait Log
+// defined object Log
+</span></code></pre>
+</div>
+
+<p>Once our algebra is defined we can easily write an interpreter for it:</p>
+
+<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">cats.implicits._</span>
+<span class="c1">// import cats.implicits._
+</span>
+<span class="k">implicit</span> <span class="k">def</span> <span class="n">logHandler</span><span class="k">:</span> <span class="kt">Log.Handler</span><span class="o">[</span><span class="kt">KVStoreState</span><span class="o">]</span> <span class="k">=</span> 
+  <span class="k">new</span> <span class="nc">Log</span><span class="o">.</span><span class="nc">Handler</span><span class="o">[</span><span class="kt">KVStoreState</span><span class="o">]</span> <span class="o">{</span>
+    <span class="k">def</span> <span class="n">info</span><span class="o">(</span><span class="n">msg</span><span class="k">:</span> <span class="kt">String</span><span class="o">)</span><span class="k">:</span> <span class="kt">KVStoreState</span><span class="o">[</span><span class="kt">Unit</span><span class="o">]</span> <span class="k">=</span> <span class="n">println</span><span class="o">(</span><span class="s">"INFO: $msg"</span><span class="o">).</span><span class="n">pure</span><span class="o">[</span><span class="kt">KVStoreState</span><span class="o">]</span>
+    <span class="k">def</span> <span class="n">warn</span><span class="o">(</span><span class="n">msg</span><span class="k">:</span> <span class="kt">String</span><span class="o">)</span><span class="k">:</span> <span class="kt">KVStoreState</span><span class="o">[</span><span class="kt">Unit</span><span class="o">]</span> <span class="k">=</span> <span class="n">println</span><span class="o">(</span><span class="s">"WARN: $msg"</span><span class="o">).</span><span class="n">pure</span><span class="o">[</span><span class="kt">KVStoreState</span><span class="o">]</span>
+  <span class="o">}</span>
+<span class="c1">// logHandler: Log.Handler[KVStoreState]
+</span></code></pre>
+</div>
+
+<p>Before we create a program combining all operations, let’s consider both <code class="highlighter-rouge">KVStore</code> and <code class="highlighter-rouge">Log</code> as part of a module in our application:</p>
+
+<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="nd">@module</span> <span class="k">trait</span> <span class="nc">Backend</span> <span class="o">{</span>
+  <span class="k">val</span> <span class="n">store</span><span class="k">:</span> <span class="kt">KVStore</span>
+  <span class="k">val</span> <span class="n">log</span><span class="k">:</span> <span class="kt">Log</span>
+<span class="o">}</span>
+<span class="c1">// defined trait Backend
+// defined object Backend
+</span></code></pre>
+</div>
+
+<p>When <code class="highlighter-rouge">@module</code> is materialized, it will automatically create the <code class="highlighter-rouge">Coproduct</code> that matches the interpreters necessary to run the <code class="highlighter-rouge">Free</code> structure
+below:</p>
+
+<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">def</span> <span class="n">program</span><span class="o">[</span><span class="kt">F</span><span class="o">[</span><span class="k">_</span><span class="o">]](</span><span class="k">implicit</span> <span class="n">B</span><span class="k">:</span> <span class="kt">Backend</span><span class="o">[</span><span class="kt">F</span><span class="o">])</span><span class="k">:</span> <span class="kt">FreeS</span><span class="o">[</span><span class="kt">F</span>, <span class="kt">Option</span><span class="o">[</span><span class="kt">Int</span><span class="o">]]</span> <span class="k">=</span> <span class="o">{</span>
+  <span class="k">import</span> <span class="nn">B.store._</span><span class="o">,</span> <span class="n">B</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="k">_</span>
+  <span class="k">for</span> <span class="o">{</span>
+    <span class="k">_</span> <span class="k">&lt;-</span> <span class="n">put</span><span class="o">(</span><span class="s">"wild-cats"</span><span class="o">,</span> <span class="mi">2</span><span class="o">)</span>
+    <span class="k">_</span> <span class="k">&lt;-</span> <span class="n">info</span><span class="o">(</span><span class="s">"Added wild-cats"</span><span class="o">)</span>
+    <span class="k">_</span> <span class="k">&lt;-</span> <span class="n">update</span><span class="o">[</span><span class="kt">Int</span><span class="o">](</span><span class="s">"wild-cats"</span><span class="o">,</span> <span class="o">(</span><span class="k">_</span> <span class="o">+</span> <span class="mi">12</span><span class="o">))</span>
+    <span class="k">_</span> <span class="k">&lt;-</span> <span class="n">info</span><span class="o">(</span><span class="s">"Updated wild-cats"</span><span class="o">)</span>
+    <span class="k">_</span> <span class="k">&lt;-</span> <span class="n">put</span><span class="o">(</span><span class="s">"tame-cats"</span><span class="o">,</span> <span class="mi">5</span><span class="o">)</span>
+    <span class="n">n</span> <span class="k">&lt;-</span> <span class="n">get</span><span class="o">[</span><span class="kt">Int</span><span class="o">](</span><span class="s">"wild-cats"</span><span class="o">)</span>
+    <span class="k">_</span> <span class="k">&lt;-</span> <span class="n">delete</span><span class="o">(</span><span class="s">"tame-cats"</span><span class="o">)</span>
+    <span class="k">_</span> <span class="k">&lt;-</span> <span class="n">warn</span><span class="o">(</span><span class="s">"Deleted tame-cats"</span><span class="o">)</span>
+  <span class="o">}</span> <span class="k">yield</span> <span class="n">n</span>
+<span class="o">}</span>
+<span class="c1">// program: [F[_]](implicit B: Backend[F])freestyle.FreeS[F,Option[Int]]
+</span></code></pre>
+</div>
+
+<p>Once we have combined our algebras, we can evaluate them by providing implicit evidence of the Coproduct interpreters. <code class="highlighter-rouge">import freestyle.implicits._</code> brings into scope, among others, the necessary implicit definitions to derive a unified interpreter given implicit evidence of each one of the individual algebra’s interpreters:</p>
+
+<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">freestyle.implicits._</span>
+<span class="c1">// import freestyle.implicits._
+</span>
+<span class="n">program</span><span class="o">[</span><span class="kt">Backend.Op</span><span class="o">].</span><span class="n">exec</span><span class="o">[</span><span class="kt">KVStoreState</span><span class="o">]</span>
+<span class="c1">// res0: KVStoreState[Option[Int]] = cats.data.StateT@2a4ccd87
+</span></code></pre>
+</div>
+
+<p>Alternatively, you can build your interpreters by hand if you choose not to use Freestyle’s implicit machinery. This can quickly grow unruly as the number of algebras increase in an application, but it’s also possible, in the spirit of providing two-way compatibility in all areas between manually built ADTs and Natural Transformations, and the ones automatically derived by Freestyle.</p>
+
+<h2 id="a-note-on-performance">A note on performance</h2>
+
+<p>You’ve heard the phrase, <code class="highlighter-rouge">With great power comes great responsibility,</code> this is also true for apps based on <code class="highlighter-rouge">Freestructures</code>. While reifying your actions allows freedom of interpretation, you should also be aware that interpreting many individual steps in the <code class="highlighter-rouge">Free</code> monad can become a performance bottleneck if abused or used in hot spots of an application.</p>
+
+<p>This is because apps built with <code class="highlighter-rouge">Free</code> reify each action in an in-memory data structure prior to being interpreted. This structure is then folded into a final result, applying the Handler natural transformation over each defined action. The entire process is also trampolined, guaranteeing stack safety in the program declaration.</p>
+
+<p>As a rule of thumb, the approach that we’ve seen working in production is modeling your key biz logic concepts as <code class="highlighter-rouge">Free</code> actions and leaving the heavy lifting to the interpreters where needed.
+For most common apps true bottlenecks are IO to Databases, Network, or the file system and this is rarely a concern.</p>
+
+<p>Now that we’ve learned to define our own interpreters, let’s jump into <a href="../parallelism/">Parallelism</a>.</p>
+</section></div></div></div></div><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script><script src="/highlight/highlight.pack.js"></script><script>hljs.configure({
+languages:['scala','java','bash']
+});
+hljs.initHighlighting();
+             </script><script src="/js/main.js"></script><script src="/js/kazari.js"></script><script>
+$(document).ready(function() {
+	kazari.KazariPlugin().decorateCode('https://scala-evaluator-212.herokuapp.com/eval', 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.S2F6YXJp.Jl2eqMfw8IakJF93PjxTbrf-8YUJgX5OoOfy5JHE8Yw', '', 'solarized-dark')
+})
+    </script></body></html>
