@@ -1,0 +1,280 @@
+<html><head><meta charset="utf-8" /><meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" /><title>Freestyle</title><meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="description" content="A Cohesive &amp; Pragmatic Framework of FP centric Scala libraries" /><meta name="author" content="47 Degrees" /><meta name="og:image" content="/img/poster.png" /><meta name="og:title" content="Freestyle" /><meta name="og:site_name" content="Freestyle" /><meta name="og:url" content="https://47deg.github.io/freestyle/" /><meta name="og:type" content="website" /><meta name="og:description" content="A Cohesive &amp; Pragmatic Framework of FP centric Scala libraries" /><meta name="twitter:image" content="/img/poster.png" /><meta name="twitter:card" content="summary_large_image" /><meta name="twitter:site" content="" /><meta name="kazari-dependencies" content="" /><meta name="kazari-resolvers" content="" /><link rel="icon" type="image/png" href="/img/favicon.png" /><link rel="icon" type="image/png" sizes="16x16" href="/img/favicon16x16.png" /><link rel="icon" type="image/png" sizes="24x24" href="/img/favicon24x24.png" /><link rel="icon" type="image/png" sizes="32x32" href="/img/favicon32x32.png" /><link rel="icon" type="image/png" sizes="48x48" href="/img/favicon48x48.png" /><link rel="icon" type="image/png" sizes="57x57" href="/img/favicon57x57.png" /><link rel="icon" type="image/png" sizes="60x60" href="/img/favicon60x60.png" /><link rel="icon" type="image/png" sizes="64x64" href="/img/favicon64x64.png" /><link rel="icon" type="image/png" sizes="70x70" href="/img/favicon70x70.png" /><link rel="icon" type="image/png" sizes="72x72" href="/img/favicon72x72.png" /><link rel="icon" type="image/png" sizes="76x76" href="/img/favicon76x76.png" /><link rel="icon" type="image/png" sizes="96x96" href="/img/favicon96x96.png" /><link rel="icon" type="image/png" sizes="114x114" href="/img/favicon114x114.png" /><link rel="icon" type="image/png" sizes="120x120" href="/img/favicon120x120.png" /><link rel="icon" type="image/png" sizes="128x128" href="/img/favicon128x128.png" /><link rel="icon" type="image/png" sizes="144x144" href="/img/favicon144x144.png" /><link rel="icon" type="image/png" sizes="150x150" href="/img/favicon150x150.png" /><link rel="icon" type="image/png" sizes="152x152" href="/img/favicon152x152.png" /><link rel="icon" type="image/png" sizes="196x196" href="/img/favicon196x196.png" /><link rel="icon" type="image/png" sizes="310x310" href="/img/favicon310x310.png" /><link rel="icon" type="image/png" sizes="310x150" href="/img/favicon310x150.png" /><link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" /><link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" /><link rel="stylesheet" href="/highlight/styles/dracula.css" /><link rel="stylesheet" href="/css/style.css" /><link rel="stylesheet" href="/css/palette.css" /><link rel="stylesheet" href="/css/codemirror.css" /><link rel="stylesheet" href="/css/kazari-style.css" /><link rel="stylesheet" href="/css/solarized-dark.css" /><link rel="stylesheet" href="/css/dracula.css" /><link rel="stylesheet" href="/css/custom.css" /></head><body class="docs"><div id="wrapper"><div id="sidebar-wrapper"><ul id="sidebar" class="sidebar-nav"><li class="sidebar-brand"><a href="/" class="brand"><div class="brand-wrapper"><span>Freestyle</span></div></a></li> <li><a href="/docs/" class="">Quick Start</a></li> <li><a href="/" class="">Core Concepts</a> <ul class="sub_section"> <li><a href="/docs/core/algebras/" class="">Algebras</a></li> <li><a href="/docs/core/interpreters/" class="">Handlers</a></li> <li><a href="/docs/core/parallelism/" class="">Parallelism</a></li> <li><a href="/docs/core/modules/" class="">Modules</a></li> <li><a href="/docs/core/tagless/" class="">Tagless Final</a></li></ul></li> <li><a href="/docs/effects/" class="">Effects</a> <ul class="sub_section"> <li><a href="/docs/effects/error" class="">Error</a></li> <li><a href="/docs/effects/either" class="">Either</a></li> <li><a href="/docs/effects/option" class="">Option</a></li> <li><a href="/docs/effects/reader" class="">Reader</a></li> <li><a href="/docs/effects/writer" class="">Writer</a></li> <li><a href="/docs/effects/state" class="">State</a></li> <li><a href="/docs/effects/traverse" class="">Traverse</a></li> <li><a href="/docs/effects/validation" class="">Validation</a></li> <li><a href="/docs/effects/async" class="">Async Callbacks</a></li></ul></li> <li><a href="/docs/stack/" class="">Example Target Stack</a></li> <li><a href="/TODO.html" class="">Patterns</a> <ul class="sub_section"> <li><a href="/docs/effects/Cache/" class=" active ">Cache</a></li> <li><a href="/TODO.html" class="">Dependency Injection</a></li> <li><a href="/docs/patterns/config" class="">Configuration</a></li> <li><a href="/docs/patterns/logging" class="">Logging</a></li></ul></li> <li><a href="/docs/integrations" class="">Integrations</a> <ul class="sub_section"> <li><a href="/docs/integrations/cats" class="">Cats</a></li> <li><a href="/docs/integrations/play" class="">Play Framework</a></li> <li><a href="/docs/integrations/monix" class="">Monix</a></li> <li><a href="/docs/integrations/fetch" class="">Fetch</a></li> <li><a href="/docs/integrations/fs2" class="">FS2</a></li> <li><a href="/docs/integrations/doobie" class="">Doobie</a></li> <li><a href="/docs/integrations/slick" class="">Slick</a></li> <li><a href="/docs/integrations/akkahttp" class="">Akka HTTP</a></li> <li><a href="/docs/integrations/finch" class="">Finch</a></li> <li><a href="/docs/integrations/http4s" class="">http4s</a></li></ul></li> <li><a href="/docs/related/" class="">Related Work</a> <ul class="sub_section"> <li><a href="/docs/related/#bibliography" class="">Bibliography</a></li> <li><a href="/docs/related/#Scala" class="">Scala Libraries</a></li></ul></li></ul></div><div id="page-content-wrapper"><div class="nav"><div class="container-fluid"><div class="row"><div class="col-lg-12"><div class="action-menu pull-left clearfix"><a href="#menu-toggle" id="menu-toggle"><i class="fa fa-bars" aria-hidden="true"></i></a></div><ul class="pull-right"><li id="gh-eyes-item" class="hidden-xs"><a href="https://github.com/47deg/freestyle"><i class="fa fa-eye"></i><span>WATCH<span id="eyes" class="label label-default">--</span></span></a></li><li id="gh-stars-item" class="hidden-xs"><a href="https://github.com/47deg/freestyle"><i class="fa fa-star-o"></i><span>STARS<span id="stars" class="label label-default">--</span></span></a></li><li><a href="#" onclick="shareSiteTwitter('Freestyle A Cohesive &amp; Pragmatic Framework of FP centric Scala libraries');"><i class="fa fa-twitter"></i></a></li><li><a href="#" onclick="shareSiteFacebook('Freestyle A Cohesive &amp; Pragmatic Framework of FP centric Scala libraries');"><i class="fa fa-facebook"></i></a></li><li><a href="#" onclick="shareSiteGoogle();"><i class="fa fa-google-plus"></i></a></li></ul></div></div></div></div><div id="content" data-github-owner="47deg" data-github-repo="freestyle"><div class="content-wrapper"><section><h2 id="cache">Cache</h2>
+
+<p>The <code class="highlighter-rouge">Cache</code> effect algebra allows interacting with a <em>global</em> key-value data store.
+It declares several abstract operations to read and write data into the store.</p>
+
+<p>In order to enable this algebra, you can depend on <em>freestyle-cache</em>:</p>
+
+<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="n">libraryDependencies</span> <span class="o">+=</span> <span class="s">"com.47deg"</span> <span class="o">%%</span> <span class="s">"freestyle-cache"</span> <span class="o">%</span> <span class="s">"0.1.0"</span>
+</code></pre>
+</div>
+
+<p>This algebra is parametrized on the types <code class="highlighter-rouge">Key</code>, and <code class="highlighter-rouge">Val</code>, for keys and values in the store, respectively.</p>
+
+<pre><code class="language-Scala">class KeyValueProvider[Key, Val] {
+  @free sealed trait CacheM {
+    def get(key: Key):              FS[Option[Val]]
+    def put(key: Key, newVal: Val): FS[Unit]
+    def del(key: Key):              FS[Unit]
+    def has(key: Key):              FS[Boolean]
+    def keys:                       FS[List[Key]]
+    def clear:                      FS[Unit]
+  }
+}
+</code></pre>
+
+<p>To make the algebra parametric on the types of <code class="highlighter-rouge">Key</code> and <code class="highlighter-rouge">Value</code>, we wrap the declaration of the algebra inside a <code class="highlighter-rouge">KeyValueProvider</code>; but note that this class has no instance data.
+The algebra assumes no specific implementation or representation of the data store, since that is a matter for each <em>handler</em> of the algebra.
+For the same reason, it poses no type constraint on <code class="highlighter-rouge">Key</code> or <code class="highlighter-rouge">Val</code> with regards to ordering, hashing, or encoding, but it is assumed that equality is defined for both types.</p>
+
+<h3 id="using-the-cache-effect">Using the Cache Effect</h3>
+
+<p>The following code snippet shows how to import and use the operations from the Cache algebra inside a program.</p>
+
+<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">freestyle._</span>
+<span class="c1">// import freestyle._
+</span>
+<span class="k">import</span> <span class="nn">freestyle.implicits._</span>
+<span class="c1">// import freestyle.implicits._
+</span>
+<span class="k">import</span> <span class="nn">freestyle.cache._</span>
+<span class="c1">// import freestyle.cache._
+</span>
+<span class="k">import</span> <span class="nn">cats.implicits._</span>
+<span class="c1">// import cats.implicits._
+</span>
+<span class="k">val</span> <span class="n">prov</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">KeyValueProvider</span><span class="o">[</span><span class="kt">Char</span>, <span class="kt">Int</span><span class="o">]</span>
+<span class="c1">// prov: freestyle.cache.KeyValueProvider[Char,Int] = freestyle.cache.KeyValueProvider@c633262
+</span>
+<span class="k">import</span> <span class="nn">prov.CacheM</span>
+<span class="c1">// import prov.CacheM
+</span>
+<span class="k">import</span> <span class="nn">prov.implicits._</span>
+<span class="c1">// import prov.implicits._
+</span>
+<span class="k">def</span> <span class="n">loadFrom</span><span class="o">[</span><span class="kt">F</span><span class="o">[</span><span class="k">_</span><span class="o">]</span><span class="kt">:</span> <span class="kt">prov.CacheM</span><span class="o">]</span> <span class="k">=</span> <span class="o">{</span>
+  <span class="k">for</span> <span class="o">{</span>
+    <span class="n">a</span> <span class="k">&lt;-</span> <span class="mf">1.</span><span class="n">pure</span><span class="o">[</span><span class="kt">FreeS</span><span class="o">[</span><span class="kt">F</span>, <span class="kt">?</span><span class="o">]]</span>
+    <span class="n">b</span> <span class="k">&lt;-</span> <span class="nc">CacheM</span><span class="o">[</span><span class="kt">F</span><span class="o">].</span><span class="n">get</span><span class="o">(</span><span class="sc">'a'</span><span class="o">)</span>
+    <span class="n">c</span> <span class="k">&lt;-</span> <span class="mf">1.</span><span class="n">pure</span><span class="o">[</span><span class="kt">FreeS</span><span class="o">[</span><span class="kt">F</span>, <span class="kt">?</span><span class="o">]]</span>
+  <span class="o">}</span> <span class="k">yield</span> <span class="n">a</span> <span class="o">+</span> <span class="n">b</span><span class="o">.</span><span class="n">getOrElse</span><span class="o">(</span><span class="mi">0</span><span class="o">)</span> <span class="o">+</span> <span class="n">c</span>
+<span class="o">}</span>
+<span class="c1">// loadFrom: [F[_]](implicit evidence$1: prov.CacheM[F])cats.free.Free[[β$0$]cats.free.FreeApplicative[F,β$0$],Int]
+</span></code></pre>
+</div>
+
+<h3 id="operations">Operations</h3>
+
+<p>The set of abstract operations of the <code class="highlighter-rouge">Cache</code> algebra are specified as follows.</p>
+
+<ul>
+  <li><code class="highlighter-rouge">get(key: Key): M[Option[Val]]</code> issues a query to the data store on a given key. The result can be <code class="highlighter-rouge">None</code>, if the store has no mapping for that key, or <code class="highlighter-rouge">Some(v)</code> if the key is mapped to the value <code class="highlighter-rouge">v</code>.</li>
+  <li><code class="highlighter-rouge">put(key: Key, v: Value)</code> issues a command to associate a given key to a given value</li>
+  <li><code class="highlighter-rouge">del(key: Key)</code> issues a command to disassociate a given key from the store, if it was present.</li>
+  <li><code class="highlighter-rouge">clear</code> is an abstract operation to disassociate all keys and values in the store.</li>
+  <li><code class="highlighter-rouge">keys</code> is a  query to retrieve a list of keys for which an association is present in the store. No restriction is posed on the order in which the keys will appear on the list, in relation to any ordering for the <code class="highlighter-rouge">Key</code> type.</li>
+</ul>
+
+<h4 id="laws">Laws</h4>
+
+<p>In this section we describe some laws that specify the intended semantics of the <code class="highlighter-rouge">CacheM</code> effect algebra, which any handler or interpreter for it should hold.
+These laws are applicable to any group of independent operations within the <code class="highlighter-rouge">FreeS.Par[F, ?]</code> type, which is the <code class="highlighter-rouge">Applicable</code> fragment.
+However, the laws may not hold in the general <code class="highlighter-rouge">Free[FreeS.Par[F, ?], ?]</code> case, of a <em>sequential</em> group of independent operations.
+Intuitively, a group <code class="highlighter-rouge">FreeS.Par</code> of operations is run atomically on the data store, without interleaving any other operations, and every command’s effect should be immediately visible on succeeding operations.</p>
+
+<p>Each law is an <em>equality</em> between two programs of type <code class="highlighter-rouge">FreeS.Par[F, A]</code>, where equality means that:</p>
+
+<ul>
+  <li>The results of type <code class="highlighter-rouge">A</code> from interpreting both programs should be equal; and</li>
+  <li>their side-effects on the data store are not distinguishable: there is no sequence <code class="highlighter-rouge">FreeS.Par</code> of <code class="highlighter-rouge">CacheM</code> foperations that,
+if attached to both programs to the left or to the right, would yield a different result.</li>
+</ul>
+
+<p>In these laws, we use the binary operators <code class="highlighter-rouge">&lt;*</code>, <code class="highlighter-rouge">*&gt;</code>, and <code class="highlighter-rouge">|@|</code>, to indicate the composition and
+projection of operations on the left, on the right, or on a pair. These operators come from the <code class="highlighter-rouge">cats.syntax.CartesianOps</code> trait.
+We use variables <code class="highlighter-rouge">x</code> and <code class="highlighter-rouge">y</code> to denote keys of type <code class="highlighter-rouge">Key</code>, with <code class="highlighter-rouge">x != y</code>,  and we use <code class="highlighter-rouge">v</code>, or <code class="highlighter-rouge">w</code> to denote values of type <code class="highlighter-rouge">Value</code>.</p>
+
+<h5 id="get">Get</h5>
+
+<p>A <code class="highlighter-rouge">get</code> abstract operation is a query that should not modify the store.
+This can be expressed with these conditions:</p>
+
+<ol>
+  <li>Any <code class="highlighter-rouge">get</code> operation whose result is ignored can be discarded from the program.</li>
+  <li>Consecutive <code class="highlighter-rouge">get</code> operations on a same key <code class="highlighter-rouge">x</code> should give the same result.</li>
+  <li>Consecutive <code class="highlighter-rouge">get</code> operations on different keys should give the same result for each key.</li>
+</ol>
+
+<pre><code class="language-Scala">get(x) *&gt; ff   === ff &lt;* get(x) === ff   // for any other operation ff
+get(x) |@| get(x)  === get(x).map( dup )
+get(x) |@| get(y)  === ( get(y) |@| get(x) ).map( swap )
+</code></pre>
+<p>Where <code class="highlighter-rouge">swap</code> is the function of type <code class="highlighter-rouge">(A,B) =&gt; (B,A)</code>, and <code class="highlighter-rouge">dup</code> is the function of type <code class="highlighter-rouge">A =&gt; (A,A)</code>.</p>
+
+<h5 id="put">Put</h5>
+
+<p>A <code class="highlighter-rouge">put</code> operation on a key in the store is like an assignment to a mutable variable.
+The following laws restrict <code class="highlighter-rouge">put</code> operations and <code class="highlighter-rouge">get</code> operations:</p>
+
+<ol>
+  <li>Two <code class="highlighter-rouge">put</code> operations on the same key are equivalent to the rightmost (last) one.</li>
+  <li>Two <code class="highlighter-rouge">put</code> operations on different keys can be swapped.</li>
+  <li>On a same key <code class="highlighter-rouge">x</code>, a <code class="highlighter-rouge">put</code> followed by the <code class="highlighter-rouge">get</code> is the same as giving the <code class="highlighter-rouge">put</code> value, right after the <code class="highlighter-rouge">put</code> operation.</li>
+  <li>Operations <code class="highlighter-rouge">get</code> and <code class="highlighter-rouge">put</code> on different keys can be swapped.</li>
+</ol>
+
+<pre><code class="language-Scala">put( x, v) *&gt; put( x, w) === put( x, w)
+put( x, v) *&gt; put( y, w) === put( y, w) *&gt; put( x, v)
+put( x, v) *&gt; get( x)    === put( x, v) *&gt; pure( Some(v) )
+put( x, v) *&gt; get( y)    === get( y) &lt;* put( x, v)
+</code></pre>
+
+<h5 id="delete">Delete</h5>
+
+<p>The laws concerning <code class="highlighter-rouge">del</code> with <code class="highlighter-rouge">get</code> are the following ones:</p>
+
+<ul>
+  <li>On a same key <code class="highlighter-rouge">x</code>, the result of a <code class="highlighter-rouge">del</code> right after a <code class="highlighter-rouge">get</code> should be <code class="highlighter-rouge">None</code>:</li>
+  <li>On different keys <code class="highlighter-rouge">x</code> and <code class="highlighter-rouge">n</code>, a <code class="highlighter-rouge">del</code> and a <code class="highlighter-rouge">get</code> can be swapped:</li>
+</ul>
+
+<pre><code class="language-Scala">del( x) *&gt; get( x) === del( x) *&gt; pure( None)
+del( x) *&gt; get( y) === get( y) &lt;* del( x)
+</code></pre>
+
+<p>The following laws concern several <code class="highlighter-rouge">delete</code> interactions, as well as <code class="highlighter-rouge">put</code> and <code class="highlighter-rouge">delete</code> operations.</p>
+
+<ol>
+  <li>Two <code class="highlighter-rouge">del</code> operations on a same key <code class="highlighter-rouge">x</code> are equivalent to just one of them.</li>
+  <li>Two <code class="highlighter-rouge">del</code> operations on different keys <code class="highlighter-rouge">x</code>, <code class="highlighter-rouge">y</code>, can be swapped.</li>
+  <li>On a same key <code class="highlighter-rouge">x</code>, a <code class="highlighter-rouge">put</code> followed by a delete should be equivalent to just the delete.</li>
+  <li>On a same key <code class="highlighter-rouge">x</code>, a <code class="highlighter-rouge">del</code> followed by a <code class="highlighter-rouge">put</code> should be equivalent to just the <code class="highlighter-rouge">put</code> operation.</li>
+  <li>Operations <code class="highlighter-rouge">put</code> and <code class="highlighter-rouge">del</code> on different keys can be reordered swapped.</li>
+</ol>
+
+<pre><code class="language-Scala">del( x) *&gt; del( x) === del( x)                     // 1
+del( x) *&gt; del( y) === del( y) *&gt; del( x)          // 2
+put( x, v) *&gt; del( x) === del( x)                  // 3
+del( x, v) *&gt; put( x, v) === put( x, v)            // 4
+del( x, v) *&gt; put( y, v) === put( y, v) *&gt; del( x) // 5
+</code></pre>
+
+<h5 id="keys-clear">Keys, Clear</h5>
+
+<p>The <code class="highlighter-rouge">clear</code> abstract operation is equivalent to issuing a <code class="highlighter-rouge">del</code> on all existing keys.</p>
+
+<ol>
+  <li>After a <code class="highlighter-rouge">clear</code>, a <code class="highlighter-rouge">get</code> should always return <code class="highlighter-rouge">None</code>:</li>
+  <li>After a <code class="highlighter-rouge">clear</code>, any <code class="highlighter-rouge">del</code> is redundant:</li>
+  <li>Any <code class="highlighter-rouge">put</code> operation right before a <code class="highlighter-rouge">clear</code> can be ignored:</li>
+</ol>
+
+<pre><code class="language-Scala">clear *&gt; get( x) === clear *&gt; pure( None)
+clear *&gt; del( x) === clear
+put( x, v) *&gt; clear === clear
+</code></pre>
+
+<p>The <code class="highlighter-rouge">keys</code> abstract operation, that returns a list of keys of type <code class="highlighter-rouge">Key</code>, must hold the following conditions:</p>
+
+<ol>
+  <li>The list should contain a key if and only if the <code class="highlighter-rouge">get</code> on that key would be <code class="highlighter-rouge">Some</code>.</li>
+  <li>The <code class="highlighter-rouge">keys</code> should not modify the data-store, so any <code class="highlighter-rouge">get</code> following it should give the same result.</li>
+</ol>
+
+<pre><code class="language-Scala">get(x).map(_.isDefined) === keys.map(_.contains(x) ) //1
+keys *&gt; get(x) === get(x)
+</code></pre>
+
+<h3 id="handlers">Handlers</h3>
+
+<h4 id="concurrent-hash-map">Concurrent Hash Map</h4>
+
+<p>The package <code class="highlighter-rouge">freestyle.cache.hashmap</code> in the project <code class="highlighter-rouge">freestyle-cache</code>, contains an in-program (no I/O needed)
+effect-handler / interpreter for the <code class="highlighter-rouge">CacheM</code> effect algebra.
+This interpreter implements the data store with a <a href="https://docs.oracle.com/javase/8/docs/api/java/util/concurrent/ConcurrentHashMap.html">Concurrent Hash Map</a>.
+Note that the <code class="highlighter-rouge">ConcurrentHashMap</code> provides no global locking, nor any facilities for issuing and executing transactionally a set of operations.
+Thus, the laws described above may not hold for this interpreter.</p>
+
+<h5 id="hashable-type-class">Hashable Type Class</h5>
+
+<p>A hash table divides keys according to each key’s hash code. In particular, a <code class="highlighter-rouge">ConcurrentHashMap</code> uses the <code class="highlighter-rouge">hashCode()</code> method
+from the <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html"><code class="highlighter-rouge">Object</code></a> class (<a href="http://www.scala-lang.org/api/current/scala/Any.html"><code class="highlighter-rouge">Any</code></a> in Scala).
+Most classes from the Java or Scala libraries define this method, and in Scala each <code class="highlighter-rouge">case class</code> has a definition based on its fields.
+However, using this methods directly has two problems:</p>
+
+<ul>
+  <li>Because <code class="highlighter-rouge">hashCode</code> is an object method, fixed by the class, we can not use different hash algorithms in different hash tables.</li>
+  <li>Since <code class="highlighter-rouge">Object</code> provides a default implementation of <code class="highlighter-rouge">hashCode</code>, most programmer-defined classes may not override it.</li>
+</ul>
+
+<p>To avoid these problems, we define a Scala typeclass <code class="highlighter-rouge">Hasher[A]</code>, i.e. a  trait with a single <code class="highlighter-rouge">hashCode</code> function, and for building the <code class="highlighter-rouge">CacheM</code> interpreter
+we require an instance of <code class="highlighter-rouge">Hasher</code> for the <code class="highlighter-rouge">Key</code> type. We provide default implementations of this trait for several simple types.</p>
+
+<h4 id="redis">Redis</h4>
+
+<p>The package <code class="highlighter-rouge">freestyle.cache.redis</code> in the project <code class="highlighter-rouge">freestyle-cache-redis</code> provides a handler-interpreter for the <code class="highlighter-rouge">CacheM</code> effect algebra.
+This interpreter implements the data store using a <a href="http://redis.io/">Redis</a> database.
+Access to a Redis server is done through <a href="https://github.com/etaty/rediscala"><code class="highlighter-rouge">rediscala</code></a>, an Akka-based client library for Scala.</p>
+
+<h5 id="codification">Codification</h5>
+
+<p>In the <code class="highlighter-rouge">rediscala</code> client for Redis, the keys used for indexing values are always of type <code class="highlighter-rouge">String</code>; whereas
+a special binary codification is needed for values (of type <code class="highlighter-rouge">Value</code>).
+in the Redis integration we use a couple of typeclasses to transform either keys or values, to and from <code class="highlighter-rouge">String</code>:</p>
+
+<ul>
+  <li>The <code class="highlighter-rouge">Format[A]</code> trait defines the function from the <code class="highlighter-rouge">Key</code> type (the parameter for the <code class="highlighter-rouge">CacheM</code> algebra) to <code class="highlighter-rouge">String</code>.
+The companion object provides a few helper methods and default instances.</li>
+  <li>The <code class="highlighter-rouge">Parse[A]</code> trait is a function to try to <em>parse</em> a <code class="highlighter-rouge">Key</code> from a <code class="highlighter-rouge">String</code>.
+The return type is an <code class="highlighter-rouge">Option[Key]</code>, to indicate the possibility of failure.</li>
+</ul>
+
+<p>These typeclasses are used for transforming</p>
+
+<p>The use of these typeclasses is also intended to avoid coupling the programs based on <code class="highlighter-rouge">freestyle</code> to a particular client library.</p>
+
+<h5 id="batching-and-transactions">Batching and Transactions</h5>
+
+<p>As explained in the guide, any Freestyle program has two levels: the <em>applicative</em> level (in type <code class="highlighter-rouge">FreeS.Par</code>)
+contains sequences of locally independent operations, where the result of one can not be used as argument to another.
+Such dependencies are only handled in the <em>monadic</em> level, in which the results from a group of operations are retrieved
+to be used in another group.</p>
+
+<p>In  <code class="highlighter-rouge">Redis</code>, since each command is issued through the network, retrieving any value incurs in a round-trip latency.
+This reduces performance, and exposes the results of fqueries to concurrent modifications of the data store.
+To avoid these problems, we want the <code class="highlighter-rouge">Redis</code> handler to run any sequence of operations inside a <code class="highlighter-rouge">FreeS.Par</code> so that:</p>
+
+<ul>
+  <li>Commands issued to the Redis server are <em>pipelined</em>, so as to reduce the total roundtrip to one; and</li>
+  <li>the whole command sequence is run <em>atomically</em>, that is, without interleaving any other operation.</li>
+</ul>
+
+<p>Regarding pipelining, the <code class="highlighter-rouge">rediscala</code> client already uses <a href="https://redis.io/topics/pipelining">Redis pipelining</a> to
+issue operations as soon as they are enqueued.
+For atomicity, the implementation runs each <code class="highlighter-rouge">FreeS.Par</code> sequence of independent operations in a
+Redis <a href="https://redis.io/topics/transactions"><em>transaction</em></a>.
+This allows the implementation to hold the laws for the <code class="highlighter-rouge">CacheM</code> effect algebra given above.</p>
+
+<h5 id="kleisli">Kleisli</h5>
+
+<p>To combine several <code class="highlighter-rouge">CacheM</code> operations in a single <code class="highlighter-rouge">FreeS.Par</code>, we use the <a href="https://github.com/typelevel/cats/blob/master/core/src/main/scala/cats/data/Kleisli.scala"><code class="highlighter-rouge">Kleisli</code></a> class from the <code class="highlighter-rouge">cats</code> library.
+Intuitively, for each single <code class="highlighter-rouge">CacheM</code> operation the interpreter does not <em>issue</em> an operation to the client,
+but instead creates a <code class="highlighter-rouge">Function</code> that, when applied to a client, will issue the command through it.</p>
+
+<pre><code class="language-Scala">def del[Key](keys: List[Key])(implicit format: Format[Key]): Ops[Future, Long] =
+  Kleisli((client: KeyCommands) =&gt; client.del(keys.map(format): _*))
+</code></pre>
+
+<p>Given two such <code class="highlighter-rouge">Kleisli</code> objects that correspond to two independent operations, composing them can be done through the
+default instance of <code class="highlighter-rouge">Applicative</code> for <code class="highlighter-rouge">Kleisli</code> in <code class="highlighter-rouge">cats</code>. The result would be a function that takes a  <em>client</em> and issues
+the commands for the operations in the order in which they appear.</p>
+
+</section></div></div></div></div><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script><script src="/highlight/highlight.pack.js"></script><script>hljs.configure({
+languages:['scala','java','bash']
+});
+hljs.initHighlighting();
+             </script><script src="/js/main.js"></script><script src="/js/kazari.js"></script><script>
+$(document).ready(function() {
+	kazari.KazariPlugin().decorateCode('https://scala-evaluator-212.herokuapp.com/eval', 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.S2F6YXJp.Jl2eqMfw8IakJF93PjxTbrf-8YUJgX5OoOfy5JHE8Yw', '', 'solarized-dark')
+})
+    </script></body></html>
