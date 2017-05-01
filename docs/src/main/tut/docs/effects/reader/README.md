@@ -11,8 +11,8 @@ at runtime interpretation.
 
 The `reader` effect supports parametrization to any seed value type while remaining type safe throughout the program declaration. 
 
-The constrains placed by this effect is that there needs to be an implicit evidence of `MonadReader[M[_], R]` 
-for any runtime `M[_]` used in its interpretation. `R` represents the seed value type. 
+There needs to be implicit evidence of `MonadReader[M[_], R]` 
+for any runtime `M[_]` used in its interpretation due to the constraints placed by this effect. `R` represents the seed value type. 
 
 The reader effect comes with two operations `ask` and `reader`.
 

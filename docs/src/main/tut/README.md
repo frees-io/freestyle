@@ -62,7 +62,7 @@ def storedUsers[F[_]]
 <div class="col-md-6" markdown="1">
 # Ready to use integrations
 Freestyle ships with [ready to use algebras and convenient syntax extensions](./docs/integrations) covering most of the application concerns such as persistence, configuration, logging, etc.
-In addition Freestyle includes commonly used FP [effects](./docs/effects) stack such as `option`, `error`, `reader`, `writer`, `state` based on the capabilities of
+In addition, Freestyle includes commonly used FP [effects](./docs/effects) stack such as `option`, `error`, `reader`, `writer`, `state` based on the capabilities of
 the target runtime interpreters.
 
 </div>
