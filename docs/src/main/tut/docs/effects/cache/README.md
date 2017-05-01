@@ -8,6 +8,17 @@ permalink: /docs/effects/Cache/
 
 The `Cache` effect algebra allows interacting with a _global_ key-value data store.
 It declares several abstract operations to read and write data into the store.
+
+In order to enable this algebra, you can depend on _freestyle-cache_:
+
+[comment]: # (Start Replace)
+
+```scala
+libraryDependencies += "com.47deg" %% "freestyle-cache" % "0.1.0"
+```
+
+[comment]: # (End Replace)
+
 This algebra is parametrized on the types `Key`, and `Val`, for keys and values in the store, respectively.
 
 ```Scala
@@ -56,7 +67,7 @@ def loadFrom[F[_]: prov.CacheM] = {
 The set of abstract operations of the `Cache` algebra are specified as follows.
 
 * `get(key: Key): M[Option[Val]]` issues a query to the data store on a given key. The result can be `None`, if the store has no mapping for that key, or `Some(v)` if the key is mapped to the value `v`.
-* `put(key: Key, v: Value)` issues a command to
+* `put(key: Key, v: Value)` issues a command to associate a given key to a given value
 * `del(key: Key)` issues a command to disassociate a given key from the store, if it was present.
 * `clear` is an abstract operation to disassociate all keys and values in the store.
 * `keys` is a  query to retrieve a list of keys for which an association is present in the store. No restriction is posed on the order in which the keys will appear on the list, in relation to any ordering for the `Key` type.
@@ -90,7 +101,7 @@ This can be expressed with these conditions:
 
 ```Scala
 get(x) *> ff   === ff <* get(x) === ff   // for any other operation ff
-get(x) |@| get(x)  === get( x).map( dup )
+get(x) |@| get(x)  === get(x).map( dup )
 get(x) |@| get(y)  === ( get(y) |@| get(x) ).map( swap )
 ```
 Where `swap` is the function of type `(A,B) => (B,A)`, and `dup` is the function of type `A => (A,A)`.
