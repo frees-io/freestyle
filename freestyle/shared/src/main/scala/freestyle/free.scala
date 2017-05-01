@@ -142,23 +142,23 @@ object freeImpl {
           import _root_.cats.free.Inject
           import _root_.freestyle.{ FreeS, FSHandler}
 
-          sealed trait $OP[$AA] extends scala.Product with java.io.Serializable
+          sealed trait Op[$AA] extends scala.Product with java.io.Serializable
           ..${requests.map( _.mkRequestClass(TTs))}
 
-          trait Handler[$MM[_], ..$TTs] extends FSHandler[$OP, $MM] {
+          trait Handler[$MM[_], ..$TTs] extends FSHandler[Op, $MM] {
             ..${requests.map( _.handlerDef )}
 
-            override def apply[$AA]($fa: $OP[$AA]): $MM[$AA] = $fa match {
+            override def apply[$AA]($fa: Op[$AA]): $MM[$AA] = $fa match {
               case ..${requests.map(_.handlerCase )}
             }
           }
 
-          class To[$LL[_], ..$TTs](implicit $ii: Inject[$OP, $LL]) extends $Eff[$LL, ..$tns] {
-            private[this] val $inj = FreeS.inject[$OP, $LL]($ii)
+          class To[$LL[_], ..$TTs](implicit $ii: InjK[Op, $LL]) extends $Eff[$LL, ..$tns] {
+            private[this] val $inj = FreeS.inject[Op, $LL]($ii)
             ..${requests.map(_.raiser )}
           }
 
-          implicit def to[$LL[_], ..$TTs](implicit $ii: Inject[$OP, $LL]):
+          implicit def to[$LL[_], ..$TTs](implicit $ii: InjK[Op, $LL]):
               To[$LL, ..$tns] = new To[$LL, ..$TTs]
 
           def apply[$LL[_], ..$TTs](implicit $ev: $Eff[$LL, ..$tns]): $Eff[$LL, ..$tns] = $ev

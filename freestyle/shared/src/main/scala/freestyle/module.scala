@@ -16,171 +16,191 @@
 
 package freestyle
 
+import scala.annotation.tailrec
 import scala.reflect.macros.whitebox.Context
+
+import cats.data.NonEmptyList
+import cats.data.{ Validated, ValidatedNel }
+import cats.syntax.flatMap._
+import cats.syntax.traverse._
+import cats.syntax.validated._
+import cats.instances.all._
 
 trait FreeModuleLike
 
-object openUnion {
+// $COVERAGE-OFF$ ScalaJS + coverage = fails with NoClassDef exceptions
 
-  def apply[A](a: A): Any = macro materializeImpl[A]
+final class moduleImpl(val c: Context) {
+  import c.universe._
+  import c.universe.internal.reificationSupport.{ ConstantType => _, _ }
+  import compat._
 
-  def materializeImpl[A](c: Context)(a: c.Expr[A])( implicit foo: c.WeakTypeTag[A]): c.Expr[Any] = {
+  private[this] lazy val FF       = freshTypeName("FF")
+  private[this] lazy val LL       = freshTypeName("LL")
+  private[this] lazy val AA       = freshTypeName("AA")
 
-    import c.universe._
-    import c.universe.internal.reificationSupport._
+  private[this] lazy val tpnme_EMPTY_PACKAGE_NAME = termNames.EMPTY_PACKAGE_NAME.toTypeName
 
-    /* This method takes as input the `ClassSymbol` of the `@module`-annotated `trait` and computes the list
-     *  of _algebras_ (`@free`-annotated `trait`s) used, directly or transitively, by the `@module`.
-     *
-     * To recognise if a `val` type is itself  a `@module`, the `@module` macro adds `FreeModuleLike`
-     * trait as a super-class of the `@module`-annotated trait.
-     */
-    def findAlgebras(s: ClassSymbol): List[Type] = {
+  private[this] lazy val FreeModuleLike = typeOf[freestyle.FreeModuleLike].typeSymbol
+  private[this] lazy val Coproduct      = typeOf[cats.data.Coproduct[Nothing, Nothing, _]].typeSymbol
+  private[this] lazy val CopK           = typeOf[iota.CopK[_, _]].typeSymbol
+  private[this] lazy val KNil           = typeOf[iota.KNil].typeSymbol
+  private[this] lazy val KCons          = typeOf[iota.KCons[Nothing, _]].typeSymbol
 
-      def methodsOf(cs: ClassSymbol): List[MethodSymbol] =
-        cs.info.decls.toList.collect { case met: MethodSymbol if met.isAbstract => met }
+  private[this] lazy val wildcard =
+    TypeDef(Modifiers(Flag.PARAM), typeNames.WILDCARD, List(),
+      TypeBoundsTree(EmptyTree, EmptyTree))
 
-      def isModuleFS(cs: ClassSymbol): Boolean =
-        cs.baseClasses.exists( _.name == TypeName("FreeModuleLike") )
+  private[this] lazy val FFtypeConstructor =
+    TypeDef(Modifiers(Flag.PARAM), FF, List(wildcard),
+      TypeBoundsTree(EmptyTree, EmptyTree))
 
-      def fromClass(cs: ClassSymbol): List[Type] =
-        methodsOf(cs).flatMap(x => fromMethod(x.returnType))
-
-      def fromMethod(meth: Type): List[Type] =
-        meth.typeSymbol match {
-          case cs: ClassSymbol =>
-            if (isModuleFS(cs)) fromClass(cs) else List(meth.typeConstructor)
-          case _ => Nil
-        }
-
-      fromClass(s)
-    }
-
-    val AA = freshTypeName("AA$")
-
-    def mkCoproduct(algebras: List[Type]): List[TypeDef] =
-      algebras.map(x => TermName(x.toString) ) match {
-        case Nil => q"type Op[$AA] = Nothing" :: Nil
-
-        case alg :: Nil => q"type Op[$AA] = $alg.Op[$AA]" :: Nil
-
-        case alg0 :: alg1 :: algs =>
-          /* We create several type aliases, where the type names are generated fresh names,
-           * C0, C1, ..., C{n-1}, where n is the length of algebras. We then generate aliases:
-           *
-           * type C1 = A1 |+| A0
-           * type C2 = A2 |+| C1
-           * type Ci = Ai |+| C{i-1}
-           * type C{n-1} = A{n-1} |+| C{n-2
-           * type Op{n-1}= C{n-1}
-           */
-          val ccs: List[TypeName] = algebras.map( _ => freshTypeName("CC$") )
-          val tyDef1 = q"type ${ccs(1)}[$AA] = Coproduct[$alg1.Op, $alg0.Op, $AA]"
-          val tyDefs = algebras.zipWithIndex.drop(2).map { case (alg, pos) =>
-            q"type ${ccs(pos)}[$AA] = Coproduct[$alg.Op, ${ccs(pos-1)}, $AA]"
-          }
-          val opDef = q"type Op[$AA] = ${ccs.last}[$AA]"
-          tyDef1 :: (tyDefs :+ opDef)
-      }
-
-    // findAlgebras starts from the ClassSymbol of the `@moudle-annotated trait
-    val algebras   = findAlgebras(weakTypeOf[A].typeSymbol.companion.asClass)
-    val coproducts = mkCoproduct(algebras)
-    //ugly hack because, as String,  it does not typecheck, early which we need for types to be in scope
-    val parsed     = coproducts.map( cop => c.parse(cop.toString))
-
-    val expr = if (algebras.length >= 2)
-      q"""new {
-        import _root_.cats.data.Coproduct
-        ..$parsed
-      }"""
-    else
-      q"""new {
-        ..$parsed
-      }"""
-    c.Expr[Any](expr)
+  private[this] implicit final class ValidateFlatmap[E, A](v: Validated[E, A]) {
+    def flatMap[EE >: E, B](f: A => Validated[EE, B]): Validated[EE, B] =
+      v.andThen(f)
   }
 
+  def impl(annottees: c.Expr[Any]*): Tree =
+    foldAbort(for {
+      cls             <- decodeAnnotationTarget(annottees.toList)
+      effectTuples     = gatherEffects(cls)
+      classTree       <- makeClassTree(cls)
+      objectTree      <- makeModuleTree(cls, effectTuples)
+    } yield q"$classTree; $objectTree")
+
+  def computeCoproductImpl: Tree =
+    foldAbort(for {
+      tpe             <- compassionateCompanionTypeOf(c.internal.enclosingOwner.owner)
+      fullEffectTypes =  expandEffectType(tpe)
+      fullEffectTrees <- fullEffectTypes.traverse(typeToTypeTree)
+      //coproductTree  = makeCatsCoproduct(fullEffectTrees) // TODO: make this configurable?
+      coproductTree    = makeIotaCoproduct(fullEffectTrees)
+    } yield q"""new { ..$coproductTree }""")
+
+  def compassionateCompanionTypeOf(sym: Symbol): ValidatedNel[String, Type] =
+    if (sym.companion.isType)
+      sym.companion.asType.toType.validNel
+    else
+      s"unable to find companion for $sym when expanding coproduct".invalidNel
+
+  private[this] def decodeAnnotationTarget(annottees: List[c.Expr[Any]]) =
+    annottees.map(_.tree) match {
+      case (cls: ClassDef) :: Nil =>
+        if (cls.mods.hasFlag(Flag.TRAIT | Flag.ABSTRACT)) cls.validNel
+        else
+          "The `@module` annotation can only be applied to a trait or an abstract class.".invalidNel
+
+      case (cls: ClassDef) :: more =>
+        "The trait or class annotated with `@module` must have no companion object.".invalidNel
+      case trees =>
+        "Unexpected trees $trees encountered for `@module` annotation".invalidNel
+  }
+
+  private[this] def gatherEffects(cls: ClassDef): List[(Name, Tree)] =
+    cls.impl.body.collect {
+      case valDef: ValDef if valDef.rhs.isEmpty => (valDef.name, valDef.tpt) }
+
+  private[this] def expandEffectType(tpe: Type): List[Type] = {
+    def isModuleFS(cs: ClassSymbol): Boolean =
+      cs.baseClasses.exists(_.name == TypeName("FreeModuleLike"))
+
+    def expandClass(cs: ClassSymbol): List[Type] =
+      cs.info.decls.toList
+        .collect { case met: MethodSymbol if met.isAbstract => met }
+        .flatMap(x => expandEffectType(x.returnType))
+
+    tpe.typeSymbol match {
+      case cs: ClassSymbol =>
+        if (isModuleFS(cs)) expandClass(cs) else List(tpe.typeConstructor)
+      case _ => Nil
+    }
+  }
+
+  private[this] def typeToTypeTree(tpe: Type): ValidatedNel[String, Tree] =
+    Validated.catchNonFatal(c.parse(tpe.toString)).leftMap(t =>
+      NonEmptyList.of(s"unable to convert type $tpe to tree"))
+
+  private[this] lazy val defaultf0: Tree =
+    q"type Op[$AA] = Nothing"
+  private[this] def defaultf1(tpt: Tree): Tree =
+    q"type Op[$AA] = $tpt.Op[$AA]"
+
+  private[this] def makeCatsCoproduct(
+    tpts: List[Tree]
+  ): Tree = tpts match {
+    case Nil                    => defaultf0
+    case tpt :: Nil             => defaultf1(tpt)
+    case head1 :: head2 :: tail =>
+
+      val max = tail.length
+      def Op(i: Int) = (max - i - 1) match {
+        case 0 => TypeName("Op")
+        case n => TypeName(s"Op$n")
+      }
+
+      tail.zipWithIndex.foldLeft(
+        q"type ${Op(-1)}[$AA] = $Coproduct[$head2.Op, $head1.Op, $AA]": Tree
+      ) { (prefix, tup) =>
+        val (tpt, i) = tup
+        q"""
+          ..$prefix
+          type ${Op(i)}[$AA] = $Coproduct[$tpt.Op, ${Op(i - 1)}, $AA]
+        """
+      }
+  }
+
+  private[this] def makeIotaCoproduct(
+    tpts: List[Tree]
+  ): Tree = tpts match {
+    case Nil        => defaultf0
+    case tpt :: Nil => defaultf1(tpt)
+    case _          =>
+      val klist = tpts.foldLeft(tq"$KNil": Tree)((tail, head) =>
+        tq"$KCons[$head.Op, $tail]")
+      q"type Op[$AA] = $CopK[$klist, $AA]"
+  }
+
+  private[this] def makeClassTree(cls: ClassDef): ValidatedNel[String, ClassDef] = {
+    val ClassDef(mods, name, tparams, Template(parents, self, body)) = cls
+    val body0 = body.map {
+      case q"$mods val $name: $tpt[..$args]" => q"$mods val $name: $tpt[$FF, ..$args]"
+      case x => x
+    }
+    ClassDef(mods, name, FFtypeConstructor :: tparams,
+      Template(parents :+ tq"$FreeModuleLike", self, body0)).validNel
+  }
+
+  private[this] def makeModuleTree(
+    cls: ClassDef,
+    effects: List[(Name, Tree)]
+  ): ValidatedNel[String, ModuleDef] = {
+
+    import cls.{ tparams, name }
+
+    val builtArgs = effects.traverse {
+      case (n, tq"$tpt[..$args]") => q"""${n.toTermName}: $tpt[$LL, ..$args]""".validNel
+      case (n, t) => s"unexpected type $n: $t when building args".invalidNel
+    }
+
+    builtArgs.map(args => q"""
+      object ${name.toTermName} {
+        val _computeOp = _root_.freestyle.moduleImpl.computeCoproduct
+        type Op[$AA] = _computeOp.Op[$AA]
+        def apply[$LL[_], ..$tparams](implicit ev: $name[$LL, ..$tparams]): $name[$LL, ..$tparams] = ev
+        implicit def to[$LL[_], ..$tparams](implicit ..$args): To[$LL, ..$tparams] =
+          new To[$LL, ..$tparams]()
+        class To[$LL[_], ..$tparams](implicit ..$args) extends $name[$LL, ..$tparams]
+      }""")
+  }
+
+  private[this] def foldAbort[A](v: ValidatedNel[String, A]): A =
+    v fold (
+      errors => c.abort(c.enclosingPosition, errors.toList.mkString(", and\n")),
+      a      => a)
 }
 
 object moduleImpl {
-
-  def impl(c: Context)(annottees: c.Expr[Any]*): c.universe.Tree = {
-    import c.universe._
-    import c.universe.internal.reificationSupport._
-
-    def fail(msg: String) = c.abort(c.enclosingPosition, msg)
-
-    def filterEffectVals(trees: Template): List[ValDef]  =
-      trees.collect { case v: ValDef if v.mods.hasFlag(Flag.DEFERRED) => v }
-
-    val LL = freshTypeName("LL$")
-
-    def toImplArg(effVal: ValDef): ValDef = effVal match {
-      case q"$mods val $name: $eff[..$args]" =>
-        q"$mods val $name: $eff[$LL, ..$args]"
-    }
-
-    def mkModuleTrait(cls: ClassDef): ClassDef = {
-      val FF = freshTypeName("FF$")
-      // this is to make a TypeDef for `$FF[_]`
-      val wildcard = TypeDef(Modifiers(Flag.PARAM), typeNames.WILDCARD, List(), TypeBoundsTree(EmptyTree, EmptyTree))
-      val ffTParam = TypeDef(Modifiers(Flag.PARAM), FF, List(wildcard), TypeBoundsTree(EmptyTree, EmptyTree))
-
-      val ClassDef(mods, name, tparams, Template(parents, self, body)) = cls
-
-      val nbody = body.map {
-        case q"$mods val $name: $eff[..$args]" => q"$mods val $name: $eff[$FF, ..$args]"
-        case x => x
-      }
-      val nimpl = Template(parents :+ tq"freestyle.FreeModuleLike", self, nbody)
-      ClassDef(mods, name, ffTParam :: tparams, nimpl)
-    }
-
-    def mkModuleObject(userTrait: ClassDef): ModuleDef = {
-      val mod = userTrait.name
-      val tts = userTrait.tparams
-      val tns = tts.map(_.name)
-      val AA = freshTypeName("AA$")
-      val ev = freshTermName("ev$")
-      val xx = freshTermName("xx$")
-
-      val effArgs: List[ValDef] = filterEffectVals(userTrait.impl).map( v => toImplArg(v) )
-
-      q"""
-        object ${mod.toTermName} {
-
-          val $xx = openUnion.apply(this)
-
-          type Op[$AA] = $xx.Op[$AA]
-
-          class To[$LL[_], ..$tts](implicit ..$effArgs) extends $mod[$LL, ..$tns]
-
-          implicit def to[$LL[_], ..$tts](implicit ..$effArgs): To[$LL, ..$tns] = new To[$LL, ..$tns]()
-
-          def apply[$LL[_], ..$tts](implicit $ev: $mod[$LL, ..$tns]): $mod[$LL, ..$tns] = $ev
-        }
-      """
-    }
-
-    // Error Messages
-    val invalid = "Invalid use of the `@module` annotation"
-    val abstractOnly = "The `@module` annotation can only be applied to a trait or an abstract class."
-    val noCompanion = "The trait or class annotated with `@module` must have no companion object."
-
-    // The main part
-    annottees match {
-      case Expr(cls: ClassDef) :: Nil =>
-        if (cls.mods.hasFlag(Flag.TRAIT | Flag.ABSTRACT)) {
-          q"""
-            ${mkModuleTrait(cls.duplicate)}
-            ${mkModuleObject(cls.duplicate)}
-          """
-        } else fail( s"$invalid in ${cls.name}. $abstractOnly")
-
-      case Expr(cls: ClassDef) :: Expr(_) :: _ => fail( s"$invalid in ${cls.name}. $noCompanion")
-
-      case _ => fail( s"$invalid. $abstractOnly")
-    }
-  }
+  // a nested macro used to delay expansion of the coproduct types until
+  // after the free/module high level code is generated
+  def computeCoproduct: Any = macro moduleImpl.computeCoproductImpl
 }

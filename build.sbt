@@ -11,6 +11,7 @@ lazy val freestyle = (crossProject in file("freestyle"))
   .settings(libraryDependencies ++= Seq(%("scala-reflect", scalaVersion.value)))
   .crossDepSettings(
     commonDeps ++ Seq(
+      %("iota-core"),
       %("cats-free"),
       %("shapeless"),
       %("monix-eval") % "test",
