@@ -5,9 +5,6 @@
 
 [comment]: # (End Badges)
 
-
-EXPERIMENTAL, UNRELEASED WIP.
-
 A Cohesive & Pragmatic Framework of FP centric Scala libraries
 
 # Build purely functional applications and libraries
