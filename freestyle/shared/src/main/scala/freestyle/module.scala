@@ -19,8 +19,11 @@ package freestyle
 import scala.annotation.tailrec
 import scala.reflect.macros.whitebox.Context
 
-import cats.data._
-import cats.syntax.all._
+import cats.data.NonEmptyList
+import cats.data.{ Validated, ValidatedNel }
+import cats.syntax.flatMap._
+import cats.syntax.traverse._
+import cats.syntax.validated._
 import cats.instances.all._
 
 trait FreeModuleLike
@@ -60,9 +63,9 @@ final class moduleImpl(val c: Context) {
   def impl(annottees: c.Expr[Any]*): Tree =
     foldAbort(for {
       cls             <- decodeAnnotationTarget(annottees.toList)
-      effectTuples    <- gatherEffects(cls)
+      effectTuples     = gatherEffects(cls)
       classTree       <- makeClassTree(cls)
-      objectTree      <- makeObjectTree(cls, effectTuples)
+      objectTree      <- makeModuleTree(cls, effectTuples)
     } yield q"$classTree; $objectTree")
 
   def computeCoproductImpl: Tree =
@@ -70,8 +73,8 @@ final class moduleImpl(val c: Context) {
       tpe             <- compassionateCompanionTypeOf(c.internal.enclosingOwner.owner)
       fullEffectTypes =  expandEffectType(tpe)
       fullEffectTrees <- fullEffectTypes.traverse(typeToTypeTree)
-      //coproductTree   <- makeCatsCoproduct(fullEffectTrees) // TODO: make this configurable?
-      coproductTree   <- makeIotaCoproduct(fullEffectTrees)
+      //coproductTree  = makeCatsCoproduct(fullEffectTrees) // TODO: make this configurable?
+      coproductTree    = makeIotaCoproduct(fullEffectTrees)
     } yield q"""new { ..$coproductTree }""")
 
   def compassionateCompanionTypeOf(sym: Symbol): ValidatedNel[String, Type] =
@@ -93,14 +96,13 @@ final class moduleImpl(val c: Context) {
         "Unexpected trees $trees encountered for `@module` annotation".invalidNel
   }
 
-  private[this] def gatherEffects(cls: ClassDef): ValidatedNel[String, List[(Name, Tree)]] =
-    cls.impl.body
-      .collect  { case valDef: ValDef if valDef.rhs.isEmpty => valDef }
-      .traverse { valDef => (valDef.name, valDef.tpt).validNel }
+  private[this] def gatherEffects(cls: ClassDef): List[(Name, Tree)] =
+    cls.impl.body.collect {
+      case valDef: ValDef if valDef.rhs.isEmpty => (valDef.name, valDef.tpt) }
 
   private[this] def expandEffectType(tpe: Type): List[Type] = {
     def isModuleFS(cs: ClassSymbol): Boolean =
-      cs.baseClasses.exists(_.name == TypeName("FreeModuleLike") )
+      cs.baseClasses.exists(_.name == TypeName("FreeModuleLike"))
 
     def expandClass(cs: ClassSymbol): List[Type] =
       cs.info.decls.toList
@@ -118,14 +120,14 @@ final class moduleImpl(val c: Context) {
     Validated.catchNonFatal(c.parse(tpe.toString)).leftMap(t =>
       NonEmptyList.of(s"unable to convert type $tpe to tree"))
 
-  private[this] lazy val defaultf0: ValidatedNel[String, Tree] =
-    q"""type Op[$AA] = Nothing""".validNel
-  private[this] def defaultf1(tpt: Tree): ValidatedNel[String, Tree] =
-    q"""type Op[$AA] = $tpt.Op[$AA]""".validNel
+  private[this] lazy val defaultf0: Tree =
+    q"type Op[$AA] = Nothing"
+  private[this] def defaultf1(tpt: Tree): Tree =
+    q"type Op[$AA] = $tpt.Op[$AA]"
 
   private[this] def makeCatsCoproduct(
     tpts: List[Tree]
-  ): ValidatedNel[String, Tree] = tpts match {
+  ): Tree = tpts match {
     case Nil                    => defaultf0
     case tpt :: Nil             => defaultf1(tpt)
     case head1 :: head2 :: tail =>
@@ -137,28 +139,28 @@ final class moduleImpl(val c: Context) {
       }
 
       tail.zipWithIndex.foldLeft(
-        q"""type ${Op(-1)}[$AA] = $Coproduct[$head2.Op, $head1.Op, $AA]""": Tree
+        q"type ${Op(-1)}[$AA] = $Coproduct[$head2.Op, $head1.Op, $AA]": Tree
       ) { (prefix, tup) =>
         val (tpt, i) = tup
         q"""
           ..$prefix
           type ${Op(i)}[$AA] = $Coproduct[$tpt.Op, ${Op(i - 1)}, $AA]
         """
-      }.validNel
+      }
   }
 
   private[this] def makeIotaCoproduct(
     tpts: List[Tree]
-  ): ValidatedNel[String, Tree] = tpts match {
+  ): Tree = tpts match {
     case Nil        => defaultf0
     case tpt :: Nil => defaultf1(tpt)
     case _          =>
       val klist = tpts.foldLeft(tq"$KNil": Tree)((tail, head) =>
         tq"$KCons[$head.Op, $tail]")
-      q"""type Op[$AA] = $CopK[$klist, $AA]""".validNel
+      q"type Op[$AA] = $CopK[$klist, $AA]"
   }
 
-  private[this] def makeClassTree(cls: ClassDef): ValidatedNel[String, Tree] = {
+  private[this] def makeClassTree(cls: ClassDef): ValidatedNel[String, ClassDef] = {
     val ClassDef(mods, name, tparams, Template(parents, self, body)) = cls
     val body0 = body.map {
       case q"$mods val $name: $tpt[..$args]" => q"$mods val $name: $tpt[$FF, ..$args]"
@@ -168,13 +170,12 @@ final class moduleImpl(val c: Context) {
       Template(parents :+ tq"$FreeModuleLike", self, body0)).validNel
   }
 
-  private[this] def makeObjectTree(
+  private[this] def makeModuleTree(
     cls: ClassDef,
     effects: List[(Name, Tree)]
-  ): ValidatedNel[String, Tree] = {
+  ): ValidatedNel[String, ModuleDef] = {
 
-    val tparams = cls.tparams
-    val name    = cls.name
+    import cls.{ tparams, name }
 
     val builtArgs = effects.traverse {
       case (n, tq"$tpt[..$args]") => q"""${n.toTermName}: $tpt[$LL, ..$args]""".validNel

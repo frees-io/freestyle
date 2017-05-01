@@ -105,12 +105,6 @@ for all it's contained algebras. This allows contained algebras to be composed.
 If you were to create this by hand, in the case of the example above, it will look like this:
 
 ```tut:book
-//import cats.data.Coproduct
-
-//type C01[A] = Coproduct[Cache.Op, Database.Op, A]
-//type C02[A] = Coproduct[Presenter.Op, C01, A]
-//type ManualAppCoproduct[A] = Coproduct[IdValidation.Op, C02, A]
-
 import iota._
 import KList.:::
 type ManualAppCoproduct[A] = CopK[

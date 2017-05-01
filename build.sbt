@@ -9,9 +9,9 @@ lazy val freestyle = (crossProject in file("freestyle"))
   .settings(name := "freestyle")
   .jsSettings(sharedJsSettings: _*)
   .settings(libraryDependencies ++= Seq(%("scala-reflect", scalaVersion.value)))
-  .settings(libraryDependencies += "com.47deg" %%% "iota-core" % "0.0.2")
   .crossDepSettings(
     commonDeps ++ Seq(
+      %("iota-core"),
       %("cats-free"),
       %("shapeless"),
       %("monix-eval") % "test",
