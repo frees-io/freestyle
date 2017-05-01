@@ -39,7 +39,7 @@ trait UserRepository[F[_]] extends freestyle.EffectLike[F] {
 
 object UserRepository {
   import _root_.cats.arrow.FunctionK
-  import _root_.cats.free.Inject
+  import _root_.freestyle.InjK
   import _root_.freestyle.FreeS
 
   sealed trait Op[A] extends Product with Serializable
@@ -47,7 +47,7 @@ object UserRepository {
   final case class Save(user: User) extends Op[User]
   final case class GetAll(filter: String) extends Op[List[User]]
 
-  class To[L[_]](implicit ii: Inject[Op, L]) extends UserRepository[L] {
+  class To[L[_]](implicit ii: InjK[Op, L]) extends UserRepository[L] {
 
     private[this] val inj = FreeS.inject[Op, L](ii)
 
@@ -58,7 +58,7 @@ object UserRepository {
     def getAll(filter: String): FS[List[User]] = inj( GetAll(filter) )
   }
 
-  implicit def to[L[_]](implicit I: Inject[Op, L]): UserRepository[L] =
+  implicit def to[L[_]](implicit I: InjK[Op, L]): UserRepository[L] =
     new To[L]
 
   def apply[L[_]](implicit c: UserRepository[L]): UserRepository[L] = c
