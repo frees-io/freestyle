@@ -9,11 +9,11 @@ permalink: /docs/effects/traverse/
 Traverse acts as a generator and works with any `G[_]` for which a `cats.Foldable` instance is available.
 The target runtime `M[_]` requires a `MonadCombine[M]` instance.
 
-Traverse includes two basic operations `fromTraversable` and `empty`
+Traverse includes two basic operations `fromTraversable` and `empty`.
 
 ### fromTraversable
 
-`fromTraversable` allows lifting of any `G[_]: Foldable` into the context of `FreeS`
+`fromTraversable` allows the lifting of any `G[_]: Foldable` into the context of `FreeS`:
 
 ```tut:book
 import freestyle._
@@ -35,7 +35,7 @@ programTraverse[TraverseM.Op].exec[List]
 
 ### empty
 
-`empty` allows short circuiting of programs providing the empty value for the `G[_]` through the final `MonadCombine`.
+`empty` allows the short circuiting of programs providing the empty value for the `G[_]` through the final `MonadCombine`.
 In the same way as `OptionM#none`, the empty value is determined by how the `MonadCombine` instance for the final `M[_]`
 is implemented.
 

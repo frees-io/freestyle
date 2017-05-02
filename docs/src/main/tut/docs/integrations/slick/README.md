@@ -85,7 +85,7 @@ Only using `SlickM` is not exactly useful in this case as it just adds an extra 
 }
 ```
 
-A `Handler[Future]` for `Calc` :
+A `Handler[Future]` for `Calc`:
 
 ```tut:book
 implicit val calcHandler: Calc.Handler[Future] =

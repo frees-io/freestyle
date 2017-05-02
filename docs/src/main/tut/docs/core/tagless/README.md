@@ -6,11 +6,11 @@ permalink: /docs/core/tagless/
 
 # Tagless Final
 
-Freestyle supports additional encodings beside Free monads to achieve pure functional applications and libraries.
+Freestyle supports additional encodings besides Free monads to achieve pure functional applications and libraries.
 
 Tagless Final is among these and remains syntactically similar to `@free`.
 
-To declare an algebra in the Tagless final encoding you need to depend on `freestyle-tagless`.
+To declare an algebra in the Tagless final encoding, you need to depend on `freestyle-tagless`.
 
 ## Dependencies
 
@@ -20,13 +20,13 @@ addCompilerPlugin("org.scalamacros" % "paradise" % "2.1.0" cross CrossVersion.fu
 
 [comment]: # (Start Replace)
 
-For Scala.jvm
+For Scala.jvm:
 
 ```scala
 libraryDependencies += "com.47deg" %% "freestyle-tagless" % "0.1.0"
 ```
 
-For Scala.js
+For Scala.js:
 
 ```scala
 libraryDependencies += "com.47deg" %%% "freestyle-tagless" % "0.1.0"
@@ -55,8 +55,8 @@ import cats.implicits._
 }
 ```
 
-Once your `@tagless` algebras are defined you can start building programs that rely upon implicit evidence of those algebras
-being present for the target runtime monad you are planning to interpret to.
+Once your `@tagless` algebras are defined, you can start building programs that rely upon implicit evidence of those algebras
+being present, for the target runtime monad you are planning to interpret to.
 
 ```tut:book
 def program[F[_]: Monad](implicit validation : Validation[F], interaction: Interaction[F]) = {
@@ -73,13 +73,13 @@ def program[F[_]: Monad](implicit validation : Validation[F], interaction: Inter
 }
 ```
 
-Note that unlike in `@free` `F[_]` here refers to the target runtime monad. This is to provide an allocation free model where your
+Note that unlike in `@free` `F[_]`, here it refers to the target runtime monad. This is to provide an allocation free model where your
 ops are not being reified and then interpreted. This allocation step in Free monads is what allows them to be stack-safe.
 The tagless final encoding with direct style syntax is as stack-safe as the target `F[_]` you are interpreting to.
 
 ## Interpretation
 
-Once our `@tagless` algebras are defined we can provide `Handler` instances in the same way we do with `@free`.
+Once our `@tagless` algebras are defined, we can provide `Handler` instances in the same way we do with `@free`.
 
 ```tut:book
 import scala.util.Try
@@ -95,7 +95,7 @@ implicit val interactionHandler = new Interaction.Handler[Try] {
 }
 ```
 
-At this point we can run our pure programs at the edge of the world.
+At this point, we can run our pure programs at the edge of the world.
 
 ```tut:book
 program[Try]
@@ -107,8 +107,8 @@ Freestyle provides two strategies to make `@tagless` encoded algebras stack safe
 
 ### Interpreting to a stack safe monad
 
-The handlers above are not stack safe because `Try` is not stack-safe. Luckily we can rewrite our interpreters to 
-interpret to `Free[Try, ?]` instead. This small penalty in a few extra allocations will make our programs stack safe.
+The handlers above are not stack safe because `Try` is not stack-safe. Luckily, we can rewrite our interpreters to 
+interpret to `Free[Try, ?]` instead. This small penalty and a few extra allocations will make our programs stack safe.
 
 ```tut:book
 import cats.free.Free
@@ -124,7 +124,7 @@ implicit val interactionHandlerStackSafe = new Interaction.Handler[Free[Try, ?]]
 }
 ```
 
-We can now safely invoke our program in a stack safe way running it to `Free[Try, ?]` first then to `Try`
+We can now safely invoke our program in a stack safe way, running it to `Free[Try, ?]` first then to `Try`:
 
 ```tut.book
 import cats.arrow.FunctionK
@@ -138,10 +138,10 @@ program[Free[Try, ?]].exec[Try]
 
 Freestyle comes with built in support to compose `@free` and `@tagless` algebras.
 
-For every `@tagless` algebra there is also a free based representation that is stack-safe by nature and that can be used
+For every `@tagless` algebra, there is also a free-based representation that is stack-safe by nature, and that can be used
 to lift `@tagless` algebras to the context of application where `@free` and `@tagless` algebras coexist.
 
-Let's redefine `program` to support `LoggingM` which is a `@free` defined algebra of logging operations.
+Let's redefine `program` to support `LoggingM` which is a `@free` defined algebra of logging operations:
 
 ```tut:book
 import freestyle.logging._
@@ -166,12 +166,12 @@ def program[F[_]]
 }
 ```
 
-Since `Validation` and `Interaction` where `@tagless` algebras we need their `StackSafe` representation in order to combine
-then with `@free` algebras.
+Since `Validation` and `Interaction` were `@tagless` algebras, we need their `StackSafe` representation in order to combine
+them with `@free` algebras.
 
 ### Interpreting combined `@tagless` and `@free` algebras
 
-When combining `@tagless` and `@free` algebras we need all algebras to be considered in the final Coproduct we are interpreting to.
+When combining `@tagless` and `@free` algebras, we need all algebras to be considered in the final Coproduct we are interpreting to.
 We can simply use tagless's `.StackSafe` representation in modules so they are considered for the final Coproduct.
 
 ```tut:book
@@ -182,7 +182,7 @@ We can simply use tagless's `.StackSafe` representation in modules so they are c
 }
 ```
 
-Once all of our algebras are considered we can execute our programs
+Once all of our algebras are considered, we can execute our programs
 
 ```tut:book
 program[App.Op].exec[Try]

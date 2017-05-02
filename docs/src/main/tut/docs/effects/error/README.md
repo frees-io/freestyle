@@ -6,18 +6,17 @@ permalink: /docs/effects/error/
 
 ## ErrorM
 
-The error effect allows short circuiting of programs and handling invocations which can potentially result in runtime exceptions.
-It includes three basic operations `either`, `error` and `catchNonFatal`.
+The error effect allows the short circuiting of programs and handling invocations which can potentially result in runtime exceptions.
+It includes three basic operations `either`, `error`, and `catchNonFatal`.
 
-The constrains placed by this effect is that there needs to be an implicit evidence of `MonadError[M[_], Throwable]` 
-for `Target` or any other runtime `M[_]` used in interpretation. In the example below this constrain is satisfied by
-`import cats.implicits._` which provides a `MonadError` instance for `Either[Throwable, ?]`. 
-Multiple types such as `Future`, `monix.eval.Task` and even more complex transformers stacks are capable of satisfying these constrains.
+The requirement of implicit evidence of `MonadError[M[_], Throwable]` for `Target` or any other runtime `M[_]` used in interpretation is a constraint placed by this effect. 
+
+In the example below, this constraint is satisfied by
+`import cats.implicits._` which provides a `MonadError` instance for `Either[Throwable, ?]`. Multiple types such as `Future`, `monix.eval.Task`, and even more complex transformer stacks are capable of satisfying these constraints.
 
 ### either
 
-`either` allows us to lift values of `Either[Throwable, ?]` into the context of `FreeS` raising an error short circuiting 
-the program if the value is a `Left(throwable)` or continuing with the computation in the case of a `Right(a)` 
+`either` allows us to lift values of `Either[Throwable, ?]` into the context of `FreeS`,  raising an error causing the program to short circuit if the value is a `Left(throwable)` or continuing with the computation in the case of a `Right(a)`. 
 
 ```tut:book
 import freestyle._
@@ -54,8 +53,7 @@ continueWithRightValue[ErrorM.Op].exec[Target]
 
 ### error
 
-If you want so simply raise an error without throwing an exception you may use the `error` operation which short circuits
-the program. 
+If you simply want to raise an error without throwing an exception, you can use the `error` operation which short circuits the program.
 
 ```tut:book
 def shortCircuitWithError[F[_]: ErrorM] =
@@ -70,9 +68,9 @@ shortCircuitWithError[ErrorM.Op].exec[Target]
 
 ### catchNonFatal
 
-`catchNonFatal` allows capturing of exception in computations that are not guaranteed to succeed and may potentially throw
+`catchNonFatal` allows the capturing of exception in computations that are not guaranteed to succeed and may potentially throw
 a runtime exception when interacting with unprincipled APIs which signal errors as thrown exceptions.
-Not all subclass of `java.lang.Throwable` are captured by `catchNonFatal`, as its name implies just those that are considered
+Not all subclasses of `java.lang.Throwable` are captured by `catchNonFatal`, as its name implies just those that are considered
 in `scala.util.control.NonFatal`.
 
 `catchNonFatal` expects a `cats.Eval` value which holds a lazy computation.
