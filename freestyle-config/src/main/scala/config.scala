@@ -20,19 +20,24 @@ import scala.collection.JavaConverters._
 import scala.concurrent.duration._
 
 import cats.MonadError
-import com.typesafe.config.ConfigFactory
+import cats.syntax.either._
+import com.typesafe.config.{ConfigException, ConfigFactory}
 
 object config {
 
-  sealed trait Config {
-    def hasPath(path: String): Boolean
-    def config(path: String): Option[Config]
-    def string(path: String): Option[String]
-    def boolean(path: String): Option[Boolean]
-    def int(path: String): Option[Int]
-    def double(path: String): Option[Double]
-    def stringList(path: String): List[String]
-    def duration(path: String, unit: TimeUnit): Option[Long]
+  sealed abstract class Config {
+    def hasPath(path: String): Config.Result[Boolean]
+    def config(path: String): Config.Result[Config]
+    def string(path: String): Config.Result[String]
+    def boolean(path: String): Config.Result[Boolean]
+    def int(path: String): Config.Result[Int]
+    def double(path: String): Config.Result[Double]
+    def stringList(path: String): Config.Result[List[String]]
+    def duration(path: String, unit: TimeUnit): Config.Result[Long]
+  }
+
+  object Config {
+    type Result[A] = Either[ConfigException, A]
   }
 
   @free sealed trait ConfigM {
@@ -45,17 +50,20 @@ object config {
 
     private[config] def loadConfig(c: com.typesafe.config.Config): Config = new Config {
 
-      def hasPath(path: String): Boolean         = c.hasPath(path)
-      def config(path: String): Option[Config]   = Option(loadConfig(c.getConfig(path)))
-      def string(path: String): Option[String]   = Option(c.getString(path))
-      def boolean(path: String): Option[Boolean] = Option(c.getBoolean(path))
-      def int(path: String): Option[Int]         = Option(c.getInt(path))
-      def double(path: String): Option[Double]   = Option(c.getDouble(path))
-      def stringList(path: String): List[String] = c.getStringList(path).asScala.toList
-      def duration(path: String, unit: TimeUnit): Option[Long] =
-        Option(c.getDuration(path, unit))
-
+      def hasPath(path: String): Config.Result[Boolean] = catchConfig(c.hasPath(path))
+      def config(path: String): Config.Result[Config]   = catchConfig(loadConfig(c.getConfig(path)))
+      def string(path: String): Config.Result[String]   = catchConfig(c.getString(path))
+      def boolean(path: String): Config.Result[Boolean] = catchConfig(c.getBoolean(path))
+      def int(path: String): Config.Result[Int]         = catchConfig(c.getInt(path))
+      def double(path: String): Config.Result[Double]   = catchConfig(c.getDouble(path))
+      def stringList(path: String): Config.Result[List[String]] =
+        catchConfig(c.getStringList(path).asScala.toList)
+      def duration(path: String, unit: TimeUnit): Config.Result[Long] =
+        catchConfig(c.getDuration(path, unit))
     }
+
+    private[config] def catchConfig[A](a: => A): Config.Result[A] =
+      Either.catchOnly[ConfigException](a)
 
     private[config] lazy val underlying = loadConfig(ConfigFactory.load())
 

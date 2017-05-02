@@ -45,11 +45,11 @@ class ConfigTests extends AsyncWordSpec with Matchers {
         a   <- app.nonConfig.x
         cfg <- app.configM.parseString("{n = 1}")
       } yield cfg.int("n").map(_ + a)
-      program.exec[Future] map { _ shouldBe Some(1 + 1) }
+      program.exec[Future] map { _ shouldBe Right(1 + 1) }
     }
 
     "allow configuration to load classpath files" in {
-      app.configM.load.exec[Future] map { _.int("s") shouldBe Some(3) }
+      app.configM.load.exec[Future] map { _.int("s") shouldBe Right(3) }
     }
 
   }
