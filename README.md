@@ -5,7 +5,7 @@
 
 [comment]: # (End Badges)
 
-A Cohesive & Pragmatic Framework of FP centric Scala libraries
+<img src="docs/src/main/resources/microsite/img/freestyle_header.png" width="100%"/>
 
 # Build purely functional applications and libraries
 Build stack-safe purely functional applications and libraries that support parallel and sequential computations where declaration is decoupled from interpretation.
@@ -80,7 +80,7 @@ def loadUser[F[_]]
  
 + [fs2](http://frees.io/docs/integrations/fs2/) - Integration to run fs2 Streams in Freestyle programs.
 
-+ [monix](http://frees.io/docs/integrations/play/) -  Instances and utilities to interpret to `monix.eval.Task`.
++ [monix](http://frees.io/docs/integrations/monix/) -  Instances and utilities to interpret to `monix.eval.Task`.
 
 + [logging](http://frees.io/docs/patterns/logging/) - A purely functional logging algebra over Verizon's Journal. 
 
