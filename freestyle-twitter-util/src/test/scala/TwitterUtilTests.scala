@@ -65,7 +65,7 @@ class TwitterUtilTests extends WordSpec with Matchers {
         override def z: Future[Int] = futurePool(blocker(3, 2000L))
       }
 
-      Await.result(program.exec[Future], Duration.Top) shouldBe List(3, 1, 2, 3)
+      Await.result(program.interpret[Future], Duration.Top) shouldBe List(3, 1, 2, 3)
       buf.toArray shouldBe Array(3, 2, 1, 3)
     }
 
@@ -76,7 +76,7 @@ class TwitterUtilTests extends WordSpec with Matchers {
       val test = new NonDeterminismTestShared
       import test._
 
-      Await.result(program.exec[Future], Duration.Top) shouldBe List(3, 1, 2, 3)
+      Await.result(program.interpret[Future], Duration.Top) shouldBe List(3, 1, 2, 3)
     }
 
     "allow execution when interpreting to twitter.util.Try" in {
@@ -86,7 +86,7 @@ class TwitterUtilTests extends WordSpec with Matchers {
       val test = new NonDeterminismTestShared
       import test._
 
-      program.exec[Try] shouldBe Return(List(3, 1, 2, 3))
+      program.interpret[Try] shouldBe Return(List(3, 1, 2, 3))
     }
 
   }
