@@ -10,6 +10,7 @@ The maintainers of the project are:
 
 These are the people that have contributed to the Freestyle project:
 
+* [47degfreestyle](https://github.com/47degfreestyle)
 * [colin-passiv](https://github.com/colin-passiv)
 * Adrián Ramírez Fornell <[AdrianRaFo](https://github.com/AdrianRaFo)>
 * Alejandro Gómez <[dialelo](https://github.com/dialelo)>
