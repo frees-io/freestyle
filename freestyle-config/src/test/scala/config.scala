@@ -23,6 +23,7 @@ import freestyle.config._
 import freestyle.config.implicits._
 import scala.concurrent.{ExecutionContext, Future}
 import cats.instances.future._
+import cats.syntax.either._
 
 class ConfigTests extends AsyncWordSpec with Matchers {
 
