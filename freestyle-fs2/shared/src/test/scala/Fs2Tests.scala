@@ -43,7 +43,7 @@ class Fs2Tests extends AsyncWordSpec with Matchers {
         b <- app.streamM.runLog(Stream.emit(40))
         c <- Applicative[FreeS[App.Op, ?]].pure(1)
       } yield a + b.head + c
-      program.exec[Future] map { _ shouldBe 42 }
+      program.interpret[Future] map { _ shouldBe 42 }
     }
 
     "allow a stream to be folded inside a program monadic flow" in {
@@ -51,7 +51,7 @@ class Fs2Tests extends AsyncWordSpec with Matchers {
         a <- app.nonStream.x
         b <- app.streamM.runFold(0, (x: Int, y: Int) => x + y)(Stream.emits(List(39, 1, 1)))
       } yield a + b
-      program.exec[Future] map { _ shouldBe 42 }
+      program.interpret[Future] map { _ shouldBe 42 }
     }
 
     "allow an empty stream to be consumed inside a program monadic flow" in {
@@ -60,7 +60,7 @@ class Fs2Tests extends AsyncWordSpec with Matchers {
         b <- app.streamM.runLast(Stream.emits(List.empty[Int]))
       } yield b
 
-      program.exec[Future] map { _ shouldBe None }
+      program.interpret[Future] map { _ shouldBe None }
     }
 
     "allow a stream to be consumed for its last element inside a program monadic flow" in {
@@ -69,7 +69,7 @@ class Fs2Tests extends AsyncWordSpec with Matchers {
         b <- app.streamM.runLast(Stream.emits(List(1, 2, 41)))
       } yield b.fold(0)(_ + a)
 
-      program.exec[Future] map { _ shouldBe 42 }
+      program.interpret[Future] map { _ shouldBe 42 }
     }
 
     "allow a stream to be run for its effects inside a program monadic flow" in {
@@ -78,7 +78,7 @@ class Fs2Tests extends AsyncWordSpec with Matchers {
         _ <- app.streamM.run(Stream.eval(Free.pure(42)))
       } yield a
 
-      program.exec[Future] map { _ shouldBe 1 }
+      program.interpret[Future] map { _ shouldBe 1 }
     }
 
     case class OhNoException() extends Exception
@@ -89,7 +89,7 @@ class Fs2Tests extends AsyncWordSpec with Matchers {
         b <- app.streamM.runFold(0, (x: Int, y: Int) => x + y)(Stream.fail(OhNoException()))
       } yield a + b
 
-      program.exec[Future] recover {
+      program.interpret[Future] recover {
         case OhNoException() => 42
       } map { _ shouldBe 42 }
     }
@@ -106,7 +106,7 @@ class Fs2Tests extends AsyncWordSpec with Matchers {
         v <- stream.liftFS[App.Op]
       } yield v
 
-      program.exec[Future] map { _ shouldBe 42 }
+      program.interpret[Future] map { _ shouldBe 42 }
     }
 
     "allow streams to be lifted to a FreeS parallel program" in {
@@ -116,7 +116,7 @@ class Fs2Tests extends AsyncWordSpec with Matchers {
         v <- stream.liftFSPar[App.Op]
       } yield v
 
-      program.exec[Future] map { _ shouldBe 42 }
+      program.interpret[Future] map { _ shouldBe 42 }
     }
   }
 

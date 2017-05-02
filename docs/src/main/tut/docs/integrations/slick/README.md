@@ -58,7 +58,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
 
 implicit val db = Database.forURL("jdbc:h2:mem:docs", driver = "org.h2.Driver")
 
-val future = slickFrees.exec[Future]
+val future = slickFrees.interpret[Future]
 ```
 
 To check if we actually retrieve Alonzo Church as a `Person`, we can block the future in this example:
@@ -107,7 +107,7 @@ def example[F[_]: SlickM](implicit example: Example[F]): FreeS[F, (Person, Int)]
 We can use `Example.Op` as the functor and translate the resulting program to `Future`:
 
 ```tut:book
-val result = example[Example.Op].exec[Future]
+val result = example[Example.Op].interpret[Future]
 
 Await.result(result, Duration.Inf)
 ```

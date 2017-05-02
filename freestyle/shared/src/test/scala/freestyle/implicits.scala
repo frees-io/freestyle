@@ -34,7 +34,7 @@ class implicitsTests extends WordSpec with Matchers {
     "enable traverseU" in {
       implicit val optionHandler = interps.optionHandler1
       val program = List(1, 2).traverseU(SCtors1[SCtors1.Op].x)
-      program.exec[Option] shouldBe (Some(List(1, 2)))
+      program.interpret[Option] shouldBe (Some(List(1, 2)))
     }
 
     "enable sequence" in {
@@ -42,7 +42,7 @@ class implicitsTests extends WordSpec with Matchers {
       def program[F[_]](implicit sc: SCtors1[F]) =
         List(sc.x(1), sc.x(2)).sequence[sc.FS.Par, Int]
 
-      program[SCtors1.Op].exec[Option] shouldBe (Some(List(1, 2)))
+      program[SCtors1.Op].interpret[Option] shouldBe (Some(List(1, 2)))
     }
 
     "provide a custom implicit not found message for a missing Capture instance" in {
@@ -53,7 +53,7 @@ class implicitsTests extends WordSpec with Matchers {
 
     "provide a custom implicit not found message for a missing implicit Handler" in {
       shapeless.test.illTyped(
-        """SCtors1[SCtors1.Op].x(1).exec[scala.util.Try]""",
+        """SCtors1[SCtors1.Op].x(1).interpret[scala.util.Try]""",
         ".*Handler not found to transform.*")
     }
 

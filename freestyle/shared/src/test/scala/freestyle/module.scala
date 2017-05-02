@@ -120,8 +120,8 @@ class moduleTests extends WordSpec with Matchers {
         c <- m1.sctors2.i(1)
         d <- m1.sctors2.j(1)
       } yield a + b + c + d
-      program.exec[Option] shouldBe Option(4)
-      program.exec[List] shouldBe List(4)
+      program.interpret[Option] shouldBe Option(4)
+      program.interpret[List] shouldBe List(4)
     }
 
     "[onion] reuse program interpretation in diferent runtimes" in {
@@ -137,8 +137,8 @@ class moduleTests extends WordSpec with Matchers {
         h <- o1.m2.sctors4.m(1)
       } yield a + b + c + d + e + f + g + h
 
-      program.exec[Option] shouldBe Option(8)
-      program.exec[List] shouldBe List(8)
+      program.interpret[Option] shouldBe Option(8)
+      program.interpret[List] shouldBe List(8)
     }
 
     "pass through concrete members to implementations" in {

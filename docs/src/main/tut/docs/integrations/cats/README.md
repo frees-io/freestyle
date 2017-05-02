@@ -94,8 +94,8 @@ val traversingSeq = numbers.traverse(incrSeq)
 Executing these with our `Id` handler:
 
 ```tut:book
-traversingPar.exec[Id]
-traversingSeq.exec[Id]
+traversingPar.interpret[Id]
+traversingSeq.interpret[Id]
 ```
 
 A simple timer method giving a rough estimate of the execution time of a piece of code:
@@ -117,10 +117,10 @@ import freestyle.nondeterminism._
 import scala.concurrent.Await
 import scala.concurrent.duration.Duration
 
-val futPar = traversingPar.exec[Future]
+val futPar = traversingPar.interpret[Future]
 simpleTime(Await.result(futPar, Duration.Inf))
 
-val futSeq = traversingSeq.exec[Future]
+val futSeq = traversingSeq.interpret[Future]
 simpleTime(Await.result(futSeq, Duration.Inf))
 ```
 
@@ -137,7 +137,7 @@ val incrAndMultiply =
     d <- FreeS.pure(c + 1)
   } yield d
 
-incrAndMultiply.exec[Id]
+incrAndMultiply.interpret[Id]
 ```
 
 In the first line of the for comprehension, the two applicative operations using `incrPar` are independent and could be executed in parallel. In the last line we are using `FreeS.pure` as a handy alternative for `(c + 1).pure[FreeS[Calc.Op, ?]]` or `Applicative[FreeS[CalcOp, ?]].pure(c + 1)`.
@@ -156,10 +156,10 @@ val incrParSum = for {
   c  <- Function.tupled(Calc[Calc.Op].sum _)(ab)
 } yield c
 
-val futSeq2 = incrSeqSum.exec[Future]
+val futSeq2 = incrSeqSum.interpret[Future]
 simpleTime(Await.result(futSeq2, Duration.Inf))
 
-val futPar2 = incrParSum.exec[Future]
+val futPar2 = incrParSum.interpret[Future]
 simpleTime(Await.result(futPar2, Duration.Inf))
 ```
 
@@ -193,8 +193,8 @@ implicit val readerHandler =
 With this `Reader` handler in place, we can translate some of the previous programs and supply the configuration to get the end result with `Kleisli#run`:
 
 ```tut:book
-val configTraversing = traversingSeq.exec[WithConfig]
-val configIncrSum    = incrParSum.exec[WithConfig]
+val configTraversing = traversingSeq.interpret[WithConfig]
+val configIncrSum    = incrParSum.interpret[WithConfig]
 
 val cfg = Config(1000)
 configTraversing.run(cfg)

@@ -37,12 +37,12 @@ import rd.implicits._
 
 def programAsk[F[_]: rd.ReaderM] =
   for {
-    _ <- 1.pure[FreeS[F, ?]]
+    _ <- FreeS.pure(1)
     c <- rd.ReaderM[F].ask
-    _ <- 1.pure[FreeS[F, ?]]
+    _ <- FreeS.pure(1)
   } yield c
     
-programAsk[rd.ReaderM.Op].exec[ConfigEnv].run(Config(n = 10))
+programAsk[rd.ReaderM.Op].interpret[ConfigEnv].run(Config(n = 10))
 ```
 
 ### reader
@@ -52,10 +52,10 @@ programAsk[rd.ReaderM.Op].exec[ConfigEnv].run(Config(n = 10))
 ```tut:book
 def programReader[F[_]: rd.ReaderM] =
   for {
-    a <- 1.pure[FreeS[F, ?]]
+    a <- FreeS.pure(1)
     b <- rd.ReaderM[F].reader(_.n)
-    c <- 1.pure[FreeS[F, ?]]
+    c <- FreeS.pure(1)
   } yield a + b + c
     
-programReader[rd.ReaderM.Op].exec[ConfigEnv].run(Config(n = 1))
+programReader[rd.ReaderM.Op].interpret[ConfigEnv].run(Config(n = 1))
 ```

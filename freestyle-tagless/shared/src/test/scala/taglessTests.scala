@@ -63,7 +63,7 @@ class taglessTests extends WordSpec with Matchers {
         x
       }
       import TG1._
-      program[App.Op].exec[Option] shouldBe Option(6)
+      program[App.Op].interpret[Option] shouldBe Option(6)
     }
 
   }

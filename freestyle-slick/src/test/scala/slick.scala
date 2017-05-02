@@ -47,7 +47,7 @@ class SlickTests extends AsyncWordSpec with Matchers {
         b <- app.slickM.run(query).freeS
         c <- FreeS.pure(1)
       } yield a + b + c
-      program.exec[Future] map { _ shouldBe 4 }
+      program.interpret[Future] map { _ shouldBe 4 }
     }
 
     "allow slick syntax to lift to FreeS" in {
@@ -56,7 +56,7 @@ class SlickTests extends AsyncWordSpec with Matchers {
         b <- query.liftFS[App.Op]
         c <- app.nonSlick.x
       } yield a + b + c
-      program.exec[Future] map { _ shouldBe 4 }
+      program.interpret[Future] map { _ shouldBe 4 }
     }
 
     "allow slick syntax to lift to FreeS.Par" in {
@@ -65,7 +65,7 @@ class SlickTests extends AsyncWordSpec with Matchers {
         b <- query.liftFSPar[App.Op].freeS
         c <- app.nonSlick.x
       } yield a + b + c
-      program.exec[Future] map { _ shouldBe 4 }
+      program.interpret[Future] map { _ shouldBe 4 }
     }
   }
 

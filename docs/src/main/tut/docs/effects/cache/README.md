@@ -55,9 +55,9 @@ import prov.implicits._
 
 def loadFrom[F[_]: prov.CacheM] = {
   for {
-    a <- 1.pure[FreeS[F, ?]]
+    a <- FreeS.pure(1)
     b <- CacheM[F].get('a')
-    c <- 1.pure[FreeS[F, ?]]
+    c <- FreeS.pure(1)
   } yield a + b.getOrElse(0) + c
 }
 ```

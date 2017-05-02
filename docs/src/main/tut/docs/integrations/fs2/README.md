@@ -72,7 +72,7 @@ import scala.concurrent._
 import scala.concurrent.duration._
 import scala.concurrent.ExecutionContext.Implicits.global
 
-Await.result(program[App.Op].exec[Future], Duration.Inf)
+Await.result(program[App.Op].interpret[Future], Duration.Inf)
 ```
 
 ## Stream operations
@@ -88,7 +88,7 @@ def program[F[_]](
   implicit app: App[F]
 ): FreeS[F, Vector[Int]] = app.streams.runLog(Stream.emit(42))
 
-Await.result(program[App.Op].exec[Future], Duration.Inf)
+Await.result(program[App.Op].interpret[Future], Duration.Inf)
 ```
 
 ### runFold
@@ -106,7 +106,7 @@ def program[F[_]](
   implicit app: App[F]
 ): FreeS[F, Int] = app.streams.runFold(0, (x: Int, y: Int) => x + y)(aStream)
 
-Await.result(program[App.Op].exec[Future], Duration.Inf)
+Await.result(program[App.Op].interpret[Future], Duration.Inf)
 ```
 
 ### runLast
@@ -118,7 +118,7 @@ def program[F[_]](
   implicit app: App[F]
 ): FreeS[F, Option[Int]] = app.streams.runLast(aStream)
 
-Await.result(program[App.Op].exec[Future], Duration.Inf)
+Await.result(program[App.Op].interpret[Future], Duration.Inf)
 ```
 
 ## Streaming IO
@@ -156,6 +156,6 @@ def program[F[_]](
  _ <- app.streams.run(converter)
 } yield ()
 
-Await.result(program[App.Op].exec[Future], Duration.Inf)
+Await.result(program[App.Op].interpret[Future], Duration.Inf)
 ```
 

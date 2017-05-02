@@ -126,7 +126,7 @@ import cats.implicits._
 import scala.concurrent.duration.Duration
 import scala.concurrent.Await
 
-val futureValue = program[Application.Op].exec[Future]
+val futureValue = program[Application.Op].interpret[Future]
 Await.result(futureValue, Duration.Inf) //blocking only for demo purposes. Don't do this at home.
 ```
 

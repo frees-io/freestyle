@@ -53,11 +53,11 @@ private[http] trait FinchMapperFrees extends FinchMapperFreeS1 {
 
   implicit def mapperFromFreeSOutputValue[Op[_], A](fo: FreeS[Op, Output[A]])(
       implicit I: Op ~> Future): Mapper.Aux[HNil, A] =
-    Mapper.mapperFromFutureOutputValue(fo.exec[Future])
+    Mapper.mapperFromFutureOutputValue(fo.interpret[Future])
 
   implicit def mapperFromFreeSOutputValueId[Op[_], A](fo: FreeS[Op, Output[A]])(
       implicit I: Op ~> Id): Mapper.Aux[HNil, A] =
-    Mapper.mapperFromOutputValue(fo.exec[Id])
+    Mapper.mapperFromOutputValue(fo.interpret[Id])
 
   implicit def mapperFromFreeSParOutputValue[Op[_], A](fpo: FreeS.Par[Op, Output[A]])(
       implicit I: Op ~> Future): Mapper.Aux[HNil, A] =
@@ -73,11 +73,11 @@ private[http] trait FinchMapperFreeS1 {
 
   implicit def mapperFromFreeSOutputFunction[Op[_], A, B](f: A => FreeS[Op, Output[B]])(
       implicit I: Op ~> Future): Mapper.Aux[A, B] =
-    Mapper.mapperFromFutureOutputFunction(a => f(a).exec[Future])
+    Mapper.mapperFromFutureOutputFunction(a => f(a).interpret[Future])
 
   implicit def mapperFromFreeSOutputFunctionId[Op[_], A, B](f: A => FreeS[Op, Output[B]])(
       implicit I: Op ~> Id): Mapper.Aux[A, B] =
-    Mapper.mapperFromOutputFunction(a => f(a).exec[Id])
+    Mapper.mapperFromOutputFunction(a => f(a).interpret[Id])
 
   implicit def mapperFromFreeSParOutputFunction[Op[_], A, B](f: A => FreeS.Par[Op, Output[B]])(
       implicit I: Op ~> Future): Mapper.Aux[A, B] =

@@ -70,7 +70,7 @@ import validation._
 
 val parValidation = (minSize(3) |@| hasNumber).map(_ :: _ :: Nil)
 
-val validator = parValidation.exec[ParValidator]
+val validator = parValidation.interpret[ParValidator]
 
 //validator.run("abc1") runs each op in parallel and returns the result in a Future
 ```

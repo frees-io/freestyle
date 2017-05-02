@@ -129,7 +129,7 @@ import cats.arrow.FunctionK
 
 implicit def functionKIdentity[F[_]]: FunctionK[F, F] = FunctionK.id[F]
 
-program[FreeS[Try, ?]].exec[Try]
+program[FreeS[Try, ?]].interpret[Try]
 ```
 
 ### Combining `@tagless` and `@free` algebras
@@ -183,5 +183,5 @@ We can simply use tagless's `.StackSafe` representation in modules so they are c
 Once all of our algebras are considered, we can execute our programs
 
 ```tut:book
-program[App.Op].exec[Try]
+program[App.Op].interpret[Try]
 ```

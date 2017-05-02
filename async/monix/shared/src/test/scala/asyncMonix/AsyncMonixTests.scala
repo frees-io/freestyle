@@ -41,7 +41,7 @@ class AsyncMonixTests extends AsyncWordSpec with Matchers {
           d <- AsyncM[F].async[Int](cb => cb(Right(10)))
         } yield a + b + c + d
 
-      program[AsyncM.Op].exec[Task].runAsync map { _ shouldBe 54 }
+      program[AsyncM.Op].interpret[Task].runAsync map { _ shouldBe 54 }
     }
   }
 }

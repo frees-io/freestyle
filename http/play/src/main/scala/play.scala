@@ -27,17 +27,17 @@ package play {
     implicit def seqToFuture[F[_], A](prog: FreeS[F, A])(
         implicit I: ParInterpreter[F, Future],
         EC: ExecutionContext
-    ): Future[A] = prog.parExec[Future]
+    ): Future[A] = prog.parInterpret[Future]
 
     implicit def parSeqToFuture[F[_], A](prog: FreeS[F, A])(
         implicit I: FSHandler[F, Future],
         EC: ExecutionContext
-    ): Future[A] = prog.exec[Future]
+    ): Future[A] = prog.interpret[Future]
 
     implicit def parToFuture[F[_], A](prog: FreeS.Par[F, A])(
         implicit I: FSHandler[F, Future],
         EC: ExecutionContext
-    ): Future[A] = prog.exec[Future]
+    ): Future[A] = prog.interpret[Future]
 
   }
 

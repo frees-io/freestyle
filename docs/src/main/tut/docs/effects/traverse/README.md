@@ -30,7 +30,7 @@ def programTraverse[F[_]: TraverseM] =
     b <- (a + 1).pure[FreeS[F, ?]]
   } yield b
 
-programTraverse[TraverseM.Op].exec[List]
+programTraverse[TraverseM.Op].interpret[List]
 ```
 
 ### empty
@@ -44,9 +44,9 @@ def programEmpty[F[_]: TraverseM] =
   for {
     _ <- TraverseM[F].empty[Int]
     a <- TraverseM[F].fromTraversable(1 :: 2 :: 3 :: Nil)
-    b <- (a + 1).pure[FreeS[F, ?]]
-    c <- (b + 1).pure[FreeS[F, ?]]
+    b <- FreeS.pure(a + 1)
+    c <- FreeS.pure(b + 1)
   } yield c
 
-programEmpty[TraverseM.Op].exec[List]
+programEmpty[TraverseM.Op].interpret[List]
 ```

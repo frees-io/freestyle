@@ -91,14 +91,14 @@ package object freestyle {
      * Runs a seq/par program by converting each parallel fragment in `f` into an `H`
      * `H` should probably be an `IO`/`Task` like `Monad` also providing parallel execution.
      */
-    def parExec[H[_]: Monad](implicit interpreter: ParInterpreter[F, H]): H[A] =
+    def parInterpret[H[_]: Monad](implicit interpreter: ParInterpreter[F, H]): H[A] =
       fa.foldMap(interpreter)
 
     /**
      * Runs a seq/par program by converting each parallel fragment in `f` into an `H`
      * `H` should probably be an `IO`/`Task` like `Monad` also providing parallel execution.
      */
-    def exec[H[_]: Monad](implicit handler: FSHandler[F, H]): H[A] = {
+    def interpret[H[_]: Monad](implicit handler: FSHandler[F, H]): H[A] = {
       val parInterpreter = λ[FSHandler[FreeApplicative[F, ?], H]](_.foldMap(handler))
       fa.foldMap(parInterpreter)
     }
@@ -114,7 +114,7 @@ package object freestyle {
      */
     def freeS: FreeS[F, A] = FreeS.liftPar(fa)
 
-    def exec[G[_]: Applicative](implicit handler: FSHandler[F,G]): G[A] =
+    def interpret[G[_]: Applicative](implicit handler: FSHandler[F,G]): G[A] =
       fa.foldMap(handler)
   }
 
