@@ -16,22 +16,18 @@
 
 package freestyle.http
 
-import org.scalatest.{AsyncWordSpec, Matchers}
+import org.scalatest.{Matchers, WordSpec}
 
 import scala.concurrent.ExecutionContext
-
 import cats.Monad
-
 import freestyle._
 import freestyle.implicits._
-
 import freestyle.http.play.implicits._
-
 import _root_.play.api.mvc.{Action, Codec, Request, Result, Results}
 import _root_.play.api.http.{ContentTypeOf, Writeable}
+import ExecutionContext.Implicits.global
 
-class PlayTests extends AsyncWordSpec with Matchers {
-  implicit override def executionContext = ExecutionContext.Implicits.global
+class PlayTests extends WordSpec with Matchers {
 
   implicit def unitWr(implicit C: Codec): Writeable[Unit] =
     Writeable(data => C.encode(data.toString))
