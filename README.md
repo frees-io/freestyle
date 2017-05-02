@@ -5,7 +5,7 @@
 
 [comment]: # (End Badges)
 
-A Cohesive & Pragmatic Framework of FP centric Scala libraries
+<img src="docs/src/main/resources/microsite/img/freestyle_header.png" alt="A Cohesive & Pragmatic Framework of FP centric Scala libraries" width="100%"/>
 
 # Build purely functional applications and libraries
 Build stack-safe purely functional applications and libraries that support parallel and sequential computations where declaration is decoupled from interpretation.
@@ -67,6 +67,30 @@ def loadUser[F[_]]
     } yield user
 }
 ```
+
+## Modules
+
++ [freestyle](http://frees.io/docs/) - Core module including building blocks for boilerplate free FP programs and apps over Free monads and cats.
+
++ [tagless](http://frees.io/docs/core/tagless/) - An alternative encoding to Free based on Tagless Final.
+
++ [effects](http://frees.io/docs/effects/) - MTL style effects such as reader, writer, state, error, and more modeled as free algebras. 
+
++ [fetch](http://frees.io/docs/integrations/fetch/) - Integration with the Fetch library for efficient data access from heterogenous datasources.
+ 
++ [fs2](http://frees.io/docs/integrations/fs2/) - Integration to run fs2 Streams in Freestyle programs.
+
++ [monix](http://frees.io/docs/integrations/monix/) -  Instances and utilities to interpret to `monix.eval.Task`.
+
++ [logging](http://frees.io/docs/patterns/logging/) - A purely functional logging algebra over Verizon's Journal. 
+
++ [slick](http://frees.io/docs/integrations/slick/) - Embedding of DBIO actions in Freestyle programs.
+
++ [doobie](http://frees.io/docs/integrations/doobie/) - Embedding of Doobie ConnectionIO actions in Freestyle programs.
+
++ [cache](http://frees.io/docs/effects/Cache/) - A generic cache with in memory and redis based implementations.
+
++ http - Adapters and marshallers to run the Freestyle program in endpoint return types for [akka-http](http://frees.io/docs/integrations/akkahttp/), [finch](http://frees.io/docs/integrations/finch/), [http4s](http://frees.io/docs/integrations/http4s/) and [play](http://frees.io/docs/integrations/play/). 
 
 ## Freestyle in the wild
 
