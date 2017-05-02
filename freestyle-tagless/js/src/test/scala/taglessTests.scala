@@ -39,7 +39,7 @@ class taglessTestsJS extends WordSpec with Matchers {
     }
 
     "remain stack safe when interpreted to stack safe monads" in {
-      SOProgram[Free[Option, ?]](0).exec[Option] shouldBe Option(iterations)
+      SOProgram[FreeS[Option, ?]](0).exec[Option] shouldBe Option(iterations)
     }
 
   }
