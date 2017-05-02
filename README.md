@@ -76,7 +76,7 @@ def loadUser[F[_]]
 
 + [effects](http://frees.io/docs/effects/) - MTL style effects such as reader, writer, state, error, and more modeled as free algebras. 
 
-+ [fetch](http://frees.io/docs/integrations/fetch/) - Integration with the Fetch library for effitient data access from heterogenous datasources.
++ [fetch](http://frees.io/docs/integrations/fetch/) - Integration with the Fetch library for efficient data access from heterogenous datasources.
  
 + [fs2](http://frees.io/docs/integrations/fs2/) - Integration to run fs2 Streams in Freestyle programs.
 
@@ -88,9 +88,9 @@ def loadUser[F[_]]
 
 + [doobie](http://frees.io/docs/integrations/doobie/) - Embedding of Doobie ConnectionIO actions in Freestyle programs.
 
-+ [cache](http://frees.io/docs/effects/Cache/) - A generic cache with an in memory and redis based implementations.
++ [cache](http://frees.io/docs/effects/Cache/) - A generic cache with in memory and redis based implementations.
 
-+ http - Adapters and marshalers to run the Freestyle program in endpoint return types for [akka-http](http://frees.io/docs/integrations/akkahttp/), [finch](http://frees.io/docs/integrations/finch/), [http4s](http://frees.io/docs/integrations/http4s/) and [play](http://frees.io/docs/integrations/play/). 
++ http - Adapters and marshallers to run the Freestyle program in endpoint return types for [akka-http](http://frees.io/docs/integrations/akkahttp/), [finch](http://frees.io/docs/integrations/finch/), [http4s](http://frees.io/docs/integrations/http4s/) and [play](http://frees.io/docs/integrations/play/). 
 
 ## Freestyle in the wild
 
