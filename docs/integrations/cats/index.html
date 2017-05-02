@@ -1,0 +1,275 @@
+<html><head><meta charset="utf-8" /><meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" /><title>Freestyle</title><meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="description" content="A Cohesive &amp; Pragmatic Framework of FP centric Scala libraries" /><meta name="author" content="47 Degrees" /><meta name="og:image" content="/img/poster.png" /><meta name="og:title" content="Freestyle" /><meta name="og:site_name" content="Freestyle" /><meta name="og:url" content="https://47deg.github.io/freestyle/" /><meta name="og:type" content="website" /><meta name="og:description" content="A Cohesive &amp; Pragmatic Framework of FP centric Scala libraries" /><meta name="twitter:image" content="/img/poster.png" /><meta name="twitter:card" content="summary_large_image" /><meta name="twitter:site" content="" /><meta name="kazari-dependencies" content="" /><meta name="kazari-resolvers" content="" /><link rel="icon" type="image/png" href="/img/favicon.png" /><link rel="icon" type="image/png" sizes="16x16" href="/img/favicon16x16.png" /><link rel="icon" type="image/png" sizes="24x24" href="/img/favicon24x24.png" /><link rel="icon" type="image/png" sizes="32x32" href="/img/favicon32x32.png" /><link rel="icon" type="image/png" sizes="48x48" href="/img/favicon48x48.png" /><link rel="icon" type="image/png" sizes="57x57" href="/img/favicon57x57.png" /><link rel="icon" type="image/png" sizes="60x60" href="/img/favicon60x60.png" /><link rel="icon" type="image/png" sizes="64x64" href="/img/favicon64x64.png" /><link rel="icon" type="image/png" sizes="70x70" href="/img/favicon70x70.png" /><link rel="icon" type="image/png" sizes="72x72" href="/img/favicon72x72.png" /><link rel="icon" type="image/png" sizes="76x76" href="/img/favicon76x76.png" /><link rel="icon" type="image/png" sizes="96x96" href="/img/favicon96x96.png" /><link rel="icon" type="image/png" sizes="114x114" href="/img/favicon114x114.png" /><link rel="icon" type="image/png" sizes="120x120" href="/img/favicon120x120.png" /><link rel="icon" type="image/png" sizes="128x128" href="/img/favicon128x128.png" /><link rel="icon" type="image/png" sizes="144x144" href="/img/favicon144x144.png" /><link rel="icon" type="image/png" sizes="150x150" href="/img/favicon150x150.png" /><link rel="icon" type="image/png" sizes="152x152" href="/img/favicon152x152.png" /><link rel="icon" type="image/png" sizes="196x196" href="/img/favicon196x196.png" /><link rel="icon" type="image/png" sizes="310x310" href="/img/favicon310x310.png" /><link rel="icon" type="image/png" sizes="310x150" href="/img/favicon310x150.png" /><link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" /><link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" /><link rel="stylesheet" href="/highlight/styles/dracula.css" /><link rel="stylesheet" href="/css/style.css" /><link rel="stylesheet" href="/css/palette.css" /><link rel="stylesheet" href="/css/codemirror.css" /><link rel="stylesheet" href="/css/kazari-style.css" /><link rel="stylesheet" href="/css/solarized-dark.css" /><link rel="stylesheet" href="/css/dracula.css" /><link rel="stylesheet" href="/css/custom.css" /></head><body class="docs"><div id="wrapper"><div id="sidebar-wrapper"><ul id="sidebar" class="sidebar-nav"><li class="sidebar-brand"><a href="/" class="brand"><div class="brand-wrapper"><span>Freestyle</span></div></a></li> <li><a href="/docs/" class="">Quick Start</a></li> <li><a href="/" class="">Core Concepts</a> <ul class="sub_section"> <li><a href="/docs/core/algebras/" class="">Algebras</a></li> <li><a href="/docs/core/interpreters/" class="">Handlers</a></li> <li><a href="/docs/core/parallelism/" class="">Parallelism</a></li> <li><a href="/docs/core/modules/" class="">Modules</a></li> <li><a href="/docs/core/tagless/" class="">Tagless Final</a></li></ul></li> <li><a href="/docs/effects/" class="">Effects</a> <ul class="sub_section"> <li><a href="/docs/effects/error" class="">Error</a></li> <li><a href="/docs/effects/either" class="">Either</a></li> <li><a href="/docs/effects/option" class="">Option</a></li> <li><a href="/docs/effects/reader" class="">Reader</a></li> <li><a href="/docs/effects/writer" class="">Writer</a></li> <li><a href="/docs/effects/state" class="">State</a></li> <li><a href="/docs/effects/traverse" class="">Traverse</a></li> <li><a href="/docs/effects/validation" class="">Validation</a></li> <li><a href="/docs/effects/async" class="">Async Callbacks</a></li></ul></li> <li><a href="/docs/stack/" class="">Example Target Stack</a></li> <li><a href="/TODO.html" class="">Patterns</a> <ul class="sub_section"> <li><a href="/docs/effects/Cache/" class="">Cache</a></li> <li><a href="/TODO.html" class="">Dependency Injection</a></li> <li><a href="/docs/patterns/config" class="">Configuration</a></li> <li><a href="/docs/patterns/logging" class="">Logging</a></li></ul></li> <li><a href="/docs/integrations" class="">Integrations</a> <ul class="sub_section"> <li><a href="/docs/integrations/cats" class=" active ">Cats</a></li> <li><a href="/docs/integrations/play" class="">Play Framework</a></li> <li><a href="/docs/integrations/monix" class="">Monix</a></li> <li><a href="/docs/integrations/fetch" class="">Fetch</a></li> <li><a href="/docs/integrations/fs2" class="">FS2</a></li> <li><a href="/docs/integrations/doobie" class="">Doobie</a></li> <li><a href="/docs/integrations/slick" class="">Slick</a></li> <li><a href="/docs/integrations/akkahttp" class="">Akka HTTP</a></li> <li><a href="/docs/integrations/finch" class="">Finch</a></li> <li><a href="/docs/integrations/http4s" class="">http4s</a></li></ul></li> <li><a href="/docs/related/" class="">Related Work</a> <ul class="sub_section"> <li><a href="/docs/related/#bibliography" class="">Bibliography</a></li> <li><a href="/docs/related/#Scala" class="">Scala Libraries</a></li></ul></li></ul></div><div id="page-content-wrapper"><div class="nav"><div class="container-fluid"><div class="row"><div class="col-lg-12"><div class="action-menu pull-left clearfix"><a href="#menu-toggle" id="menu-toggle"><i class="fa fa-bars" aria-hidden="true"></i></a></div><ul class="pull-right"><li id="gh-eyes-item" class="hidden-xs"><a href="https://github.com/47deg/freestyle"><i class="fa fa-eye"></i><span>WATCH<span id="eyes" class="label label-default">--</span></span></a></li><li id="gh-stars-item" class="hidden-xs"><a href="https://github.com/47deg/freestyle"><i class="fa fa-star-o"></i><span>STARS<span id="stars" class="label label-default">--</span></span></a></li><li><a href="#" onclick="shareSiteTwitter('Freestyle A Cohesive &amp; Pragmatic Framework of FP centric Scala libraries');"><i class="fa fa-twitter"></i></a></li><li><a href="#" onclick="shareSiteFacebook('Freestyle A Cohesive &amp; Pragmatic Framework of FP centric Scala libraries');"><i class="fa fa-facebook"></i></a></li><li><a href="#" onclick="shareSiteGoogle();"><i class="fa fa-google-plus"></i></a></li></ul></div></div></div></div><div id="content" data-github-owner="47deg" data-github-repo="freestyle"><div class="content-wrapper"><section><h1 id="cats">Cats</h1>
+
+<p>Freestyle is built on top of Cats’ <a href="http://typelevel.org/cats/datatypes/freemonad.html"><code class="highlighter-rouge">Free</code></a> and <a href="http://typelevel.org/cats/datatypes/freeapplicative.html"><code class="highlighter-rouge">FreeApplicative</code></a> and <code class="highlighter-rouge">FreeS</code> and <code class="highlighter-rouge">FreeS.Par</code> are just type aliases:</p>
+
+<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">cats.free.</span><span class="o">{</span> <span class="nc">Free</span><span class="o">,</span> <span class="nc">FreeApplicative</span> <span class="o">}</span>
+
+<span class="k">object</span> <span class="nc">aliases</span> <span class="o">{</span>
+  <span class="k">type</span> <span class="kt">FreeS</span><span class="o">[</span><span class="kt">F</span><span class="o">[</span><span class="k">_</span><span class="o">]</span>, <span class="kt">A</span><span class="o">]</span> <span class="k">=</span> <span class="nc">Free</span><span class="o">[</span><span class="kt">FreeApplicative</span><span class="o">[</span><span class="kt">F</span>, <span class="kt">?</span><span class="o">]</span>, <span class="kt">A</span><span class="o">]</span>
+
+  <span class="k">object</span> <span class="nc">FreeS</span> <span class="o">{</span>
+    <span class="k">type</span> <span class="kt">Par</span><span class="o">[</span><span class="kt">F</span><span class="o">[</span><span class="k">_</span><span class="o">]</span>, <span class="kt">A</span><span class="o">]</span> <span class="k">=</span> <span class="nc">FreeApplicative</span><span class="o">[</span><span class="kt">F</span>, <span class="kt">A</span><span class="o">]</span>
+  <span class="o">}</span>
+<span class="o">}</span>
+</code></pre>
+</div>
+
+<p>A <a href="../core/modules/">freestyle module</a> (with <code class="highlighter-rouge">@module</code>) is an easy way to combine multiple algebras and create a <code class="highlighter-rouge">Coproduct</code> of the underlying algebras together with the necessary <code class="highlighter-rouge">Inject</code> instances.</p>
+
+<ul>
+  <li>A <code class="highlighter-rouge">Coproduct</code> is a combination of data types. An operation of type <code class="highlighter-rouge">type FooBarOp[A] = Coproduct[FooOp, BarOp, A]</code> can either by a <code class="highlighter-rouge">FooOp</code> or a <code class="highlighter-rouge">BarOp</code>.</li>
+  <li><code class="highlighter-rouge">Inject</code> is a type class which can inject a data type in a <code class="highlighter-rouge">Coproduct</code> containing that specific data type. An <code class="highlighter-rouge">Inject[FooOp, FooBarOp]</code> instance can inject a <code class="highlighter-rouge">FooOp</code> operation into the <code class="highlighter-rouge">FooBarOp</code> coproduct.</li>
+</ul>
+
+<h2 id="frees-with-cats"><code class="highlighter-rouge">FreeS</code> with Cats</h2>
+
+<p>As <code class="highlighter-rouge">FreeS</code> is a <a href="http://typelevel.org/cats/typeclasses/monad.html">monad</a> and <code class="highlighter-rouge">FreeS.Par</code> an <a href="http://typelevel.org/cats/typeclasses/applicative.html">applicative</a>, they can be used like any other monad/applicative in Cats.</p>
+
+<p>To see how we can use <code class="highlighter-rouge">FreeS</code> and <code class="highlighter-rouge">FreeS.Par</code> in combination with existing Cats functions, we will create a simple algebra with a sum and a product operation:</p>
+
+<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">freestyle._</span>
+<span class="c1">// import freestyle._
+</span>
+<span class="nd">@free</span> <span class="k">trait</span> <span class="nc">Calc</span> <span class="o">{</span>
+  <span class="k">def</span> <span class="n">sum</span><span class="o">(</span><span class="n">a</span><span class="k">:</span> <span class="kt">Int</span><span class="o">,</span> <span class="n">b</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span><span class="k">:</span> <span class="kt">FS</span><span class="o">[</span><span class="kt">Int</span><span class="o">]</span>
+  <span class="k">def</span> <span class="n">product</span><span class="o">(</span><span class="n">a</span><span class="k">:</span> <span class="kt">Int</span><span class="o">,</span> <span class="n">b</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span><span class="k">:</span> <span class="kt">FS</span><span class="o">[</span><span class="kt">Int</span><span class="o">]</span>
+<span class="o">}</span>
+<span class="c1">// defined trait Calc
+// defined object Calc
+</span></code></pre>
+</div>
+
+<p>A simple <code class="highlighter-rouge">Id</code> handler:</p>
+
+<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">cats.Id</span>
+<span class="c1">// import cats.Id
+</span>
+<span class="k">implicit</span> <span class="k">val</span> <span class="n">idHandler</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">Calc</span><span class="o">.</span><span class="nc">Handler</span><span class="o">[</span><span class="kt">Id</span><span class="o">]</span> <span class="o">{</span>
+  <span class="k">def</span> <span class="n">sum</span><span class="o">(</span><span class="n">a</span><span class="k">:</span> <span class="kt">Int</span><span class="o">,</span> <span class="n">b</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span> <span class="k">=</span> <span class="n">a</span> <span class="o">+</span> <span class="n">b</span>
+  <span class="k">def</span> <span class="n">product</span><span class="o">(</span><span class="n">a</span><span class="k">:</span> <span class="kt">Int</span><span class="o">,</span> <span class="n">b</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span> <span class="k">=</span> <span class="n">a</span> <span class="o">*</span> <span class="n">b</span>
+<span class="o">}</span>
+<span class="c1">// idHandler: Calc.Handler[cats.Id] = $anon$1@70bcbfcc
+</span></code></pre>
+</div>
+
+<p>A handler translating the <code class="highlighter-rouge">Calc</code> algebra to <code class="highlighter-rouge">Future</code>, which introduces a little bit of artificial latency:</p>
+
+<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">scala.concurrent.Future</span>
+<span class="c1">// import scala.concurrent.Future
+</span>
+<span class="k">import</span> <span class="nn">scala.concurrent.ExecutionContext.Implicits.global</span>
+<span class="c1">// import scala.concurrent.ExecutionContext.Implicits.global
+</span>
+<span class="k">implicit</span> <span class="k">val</span> <span class="n">futureHandler</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">Calc</span><span class="o">.</span><span class="nc">Handler</span><span class="o">[</span><span class="kt">Future</span><span class="o">]</span> <span class="o">{</span>
+  <span class="k">def</span> <span class="n">sum</span><span class="o">(</span><span class="n">a</span><span class="k">:</span> <span class="kt">Int</span><span class="o">,</span> <span class="n">b</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span> <span class="k">=</span>
+    <span class="nc">Future</span> <span class="o">{</span> <span class="nc">Thread</span><span class="o">.</span><span class="n">sleep</span><span class="o">(</span><span class="n">a</span> <span class="o">*</span> <span class="mi">100L</span><span class="o">);</span> <span class="n">a</span> <span class="o">+</span> <span class="n">b</span> <span class="o">}</span>
+  <span class="k">def</span> <span class="n">product</span><span class="o">(</span><span class="n">a</span><span class="k">:</span> <span class="kt">Int</span><span class="o">,</span> <span class="n">b</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span> <span class="k">=</span>
+    <span class="nc">Future</span> <span class="o">{</span> <span class="nc">Thread</span><span class="o">.</span><span class="n">sleep</span><span class="o">(</span><span class="n">a</span> <span class="o">*</span> <span class="mi">100L</span><span class="o">);</span> <span class="n">a</span> <span class="o">*</span> <span class="n">b</span> <span class="o">}</span>
+<span class="o">}</span>
+<span class="c1">// futureHandler: Calc.Handler[scala.concurrent.Future] = $anon$1@7b16a4a2
+</span></code></pre>
+</div>
+
+<p>We can use <code class="highlighter-rouge">Calc#sum</code> to create a function which increments an integer.</p>
+
+<p>We have <code class="highlighter-rouge">incrPar</code> and <code class="highlighter-rouge">incrSeq</code>, where multiple <code class="highlighter-rouge">incrPar</code> calls could potentially be executed in parallel:</p>
+
+<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">val</span> <span class="n">incrPar</span><span class="k">:</span> <span class="kt">Int</span> <span class="o">=&gt;</span> <span class="nc">FreeS</span><span class="o">.</span><span class="nc">Par</span><span class="o">[</span><span class="kt">Calc.Op</span>, <span class="kt">Int</span><span class="o">]</span> <span class="k">=</span>
+  <span class="nc">Calc</span><span class="o">[</span><span class="kt">Calc.Op</span><span class="o">].</span><span class="n">sum</span><span class="o">(</span><span class="k">_</span><span class="o">,</span> <span class="mi">1</span><span class="o">)</span>
+<span class="c1">// incrPar: Int =&gt; freestyle.FreeS.Par[Calc.Op,Int] = $$Lambda$4539/1012090196@c8f8029
+</span>
+<span class="k">val</span> <span class="n">incrSeq</span><span class="k">:</span> <span class="kt">Int</span> <span class="o">=&gt;</span> <span class="nc">FreeS</span><span class="o">[</span><span class="kt">Calc.Op</span>, <span class="kt">Int</span><span class="o">]</span> <span class="k">=</span>
+  <span class="n">incrPar</span><span class="o">.</span><span class="n">andThen</span><span class="o">(</span><span class="k">_</span><span class="o">.</span><span class="n">freeS</span><span class="o">)</span>
+<span class="c1">// incrSeq: Int =&gt; freestyle.FreeS[Calc.Op,Int] = scala.Function1$$Lambda$1673/1777139530@1cf8f814
+</span></code></pre>
+</div>
+
+<h3 id="traversing">Traversing</h3>
+
+<p>We will use <code class="highlighter-rouge">traverse</code> (provided by Cats’ <a href="http://typelevel.org/cats/typeclasses/traverse.html"><code class="highlighter-rouge">Traverse</code></a>) to increment a list of integers with <code class="highlighter-rouge">incrPar</code> and <code class="highlighter-rouge">incrSeq</code>:</p>
+
+<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">cats.implicits._</span>
+<span class="c1">// import cats.implicits._
+</span>
+<span class="k">import</span> <span class="nn">freestyle.implicits._</span>
+<span class="c1">// import freestyle.implicits._
+</span>
+<span class="k">val</span> <span class="n">numbers</span> <span class="k">=</span> <span class="nc">List</span><span class="o">.</span><span class="n">range</span><span class="o">(</span><span class="mi">1</span><span class="o">,</span> <span class="mi">10</span><span class="o">)</span>
+<span class="c1">// numbers: List[Int] = List(1, 2, 3, 4, 5, 6, 7, 8, 9)
+</span>
+<span class="k">val</span> <span class="n">traversingPar</span> <span class="k">=</span> <span class="n">numbers</span><span class="o">.</span><span class="n">traverse</span><span class="o">(</span><span class="n">incrPar</span><span class="o">)</span>
+<span class="c1">// traversingPar: freestyle.FreeS.Par[Calc.Op,List[Int]] = FreeApplicative(...)
+</span>
+<span class="k">val</span> <span class="n">traversingSeq</span> <span class="k">=</span> <span class="n">numbers</span><span class="o">.</span><span class="n">traverse</span><span class="o">(</span><span class="n">incrSeq</span><span class="o">)</span>
+<span class="c1">// traversingSeq: freestyle.FreeS[Calc.Op,List[Int]] = Free(...)
+</span></code></pre>
+</div>
+
+<p>Executing these with our <code class="highlighter-rouge">Id</code> handler:</p>
+
+<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="n">traversingPar</span><span class="o">.</span><span class="n">interpret</span><span class="o">[</span><span class="kt">Id</span><span class="o">]</span>
+<span class="c1">// res1: cats.Id[List[Int]] = List(2, 3, 4, 5, 6, 7, 8, 9, 10)
+</span>
+<span class="n">traversingSeq</span><span class="o">.</span><span class="n">interpret</span><span class="o">[</span><span class="kt">Id</span><span class="o">]</span>
+<span class="c1">// res2: cats.Id[List[Int]] = List(2, 3, 4, 5, 6, 7, 8, 9, 10)
+</span></code></pre>
+</div>
+
+<p>A simple timer method giving a rough estimate of the execution time of a piece of code:</p>
+
+<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">def</span> <span class="n">simpleTime</span><span class="o">[</span><span class="kt">A</span><span class="o">](</span><span class="n">th</span><span class="k">:</span> <span class="o">=&gt;</span> <span class="n">A</span><span class="o">)</span><span class="k">:</span> <span class="kt">A</span> <span class="o">=</span> <span class="o">{</span>
+  <span class="k">val</span> <span class="n">start</span> <span class="k">=</span> <span class="nc">System</span><span class="o">.</span><span class="n">currentTimeMillis</span>
+  <span class="k">val</span> <span class="n">result</span> <span class="k">=</span> <span class="n">th</span>
+  <span class="k">val</span> <span class="n">end</span> <span class="k">=</span> <span class="nc">System</span><span class="o">.</span><span class="n">currentTimeMillis</span>
+  <span class="n">println</span><span class="o">(</span><span class="s">"time: "</span> <span class="o">+</span> <span class="o">(</span><span class="n">end</span> <span class="o">-</span> <span class="n">start</span><span class="o">))</span>
+  <span class="n">result</span>
+<span class="o">}</span>
+<span class="c1">// simpleTime: [A](th: =&gt; A)A
+</span></code></pre>
+</div>
+
+<p>When we execute the increment traversals again using <code class="highlighter-rouge">Future</code>, we can observe that the parallel execution is now quicker than the sequential.</p>
+
+<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">freestyle.nondeterminism._</span>
+<span class="c1">// import freestyle.nondeterminism._
+</span>
+<span class="k">import</span> <span class="nn">scala.concurrent.Await</span>
+<span class="c1">// import scala.concurrent.Await
+</span>
+<span class="k">import</span> <span class="nn">scala.concurrent.duration.Duration</span>
+<span class="c1">// import scala.concurrent.duration.Duration
+</span>
+<span class="k">val</span> <span class="n">futPar</span> <span class="k">=</span> <span class="n">traversingPar</span><span class="o">.</span><span class="n">interpret</span><span class="o">[</span><span class="kt">Future</span><span class="o">]</span>
+<span class="c1">// futPar: scala.concurrent.Future[List[Int]] = Future(&lt;not completed&gt;)
+</span>
+<span class="n">simpleTime</span><span class="o">(</span><span class="nc">Await</span><span class="o">.</span><span class="n">result</span><span class="o">(</span><span class="n">futPar</span><span class="o">,</span> <span class="nc">Duration</span><span class="o">.</span><span class="nc">Inf</span><span class="o">))</span>
+<span class="c1">// time: 2218
+// res3: List[Int] = List(2, 3, 4, 5, 6, 7, 8, 9, 10)
+</span>
+<span class="k">val</span> <span class="n">futSeq</span> <span class="k">=</span> <span class="n">traversingSeq</span><span class="o">.</span><span class="n">interpret</span><span class="o">[</span><span class="kt">Future</span><span class="o">]</span>
+<span class="c1">// futSeq: scala.concurrent.Future[List[Int]] = Future(&lt;not completed&gt;)
+</span>
+<span class="n">simpleTime</span><span class="o">(</span><span class="nc">Await</span><span class="o">.</span><span class="n">result</span><span class="o">(</span><span class="n">futSeq</span><span class="o">,</span> <span class="nc">Duration</span><span class="o">.</span><span class="nc">Inf</span><span class="o">))</span>
+<span class="c1">// time: 4296
+// res4: List[Int] = List(2, 3, 4, 5, 6, 7, 8, 9, 10)
+</span></code></pre>
+</div>
+
+<h3 id="applicative-and-monadic-behavior">Applicative and Monadic behavior</h3>
+
+<p>We can combine applicative and monadic steps by using the Cartesian builder (<code class="highlighter-rouge">|@|</code>) inside a for comprehension:</p>
+
+<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">val</span> <span class="n">incrAndMultiply</span> <span class="k">=</span>
+  <span class="k">for</span> <span class="o">{</span>
+    <span class="n">ab</span> <span class="k">&lt;-</span> <span class="o">(</span><span class="n">incrPar</span><span class="o">(</span><span class="mi">5</span><span class="o">)</span> <span class="o">|@|</span> <span class="n">incrPar</span><span class="o">(</span><span class="mi">6</span><span class="o">)).</span><span class="n">tupled</span>
+    <span class="o">(</span><span class="n">a</span><span class="o">,</span> <span class="n">b</span><span class="o">)</span> <span class="k">=</span> <span class="n">ab</span>
+    <span class="n">c</span> <span class="k">&lt;-</span> <span class="nc">Calc</span><span class="o">[</span><span class="kt">Calc.Op</span><span class="o">].</span><span class="n">product</span><span class="o">(</span><span class="n">a</span><span class="o">,</span> <span class="n">b</span><span class="o">)</span>
+    <span class="n">d</span> <span class="k">&lt;-</span> <span class="nc">FreeS</span><span class="o">.</span><span class="n">pure</span><span class="o">(</span><span class="n">c</span> <span class="o">+</span> <span class="mi">1</span><span class="o">)</span>
+  <span class="o">}</span> <span class="k">yield</span> <span class="n">d</span>
+<span class="c1">// incrAndMultiply: cats.free.Free[[β$0$]cats.free.FreeApplicative[Calc.Op,β$0$],Int] = Free(...)
+</span>
+<span class="n">incrAndMultiply</span><span class="o">.</span><span class="n">interpret</span><span class="o">[</span><span class="kt">Id</span><span class="o">]</span>
+<span class="c1">// res5: cats.Id[Int] = 43
+</span></code></pre>
+</div>
+
+<p>In the first line of the for comprehension, the two applicative operations using <code class="highlighter-rouge">incrPar</code> are independent and could be executed in parallel. In the last line we are using <code class="highlighter-rouge">FreeS.pure</code> as a handy alternative for <code class="highlighter-rouge">(c + 1).pure[FreeS[Calc.Op, ?]]</code> or <code class="highlighter-rouge">Applicative[FreeS[CalcOp, ?]].pure(c + 1)</code>.</p>
+
+<p>To see the effect of replacing multiple independent monadic steps with one applicative step, we can again execute two similar programs using <code class="highlighter-rouge">Future</code>:</p>
+
+<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">val</span> <span class="n">incrSeqSum</span> <span class="k">=</span> <span class="k">for</span> <span class="o">{</span>
+  <span class="n">a</span> <span class="k">&lt;-</span> <span class="n">incrSeq</span><span class="o">(</span><span class="mi">1</span><span class="o">)</span>
+  <span class="n">b</span> <span class="k">&lt;-</span> <span class="n">incrSeq</span><span class="o">(</span><span class="mi">2</span><span class="o">)</span>
+  <span class="n">c</span> <span class="k">&lt;-</span> <span class="nc">Calc</span><span class="o">[</span><span class="kt">Calc.Op</span><span class="o">].</span><span class="n">sum</span><span class="o">(</span><span class="n">a</span><span class="o">,</span> <span class="n">b</span><span class="o">)</span>
+<span class="o">}</span> <span class="k">yield</span> <span class="n">c</span>
+<span class="c1">// incrSeqSum: cats.free.Free[[β$0$]cats.free.FreeApplicative[Calc.Op,β$0$],Int] = Free(...)
+</span>
+<span class="k">val</span> <span class="n">incrParSum</span> <span class="k">=</span> <span class="k">for</span> <span class="o">{</span>
+  <span class="n">ab</span> <span class="k">&lt;-</span> <span class="o">(</span><span class="n">incrPar</span><span class="o">(</span><span class="mi">1</span><span class="o">)</span> <span class="o">|@|</span> <span class="n">incrPar</span><span class="o">(</span><span class="mi">2</span><span class="o">)).</span><span class="n">tupled</span>
+  <span class="n">c</span>  <span class="k">&lt;-</span> <span class="nc">Function</span><span class="o">.</span><span class="n">tupled</span><span class="o">(</span><span class="nc">Calc</span><span class="o">[</span><span class="kt">Calc.Op</span><span class="o">].</span><span class="n">sum</span> <span class="k">_</span><span class="o">)(</span><span class="n">ab</span><span class="o">)</span>
+<span class="o">}</span> <span class="k">yield</span> <span class="n">c</span>
+<span class="c1">// incrParSum: cats.free.Free[[β$0$]cats.free.FreeApplicative[Calc.Op,β$0$],Int] = Free(...)
+</span>
+<span class="k">val</span> <span class="n">futSeq2</span> <span class="k">=</span> <span class="n">incrSeqSum</span><span class="o">.</span><span class="n">interpret</span><span class="o">[</span><span class="kt">Future</span><span class="o">]</span>
+<span class="c1">// futSeq2: scala.concurrent.Future[Int] = Future(&lt;not completed&gt;)
+</span>
+<span class="n">simpleTime</span><span class="o">(</span><span class="nc">Await</span><span class="o">.</span><span class="n">result</span><span class="o">(</span><span class="n">futSeq2</span><span class="o">,</span> <span class="nc">Duration</span><span class="o">.</span><span class="nc">Inf</span><span class="o">))</span>
+<span class="c1">// time: 385
+// res6: Int = 5
+</span>
+<span class="k">val</span> <span class="n">futPar2</span> <span class="k">=</span> <span class="n">incrParSum</span><span class="o">.</span><span class="n">interpret</span><span class="o">[</span><span class="kt">Future</span><span class="o">]</span>
+<span class="c1">// futPar2: scala.concurrent.Future[Int] = Future(&lt;not completed&gt;)
+</span>
+<span class="n">simpleTime</span><span class="o">(</span><span class="nc">Await</span><span class="o">.</span><span class="n">result</span><span class="o">(</span><span class="n">futPar2</span><span class="o">,</span> <span class="nc">Duration</span><span class="o">.</span><span class="nc">Inf</span><span class="o">))</span>
+<span class="c1">// time: 294
+// res7: Int = 5
+</span></code></pre>
+</div>
+
+<h2 id="cats-data-types">Cats data types</h2>
+
+<p>Imagine a scenario where we want to execute our simple calculations by a (remote) service that needs some configuration and our <code class="highlighter-rouge">Calc</code> algebra has no parameters taking configuration. We don’t want to add this service specific configuration to the <code class="highlighter-rouge">Calc</code> algebra because it would mean that we would also need to pass the configuration when we want to perform calculations ourselves with our <code class="highlighter-rouge">Id</code> or <code class="highlighter-rouge">Future</code> handlers. A possible solution to this dilemma is to use the <a href="http://typelevel.org/cats/datatypes/kleisli.html"><code class="highlighter-rouge">Kleisli</code></a> or <code class="highlighter-rouge">ReaderT</code> data type from Cats as a target for our <code class="highlighter-rouge">Calc</code> operations.</p>
+
+<p><code class="highlighter-rouge">Kleisli</code> is essentially a function where you can work with the eventual result in a for comprehension, <code class="highlighter-rouge">map</code> function; while only supplying the input to the <code class="highlighter-rouge">Kleisli</code> function when you need the final result.</p>
+
+<p>Our demo configuration will only contain a number that we will add to every computation, but in a more realistic case, it could contain an API key, a URI, etc.</p>
+
+<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">case</span> <span class="k">class</span> <span class="nc">Config</span><span class="o">(</span><span class="n">n</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span>
+<span class="c1">// defined class Config
+</span></code></pre>
+</div>
+
+<p>We will use <code class="highlighter-rouge">Reader[Config, ?]</code>, which is a type alias for <code class="highlighter-rouge">ReaderT[Id, Config, ?]</code>, as target here:</p>
+
+<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">cats.data.Reader</span>
+<span class="c1">// import cats.data.Reader
+</span>
+<span class="k">type</span> <span class="kt">WithConfig</span><span class="o">[</span><span class="kt">A</span><span class="o">]</span> <span class="k">=</span> <span class="nc">Reader</span><span class="o">[</span><span class="kt">Config</span>, <span class="kt">A</span><span class="o">]</span>
+<span class="c1">// defined type alias WithConfig
+</span>
+<span class="k">implicit</span> <span class="k">val</span> <span class="n">readerHandler</span> <span class="k">=</span>
+  <span class="k">new</span> <span class="nc">Calc</span><span class="o">.</span><span class="nc">Handler</span><span class="o">[</span><span class="kt">WithConfig</span><span class="o">]</span> <span class="o">{</span>
+    <span class="k">def</span> <span class="n">sum</span><span class="o">(</span><span class="n">a</span><span class="k">:</span> <span class="kt">Int</span><span class="o">,</span> <span class="n">b</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span> <span class="k">=</span>
+      <span class="nc">Reader</span> <span class="o">{</span> <span class="n">cfg</span> <span class="k">=&gt;</span> <span class="n">cfg</span><span class="o">.</span><span class="n">n</span> <span class="o">+</span> <span class="n">a</span> <span class="o">+</span> <span class="n">b</span> <span class="o">}</span>
+    <span class="k">def</span> <span class="n">product</span><span class="o">(</span><span class="n">a</span><span class="k">:</span> <span class="kt">Int</span><span class="o">,</span> <span class="n">b</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span> <span class="k">=</span>
+      <span class="nc">Reader</span> <span class="o">{</span> <span class="n">cfg</span> <span class="k">=&gt;</span> <span class="n">cfg</span><span class="o">.</span><span class="n">n</span> <span class="o">+</span> <span class="n">a</span> <span class="o">*</span> <span class="n">b</span> <span class="o">}</span>
+  <span class="o">}</span>
+<span class="c1">// readerHandler: Calc.Handler[WithConfig] = $anon$1@2b714ab3
+</span></code></pre>
+</div>
+
+<p>With this <code class="highlighter-rouge">Reader</code> handler in place, we can translate some of the previous programs and supply the configuration to get the end result with <code class="highlighter-rouge">Kleisli#run</code>:</p>
+
+<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">val</span> <span class="n">configTraversing</span> <span class="k">=</span> <span class="n">traversingSeq</span><span class="o">.</span><span class="n">interpret</span><span class="o">[</span><span class="kt">WithConfig</span><span class="o">]</span>
+<span class="c1">// configTraversing: WithConfig[List[Int]] = Kleisli(cats.data.KleisliInstances4$$anon$3$$Lambda$4605/666559258@5f6b8fef)
+</span>
+<span class="k">val</span> <span class="n">configIncrSum</span>    <span class="k">=</span> <span class="n">incrParSum</span><span class="o">.</span><span class="n">interpret</span><span class="o">[</span><span class="kt">WithConfig</span><span class="o">]</span>
+<span class="c1">// configIncrSum: WithConfig[Int] = Kleisli(cats.data.KleisliInstances4$$anon$3$$Lambda$4605/666559258@6ea4dfef)
+</span>
+<span class="k">val</span> <span class="n">cfg</span> <span class="k">=</span> <span class="nc">Config</span><span class="o">(</span><span class="mi">1000</span><span class="o">)</span>
+<span class="c1">// cfg: Config = Config(1000)
+</span>
+<span class="n">configTraversing</span><span class="o">.</span><span class="n">run</span><span class="o">(</span><span class="n">cfg</span><span class="o">)</span>
+<span class="c1">// res8: cats.Id[List[Int]] = List(1002, 1003, 1004, 1005, 1006, 1007, 1008, 1009, 1010)
+</span>
+<span class="n">configIncrSum</span><span class="o">.</span><span class="n">run</span><span class="o">(</span><span class="n">cfg</span><span class="o">)</span>
+<span class="c1">// res9: cats.Id[Int] = 3005
+</span></code></pre>
+</div>
+
+<p>The Cats data types can be used as the target of a Freestyle program, but they also cooperate well with <code class="highlighter-rouge">FreeS</code> and <code class="highlighter-rouge">FreeS.Par</code>. In the <a href="../stack/">stack example</a>, the <code class="highlighter-rouge">getCustomer</code> method uses <a href="http://typelevel.org/cats/datatypes/optiont.html"><code class="highlighter-rouge">OptionT</code></a> to combine <code class="highlighter-rouge">FreeS</code> programs.</p>
+
+<h2 id="standing-on-the-shoulders-of-giant-cats">Standing on the shoulders of giant Cats</h2>
+
+<p>Freestyle is only possible because of the foundational abstractions provided by Cats. Freestyle shares Cats philosophy to make functional programming in Scala simpler and more approachable to all Scala developers.</p>
+
+<p>Freestyle tries to reduce the boilerplate needed to create programs using free algebras and provides ready to use effect algebras and integrations with other libraries, making it easier to work and get started with <code class="highlighter-rouge">Free</code> and consorts.</p>
+</section></div></div></div></div><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script><script src="/highlight/highlight.pack.js"></script><script>hljs.configure({
+languages:['scala','java','bash']
+});
+hljs.initHighlighting();
+             </script><script src="/js/main.js"></script><script src="/js/kazari.js"></script><script>
+$(document).ready(function() {
+	kazari.KazariPlugin().decorateCode('https://scala-evaluator-212.herokuapp.com/eval', 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.S2F6YXJp.Jl2eqMfw8IakJF93PjxTbrf-8YUJgX5OoOfy5JHE8Yw', '', 'solarized-dark')
+})
+    </script></body></html>
