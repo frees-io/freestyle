@@ -34,13 +34,13 @@ class KeyValueProvider[Key, Val] {
 }
 ```
 
-To make the algebra parametric on the types of `Key` and `Value`, we wrap the declaration of the algebra inside a `KeyValueProvider`; but note that this class has no instance data.
+To create the algebra parametric on the types of `Key` and `Value`, we wrap the declaration of the algebra inside a `KeyValueProvider`; but note that this class has no instance data.
 The algebra assumes no specific implementation or representation of the data store, since that is a matter for each _handler_ of the algebra.
 For the same reason, it poses no type constraint on `Key` or `Val` with regards to ordering, hashing, or encoding, but it is assumed that equality is defined for both types.
 
 ### Using the Cache Effect
 
-The following code snippet shows how to import and use the operations from the Cache algebra inside a program.
+The following code snippet shows how to import and use the operations from the Cache algebra inside a program:
 
 ```tut:book
 import freestyle._
@@ -64,7 +64,7 @@ def loadFrom[F[_]: prov.CacheM] = {
 
 ### Operations
 
-The set of abstract operations of the `Cache` algebra are specified as follows.
+The set of abstract operations of the `Cache` algebra are specified as follows:
 
 * `get(key: Key): M[Option[Val]]` issues a query to the data store on a given key. The result can be `None`, if the store has no mapping for that key, or `Some(v)` if the key is mapped to the value `v`.
 * `put(key: Key, v: Value)` issues a command to associate a given key to a given value

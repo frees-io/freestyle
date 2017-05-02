@@ -6,13 +6,11 @@ permalink: /docs/effects/async/
 
 # Async Callbacks
 
-The _freestyle-async_ module makes it possible to use asynchronous callback based APIs with freestyle.
+The _freestyle-async_ module makes it possible to use asynchronous callback-based APIs with freestyle.
 
 ## Example
 
-Imagine the following API that allows us to find the books written by some author and where we need to
-supply a callback function handling both the successfull case where the books have been found and the case
-where something went wrong.
+Let’s imagine an API that allows us to find books written by a certain author. We need to supply a callback function handling both a successful case where the books have been found, and a case where something went wrong. 
 
 ```tut:book
 case class Author(name: String) extends AnyVal
@@ -23,9 +21,9 @@ trait LibraryAPI {
 }
 ```
 
-We can use such a callback based (asynchronous) API in freestyle by using the _freestyle-async_ module.
+We can use this type of callback-based (asynchronous) API in freestyle by using the _freestyle-async_ module.
 
-To use the _freestyle-async_ module you need to include one of the following dependencies:
+To use the _freestyle-async_ module, you need to include one of the following dependencies:
 
 [comment]: # (Start Replace)
 
@@ -55,7 +53,7 @@ import freestyle.async._
 import freestyle.async.implicits._
 ```
 
-If we know want to create a freestyle program which uses the `findBooks` function and returns all the books sorted by the year they were written, we can use the `AsyncM` effect.
+Now if we want to create a freestyle program which uses the `findBooks` function and returns all the books sorted by the year they were written, we can use the `AsyncM` effect:
 
 ```tut:book
 def sortedBooks[F[_]: AsyncM](lib: LibraryAPI)(author: Author): FreeS[F, List[Book]] =
@@ -64,7 +62,7 @@ def sortedBooks[F[_]: AsyncM](lib: LibraryAPI)(author: Author): FreeS[F, List[Bo
   }
 ```
 
-A simple demo implementation for the `LibararyAPI` :
+A simple demo implementation for the `LibararyAPI`:
 
 ```tut:book
 case class NoBooksFound(author: Author) extends Exception(s"No books found from ${author.name}")
@@ -76,7 +74,7 @@ object Library extends LibraryAPI {
 }
 ```
 
-Now we can create simple programs requesting the books for some authors.
+Now we can create simple programs requesting the books for certain authors:
 
 ```tut:book
 val getSorted: Author => FreeS[AsyncM.Op, List[Book]] =
@@ -88,7 +86,7 @@ val otherBooks   = getSorted(Author("HemingwayOrwellKerouac"))
 
 We can run these programs using:
 
-- FS2's `Task` as target (we need to have an `fs2.Strategy` in implicit scope)
+- FS2's `Task` as target (we need to have an `fs2.Strategy` in implicit scope):
 
 ```tut:book
 import freestyle.asyncFs2.implicits._
@@ -113,7 +111,7 @@ Await.result(fs2Task1.unsafeRunAsyncFuture, Duration.Inf)
 Await.result(fs2Task2.unsafeRunAsyncFuture, Duration.Inf)
 ```
 
-- Monix' `Task` as target (we need to have an `ExecutionContext` in implicit scope)
+- Monix' `Task` as target (we need to have an `ExecutionContext` in implicit scope):
 
 ```tut:book
 import freestyle.asyncMonix.implicits._
@@ -136,7 +134,7 @@ Await.result(monixTask1.runAsync, Duration.Inf)
 Await.result(monixTask2.runAsync, Duration.Inf)
 ```
 
-- `Future` as target (we need to have an `ExecutionContext` in implicit scope)
+- `Future` as target (we need to have an `ExecutionContext` in implicit scope):
 
 ```tut:book
 import scala.concurrent.Future

@@ -9,15 +9,13 @@ permalink: /docs/effects/option/
 The option effect allows short circuiting of programs for optional values.
 It includes two basic operations: `option` and `non`.
 
-The constrains placed by this effect is that there needs to be an implicit evidence of `MonadFilter[M[_]] 
-for any runtime `M[_]` used in its interpretation. Short-circuiting with `none` does not mean that you'd end up with a
-`None` value at some point. The final value in case of short-circuit is determined by the `MonadFilter[M[_]]#empty` for 
+There needs to be implicit evidence of `MonadFilter[M[_]]` for any runtime `M[_]` used in its interpretation due to contraints placed by this effect. Short-circuiting with `none` does not mean that you'll end up with a
+`None` value at some point. The final value in case of short-circuiting is determined by the `MonadFilter[M[_]]#empty` for 
 your target runtime `M[_]`.
 
 ### option
 
-`option` allows a value of type `Option[_]` to be lifted into the context of `FreeS`. If a `None` it's found the program
-will short circuit. 
+`option` allows a value of type `Option[_]` to be lifted into the context of `FreeS`. If a `None` is found the program will short circuit. 
 
 
 ```tut:book
@@ -37,7 +35,7 @@ def programNone[F[_]: OptionM] =
 programNone[OptionM.Op].exec[Option]
 ```
 
-If a `Some(_)` is found the value is extracted and lifted into the context and the programs resumes
+If a `Some(_)` is found, the value is extracted and lifted into the context and the programs resumes
 normally.
 
 ```tut:book

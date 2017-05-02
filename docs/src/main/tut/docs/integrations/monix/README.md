@@ -12,7 +12,7 @@ Monix' `Task` can be used as a target of your `FreeS` programs.
 import freestyle._
 ```
 
-We will take a similar example as in the [parallelism](/docs/core/parallelism/) section. Here we will create a small algebra to validate numbers.
+We will use an example similar to the one used in the [parallelism](/docs/core/parallelism/) section. We will create a small algebra to validate numbers:
 
 ```tut:book
 @free trait Validator {
@@ -30,11 +30,11 @@ def isPositiveEven[F[_]](implicit V: Validator[F]): FreeS.Par[F, Boolean] =
   (V.isPositive |@| V.isEven).map(_ && _)
 ```
 
-Our algebra didn't specify what exactly will be validated, so that gives us the liberty to do that in a handler.
+Our algebra didn't specify exactly what will be validated, so that gives us the liberty to do that in a handler.
 
-We will create a handler that validates integers and that can potentially validate these integers asynchronously.
+We will create a handler that validates integers and can potentially do so asynchronously.
 
-We could encode the fact that we will validate integers by using `Reader[Int, ?]` and the (potential) asynchronicity with Monix `Task`, combining the two we end up with `ReaderT[Task, Int, ?]` or `Kleisli[Task, Int, ?]`.
+We can encode that we will validate integers by using `Reader[Int, ?]` and the (potential) asynchronicity with Monix `Task`, combining the two we end up with `ReaderT[Task, Int, ?]` or `Kleisli[Task, Int, ?]`.
 
 ```tut:book
 import cats.data.Kleisli
@@ -78,11 +78,11 @@ Await.result(check.run(2).runAsync, Duration.Inf)
 Await.result(check.run(-1).runAsync, Duration.Inf)
 ```
 
-We can see that `isPositive` is always printed before `isEven` eventhough `isEven` doesn't take as long as `isPositive`.
+We can see that `isPositive` is always printed before `isEven` even though `isEven` doesn't take as long as `isPositive`.
 
-This happens because in most `Monad` instances the `Applicative` operations are implemented using `flatMap`, which means that the operations are sequential.
+This happens because, in most `Monad` instances, the `Applicative` operations are implemented using `flatMap`, which means that the operations are sequential.
 
-Monix however also has a nondeterministic `Monad` instance, that will execute `Task`s in parallel:
+Monix however, also has a nondeterministic `Monad` instance, that will execute `Task`s in parallel:
 
 ```tut:book
 import Task.nondeterminism
@@ -94,7 +94,7 @@ Await.result(check2.run(2).runAsync, Duration.Inf)
 Await.result(check2.run(-1).runAsync, Duration.Inf)
 ```
 
-Note that if we lift our `isPostiveEven` program into `FreeS`, it will still execute sequentially. This is an issue in the `Monad` instance of `Kleisli` in the current Cats version, that means that it doesn't use (all) the `Applicative` methods of the nondeterministic instance of `Task`. In the next release of Cats this will execute in parallel as well.
+Note that if we lift our `isPostiveEven` program into `FreeS`, it will still execute sequentially. This is an issue in the `Monad` instance of `Kleisli` in the current Cats version, that means that it doesn't use (all) the `Applicative` methods of the nondeterministic instance of `Task`. In the next release of Cats, this will execute in parallel as well.
 
 ```
 val check3 = isPositiveEven[Validator.Op].freeS.exec[ValidateInt]
@@ -106,4 +106,4 @@ Await.result(check3.run(-1).runAsync, Duration.Inf)
 
 ### Async
 
-There is also the _freestyle-async-monix_ module mentioned in the [async callback section](/docs/effects/async/), which allows you to work with callback based APIs in freestyle and translate your `FreeS` program in the end to a type like Monix' `Task`.
+There is also the _freestyle-async-monix_ module mentioned in the [async callback section](/docs/effects/async/), which allows you to work with callback-based APIs in freestyle and translate your `FreeS` program in the end to a type like Monix' `Task`.

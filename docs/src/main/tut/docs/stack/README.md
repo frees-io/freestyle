@@ -4,7 +4,7 @@ title: A common stack with cache
 permalink: /docs/stack/
 ---
 
-In the following example we will see how a module with two algebras can be used in combination with some of the effect algebras provided by Freestyle.
+In the following example, we will see how a module with two algebras can be used in combination with some of the effect algebras provided by Freestyle.
 
 In this example, a company selling multiple varieties of apples wants to process its customers' orders. The orders need to be validated, the stock levels of apples checked to make sure the order can be fulfilled, and finally, the order needs to be processed.
 

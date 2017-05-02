@@ -8,12 +8,12 @@ permalink: /docs/effects/validation/
 
 The validation effect allows for the distinction between valid and invalid values in a program, accumulating the validation errors when executing it.
 
-The `validation` effect, like [state](../state), supports parametrization to any type remaining type safe throughout the program declaration.
+The `validation` effect, like [state](../state), supports parameterization to any type remaining type safe throughout the program declaration.
 
-The constrains placed by this effect is that there needs to be an implicit evidence of `MonadState[M[_], List[E]]`
-for any runtime `M[_]` where `E` is the type of the validation error.
+There needs to be implicit evidence of `MonadState[M[_], List[E]]`
+for any runtime `M[_]` where `E` is the type of the validation error due to the constraints placed by this effect.
 
-The validation effect comes with three basic operations `valid`, `invalid`, and `errors`. Apart from that, it includes a couple of combinators for accumulating errors: `fromEither` and `fromValidatedNel`.
+The validation effect comes with three basic operations `valid`, `invalid`, and `errors`. Apart from these, it includes a couple of combinators for accumulating errors: `fromEither` and `fromValidatedNel`.
 
 ```tut:silent
 import freestyle._
@@ -33,7 +33,7 @@ type ValidationResult[A] = State[List[ValidationError], A]
 
 ### valid
 
-`valid` lifts a valid value to the program without accumulating any errors.
+`valid` lifts a valid value to the program without accumulating any errors:
 
 ```tut:book
 import cats.instances.list._
@@ -50,7 +50,7 @@ programValid[vl.ValidationM.Op].exec[ValidationResult].runEmpty
 
 ### invalid
 
-`invalid` accumulates a validation error.
+`invalid` accumulates a validation error:
 
 ```tut:book
 def programInvalid[F[_]: vl.ValidationM] =
@@ -65,7 +65,7 @@ programInvalid[vl.ValidationM.Op].exec[ValidationResult].runEmpty
 
 ### errors
 
-`errors` allows you to inspect the accumulated errors so far.
+`errors` allows you to inspect the accumulated errors so far:
 
 ```tut:book
 def programErrors[F[_]: vl.ValidationM] =
@@ -80,7 +80,7 @@ programErrors[vl.ValidationM.Op].exec[ValidationResult].runEmpty
 
 ### fromEither
 
-We can interleave `Either[ValidationError, ?]` values in the program, and if they have errors in the left side they will be accumulated.
+We can interleave `Either[ValidationError, ?]` values in the program. If they have errors on the left side they will be accumulated:
 
 ```tut:book
 def programFromEither[F[_]: vl.ValidationM] =
@@ -94,7 +94,7 @@ programFromEither[vl.ValidationM.Op].exec[ValidationResult].runEmpty
 
 ### fromValidatedNel
 
-We can interleave `ValidatedNel[ValidationError, ?]` values in the program, and if they have errors in the invalid case they will be accumulated.
+We can interleave `ValidatedNel[ValidationError, ?]` values in the program. If they have errors in the invalid case they will be accumulated:
 
 ```tut:book
 import cats.data.{Validated, ValidatedNel, NonEmptyList}
@@ -117,7 +117,7 @@ programFromValidatedNel[vl.ValidationM.Op].exec[ValidationResult].runEmpty
 
 ### Syntax
 
-By importing the validation effect implicits, a couple methods are available for lifting valid and invalid values to our program: `liftValid` and `liftInvalid`.
+By importing the validation effect implicits, a couple of methods are available for lifting valid and invalid values to our program: `liftValid` and `liftInvalid`.
 
 ```tut:book
 def programSyntax[F[_]: vl.ValidationM] =

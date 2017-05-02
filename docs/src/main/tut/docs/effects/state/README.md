@@ -10,14 +10,13 @@ The state effect enables purely functional state throughout programs.
 
 The `state` effect supports parametrization to any type remaining type safe throughout the program declaration. 
 
-The constrains placed by this effect is that there needs to be an implicit evidence of `MonadState[M[_], S]` 
-for any runtime `M[_]` where `S` is the type of state.
+There needs to be implicit evidence of `MonadState[M[_], S]` for any runtime `M[_]` where `S` is the type of state due to the constraints placed by this effect.
 
-The state effect comes with four basic operations `get`, `set`, `modify` and `inspect`.
+The state effect comes with four basic operations `get`, `set`, `modify`, and `inspect`.
 
 ## get
 
-`get` retrieves the current state
+`get` retrieves the current state:
 
 ```tut:book
 import freestyle._
@@ -44,7 +43,7 @@ programGet[st.StateM.Op].exec[TargetState].run(1).value
 
 ### set
 
-`set` replaces the current state
+`set` replaces the current state:
 
 ```tut:book
 def programSet[F[_]: st.StateM] =
@@ -58,7 +57,7 @@ programSet[st.StateM.Op].exec[TargetState].run(0).value
 
 ### modify
 
-`modify` modifies the current state
+`modify` modifies the current state:
 
 ```tut:book
 def programModify[F[_]: st.StateM] =
@@ -73,7 +72,7 @@ programModify[st.StateM.Op].exec[TargetState].run(1).value
 
 ### inspect
 
-`inspect` runs a function over the current state and returns the resulting value
+`inspect` runs a function over the current state and returns the resulting value:
 
 ```tut:book
 def programInspect[F[_]: st.StateM] =
