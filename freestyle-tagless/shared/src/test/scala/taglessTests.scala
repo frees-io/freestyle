@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import freestyle._
+import freestyle.{FreeS, _}
 import freestyle.implicits._
 import org.scalatest.{Matchers, WordSpec}
 import cats._
@@ -105,10 +105,10 @@ object handlers  {
     def y(a: Int): Option[Int] = Some(a)
   }
 
-  implicit val stackSafeOptionHandler1: TG1.Handler[Free[Option, ?]] = new TG1.Handler[Free[Option, ?]] {
-    def x(a: Int): Free[Option, Int] = Free.liftF(Some(a))
+  implicit val stackSafeOptionHandler1: TG1.Handler[FreeS[Option, ?]] = new TG1.Handler[FreeS[Option, ?]] {
+    def x(a: Int): FreeS[Option, Int] = FreeS.liftFA(Some(a))
 
-    def y(a: Int): Free[Option, Int] = Free.liftF(Some(a))
+    def y(a: Int): FreeS[Option, Int] = FreeS.liftFA(Some(a))
   }
 
   implicit val optionHandler2: TG2.Handler[Option] = new TG2.Handler[Option] {

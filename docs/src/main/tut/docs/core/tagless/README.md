@@ -108,19 +108,17 @@ Freestyle provides two strategies to make `@tagless` encoded algebras stack safe
 ### Interpreting to a stack safe monad
 
 The handlers above are not stack safe because `Try` is not stack-safe. Luckily, we can rewrite our interpreters to 
-interpret to `Free[Try, ?]` instead. This small penalty and a few extra allocations will make our programs stack safe.
+interpret to `FreeS[Try, ?]` instead. This small penalty and a few extra allocations will make our programs stack safe.
 
 ```tut:book
-import cats.free.Free
-
-implicit val validationHandlerStackSafe = new Validation.Handler[Free[Try, ?]] {
-  override def minSize(s: String, n: Int): Free[Try, Boolean] = Free.liftF(Try(s.size >= n))
-  override def hasNumber(s: String): Free[Try, Boolean] = Free.liftF(Try(s.exists(c => "0123456789".contains(c))))
+implicit val validationHandlerStackSafe = new Validation.Handler[FreeS[Try, ?]] {
+  override def minSize(s: String, n: Int): FreeS[Try, Boolean] = FreeS.liftFA(Try(s.size >= n))
+  override def hasNumber(s: String): FreeS[Try, Boolean] = FreeS.liftFA(Try(s.exists(c => "0123456789".contains(c))))
 }
 
-implicit val interactionHandlerStackSafe = new Interaction.Handler[Free[Try, ?]] {
-  override def tell(s: String): Free[Try, Unit] = Free.liftF(Try(println(s)))
-  override def ask(s: String): Free[Try, String] = Free.liftF(Try("This could have been user input 1"))
+implicit val interactionHandlerStackSafe = new Interaction.Handler[FreeS[Try, ?]] {
+  override def tell(s: String): FreeS[Try, Unit] = FreeS.liftFA(Try(println(s)))
+  override def ask(s: String): FreeS[Try, String] = FreeS.liftFA(Try("This could have been user input 1"))
 }
 ```
 
@@ -131,7 +129,7 @@ import cats.arrow.FunctionK
 
 implicit def functionKIdentity[F[_]]: FunctionK[F, F] = FunctionK.id[F]
 
-program[Free[Try, ?]].exec[Try]
+program[FreeS[Try, ?]].exec[Try]
 ```
 
 ### Combining `@tagless` and `@free` algebras
