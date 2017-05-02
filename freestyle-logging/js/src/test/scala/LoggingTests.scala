@@ -47,7 +47,7 @@ class LoggingTests extends AsyncWordSpec with Matchers {
         _ <- app.loggingM.warnWithCause("Warning Message", Cause)
         b <- FreeS.pure(1)
       } yield a + b
-      program.exec[Future] map { _ shouldBe 2 }
+      program.interpret[Future] map { _ shouldBe 2 }
     }
 
   }

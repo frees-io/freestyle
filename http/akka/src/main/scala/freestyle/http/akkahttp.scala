@@ -30,12 +30,12 @@ package object akka {
       implicit NT: F ~> G,
       MonG: Monad[G],
       gem: ToEntityMarshaller[G[A]]): ToEntityMarshaller[FreeS[F, A]] =
-    gem.compose((fs: FreeS[F, A]) => fs.exec[G])
+    gem.compose((fs: FreeS[F, A]) => fs.interpret[G])
 
   implicit def parToEntityMarshaller[F[_], G[_], A](
       implicit NT: F ~> G,
       MonG: Monad[G],
       gem: ToEntityMarshaller[G[A]]): ToEntityMarshaller[FreeS.Par[F, A]] =
-    gem.compose((fp: FreeS.Par[F, A]) => FreeS.liftPar(fp).exec[G])
+    gem.compose((fp: FreeS.Par[F, A]) => FreeS.liftPar(fp).interpret[G])
 
 }

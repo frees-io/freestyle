@@ -85,7 +85,7 @@ import scala.concurrent._
 import scala.concurrent.duration._
 import scala.concurrent.ExecutionContext.Implicits.global
 
-Await.result(program[App.Op].exec[Future], Duration.Inf)
+Await.result(program[App.Op].interpret[Future], Duration.Inf)
 ```
 
 ## Running fetches
@@ -105,7 +105,7 @@ def program[F[_]](
     _ <- app.interact.tell(s"Result: ${x}")
   } yield x
 
-Await.result(program[App.Op].exec[Future], Duration.Inf)
+Await.result(program[App.Op].interpret[Future], Duration.Inf)
 ```
 
 There is a variant of `runA` where a cache can be specified: `FetchM#runAWithCache`. In the following example, we simply pass an empty in-memory cache, but you can pass your own cache or a resulting cache from a previous fetch:
@@ -119,7 +119,7 @@ def program[F[_]](
     _ <- app.interact.tell(s"Result: ${x}")
   } yield x
 
-Await.result(program[App.Op].exec[Future], Duration.Inf)
+Await.result(program[App.Op].interpret[Future], Duration.Inf)
 ```
 
 ### runE
@@ -135,7 +135,7 @@ def program[F[_]](
     _ <- app.interact.tell(s"Result: ${env}")
   } yield env
 
-Await.result(program[App.Op].exec[Future], Duration.Inf)
+Await.result(program[App.Op].interpret[Future], Duration.Inf)
 ```
 
 There is a variant of `runE` where a cache can be specified: `FetchM#runEWithCache`. In the following example, we simply pass an empty in-memory cache, but you can pass your own cache or a resulting cache from a previous fetch.
@@ -149,7 +149,7 @@ def program[F[_]](
     _ <- app.interact.tell(s"Result: ${env}")
   } yield env
 
-Await.result(program[App.Op].exec[Future], Duration.Inf)
+Await.result(program[App.Op].interpret[Future], Duration.Inf)
 ```
 
 ### runF
@@ -166,7 +166,7 @@ def program[F[_]](
     _ <- app.interact.tell(s"Result: ${env}")
   } yield env
 
-Await.result(program[App.Op].exec[Future], Duration.Inf)
+Await.result(program[App.Op].interpret[Future], Duration.Inf)
 ```
 
 There is a variant of `runF` where a cache can be specified: `FetchM#runFWithCache`. In the following example, we simply pass an empty in-memory cache, but you can pass your own cache or a resulting cache from a previous fetch:
@@ -181,7 +181,7 @@ def program[F[_]](
 	_ <- app.interact.tell(s"Result: ${env}")
   } yield env
 
-Await.result(program[App.Op].exec[Future], Duration.Inf)
+Await.result(program[App.Op].interpret[Future], Duration.Inf)
 ```
 
 ## Tips
@@ -200,7 +200,7 @@ def program[F[_]](
 	y <- app.fetches.runA(fetchOne(1))
   } yield x + y
 
-Await.result(program[App.Op].exec[Future], Duration.Inf)
+Await.result(program[App.Op].interpret[Future], Duration.Inf)
 ```
 
 However, we can run a fetch getting both the environment and the result with `runF`, and pass the resulting cache to subsequent fetch runs. Note how the `"Fetching 1"` message is only printed once:
@@ -216,5 +216,5 @@ def program[F[_]](
 	y <- app.fetches.runAWithCache(fetchOne(1), env.cache)
   } yield x + y
 
-Await.result(program[App.Op].exec[Future], Duration.Inf)
+Await.result(program[App.Op].interpret[Future], Duration.Inf)
 ```

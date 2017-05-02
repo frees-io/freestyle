@@ -41,7 +41,7 @@ class FetchTests extends AsyncWordSpec with Matchers {
         b <- app.fetchM.runA(fetchString(a)).freeS
         c <- FreeS.pure(1)
       } yield a + b + c
-      program.exec[Future] map { _ shouldBe "111" }
+      program.interpret[Future] map { _ shouldBe "111" }
     }
 
     "allow fetch syntax to lift to FreeS" in {
@@ -50,7 +50,7 @@ class FetchTests extends AsyncWordSpec with Matchers {
         b <- fetchString(a).liftFS[App.Op]
         c <- app.nonFetch.x
       } yield a + b + c
-      program.exec[Future] map { _ shouldBe "111" }
+      program.interpret[Future] map { _ shouldBe "111" }
     }
 
     "allow fetch syntax to lift to FreeS.Par" in {
@@ -59,7 +59,7 @@ class FetchTests extends AsyncWordSpec with Matchers {
         b <- fetchString(a).liftFSPar[App.Op].freeS
         c <- app.nonFetch.x
       } yield a + b + c
-      program.exec[Future] map { _ shouldBe "111" }
+      program.interpret[Future] map { _ shouldBe "111" }
     }
 
     "allow a fetch to be run and return the result and/or environment with or without cache" in {
@@ -73,7 +73,7 @@ class FetchTests extends AsyncWordSpec with Matchers {
       app.fetchM.runF(fetch) |@|
       app.fetchM.runAWithCache(fetch, cache) |@|
       app.fetchM.runEWithCache(fetch, cache) |@|
-      app.fetchM.runFWithCache(fetch, cache)).tupled.exec[Future].map {
+      app.fetchM.runFWithCache(fetch, cache)).tupled.interpret[Future].map {
         case (a1, env2, (env3, a3), a4, env5, (env6, a6)) =>
           a1 shouldBe "1"
           a3 shouldBe a1

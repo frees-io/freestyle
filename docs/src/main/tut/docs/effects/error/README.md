@@ -31,24 +31,24 @@ type Target[A] = Either[Throwable, A]
 
 def shortCircuit[F[_]: ErrorM] =
   for {
-    a <- 1.pure[FreeS[F, ?]]
+    a <- FreeS.pure(1)
     b <- ErrorM[F].either[Int](Left(boom))
-    c <- 1.pure[FreeS[F, ?]]
+    c <- FreeS.pure(1)
   } yield a + b + c
 
-shortCircuit[ErrorM.Op].exec[Target]
+shortCircuit[ErrorM.Op].interpret[Target]
 ```
 
 ```tut:book
 
 def continueWithRightValue[F[_]: ErrorM] =
   for {
-    a <- 1.pure[FreeS[F, ?]]
+    a <- FreeS.pure(1)
     b <- ErrorM[F].either[Int](Right(1))
-    c <- 1.pure[FreeS[F, ?]]
+    c <- FreeS.pure(1)
   } yield a + b + c
 
-continueWithRightValue[ErrorM.Op].exec[Target]
+continueWithRightValue[ErrorM.Op].interpret[Target]
 ```
 
 ### error
@@ -58,12 +58,12 @@ If you simply want to raise an error without throwing an exception, you can use 
 ```tut:book
 def shortCircuitWithError[F[_]: ErrorM] =
   for {
-    a <- 1.pure[FreeS[F, ?]]
+    a <- FreeS.pure(1)
     b <- ErrorM[F].error[Int](boom)
-    c <- 1.pure[FreeS[F, ?]]
+    c <- FreeS.pure(1)
   } yield a + b + c
 
-shortCircuitWithError[ErrorM.Op].exec[Target]
+shortCircuitWithError[ErrorM.Op].interpret[Target]
 ```
 
 ### catchNonFatal
@@ -80,10 +80,10 @@ import cats.Eval
 
 def catchingExceptions[F[_]: ErrorM] =
   for {
-    a <- 1.pure[FreeS[F, ?]]
+    a <- FreeS.pure(1)
     b <- ErrorM[F].catchNonFatal[Int](Eval.later(throw new RuntimeException))
-    c <- 1.pure[FreeS[F, ?]]
+    c <- FreeS.pure(1)
   } yield a + b + c
   
-catchingExceptions[ErrorM.Op].exec[Target]
+catchingExceptions[ErrorM.Op].interpret[Target]
 ```

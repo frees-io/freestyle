@@ -62,7 +62,7 @@ class freeTests extends WordSpec with Matchers {
         a <- s.x(1)
         b <- s.y(1)
       } yield a + b
-      program.exec[Option] shouldBe Option(2)
+      program.interpret[Option] shouldBe Option(2)
     }
 
     "reuse program interpretation in diferent runtimes" in {
@@ -73,8 +73,8 @@ class freeTests extends WordSpec with Matchers {
         a <- s.x(1)
         b <- s.y(1)
       } yield a + b
-      program.exec[Option] shouldBe Option(2)
-      program.exec[List] shouldBe List(2)
+      program.interpret[Option] shouldBe Option(2)
+      program.interpret[List] shouldBe List(2)
     }
 
     "allow multiple args in smart constructors" in {
@@ -132,7 +132,7 @@ class freeTests extends WordSpec with Matchers {
       val v = ApplicativesServ[ApplicativesServ.Op]
       import v._
       val program = (x("a") |@| y("b") |@| z("c")).map { _ + _ + _ }.freeS
-      program.exec[Option] shouldBe Some("abc")
+      program.interpret[Option] shouldBe Some("abc")
     }
 
     "allow sequential evaluation of combined FreeS & FreeS.Par" in {
@@ -154,7 +154,7 @@ class freeTests extends WordSpec with Matchers {
         n <- z("1")
         m <- apProgram.freeS
       } yield n + m
-      program.exec[Option] shouldBe Some("1ab")
+      program.interpret[Option] shouldBe Some("1ab")
     }
 
     "allow non-FreeS concrete definitions in the trait" in {
@@ -170,7 +170,7 @@ class freeTests extends WordSpec with Matchers {
       implicit val interpreter = new WithExtra.Handler[Id]{
         override def x(a: Int): String = a.toString
       }
-      v.x(v.z).exec[Id] shouldBe "6"
+      v.x(v.z).interpret[Id] shouldBe "6"
     }
 
     "allow `FreeS` operations that use other abstractoperations" in {
@@ -182,7 +182,7 @@ class freeTests extends WordSpec with Matchers {
       implicit val interpreter = new Combine.Handler[Id]{
         override def x(a: Int): Int = 4
       }
-      v.y(5).exec[Id] shouldBe(true)
+      v.y(5).interpret[Id] shouldBe(true)
     }
 
   }

@@ -34,12 +34,12 @@ type Logger[A] = Writer[List[Int], A]
 
 def programWriter[F[_]: wr.WriterM] =
   for {
-    _ <- 1.pure[FreeS[F, ?]]
+    _ <- FreeS.pure(1)
     b <- wr.WriterM[F].writer((Nil, 1))
-    _ <- 1.pure[FreeS[F, ?]]
+    _ <- FreeS.pure(1)
   } yield b
   
-programWriter[wr.WriterM.Op].exec[Logger].run
+programWriter[wr.WriterM.Op].interpret[Logger].run
 ```
 
 ### tell
@@ -49,11 +49,11 @@ programWriter[wr.WriterM.Op].exec[Logger].run
 ```tut:book
 def programTell[F[_]: wr.WriterM] =
   for {
-    _ <- 1.pure[FreeS[F, ?]]
+    _ <- FreeS.pure(1)
     b <- wr.WriterM[F].writer((List(1), 1))
     c <- wr.WriterM[F].tell(List(1))
-    _ <- 1.pure[FreeS[F, ?]]
+    _ <- FreeS.pure(1)
   } yield b
       
-programTell[wr.WriterM.Op].exec[Logger].run
+programTell[wr.WriterM.Op].interpret[Logger].run
 ```

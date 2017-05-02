@@ -57,7 +57,7 @@ By using the _fs2-cats_ interop project, we get the necessary type class instanc
 ```tut:book
 import _root_.fs2.interop.cats._
 
-val task = doobieFrees.exec[Task]
+val task = doobieFrees.interpret[Task]
 ```
 
 To check if we actually get Alonzo Church as a `Person`, we can use `Task#unsafeRunSync` in this example:
@@ -104,7 +104,7 @@ def example[F[_]: DoobieM](implicit example: Example[F]): FreeS[F, (Person, Int)
 We can use `Example.Op` as the functor and translate the resulting program to `Task`:
 
 ```tut:book
-val task2 = example[Example.Op].exec[Task]
+val task2 = example[Example.Op].interpret[Task]
 
 task2.unsafeRunSync.toOption
 ```

@@ -27,12 +27,12 @@ import cats.implicits._
 
 def programNone[F[_]: OptionM] =
   for {
-    a <- 1.pure[FreeS[F, ?]]
+    a <- FreeS.pure(1)
     b <- OptionM[F].option[Int](None)
-    c <- 1.pure[FreeS[F, ?]]
+    c <- FreeS.pure(1)
   } yield a + b + c
   
-programNone[OptionM.Op].exec[Option]
+programNone[OptionM.Op].interpret[Option]
 ```
 
 If a `Some(_)` is found, the value is extracted and lifted into the context and the programs resumes
@@ -41,12 +41,12 @@ normally.
 ```tut:book
 def programSome[F[_]: OptionM] =
   for {
-    a <- 1.pure[FreeS[F, ?]]
+    a <- FreeS.pure(1)
     b <- OptionM[F].option(Some(1))
-    c <- 1.pure[FreeS[F, ?]]
+    c <- FreeS.pure(1)
   } yield a + b + c
   
-programSome[OptionM.Op].exec[Option]
+programSome[OptionM.Op].interpret[Option]
 ```
 
 ### none
@@ -57,10 +57,10 @@ care.
 ```tut:book
 def programNone2[F[_]: OptionM] =
   for {
-    a <- 1.pure[FreeS[F, ?]]
+    a <- FreeS.pure(1)
     b <- OptionM[F].none[Int]
-    c <- 1.pure[FreeS[F, ?]]
+    c <- FreeS.pure(1)
   } yield a + b + c
   
-programNone2[OptionM.Op].exec[Option]
+programNone2[OptionM.Op].interpret[Option]
 ```

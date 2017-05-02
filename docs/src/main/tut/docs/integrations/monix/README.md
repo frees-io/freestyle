@@ -63,7 +63,7 @@ With the Freestyle implicits and the Monix to Cats conversions in scope, we can 
 import freestyle.implicits._
 import monix.cats._
 
-val check = isPositiveEven[Validator.Op].exec[ValidateInt]
+val check = isPositiveEven[Validator.Op].interpret[ValidateInt]
 ```
 
 We can pass some integers to the `check` program with the `Kleisli#run` method and run the `Task` as a `Future` using `Task#runAsync`:
@@ -87,7 +87,7 @@ Monix however, also has a nondeterministic `Monad` instance, that will execute `
 ```tut:book
 import Task.nondeterminism
 
-val check2 = isPositiveEven[Validator.Op].exec[ValidateInt]
+val check2 = isPositiveEven[Validator.Op].interpret[ValidateInt]
 
 Await.result(check2.run(1).runAsync, Duration.Inf)
 Await.result(check2.run(2).runAsync, Duration.Inf)
@@ -97,7 +97,7 @@ Await.result(check2.run(-1).runAsync, Duration.Inf)
 Note that if we lift our `isPostiveEven` program into `FreeS`, it will still execute sequentially. This is an issue in the `Monad` instance of `Kleisli` in the current Cats version, that means that it doesn't use (all) the `Applicative` methods of the nondeterministic instance of `Task`. In the next release of Cats, this will execute in parallel as well.
 
 ```
-val check3 = isPositiveEven[Validator.Op].freeS.exec[ValidateInt]
+val check3 = isPositiveEven[Validator.Op].freeS.interpret[ValidateInt]
 
 Await.result(check3.run(1).runAsync, Duration.Inf)
 Await.result(check3.run(2).runAsync, Duration.Inf)

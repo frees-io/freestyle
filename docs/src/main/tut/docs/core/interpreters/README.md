@@ -134,7 +134,7 @@ Once we have combined our algebras, we can evaluate them by providing implicit e
 
 ```tut:book
 import freestyle.implicits._
-program[Backend.Op].exec[KVStoreState]
+program[Backend.Op].interpret[KVStoreState]
 ```
 
 Alternatively, you can build your interpreters by hand if you choose not to use Freestyle’s implicit machinery. This can quickly grow unruly as the number of algebras increase in an application, but it’s also possible, in the spirit of providing two-way compatibility in all areas between manually built ADTs and Natural Transformations, and the ones automatically derived by Freestyle.

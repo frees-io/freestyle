@@ -41,7 +41,7 @@ class ConfigTests extends AsyncWordSpec with Matchers {
         _      <- app.nonConfig.x
         config <- app.configM.empty
       } yield config
-      program.exec[Future] map { _ shouldBe a[Config] }
+      program.interpret[Future] map { _ shouldBe a[Config] }
     }
 
     "allow configuration to parse strings" in {
@@ -49,11 +49,11 @@ class ConfigTests extends AsyncWordSpec with Matchers {
         a   <- app.nonConfig.x
         cfg <- app.configM.parseString("{n = 1}")
       } yield cfg.int("n").map(_ + a)
-      program.exec[Future] map { _ shouldBe Right(1 + 1) }
+      program.interpret[Future] map { _ shouldBe Right(1 + 1) }
     }
 
     "allow configuration to load classpath files" in {
-      app.configM.load.exec[Future] map { _.int("s") shouldBe Right(3) }
+      app.configM.load.interpret[Future] map { _.int("s") shouldBe Right(3) }
     }
 
     "allow values to be read from a parsed config" in {
@@ -67,7 +67,7 @@ class ConfigTests extends AsyncWordSpec with Matchers {
           cfg.stringList("xs") |@|
           cfg.duration("delay", TimeUnit.SECONDS)).tupled
       }
-      program.exec[Future] map {
+      program.interpret[Future] map {
         _ shouldBe Right((true, 1, 1d, "foo", true, List("a", "b"), 1L))
       }
     }

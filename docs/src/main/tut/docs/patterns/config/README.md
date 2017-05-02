@@ -105,6 +105,6 @@ def filteredStates[F[_]](implicit app : App[F]): FreeS[F, List[String]] =
 Once we have a program we can interpret it to our desired runtime, in this case `scala.util.Try`:
 
 ```tut:book
-filteredStates[App.Op].exec[Try]
+filteredStates[App.Op].interpret[Try]
 ```
 

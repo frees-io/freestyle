@@ -241,7 +241,7 @@ import rd.implicits._
 val varieties = Set("granny smith", "jonagold", "boskoop")
 val config = Config(varieties)
 
-val result: Stack[String] = program.exec[Stack]
+val result: Stack[String] = program.interpret[Stack]
 ```
 
 We can run our `Stack` by supplying a `Config` value and running the `Task`.

@@ -26,11 +26,11 @@ object http4s {
       implicit NT: FSHandler[F, G],
       G: Monad[G],
       EE: EntityEncoder[G[A]]): EntityEncoder[FreeS[F, A]] =
-    EE.contramap((f: FreeS[F, A]) => f.exec[G])
+    EE.contramap((f: FreeS[F, A]) => f.interpret[G])
 
   implicit def freeSParEntityEncoder[F[_], G[_], A](
       implicit NT: FSHandler[F, G],
       G: Applicative[G],
       EE: EntityEncoder[G[A]]): EntityEncoder[FreeS.Par[F, A]] =
-    EE.contramap((f: FreeS.Par[F, A]) => f.exec[G])
+    EE.contramap((f: FreeS.Par[F, A]) => f.interpret[G])
 }

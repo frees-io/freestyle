@@ -47,7 +47,7 @@ class DoobieTests extends AsyncWordSpec with Matchers {
         b <- app.doobieM.transact(query).freeS
         c <- FreeS.pure(1)
       } yield a + b + c
-      program.exec[Task] map { _ shouldBe 4 } unsafeRunAsyncFuture
+      program.interpret[Task] map { _ shouldBe 4 } unsafeRunAsyncFuture
     }
 
     "allow doobie syntax to lift to FreeS" in {
@@ -56,7 +56,7 @@ class DoobieTests extends AsyncWordSpec with Matchers {
         b <- query.liftFS[App.Op]
         c <- app.nonDoobie.x
       } yield a + b + c
-      program.exec[Task] map { _ shouldBe 4 } unsafeRunAsyncFuture
+      program.interpret[Task] map { _ shouldBe 4 } unsafeRunAsyncFuture
     }
 
     "allow doobie syntax to lift to FreeS.Par" in {
@@ -65,7 +65,7 @@ class DoobieTests extends AsyncWordSpec with Matchers {
         b <- query.liftFSPar[App.Op].freeS
         c <- app.nonDoobie.x
       } yield a + b + c
-      program.exec[Task] map { _ shouldBe 4 } unsafeRunAsyncFuture
+      program.interpret[Task] map { _ shouldBe 4 } unsafeRunAsyncFuture
     }
   }
 

@@ -39,7 +39,7 @@ class AsyncTests extends AsyncWordSpec with Matchers {
           c <- FreeS.pure(1)
         } yield a + b + c
 
-      program[AsyncM.Op].exec[Future] map { _ shouldBe 44 }
+      program[AsyncM.Op].interpret[Future] map { _ shouldBe 44 }
     }
 
     "allow multiple Async to be interleaved inside a program monadic flow" in {
@@ -51,7 +51,7 @@ class AsyncTests extends AsyncWordSpec with Matchers {
           d <- AsyncM[F].async[Int](cb => cb(Right(10)))
         } yield a + b + c + d
 
-      program[AsyncM.Op].exec[Future] map { _ shouldBe 54 }
+      program[AsyncM.Op].interpret[Future] map { _ shouldBe 54 }
     }
 
     case class OhNoException() extends Exception
@@ -64,7 +64,7 @@ class AsyncTests extends AsyncWordSpec with Matchers {
           c <- FreeS.pure(3)
         } yield a + b + c
 
-      program[AsyncM.Op].exec[Future] recover { case OhNoException() => 42 } map { _ shouldBe 42 }
+      program[AsyncM.Op].interpret[Future] recover { case OhNoException() => 42 } map { _ shouldBe 42 }
     }
   }
 }

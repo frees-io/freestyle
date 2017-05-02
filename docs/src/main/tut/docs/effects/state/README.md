@@ -33,12 +33,12 @@ import st.implicits._
 
 def programGet[F[_]: st.StateM] =
   for {
-    a <- 1.pure[FreeS[F, ?]]
+    a <- FreeS.pure(1)
     b <- st.StateM[F].get
-    c <- 1.pure[FreeS[F, ?]]
+    c <- FreeS.pure(1)
   } yield a + b + c
       
-programGet[st.StateM.Op].exec[TargetState].run(1).value
+programGet[st.StateM.Op].interpret[TargetState].run(1).value
 ```
 
 ### set
@@ -52,7 +52,7 @@ def programSet[F[_]: st.StateM] =
     a <- st.StateM[F].get
   } yield a
 
-programSet[st.StateM.Op].exec[TargetState].run(0).value
+programSet[st.StateM.Op].interpret[TargetState].run(0).value
 ```
 
 ### modify
@@ -67,7 +67,7 @@ def programModify[F[_]: st.StateM] =
     b <- st.StateM[F].get
   } yield b
 
-programModify[st.StateM.Op].exec[TargetState].run(1).value
+programModify[st.StateM.Op].interpret[TargetState].run(1).value
 ```
 
 ### inspect
@@ -81,5 +81,5 @@ def programInspect[F[_]: st.StateM] =
     b <- st.StateM[F].inspect(_ + a)
   } yield b
 
-programInspect[st.StateM.Op].exec[TargetState].run(1).value
+programInspect[st.StateM.Op].interpret[TargetState].run(1).value
 ```

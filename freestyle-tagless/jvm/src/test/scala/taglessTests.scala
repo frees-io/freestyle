@@ -36,7 +36,7 @@ class taglessTestsJVM extends WordSpec with Matchers {
     }
 
     "remain stack safe when interpreted to stack safe monads" in {
-      SOProgram[FreeS[Option, ?]](0).exec[Option] shouldBe Option(iterations)
+      SOProgram[FreeS[Option, ?]](0).interpret[Option] shouldBe Option(iterations)
     }
 
   }

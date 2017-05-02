@@ -40,12 +40,12 @@ import cats.instances.list._
 
 def programValid[F[_]: vl.ValidationM] =
   for {
-    a <- 1.pure[FreeS[F, ?]]
+    a <- FreeS.pure(1)
     b <- vl.ValidationM[F].valid(1)
-    c <- 1.pure[FreeS[F, ?]]
+    c <- FreeS.pure(1)
   } yield a + b + c
 
-programValid[vl.ValidationM.Op].exec[ValidationResult].runEmpty
+programValid[vl.ValidationM.Op].interpret[ValidationResult].runEmpty
 ```
 
 ### invalid
@@ -55,12 +55,12 @@ programValid[vl.ValidationM.Op].exec[ValidationResult].runEmpty
 ```tut:book
 def programInvalid[F[_]: vl.ValidationM] =
   for {
-    a <- 1.pure[FreeS[F, ?]]
+    a <- FreeS.pure(1)
     _ <- vl.ValidationM[F].invalid(NotValid("oh no"))
-    b <- 1.pure[FreeS[F, ?]]
+    b <- FreeS.pure(1)
   } yield a + b
 
-programInvalid[vl.ValidationM.Op].exec[ValidationResult].runEmpty
+programInvalid[vl.ValidationM.Op].interpret[ValidationResult].runEmpty
 ```
 
 ### errors
@@ -75,7 +75,7 @@ def programErrors[F[_]: vl.ValidationM] =
     _ <- vl.ValidationM[F].invalid(NotValid("this won't be in errs"))
   } yield errs
 
-programErrors[vl.ValidationM.Op].exec[ValidationResult].runEmpty
+programErrors[vl.ValidationM.Op].interpret[ValidationResult].runEmpty
 ```
 
 ### fromEither
@@ -89,7 +89,7 @@ def programFromEither[F[_]: vl.ValidationM] =
 	a <- vl.ValidationM[F].fromEither(Right(42) : Either[ValidationError, Int])
   } yield a
 
-programFromEither[vl.ValidationM.Op].exec[ValidationResult].runEmpty
+programFromEither[vl.ValidationM.Op].interpret[ValidationResult].runEmpty
 ```
 
 ### fromValidatedNel
@@ -112,7 +112,7 @@ def programFromValidatedNel[F[_]: vl.ValidationM] =
     )
   } yield a
 
-programFromValidatedNel[vl.ValidationM.Op].exec[ValidationResult].runEmpty
+programFromValidatedNel[vl.ValidationM.Op].interpret[ValidationResult].runEmpty
 ```
 
 ### Syntax
@@ -127,5 +127,5 @@ def programSyntax[F[_]: vl.ValidationM] =
 	_ <- NotValid("another error!").liftInvalid
   } yield a
 
-programSyntax[vl.ValidationM.Op].exec[ValidationResult].runEmpty
+programSyntax[vl.ValidationM.Op].interpret[ValidationResult].runEmpty
 ```

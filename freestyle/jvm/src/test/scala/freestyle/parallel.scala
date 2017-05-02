@@ -66,7 +66,7 @@ class parallelTests extends WordSpec with Matchers {
         override def z: Future[Int] = Future(blocker(3, 2000L))
       }
 
-      Await.result(program.exec[Future], Duration.Inf) shouldBe List(3, 1, 2, 3)
+      Await.result(program.interpret[Future], Duration.Inf) shouldBe List(3, 1, 2, 3)
       buf.toArray shouldBe Array(3, 2, 1, 3)
     }
 
@@ -87,7 +87,7 @@ class parallelTests extends WordSpec with Matchers {
         override def z: Task[Int] = Task(blocker(3, 2000L))
       }
 
-      Await.result(program.exec[Task].runAsync, Duration.Inf) shouldBe List(3, 1, 2, 3)
+      Await.result(program.interpret[Task].runAsync, Duration.Inf) shouldBe List(3, 1, 2, 3)
       buf.toArray shouldBe Array(3, 2, 1, 3)
     }
 
@@ -104,7 +104,7 @@ class parallelTests extends WordSpec with Matchers {
         override def z: Option[Int] = Option(blocker(3, 2000L))
       }
 
-      program.exec[Option] shouldBe Option(List(3, 1, 2, 3))
+      program.interpret[Option] shouldBe Option(List(3, 1, 2, 3))
       buf.toArray shouldBe Array(3, 1, 2, 3)
     }
 
@@ -138,7 +138,7 @@ class parallelTests extends WordSpec with Matchers {
       import validation._
 
       val parValidation = (minSize(3) |@| hasNumber).map(_ :: _ :: Nil)
-      val validator     = parValidation.exec[ParValidator]
+      val validator     = parValidation.interpret[ParValidator]
 
       Await.result(validator.run("a"), Duration.Inf) shouldBe List(false, false)
       Await.result(validator.run("abc"), Duration.Inf) shouldBe List(true, false)

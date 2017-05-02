@@ -99,8 +99,8 @@ import _root_.fs2.interop.cats._
 
 implicit val strategy = Strategy.fromExecutionContext(ExecutionContext.Implicits.global)
 
-val fs2Task1 = dickensBooks.exec[Fs2Task]
-val fs2Task2 = otherBooks.exec[Fs2Task]
+val fs2Task1 = dickensBooks.interpret[Fs2Task]
+val fs2Task2 = otherBooks.interpret[Fs2Task]
 ```
 
 ```tut:book:fail
@@ -122,8 +122,8 @@ import monix.execution.Scheduler
 
 implicit val executionContext = Scheduler.Implicits.global
 
-val monixTask1 = dickensBooks.exec[MonixTask]
-val monixTask2 = otherBooks.exec[MonixTask]
+val monixTask1 = dickensBooks.interpret[MonixTask]
+val monixTask2 = otherBooks.interpret[MonixTask]
 ```
 
 ```tut:book:fail
@@ -142,8 +142,8 @@ import scala.concurrent.Future
 
 import cats.implicits._
 
-val fut1 = dickensBooks.exec[Future]
-val fut2 = otherBooks.exec[Future]
+val fut1 = dickensBooks.interpret[Future]
+val fut2 = otherBooks.interpret[Future]
 ```
 
 ```tut:fail:book

@@ -94,7 +94,7 @@ def program[F[_]](implicit app : App[F]): FreeS[F, Unit] =
 Once we have a program, we can interpret it to our desired runtime, in this case, `scala.util.Try`:
 
 ```tut:evaluated
-program[App.Op].exec[Try]
+program[App.Op].interpret[Try]
 ```
 
 ### Alternative logging with the `WriterM` effect
