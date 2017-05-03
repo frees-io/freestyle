@@ -56,12 +56,14 @@ object ProjectPlugin extends AutoPlugin {
       orgBadgeListSetting := List(
         TravisBadge.apply,
         CodecovBadge.apply,
+        MavenCentralBadge.apply,
+        ScalaLangBadge.apply,
         LicenseBadge.apply,
         GitterBadge.apply,
         GitHubIssuesBadge.apply,
         ScalaJSBadge.apply
       ),
-      orgSupportedScalaJSVersion := Some("0.6.16"),
+      orgSupportedScalaJSVersion := Some("0.6.15"),
       orgScriptTaskListSetting := List(
         orgValidateFiles.asRunnableItem,
         (clean in Global).asRunnableItemFull,
