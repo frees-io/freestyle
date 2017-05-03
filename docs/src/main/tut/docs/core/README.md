@@ -7,6 +7,7 @@ permalink: /docs/core/
 # Core
 
 * [Algebras](./algebras/)
+* [Modules](./modules/)
 * [Handlers](./interpreters/)
 * [Parallelism](./parallelism/)
-* [Modules](./modules/)
+* [Tagless Final](./tagless/)
