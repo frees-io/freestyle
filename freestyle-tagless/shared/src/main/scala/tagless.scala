@@ -86,6 +86,20 @@ object taglessImpl {
           q"def $reqImpl[..$tparams](..$params): $RT[$Res] = $H.${reqDef.name}(..$args)"
       }
 
+      def stackSafeFinallyTaglessHandlerDef(H: TermName, RT: TypeName): DefDef = {
+        val args = params.map(_.name)
+        if (params.isEmpty)
+          q"""
+            def $reqImpl[..$tparams]: _root_.cats.free.Free[$RT, $Res] =
+              _root_.cats.free.Free.liftF($H.${reqDef.name}(..$args))
+          """
+        else
+          q"""
+            def $reqImpl[..$tparams](..$params): _root_.cats.free.Free[$RT, $Res] =
+              _root_.cats.free.Free.liftF($H.${reqDef.name}(..$args))
+          """
+      }
+
       def traitDef(FF: TypeName): DefDef =
         if (params.isEmpty)
           q"def $reqImpl[..$tparams]: $FF[$Res]"
@@ -117,6 +131,7 @@ object taglessImpl {
       val ev = freshTermName("ev$")
       val hh = freshTermName("hh$")
       val stackSafeHandler = freshTermName("stackSafeHandler$")
+      val stackSafeFTHandler = freshTermName("stackSafeFTHandler$")
 
       q"""
         object ${Eff.toTermName} {
@@ -133,12 +148,21 @@ object taglessImpl {
             ..${requests.map(_.freeHandlerDef(hh, MM))}
           }
 
+          implicit def $stackSafeFTHandler[$MM[_]: _root_.cats.Monad](
+            implicit $hh: Handler[$MM]
+          ): Handler[({ type λ[α] = _root_.cats.free.Free[$MM, α]})#λ] =
+            new Handler[({ type λ[α] = _root_.cats.free.Free[$MM, α]})#λ] {
+              ..${requests.map(_.stackSafeFinallyTaglessHandlerDef(hh, MM))}
+            }
+
           def apply[$MM[_], ..$TTs](implicit $ev: $Eff[$MM, ..$tns]): $Eff[$MM, ..$tns] = $ev
 
         }
       """
     }
 
-    gen()
+    val output = gen()
+    println(output)
+    output
   }
 }
