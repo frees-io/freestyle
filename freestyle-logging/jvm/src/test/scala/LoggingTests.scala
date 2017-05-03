@@ -19,14 +19,14 @@ package freestyle
 import cats.instances.future._
 import freestyle.implicits._
 import freestyle.loggingJVM.implicits._
-import org.scalatest.{AsyncWordSpec, Matchers}
+import org.scalatest.{Matchers, WordSpec}
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.control.NoStackTrace
 
-class LoggingTests extends AsyncWordSpec with Matchers {
+class LoggingTests extends WordSpec with Matchers {
 
-  implicit override def executionContext = ExecutionContext.Implicits.global
+  import ExecutionContext.Implicits.global
 
   import algebras._
 

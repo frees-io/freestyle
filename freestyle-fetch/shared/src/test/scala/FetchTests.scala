@@ -16,7 +16,7 @@
 
 package freestyle
 
-import org.scalatest.{AsyncWordSpec, Matchers}
+import org.scalatest.{Matchers, WordSpec}
 import _root_.fetch._
 import _root_.fetch.implicits._
 
@@ -26,12 +26,12 @@ import freestyle.implicits._
 import freestyle.fetch.implicits._
 import scala.concurrent.{ExecutionContext, Future}
 
-class FetchTests extends AsyncWordSpec with Matchers {
+class FetchTests extends WordSpec with Matchers {
 
   import algebras._
   import fetches._
 
-  implicit override def executionContext = ExecutionContext.Implicits.global
+  import ExecutionContext.Implicits.global
 
   "Fetch Freestyle integration" should {
 
@@ -69,11 +69,11 @@ class FetchTests extends AsyncWordSpec with Matchers {
       val nbRounds: Env => Int = _.rounds.length
 
       (app.fetchM.runA(fetch) |@|
-      app.fetchM.runE(fetch) |@|
-      app.fetchM.runF(fetch) |@|
-      app.fetchM.runAWithCache(fetch, cache) |@|
-      app.fetchM.runEWithCache(fetch, cache) |@|
-      app.fetchM.runFWithCache(fetch, cache)).tupled.interpret[Future].map {
+        app.fetchM.runE(fetch) |@|
+        app.fetchM.runF(fetch) |@|
+        app.fetchM.runAWithCache(fetch, cache) |@|
+        app.fetchM.runEWithCache(fetch, cache) |@|
+        app.fetchM.runFWithCache(fetch, cache)).tupled.interpret[Future].map {
         case (a1, env2, (env3, a3), a4, env5, (env6, a6)) =>
           a1 shouldBe "1"
           a3 shouldBe a1

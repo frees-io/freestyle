@@ -29,7 +29,7 @@ import freestyle.doobie.implicits._
 
 import scala.language.postfixOps
 
-class DoobieTests extends AsyncWordSpec with Matchers {
+class DoobieTests extends WordSpec with Matchers {
 
   import algebras._
 

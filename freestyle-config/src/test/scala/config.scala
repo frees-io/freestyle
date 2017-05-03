@@ -16,7 +16,7 @@
 
 package freestyle
 
-import org.scalatest.{AsyncWordSpec, Matchers}
+import org.scalatest.{Matchers, WordSpec}
 
 import freestyle.implicits._
 import freestyle.config._
@@ -27,12 +27,11 @@ import cats.instances.either._
 import cats.instances.future._
 import cats.syntax.cartesian._
 import cats.syntax.either._
+import ExecutionContext.Implicits.global
 
-class ConfigTests extends AsyncWordSpec with Matchers {
+class ConfigTests extends WordSpec with Matchers {
 
   import algebras._
-
-  implicit override def executionContext = ExecutionContext.Implicits.global
 
   "Config integration" should {
 

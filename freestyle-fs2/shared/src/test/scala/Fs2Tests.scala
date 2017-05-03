@@ -31,8 +31,8 @@ import cats.instances.future._
 import scala.concurrent._
 import scala.concurrent.duration._
 
-class Fs2Tests extends AsyncWordSpec with Matchers {
-  implicit override def executionContext = ExecutionContext.Implicits.global
+class Fs2Tests extends WordSpec with Matchers {
+  import ExecutionContext.Implicits.global
 
   "Fetch Freestyle integration" should {
     import algebras._

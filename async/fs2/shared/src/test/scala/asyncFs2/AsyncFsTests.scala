@@ -29,9 +29,9 @@ import scala.concurrent.ExecutionContext
 import fs2.{Strategy, Task}
 import fs2.interop.cats._
 
-class AsyncFs2Tests extends AsyncWordSpec with Matchers {
+class AsyncFs2Tests extends WordSpec with Matchers {
 
-  implicit override def executionContext = ExecutionContext.Implicits.global
+  implicit val executionContext = ExecutionContext.Implicits.global
 
   implicit val strategy = Strategy.fromExecutionContext(executionContext)
 

@@ -26,9 +26,9 @@ import freestyle.async._
 import freestyle.async.implicits._
 
 import scala.concurrent.{ExecutionContext, Future}
+import ExecutionContext.Implicits.global
 
-class AsyncTests extends AsyncWordSpec with Matchers {
-  implicit override def executionContext = ExecutionContext.Implicits.global
+class AsyncTests extends WordSpec with Matchers {
 
   "Async Freestyle integration" should {
     "allow an Async to be interleaved inside a program monadic flow" in {
@@ -64,7 +64,9 @@ class AsyncTests extends AsyncWordSpec with Matchers {
           c <- FreeS.pure(3)
         } yield a + b + c
 
-      program[AsyncM.Op].interpret[Future] recover { case OhNoException() => 42 } map { _ shouldBe 42 }
+      program[AsyncM.Op].interpret[Future] recover { case OhNoException() => 42 } map {
+        _ shouldBe 42
+      }
     }
   }
 }
