@@ -15,6 +15,7 @@
  */
 
 package freestyle
+package integrations
 
 import _root_.slick.dbio.{DBIO, DBIOAction}
 import _root_.slick.jdbc.JdbcBackend
@@ -23,8 +24,8 @@ import _root_.slick.jdbc.H2Profile.api._
 import org.scalatest.{Matchers, WordSpec}
 
 import freestyle.implicits._
-import freestyle.slick._
-import freestyle.slick.implicits._
+import freestyle.integrations.slick._
+import freestyle.integrations.slick.implicits._
 import cats.implicits._
 
 import scala.concurrent.Future
