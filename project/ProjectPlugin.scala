@@ -29,6 +29,7 @@ object ProjectPlugin extends AutoPlugin {
       micrositeDocumentationUrl := "/docs/",
       micrositeGithubOwner := "47deg",
       micrositeGithubRepo := "freestyle",
+      micrositeAnalyticsToken := "UA-18433785-14",
       micrositeHighlightTheme := "dracula",
       micrositeExternalLayoutsDirectory := (resourceDirectory in Compile).value / "microsite" / "layouts",
       micrositeExternalIncludesDirectory := (resourceDirectory in Compile).value / "microsite" / "includes",
