@@ -3,20 +3,21 @@ options:
     url: docs/
 
   - title: Core Concepts
+    url: docs/core/
 
     nested_options:
 
      - title: Algebras
        url: docs/core/algebras/
 
+     - title: Modules
+       url: docs/core/modules/
+
      - title: Handlers
        url: docs/core/interpreters/
 
      - title: Parallelism
        url: docs/core/parallelism/
-
-     - title: Modules
-       url: docs/core/modules/
 
      - title: Tagless Final
        url: docs/core/tagless/
