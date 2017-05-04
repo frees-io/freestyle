@@ -201,7 +201,7 @@ configTraversing.run(cfg)
 configIncrSum.run(cfg)
 ```
 
-The Cats data types can be used as the target of a Freestyle program, but they also cooperate well with `FreeS` and `FreeS.Par`. In the [stack example](../stack/), the `getCustomer` method uses [`OptionT`](http://typelevel.org/cats/datatypes/optiont.html) to combine `FreeS` programs.
+The Cats data types can be used as the target of a Freestyle program, but they also cooperate well with `FreeS` and `FreeS.Par`. In the [stack example](../../stack/), the `getCustomer` method uses [`OptionT`](http://typelevel.org/cats/datatypes/optiont.html) to combine `FreeS` programs.
 
 ## Standing on the shoulders of giant Cats
 
