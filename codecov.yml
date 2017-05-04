@@ -5,5 +5,6 @@ comment:
 coverage:
   ignore:
     - docs/*
+    - freestyle-doobie/src/test/*
   status:
     patch: false
