@@ -14,9 +14,16 @@
  * limitations under the License.
  */
 
-import freestyle._
-import freestyle.async._
+package freestyle
+
 import org.scalatest._
+
+import cats.instances.future._
+
+import freestyle._
+import freestyle.implicits._
+import freestyle.async._
+import freestyle.async.implicits._
 
 import scala.concurrent.{ExecutionContext, Future}
 
