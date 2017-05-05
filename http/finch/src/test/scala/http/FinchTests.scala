@@ -16,7 +16,7 @@
 
 package freestyle.http
 
-import org.scalatest.{AsyncWordSpec, Matchers}
+import org.scalatest.{Matchers, WordSpec}
 
 import cats.Id
 import com.twitter.util.Future
@@ -28,7 +28,7 @@ import freestyle._
 import freestyle.implicits._
 import freestyle.http.finch._
 
-class FinchTests extends AsyncWordSpec with Matchers {
+class FinchTests extends WordSpec with Matchers {
 
   "Finch Freestyle integration" should {
     import algebra._

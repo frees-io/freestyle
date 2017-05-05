@@ -28,8 +28,8 @@ import monix.eval.Task
 import monix.cats._
 import monix.execution.Scheduler
 
-class AsyncMonixTests extends AsyncWordSpec with Matchers {
-  implicit override def executionContext = Scheduler.Implicits.global
+class AsyncMonixTests extends WordSpec with Matchers {
+  import Scheduler.Implicits.global
 
   "Async Monix Freestyle integration" should {
     "support Task as the target runtime" in {

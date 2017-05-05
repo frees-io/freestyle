@@ -25,11 +25,11 @@ import freestyle.implicits._
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class EffectsTests extends AsyncWordSpec with Matchers {
+class EffectsTests extends WordSpec with Matchers {
 
   import collision._
 
-  implicit override def executionContext = ExecutionContext.Implicits.global
+  import ExecutionContext.Implicits.global
 
   "Option Freestyle integration" should {
 
@@ -148,7 +148,7 @@ class EffectsTests extends AsyncWordSpec with Matchers {
 
     import freestyle.effects.either
 
-    val e = either[CustomError]
+    val e  = either[CustomError]
     val ex = Custom1
 
     import e.implicits._
@@ -170,7 +170,9 @@ class EffectsTests extends AsyncWordSpec with Matchers {
       def program[F[_]: e.EitherM] =
         for {
           a <- FreeS.pure(1)
-          b <- e.EitherM[F].catchNonFatal[Int](Eval.later(throw new RuntimeException("BOOM")), _ => ex)
+          b <- e
+            .EitherM[F]
+            .catchNonFatal[Int](Eval.later(throw new RuntimeException("BOOM")), _ => ex)
           c <- FreeS.pure(1)
         } yield a + b + c
       program[e.EitherM.Op].interpret[Either[CustomError, ?]] shouldBe Left(ex)

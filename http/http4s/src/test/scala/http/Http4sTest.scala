@@ -16,7 +16,7 @@
 
 package freestyle.http
 
-import org.scalatest.{AsyncWordSpec, Matchers}
+import org.scalatest.{Matchers, WordSpec}
 
 import fs2.Task
 import fs2.interop.cats._
@@ -27,7 +27,7 @@ import freestyle._
 import freestyle.implicits._
 import freestyle.http.http4s._
 
-class Http4sTests extends AsyncWordSpec with Matchers {
+class Http4sTests extends WordSpec with Matchers {
   import algebras._
   import handlers._
 

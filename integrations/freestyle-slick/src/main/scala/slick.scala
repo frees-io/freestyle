@@ -15,6 +15,7 @@
  */
 
 package freestyle
+package integrations
 
 import _root_.slick.dbio.{DBIO, DBIOAction}
 import _root_.slick.jdbc.JdbcBackend

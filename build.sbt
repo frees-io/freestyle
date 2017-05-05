@@ -144,7 +144,7 @@ lazy val cacheRedis = (project in file("freestyle-cache-redis"))
     )
   )
 
-lazy val doobie = (project in file("freestyle-doobie"))
+lazy val doobie = (project in file("integrations/freestyle-doobie"))
   .dependsOn(freestyleJVM)
   .settings(name := "freestyle-doobie")
   .settings(
@@ -154,7 +154,7 @@ lazy val doobie = (project in file("freestyle-doobie"))
     ) ++ commonDeps
   )
 
-lazy val slick = (project in file("freestyle-slick"))
+lazy val slick = (project in file("integrations/freestyle-slick"))
   .dependsOn(freestyleJVM, asyncJVM)
   .settings(name := "freestyle-slick")
   .settings(
@@ -171,7 +171,7 @@ lazy val twitterUtil = (project in file("freestyle-twitter-util"))
     libraryDependencies ++= %%("catbird-util") +: commonDeps
   )
 
-lazy val config = (project in file("freestyle-config"))
+lazy val config = (project in file("integrations/freestyle-config"))
   .dependsOn(freestyleJVM)
   .settings(
     name := "freestyle-config",

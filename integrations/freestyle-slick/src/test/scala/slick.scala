@@ -15,25 +15,26 @@
  */
 
 package freestyle
+package integrations
 
 import _root_.slick.dbio.{DBIO, DBIOAction}
 import _root_.slick.jdbc.JdbcBackend
 import _root_.slick.jdbc.H2Profile.api._
 
-import org.scalatest.{AsyncWordSpec, Matchers}
+import org.scalatest.{Matchers, WordSpec}
 
 import freestyle.implicits._
-import freestyle.slick._
-import freestyle.slick.implicits._
+import freestyle.integrations.slick._
+import freestyle.integrations.slick.implicits._
 import cats.implicits._
 
 import scala.concurrent.Future
 
-class SlickTests extends AsyncWordSpec with Matchers {
+class SlickTests extends WordSpec with Matchers {
 
   import algebras._
 
-  implicit override def executionContext = scala.concurrent.ExecutionContext.Implicits.global
+  import scala.concurrent.ExecutionContext.Implicits.global
 
   implicit val db = Database.forURL("jdbc:h2:mem:test", driver = "org.h2.Driver")
 
