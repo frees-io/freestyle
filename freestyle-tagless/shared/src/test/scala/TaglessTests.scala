@@ -26,7 +26,7 @@ import handlers._
 import modules._
 import utils._
 
-class taglessTests extends WordSpec with Matchers {
+class TaglessTests extends WordSpec with Matchers {
 
   "Tagless final algebras" should {
 

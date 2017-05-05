@@ -19,7 +19,7 @@ package freestyle
 import org.scalatest.{Matchers, WordSpec}
 import cats.implicits._
 
-class tests extends WordSpec with Matchers {
+class Tests extends WordSpec with Matchers {
 
   "Presentation Compiler Support" should {
 
