@@ -1,6 +1,7 @@
 lazy val root = (project in file("."))
   .settings(moduleName := "root")
   .settings(name := "freestyle")
+  .settings(noPublishSettings: _*)
   .aggregate(freestyleModules: _*)
 
 lazy val freestyle = (crossProject in file("freestyle"))
