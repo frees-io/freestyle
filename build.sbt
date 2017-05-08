@@ -64,9 +64,20 @@ lazy val docs = (project in file("docs"))
   )
   .settings(
     libraryDependencies ++= Seq(
-      %%("play") % "test",
+      %%("freestyle-cache-redis"),
+      %%("freestyle-doobie"),
+      %%("freestyle-fetch"),
+      %%("freestyle-fs2"),
+      %%("freestyle-http-akka"),
+      %%("freestyle-http-finch"),
+      %%("freestyle-http-http4s"),
+      %%("freestyle-http-play"),
+      %%("freestyle-monix"),
+      %%("freestyle-slick"),
+      %%("freestyle-twitter-util"),
       %%("doobie-h2-cats"),
       %%("http4s-dsl"),
+      %%("play") % "test",
       %("h2") % "test"
     )
   )
@@ -74,14 +85,6 @@ lazy val docs = (project in file("docs"))
     tutScalacOptions ~= (_ filterNot Set("-Ywarn-unused-import", "-Xlint").contains)
   )
   .enablePlugins(MicrositesPlugin)
-
-lazy val monix = (crossProject in file("freestyle-monix"))
-  .settings(name := "freestyle-monix")
-  .jsSettings(sharedJsSettings: _*)
-  .crossDepSettings(commonDeps ++ Seq(%("monix-eval"), %("monix-cats")): _*)
-
-lazy val monixJVM = monix.jvm
-lazy val monixJS  = monix.js
 
 lazy val effects = (crossProject in file("freestyle-effects"))
   .dependsOn(freestyle)
@@ -132,46 +135,6 @@ lazy val cache = (crossProject in file("freestyle-cache"))
 lazy val cacheJVM = cache.jvm
 lazy val cacheJS  = cache.js
 
-lazy val cacheRedis = (project in file("freestyle-cache-redis"))
-  .dependsOn(freestyleJVM, cacheJVM)
-  .settings(
-    name := "freestyle-cache-redis",
-    resolvers += "Sonatype OSS Releases" at "https://oss.sonatype.org/content/repositories/releases/",
-    resolvers += Resolver.mavenLocal,
-    libraryDependencies ++= Seq(
-      %%("rediscala"),
-      %%("akka-actor")    % "test",
-      %("embedded-redis") % "test"
-    )
-  )
-
-lazy val doobie = (project in file("freestyle-doobie"))
-  .dependsOn(freestyleJVM)
-  .settings(name := "freestyle-doobie")
-  .settings(
-    libraryDependencies ++= Seq(
-      %%("doobie-core-cats"),
-      %%("doobie-h2-cats") % "test"
-    ) ++ commonDeps
-  )
-
-lazy val slick = (project in file("freestyle-slick"))
-  .dependsOn(freestyleJVM, asyncJVM)
-  .settings(name := "freestyle-slick")
-  .settings(
-    libraryDependencies ++= Seq(
-      %%("slick"),
-      %("h2") % "test"
-    ) ++ commonDeps
-  )
-
-lazy val twitterUtil = (project in file("freestyle-twitter-util"))
-  .dependsOn(freestyleJVM)
-  .settings(name := "freestyle-twitter-util")
-  .settings(
-    libraryDependencies ++= %%("catbird-util") +: commonDeps
-  )
-
 lazy val config = (project in file("freestyle-config"))
   .dependsOn(freestyleJVM)
   .settings(
@@ -194,20 +157,6 @@ lazy val config = (project in file("freestyle-config"))
     ) ++ commonDeps
   )
 
-lazy val fetch = (crossProject in file("freestyle-fetch"))
-  .dependsOn(freestyle)
-  .settings(name := "freestyle-fetch")
-  .jsSettings(sharedJsSettings: _*)
-  .crossDepSettings(
-    commonDeps ++ Seq(
-      %("fetch"),
-      %("fetch-monix")
-    ): _*
-  )
-
-lazy val fetchJVM = fetch.jvm
-lazy val fetchJS  = fetch.js
-
 lazy val logging = (crossProject in file("freestyle-logging"))
   .dependsOn(freestyle)
   .settings(name := "freestyle-logging")
@@ -223,57 +172,6 @@ lazy val logging = (crossProject in file("freestyle-logging"))
 lazy val loggingJVM = logging.jvm
 lazy val loggingJS  = logging.js
 
-lazy val fs2 = (crossProject in file("freestyle-fs2"))
-  .dependsOn(freestyle)
-  .settings(name := "freestyle-fs2")
-  .jsSettings(sharedJsSettings: _*)
-  .crossDepSettings(
-    commonDeps ++ Seq(
-      %("fs2-core")
-    ): _*
-  )
-
-lazy val fs2JVM = fs2.jvm
-lazy val fs2JS  = fs2.js
-
-lazy val httpHttp4s = (project in file("http/http4s"))
-  .dependsOn(freestyleJVM)
-  .settings(name := "freestyle-http-http4s")
-  .settings(
-    libraryDependencies ++= Seq(
-      %%("http4s-core"),
-      %%("http4s-dsl") % "test"
-    ) ++ commonDeps
-  )
-
-lazy val httpFinch = (project in file("http/finch"))
-  .dependsOn(freestyleJVM)
-  .settings(name := "freestyle-http-finch")
-  .settings(
-    libraryDependencies ++= %%("finch-core") +: commonDeps
-  )
-
-lazy val httpAkka = (project in file("http/akka"))
-  .dependsOn(freestyleJVM)
-  .settings(name := "freestyle-http-akka")
-  .settings(
-    libraryDependencies ++= Seq(
-      %%("akka-http"),
-      %%("akka-http-testkit") % "test"
-    ) ++ commonDeps
-  )
-
-lazy val httpPlay = (project in file("http/play"))
-  .dependsOn(freestyleJVM)
-  .settings(name := "freestyle-http-play")
-  .settings(
-    concurrentRestrictions in Global := Seq(Tags.limitAll(1)),
-    libraryDependencies ++= Seq(
-      %%("play")      % "test",
-      %%("play-test") % "test"
-    ) ++ commonDeps
-  )
-
 addCommandAlias("debug", "; clean ; test")
 
 addCommandAlias("validate", "; +clean ; +test; makeMicrosite")
@@ -287,8 +185,6 @@ lazy val freestyleModules: Seq[ProjectReference] = Seq(
   freestyleJS,
   taglessJVM,
   taglessJS,
-  monixJVM,
-  monixJS,
   effectsJVM,
   effectsJS,
   asyncJVM,
@@ -299,21 +195,9 @@ lazy val freestyleModules: Seq[ProjectReference] = Seq(
   asyncFsJS,
   cacheJVM,
   cacheJS,
-  cacheRedis,
-  doobie,
-  slick,
-  twitterUtil,
   config,
-  fetchJVM,
-  fetchJS,
   loggingJVM,
-  loggingJS,
-  fs2JVM,
-  fs2JS,
-  httpHttp4s,
-  httpFinch,
-  httpAkka,
-  httpPlay
+  loggingJS
 )
 
 lazy val freestyleDependencies: Seq[ClasspathDependency] =
