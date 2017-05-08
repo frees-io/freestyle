@@ -13,7 +13,7 @@ You can add the _freestyle-http4s_ module as follows:
 [comment]: # (Start Replace)
 
 ```scala
-libraryDependencies += "io.frees" %% "freestyle-http-http4s" % "0.1.0"
+libraryDependencies += "io.frees" %% "freestyle-http-http4s" % "0.1.1"
 ```
 
 [comment]: # (End Replace)

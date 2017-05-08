@@ -14,7 +14,7 @@ In order to enable this integration, you can depend on _freestyle-logging_:
 [comment]: # (Start Replace)
 
 ```scala
-libraryDependencies += "io.frees" %% "freestyle-logging" % "0.1.0"
+libraryDependencies += "io.frees" %% "freestyle-logging" % "0.1.1"
 ```
 
 [comment]: # (End Replace)
@@ -105,6 +105,4 @@ target monad. Learn more about the writer effect in the [Effects](../../effects/
 ### A note on performance
 
 Using pure functional logging is ideal, but it can affect performance in an application’s hot paths because Free algebras are reified in memory, then interpreted. While this is a non-issue in most applications whose bottleneck are IO/Network bound, you should be aware that traditional logging placed in handlers may yield better overall performance in specific cases.
-
-
 

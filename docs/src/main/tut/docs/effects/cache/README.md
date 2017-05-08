@@ -14,7 +14,7 @@ In order to enable this algebra, you can depend on _freestyle-cache_:
 [comment]: # (Start Replace)
 
 ```scala
-libraryDependencies += "io.frees" %% "freestyle-cache" % "0.1.0"
+libraryDependencies += "io.frees" %% "freestyle-cache" % "0.1.1"
 ```
 
 [comment]: # (End Replace)
@@ -253,5 +253,3 @@ def del[Key](keys: List[Key])(implicit format: Format[Key]): Ops[Future, Long] =
 Given two such `Kleisli` objects that correspond to two independent operations, composing them can be done through the
 default instance of `Applicative` for `Kleisli` in `cats`. The result would be a function that takes a  _client_ and issues
 the commands for the operations in the order in which they appear.
-
-
