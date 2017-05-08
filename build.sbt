@@ -2,7 +2,7 @@ lazy val root = (project in file("."))
   .settings(moduleName := "root")
   .settings(name := "freestyle")
   .settings(noPublishSettings: _*)
-  .aggregate(freestyleModules: _*)
+  .aggregate(allFreestyleModules: _*)
 
 lazy val freestyle = (crossProject in file("freestyle"))
   .settings(name := "freestyle")
@@ -75,7 +75,7 @@ lazy val docs = (project in file("docs"))
   )
   .enablePlugins(MicrositesPlugin)
 
-lazy val monix = (crossProject in file("freestyle-monix"))
+lazy val monix = (crossProject in file("integration-modules/freestyle-monix"))
   .settings(name := "freestyle-monix")
   .jsSettings(sharedJsSettings: _*)
   .crossDepSettings(commonDeps ++ Seq(%("monix-eval"), %("monix-cats")): _*)
@@ -132,7 +132,7 @@ lazy val cache = (crossProject in file("freestyle-cache"))
 lazy val cacheJVM = cache.jvm
 lazy val cacheJS  = cache.js
 
-lazy val cacheRedis = (project in file("freestyle-cache-redis"))
+lazy val cacheRedis = (project in file("integration-modules/freestyle-cache-redis"))
   .dependsOn(freestyleJVM, cacheJVM)
   .settings(
     name := "freestyle-cache-redis",
@@ -142,10 +142,10 @@ lazy val cacheRedis = (project in file("freestyle-cache-redis"))
       %%("rediscala"),
       %%("akka-actor")    % "test",
       %("embedded-redis") % "test"
-    )
+    ) ++ commonDeps
   )
 
-lazy val doobie = (project in file("freestyle-doobie"))
+lazy val doobie = (project in file("integration-modules/freestyle-doobie"))
   .dependsOn(freestyleJVM)
   .settings(name := "freestyle-doobie")
   .settings(
@@ -155,7 +155,7 @@ lazy val doobie = (project in file("freestyle-doobie"))
     ) ++ commonDeps
   )
 
-lazy val slick = (project in file("freestyle-slick"))
+lazy val slick = (project in file("integration-modules/freestyle-slick"))
   .dependsOn(freestyleJVM, asyncJVM)
   .settings(name := "freestyle-slick")
   .settings(
@@ -165,7 +165,7 @@ lazy val slick = (project in file("freestyle-slick"))
     ) ++ commonDeps
   )
 
-lazy val twitterUtil = (project in file("freestyle-twitter-util"))
+lazy val twitterUtil = (project in file("integration-modules/freestyle-twitter-util"))
   .dependsOn(freestyleJVM)
   .settings(name := "freestyle-twitter-util")
   .settings(
@@ -178,7 +178,7 @@ lazy val config = (project in file("freestyle-config"))
     name := "freestyle-config",
     fixResources := {
       val testConf   = (resourceDirectory in Test).value / "application.conf"
-      val targetFile = (classDirectory in (freestyleJVM, Test)).value / "application.conf"
+      val targetFile = (classDirectory in (freestyleJVM, Compile)).value / "application.conf"
       if (testConf.exists) {
         IO.copyFile(
           testConf,
@@ -194,7 +194,7 @@ lazy val config = (project in file("freestyle-config"))
     ) ++ commonDeps
   )
 
-lazy val fetch = (crossProject in file("freestyle-fetch"))
+lazy val fetch = (crossProject in file("integration-modules/freestyle-fetch"))
   .dependsOn(freestyle)
   .settings(name := "freestyle-fetch")
   .jsSettings(sharedJsSettings: _*)
@@ -223,7 +223,7 @@ lazy val logging = (crossProject in file("freestyle-logging"))
 lazy val loggingJVM = logging.jvm
 lazy val loggingJS  = logging.js
 
-lazy val fs2 = (crossProject in file("freestyle-fs2"))
+lazy val fs2 = (crossProject in file("integration-modules/freestyle-fs2"))
   .dependsOn(freestyle)
   .settings(name := "freestyle-fs2")
   .jsSettings(sharedJsSettings: _*)
@@ -236,7 +236,7 @@ lazy val fs2 = (crossProject in file("freestyle-fs2"))
 lazy val fs2JVM = fs2.jvm
 lazy val fs2JS  = fs2.js
 
-lazy val httpHttp4s = (project in file("http/http4s"))
+lazy val httpHttp4s = (project in file("integration-modules/http/http4s"))
   .dependsOn(freestyleJVM)
   .settings(name := "freestyle-http-http4s")
   .settings(
@@ -246,14 +246,14 @@ lazy val httpHttp4s = (project in file("http/http4s"))
     ) ++ commonDeps
   )
 
-lazy val httpFinch = (project in file("http/finch"))
+lazy val httpFinch = (project in file("integration-modules/http/finch"))
   .dependsOn(freestyleJVM)
   .settings(name := "freestyle-http-finch")
   .settings(
     libraryDependencies ++= %%("finch-core") +: commonDeps
   )
 
-lazy val httpAkka = (project in file("http/akka"))
+lazy val httpAkka = (project in file("integration-modules/http/akka"))
   .dependsOn(freestyleJVM)
   .settings(name := "freestyle-http-akka")
   .settings(
@@ -263,7 +263,7 @@ lazy val httpAkka = (project in file("http/akka"))
     ) ++ commonDeps
   )
 
-lazy val httpPlay = (project in file("http/play"))
+lazy val httpPlay = (project in file("integration-modules/http/play"))
   .dependsOn(freestyleJVM)
   .settings(name := "freestyle-http-play")
   .settings(
@@ -282,39 +282,44 @@ pgpPassphrase := Some(getEnvVar("PGP_PASSPHRASE").getOrElse("").toCharArray)
 pgpPublicRing := file(s"$gpgFolder/pubring.gpg")
 pgpSecretRing := file(s"$gpgFolder/secring.gpg")
 
-lazy val freestyleModules: Seq[ProjectReference] = Seq(
+lazy val jvmModules: Seq[ProjectReference] = Seq(
   freestyleJVM,
-  freestyleJS,
   taglessJVM,
-  taglessJS,
   monixJVM,
-  monixJS,
   effectsJVM,
-  effectsJS,
   asyncJVM,
-  asyncJS,
   asyncMonixJVM,
-  asyncMonixJS,
   asyncFsJVM,
-  asyncFsJS,
   cacheJVM,
-  cacheJS,
   cacheRedis,
   doobie,
   slick,
   twitterUtil,
   config,
   fetchJVM,
-  fetchJS,
   loggingJVM,
-  loggingJS,
   fs2JVM,
-  fs2JS,
   httpHttp4s,
   httpFinch,
   httpAkka,
   httpPlay
 )
 
+lazy val jsModules: Seq[ProjectReference] = Seq(
+  freestyleJS,
+  taglessJS,
+  monixJS,
+  effectsJS,
+  asyncJS,
+  asyncMonixJS,
+  asyncFsJS,
+  cacheJS,
+  fetchJS,
+  loggingJS,
+  fs2JS
+)
+
+lazy val allFreestyleModules: Seq[ProjectReference] = jvmModules ++ jsModules
+
 lazy val freestyleDependencies: Seq[ClasspathDependency] =
-  freestyleModules.map(ClasspathDependency(_, None))
+  jvmModules.map(ClasspathDependency(_, None))

@@ -63,7 +63,7 @@ class MapWrapper[M[_], Key, Value](
   override def replace(key: Key, newVal: Value): Ops[M, Unit] =
     RediscalaCont.setxx(key, newVal).transform(toM).void
 
-  override def isEmpty : Ops[M, Boolean] =
+  override def isEmpty: Ops[M, Boolean] =
     RediscalaCont.scan.transform(toM).map(_.data.isEmpty)
 
 }

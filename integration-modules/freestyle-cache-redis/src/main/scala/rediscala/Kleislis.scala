@@ -19,8 +19,16 @@ package freestyle.cache.redis.rediscala
 import cats.data.Kleisli
 
 import scala.concurrent.Future
-import _root_.redis.{Cursor, ByteStringDeserializer => Deserializer, ByteStringSerializer => Serializer}
-import _root_.redis.commands.{Keys => KeyCommands, Server => ServerCommands, Strings => StringCommands}
+import _root_.redis.{
+  Cursor,
+  ByteStringDeserializer => Deserializer,
+  ByteStringSerializer => Serializer
+}
+import _root_.redis.commands.{
+  Keys => KeyCommands,
+  Server => ServerCommands,
+  Strings => StringCommands
+}
 
 private[rediscala] trait StringCommandsCont {
 
@@ -39,15 +47,16 @@ private[rediscala] trait StringCommandsCont {
   def set[Key: Format, Value: Serializer](key: Key, value: Value): Ops[Future, Boolean] =
     Kleisli((client: StringCommands) => client.set(key, value))
 
-  def mset[Key, Value: Serializer](keyValues: Map[Key, Value])(implicit format: Format[Key]): Ops[Future, Boolean] = {
-    val b = keyValues.map { case (k,v) => (format(k), v) }
+  def mset[Key, Value: Serializer](keyValues: Map[Key, Value])(
+      implicit format: Format[Key]): Ops[Future, Boolean] = {
+    val b = keyValues.map { case (k, v) => (format(k), v) }
     Kleisli((client: StringCommands) => client.mset(b))
   }
 
-  def setnx[Key : Format, Value: Serializer](key: Key, value: Value): Ops[Future, Boolean] =
+  def setnx[Key: Format, Value: Serializer](key: Key, value: Value): Ops[Future, Boolean] =
     Kleisli((client: StringCommands) => client.setnx(key, value))
 
-  def setxx[Key : Format, Value: Serializer](key: Key, value: Value): Ops[Future, Boolean] =
+  def setxx[Key: Format, Value: Serializer](key: Key, value: Value): Ops[Future, Boolean] =
     Kleisli((client: StringCommands) => client.set(key, value, XX = true))
 
 }
@@ -74,4 +83,7 @@ private[rediscala] trait ServerCommandsCont {
 
 }
 
-private[rediscala] object RediscalaCont extends StringCommandsCont with KeyCommandsCont with ServerCommandsCont
+private[rediscala] object RediscalaCont
+    extends StringCommandsCont
+    with KeyCommandsCont
+    with ServerCommandsCont

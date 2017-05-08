@@ -28,9 +28,9 @@ object TestUtil {
       formatKey = Format((key: String) => key),
       parseKey = Parser((str: String) => Some(str)),
       formatVal = Format((age: Int) => age.toString),
-      parseVal = Parser((str:String) => scala.util.Try(Integer.parseInt(str)).toOption),
-      toM    = FunctionK.id[Future],
-      funcM  = future.catsStdInstancesForFuture(ec)
+      parseVal = Parser((str: String) => scala.util.Try(Integer.parseInt(str)).toOption),
+      toM = FunctionK.id[Future],
+      funcM = future.catsStdInstancesForFuture(ec)
     )
 
 }
