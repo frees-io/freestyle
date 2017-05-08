@@ -28,13 +28,13 @@ To use the _freestyle-async_ module, you need to include one of the following de
 [comment]: # (Start Replace)
 
 ```scala
-libraryDependencies += "com.47deg" %% "freestyle-async" % "0.1.0"
+libraryDependencies += "io.frees" %% "freestyle-async" % "0.1.0"
 
 // and if you want to use Monix' Task:
-libraryDependencies += "com.47deg" %% "freestyle-async-monix" % "0.1.0"
+libraryDependencies += "io.frees" %% "freestyle-async-monix" % "0.1.0"
 
 // and if you want to use FS2's Task:
-libraryDependencies += "com.47deg" %% "freestyle-async-fs2" % "0.1.0"
+libraryDependencies += "io.frees" %% "freestyle-async-fs2" % "0.1.0"
 ```
 
 [comment]: # (End Replace)

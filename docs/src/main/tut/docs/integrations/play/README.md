@@ -13,7 +13,7 @@ To enable this integration you can depend on _freestyle-http-play_:
 [comment]: # (Start Replace)
 
 ```scala
-libraryDependencies += "com.47deg" %% "freestyle-http-play" % "0.1.0"
+libraryDependencies += "io.frees" %% "freestyle-http-play" % "0.1.0"
 ```
 
 [comment]: # (End Replace)

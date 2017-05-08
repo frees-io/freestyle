@@ -14,7 +14,7 @@ In order to enable this integration, you can depend on _freestyle-config_:
 [comment]: # (Start Replace)
 
 ```scala
-libraryDependencies += "com.47deg" %% "freestyle-config" % "0.1.0"
+libraryDependencies += "io.frees" %% "freestyle-config" % "0.1.0"
 ```
 
 [comment]: # (End Replace)
