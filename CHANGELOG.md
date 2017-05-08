@@ -1,5 +1,31 @@
 # Changelog
 
+## 05/08/2017 - Version 0.1.1
+
+Release changes:
+
+* Links header image to frees.io ([#277](https://github.com/frees-io/freestyle/pull/277))
+* Prevents OOM Issues in Releasing Process ([#279](https://github.com/frees-io/freestyle/pull/279))
+* Update fs-home.html ([#281](https://github.com/frees-io/freestyle/pull/281))
+* Downgrades Scalajs Badge ([#278](https://github.com/frees-io/freestyle/pull/278))
+* Update fs-home.html ([#282](https://github.com/frees-io/freestyle/pull/282))
+* Update fs-home.html ([#283](https://github.com/frees-io/freestyle/pull/283))
+* Set GA token in sbt-microsites settings ([#286](https://github.com/frees-io/freestyle/pull/286))
+* Update Core Concepts link in navigation menu ([#284](https://github.com/frees-io/freestyle/pull/284))
+* Fixes broken file at cats README.md ([#289](https://github.com/frees-io/freestyle/pull/289))
+* Adds viewport meta Tag ([#290](https://github.com/frees-io/freestyle/pull/290))
+* Removes sudo: required from Travis file ([#291](https://github.com/frees-io/freestyle/pull/291))
+* Fix org in docs to show stars and watchers ([#294](https://github.com/frees-io/freestyle/pull/294))
+* Fixed problem with a test application.conf file being included on the freestyle deployed jars… ([#295](https://github.com/frees-io/freestyle/pull/295))
+* Changes microsite org to `frees-io` ([#296](https://github.com/frees-io/freestyle/pull/296))
+* Renaming tests files ([#293](https://github.com/frees-io/freestyle/pull/293))
+* Integrates sbt-freestyle Plugin ([#297](https://github.com/frees-io/freestyle/pull/297))
+* Moves integration modules to its Subdirectory ([#298](https://github.com/frees-io/freestyle/pull/298))
+* Revert "Moves integration modules to its Subdirectory" ([#299](https://github.com/frees-io/freestyle/pull/299))
+* Removes Migrated Modules ([#300](https://github.com/frees-io/freestyle/pull/300))
+* Releases 0.1.1 patch version under io.frees GroupId ([#301](https://github.com/frees-io/freestyle/pull/301))
+
+
 ## 05/02/2017 - Version 0.1.0
 
 Release changes:
