@@ -1,2 +1,2 @@
-resolvers += Resolver.sonatypeRepo("releases")
-addSbtPlugin("com.47deg" % "sbt-org-policies" % "0.4.21")
+resolvers ++= Seq(Resolver.sonatypeRepo("snapshots"), Resolver.sonatypeRepo("releases"))
+addSbtPlugin("io.frees" % "sbt-freestyle" % "0.0.1-SNAPSHOT")
