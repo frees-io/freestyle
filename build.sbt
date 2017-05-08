@@ -2,7 +2,7 @@ lazy val root = (project in file("."))
   .settings(moduleName := "root")
   .settings(name := "freestyle")
   .settings(noPublishSettings: _*)
-  .aggregate(freestyleModules: _*)
+  .aggregate(allModules: _*)
 
 lazy val freestyle = (crossProject in file("freestyle"))
   .settings(name := "freestyle")
@@ -55,7 +55,7 @@ lazy val tests = (project in file("tests"))
   )
 
 lazy val docs = (project in file("docs"))
-  .dependsOn(freestyleDependencies: _*)
+  .dependsOn(jvmFreestyleDeps: _*)
   .settings(micrositeSettings: _*)
   .settings(noPublishSettings: _*)
   .settings(
@@ -141,7 +141,7 @@ lazy val config = (project in file("freestyle-config"))
     name := "freestyle-config",
     fixResources := {
       val testConf   = (resourceDirectory in Test).value / "application.conf"
-      val targetFile = (classDirectory in (freestyleJVM, Test)).value / "application.conf"
+      val targetFile = (classDirectory in (freestyleJVM, Compile)).value / "application.conf"
       if (testConf.exists) {
         IO.copyFile(
           testConf,
@@ -180,25 +180,30 @@ pgpPassphrase := Some(getEnvVar("PGP_PASSPHRASE").getOrElse("").toCharArray)
 pgpPublicRing := file(s"$gpgFolder/pubring.gpg")
 pgpSecretRing := file(s"$gpgFolder/secring.gpg")
 
-lazy val freestyleModules: Seq[ProjectReference] = Seq(
+lazy val jvmModules: Seq[ProjectReference] = Seq(
   freestyleJVM,
-  freestyleJS,
   taglessJVM,
-  taglessJS,
   effectsJVM,
-  effectsJS,
   asyncJVM,
-  asyncJS,
   asyncMonixJVM,
-  asyncMonixJS,
   asyncFsJVM,
-  asyncFsJS,
   cacheJVM,
-  cacheJS,
   config,
-  loggingJVM,
+  loggingJVM
+)
+
+lazy val jsModules: Seq[ProjectReference] = Seq(
+  freestyleJS,
+  taglessJS,
+  effectsJS,
+  asyncJS,
+  asyncMonixJS,
+  asyncFsJS,
+  cacheJS,
   loggingJS
 )
 
-lazy val freestyleDependencies: Seq[ClasspathDependency] =
-  freestyleModules.map(ClasspathDependency(_, None))
+lazy val allModules: Seq[ProjectReference] = jvmModules ++ jsModules
+
+lazy val jvmFreestyleDeps: Seq[ClasspathDependency] =
+  jvmModules.map(ClasspathDependency(_, None))
