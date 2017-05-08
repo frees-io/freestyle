@@ -27,7 +27,7 @@ object ProjectPlugin extends AutoPlugin {
       micrositeName := "Freestyle",
       micrositeDescription := "A Cohesive & Pragmatic Framework of FP centric Scala libraries",
       micrositeDocumentationUrl := "/docs/",
-      micrositeGithubOwner := "47deg",
+      micrositeGithubOwner := "frees-io",
       micrositeGithubRepo := "freestyle",
       micrositeAnalyticsToken := "UA-18433785-14",
       micrositeHighlightTheme := "dracula",
