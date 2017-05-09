@@ -74,7 +74,7 @@ def loadUser[F[_]]
 
 + [tagless](http://frees.io/docs/core/tagless/) - An alternative encoding to Free based on Tagless Final.
 
-+ [effects](http://frees.io/docs/effects/) - MTL style effects such as reader, writer, state, error, and more modeled as free algebras. 
++ [effects](http://frees.io/docs/effects/) - MTL style effects such as reader, writer, state, error, and more modeled as free algebras.
 
 + [logging](http://frees.io/docs/patterns/logging/) - A purely functional logging algebra over Verizon's Journal.
 
@@ -85,7 +85,7 @@ def loadUser[F[_]]
 Freestyle integrations are located at https://github.com/frees-io/freestyle-integrations.
 
 + [fetch](http://frees.io/docs/integrations/fetch/) - Integration with the Fetch library for efficient data access from heterogenous datasources.
- 
+
 + [fs2](http://frees.io/docs/integrations/fs2/) - Integration to run fs2 Streams in Freestyle programs.
 
 + [monix](http://frees.io/docs/integrations/monix/) -  Instances and utilities to interpret to `monix.eval.Task`.
@@ -94,7 +94,74 @@ Freestyle integrations are located at https://github.com/frees-io/freestyle-inte
 
 + [doobie](http://frees.io/docs/integrations/doobie/) - Embedding of Doobie ConnectionIO actions in Freestyle programs.
 
-+ http - Adapters and marshallers to run the Freestyle program in endpoint return types for [akka-http](http://frees.io/docs/integrations/akkahttp/), [finch](http://frees.io/docs/integrations/finch/), [http4s](http://frees.io/docs/integrations/http4s/) and [play](http://frees.io/docs/integrations/play/). 
++ http - Adapters and marshallers to run the Freestyle program in endpoint return types for [akka-http](http://frees.io/docs/integrations/akkahttp/), [finch](http://frees.io/docs/integrations/finch/), [http4s](http://frees.io/docs/integrations/http4s/) and [play](http://frees.io/docs/integrations/play/).
+
+## Freestyle Artifacts
+
+Freestyle is compatible with both Scala JVM and Scala.js.
+
+This project supports Scala 2.11 and 2.12. The project is based on macro paradise.
+
+To use the project, add the following to your build.sbt:
+
+```scala
+addCompilerPlugin("org.scalamacros" % "paradise" % "2.1.0" cross CrossVersion.full)
+```
+
+[comment]: # (Start Replace)
+
+For Scala.jvm:
+
+```scala
+// required
+libraryDependencies += "io.frees" %% "freestyle"              % "0.1.1"
+
+// optional - effects and patterns
+libraryDependencies += "io.frees" %% "freestyle-effects"      % "0.1.1"
+libraryDependencies += "io.frees" %% "freestyle-tagless"      % "0.1.1"
+libraryDependencies += "io.frees" %% "freestyle-async"        % "0.1.1"
+libraryDependencies += "io.frees" %% "freestyle-async-fs2"    % "0.1.1"
+libraryDependencies += "io.frees" %% "freestyle-async-monix"  % "0.1.1"
+libraryDependencies += "io.frees" %% "freestyle-cache"        % "0.1.1"
+libraryDependencies += "io.frees" %% "freestyle-config"       % "0.1.1"
+libraryDependencies += "io.frees" %% "freestyle-logging"      % "0.1.1"
+
+// optional - integrations
+libraryDependencies += "io.frees" %% "freestyle-cache-redis"  % "0.1.1"
+libraryDependencies += "io.frees" %% "freestyle-doobie"       % "0.1.1"
+libraryDependencies += "io.frees" %% "freestyle-fetch"        % "0.1.1"
+libraryDependencies += "io.frees" %% "freestyle-fs2"          % "0.1.1"
+libraryDependencies += "io.frees" %% "freestyle-http-akka"    % "0.1.1"
+libraryDependencies += "io.frees" %% "freestyle-http-finch"   % "0.1.1"
+libraryDependencies += "io.frees" %% "freestyle-http-http4s"  % "0.1.1"
+libraryDependencies += "io.frees" %% "freestyle-http-play"    % "0.1.1"
+libraryDependencies += "io.frees" %% "freestyle-monix"        % "0.1.1"
+libraryDependencies += "io.frees" %% "freestyle-slick"        % "0.1.1"
+libraryDependencies += "io.frees" %% "freestyle-twitter-util" % "0.1.1"
+```
+
+For Scala.js:
+
+```scala
+// required
+libraryDependencies += "io.frees" %%% "freestyle"             % "0.1.1"
+
+// optional - effects and patterns
+libraryDependencies += "io.frees" %%% "freestyle-effects"     % "0.1.1"
+libraryDependencies += "io.frees" %%% "freestyle-tagless"     % "0.1.1"
+libraryDependencies += "io.frees" %%% "freestyle-async"       % "0.1.1"
+libraryDependencies += "io.frees" %%% "freestyle-async-fs2"   % "0.1.1"
+libraryDependencies += "io.frees" %%% "freestyle-async-monix" % "0.1.1"
+libraryDependencies += "io.frees" %%% "freestyle-cache"       % "0.1.1"
+libraryDependencies += "io.frees" %%% "freestyle-logging"     % "0.1.1"
+
+// optional - integrations
+libraryDependencies += "io.frees" %%% "freestyle-fetch"       % "0.1.1"
+libraryDependencies += "io.frees" %%% "freestyle-fs2"         % "0.1.1"
+libraryDependencies += "io.frees" %%% "freestyle-monix"       % "0.1.1"
+```
+
+[comment]: # (End Replace)
 
 ## Freestyle in the wild
 
