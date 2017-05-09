@@ -12,7 +12,7 @@ permalink: /docs/
 
 Freestyle is compatible with both Scala JVM and Scala.js.
 
-This project supports Scala 2.10, 2.11, and 2.12. The project is based on macro paradise.
+This project supports Scala 2.11 and 2.12. The project is based on macro paradise.
 
 To use the project, add the following to your build.sbt:
 
