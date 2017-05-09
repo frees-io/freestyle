@@ -26,8 +26,8 @@ script:
 - sbt ++$TRAVIS_SCALA_VERSION orgScriptCI
 
 after_success:
-- sbt ++$TRAVIS_SCALA_VERSION orgAfterCISuccess
 - bash <(curl -s https://codecov.io/bash)
+- sbt ++$TRAVIS_SCALA_VERSION orgAfterCISuccess
 
 cache:
   directories:
