@@ -67,15 +67,5 @@ class AsyncTests extends AsyncWordSpec with Matchers {
       program[AsyncM.Op].interpret[Future] recover { case OhNoException() => 42 } map { _ shouldBe 42 }
     }
 
-    "allow Async errors to short-circuit a program" in {
-      def program[F[_]: AsyncM] =
-        for {
-          a <- FreeS.pure(1)
-          b <- AsyncM[F].async[Int](cb => cb(Left(OhNoException())))
-          c <- FreeS.pure(3)
-        } yield a + b + c
-
-      program[AsyncM.Op].interpret[Future] recover { case OhNoException() => 42 } map { _ shouldBe 42 }
-    }
   }
 }
