@@ -14,11 +14,10 @@
  * limitations under the License.
  */
 
+package freestyle.tagless
+
 import org.scalatest.{Matchers, WordSpec}
 
-import scala.scalajs.js.JavaScriptException
-
-import cats.~>
 import cats.free.Free
 import cats.instances.option._
 
@@ -26,21 +25,24 @@ import algebras._
 import handlers._
 import utils._
 
-class taglessTestsJS extends WordSpec with Matchers {
+class taglessTestsJVM extends WordSpec with Matchers {
 
   "Tagless final algebras" should {
 
-    //Can't catch `StackOverflowError` in scala.js https://github.com/scala-js/scala-js/issues/212
     "blow up the stack when interpreted to stack unsafe monads" in {
-      assertThrows[JavaScriptException] {
+      assertThrows[StackOverflowError] {
         SOProgram[Option](0)
       }
     }
 
     "remain stack safe when interpreted to stack safe monads" in {
-      implicit def liftFree[F[_]]: F ~> Free[F, ?] = λ[F ~> Free[F, ?]](Free.liftF(_))
-
       SOProgram[Free[Option, ?]](0).runTailRec shouldBe Option(iterations)
+
+      type StackSafe[F[_]] = {
+        type λ[α] = Free[F, α]
+      }
+
+      SOProgram[StackSafe[Option]#λ](0).runTailRec shouldBe Option(iterations)
     }
 
   }

@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+ package freestyle.tagless
+
 import org.scalatest.{Matchers, WordSpec}
 
 import freestyle.{free, module, tagless}

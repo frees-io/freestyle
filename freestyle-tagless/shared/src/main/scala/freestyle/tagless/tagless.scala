@@ -15,6 +15,7 @@
  */
 
 package freestyle
+package tagless
 
 import scala.reflect.macros.blackbox.Context
 
@@ -165,8 +166,6 @@ object taglessImpl {
       """
     }
 
-    val output = gen()
-    println(output)
-    output
+    gen()
   }
 }

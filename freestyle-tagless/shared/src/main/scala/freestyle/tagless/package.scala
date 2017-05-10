@@ -16,13 +16,9 @@
 
 package freestyle
 
-import scala.annotation.{StaticAnnotation, compileTimeOnly}
+import cats.~>
+import cats.free.Free
 
-@compileTimeOnly("enable macro paradise to expand @tagless macro annotations")
-class tagless extends StaticAnnotation {
-  def macroTransform(annottees: Any*): Any = macro taglessImpl.tagless
-}
-
-trait TaglessEffectLike[F[_]] {
-  final type FS[A] = F[A]
+package object tagless {
+  implicit def freestyleTaglessLiftFree[F[_]]: F ~> Free[F, ?] = λ[F ~> Free[F, ?]](Free.liftF(_))
 }
