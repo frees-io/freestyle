@@ -36,14 +36,18 @@ libraryDependencies += "io.frees" %%% "freestyle-tagless" % "0.1.1"
 
 ## Declaration
 
-Tagless final algebras are declared using the `@tagless` macro annotation.
+Some imports:
 
-```tut:book
-import freestyle._
-import freestyle.implicits._
+```tut:silent
 import cats._
 import cats.implicits._
 
+import freestyle.tagless._
+```
+
+Tagless final algebras are declared using the `@tagless` macro annotation.
+
+```tut:book
 @tagless trait Validation {
   def minSize(s: String, n: Int): FS[Boolean]
   def hasNumber(s: String): FS[Boolean]
@@ -59,9 +63,7 @@ Once your `@tagless` algebras are defined, you can start building programs that 
 being present, for the target runtime monad you are planning to interpret to.
 
 ```tut:book
-def program[F[_]: Monad](implicit validation : Validation[F], interaction: Interaction[F]) = {
-  import cats.implicits._
-
+def program[F[_]: Monad](implicit validation : Validation[F], interaction: Interaction[F]) =
   for {
     userInput <- interaction.ask("Give me something with at least 3 chars and a number on it")
     valid <- (validation.minSize(userInput, 3) |@| validation.hasNumber(userInput)).map(_ && _)
@@ -70,7 +72,6 @@ def program[F[_]: Monad](implicit validation : Validation[F], interaction: Inter
          else
             interaction.tell(s"$userInput is not valid")
   } yield ()
-}
 ```
 
 Note that unlike in `@free` `F[_]`, here it refers to the target runtime monad. This is to provide an allocation free model where your
@@ -107,29 +108,14 @@ Freestyle provides two strategies to make `@tagless` encoded algebras stack safe
 
 ### Interpreting to a stack safe monad
 
-The handlers above are not stack safe because `Try` is not stack-safe. Luckily, we can rewrite our interpreters to 
-interpret to `FreeS[Try, ?]` instead. This small penalty and a few extra allocations will make our programs stack safe.
+The handlers above are not stack safe because `Try` is not stack-safe. Luckily, we can still execute our program stack safe with Freestyle by interpreting to `Free[Try, ?]` instead of `Try` directly. This small penalty and a few extra allocations will make our programs stack safe.
 
-```tut:book
-implicit val validationHandlerStackSafe = new Validation.Handler[FreeS[Try, ?]] {
-  override def minSize(s: String, n: Int): FreeS[Try, Boolean] = FreeS.liftFA(Try(s.size >= n))
-  override def hasNumber(s: String): FreeS[Try, Boolean] = FreeS.liftFA(Try(s.exists(c => "0123456789".contains(c))))
-}
-
-implicit val interactionHandlerStackSafe = new Interaction.Handler[FreeS[Try, ?]] {
-  override def tell(s: String): FreeS[Try, Unit] = FreeS.liftFA(Try(println(s)))
-  override def ask(s: String): FreeS[Try, String] = FreeS.liftFA(Try("This could have been user input 1"))
-}
-```
-
-We can now safely invoke our program in a stack safe way, running it to `Free[Try, ?]` first then to `Try`:
+We can safely invoke our program in a stack safe way, running it to `Free[Try, ?]` first then to `Try` with `Free#runTailRec`:
 
 ```tut.book
-import cats.arrow.FunctionK
+import cats.free.Free
 
-implicit def functionKIdentity[F[_]]: FunctionK[F, F] = FunctionK.id[F]
-
-program[FreeS[Try, ?]].interpret[Try]
+program[Free[Try, ?]].runTailRec
 ```
 
 ### Combining `@tagless` and `@free` algebras
@@ -141,10 +127,15 @@ to lift `@tagless` algebras to the context of application where `@free` and `@ta
 
 Let's redefine `program` to support `LoggingM` which is a `@free` defined algebra of logging operations:
 
-```tut:book
+```tut:silent
+import freestyle._
+import freestyle.implicits._
+
 import freestyle.logging._
 import freestyle.loggingJVM.implicits._
+```
 
+```tut:book
 def program[F[_]]
    (implicit log: LoggingM[F], 
              validation : Validation.StackSafe[F], 
