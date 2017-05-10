@@ -14,15 +14,14 @@
  * limitations under the License.
  */
 
-import freestyle._
-import freestyle.implicits._
 import org.scalatest.{Matchers, WordSpec}
-import cats.{~>, Monad}
-import cats.implicits._
-import algebras._
+
+import cats.~>
 import cats.free.Free
+import cats.instances.option._
+
+import algebras._
 import handlers._
-import modules._
 import utils._
 
 class taglessTestsJVM extends WordSpec with Matchers {

@@ -14,17 +14,21 @@
  * limitations under the License.
  */
 
-import freestyle.{FreeS, _}
-import freestyle.implicits._
 import org.scalatest.{Matchers, WordSpec}
-import cats._
-import cats.implicits._
-import algebras._
+
+import freestyle.{free, module, tagless}
+
+import cats.{~>, Monad}
 import cats.arrow.FunctionK
 import cats.free.Free
+import cats.instances.either._
+import cats.instances.option._
+import cats.syntax.flatMap._
+import cats.syntax.functor._
+
+import algebras._
 import handlers._
 import modules._
-import utils._
 
 class TaglessTests extends WordSpec with Matchers {
 
@@ -33,7 +37,6 @@ class TaglessTests extends WordSpec with Matchers {
     "combine with other tagless algebras" in {
 
       def program[F[_] : Monad : TG1 : TG2] = {
-        import cats.implicits._
         val a1 = TG1[F]
         val a2 = TG2[F]
         for {
@@ -47,6 +50,8 @@ class TaglessTests extends WordSpec with Matchers {
     }
 
     "combine with FreeS monadic comprehensions" in {
+      import freestyle._
+      import freestyle.implicits._
 
       def program[F[_] : F1: TG1.StackSafe : TG2.StackSafe]: FreeS[F, Int] = {
         val tg1 = TG1.StackSafe[F]
@@ -66,22 +71,22 @@ class TaglessTests extends WordSpec with Matchers {
       program[App.Op].interpret[Option] shouldBe Option(6)
     }
 
-  }
+    "work with derived handlers" in {
 
-  "work with derived handlers" in {
+      def program[F[_]: TG1: Monad] =
+        for {
+          x <- TG1[F].x(1)
+          y <- TG1[F].y(2)
+        } yield x + y
 
-    def program[F[_]: TG1: Monad] =
-      for {
-        x <- TG1[F].x(1)
-        y <- TG1[F].y(2)
-      } yield x + y
+      type ErrorOr[A] = Either[String, A]
 
-    type ErrorOr[A] = Either[String, A]
+      implicit val fk: Option ~> ErrorOr =
+        λ[Option ~> ErrorOr](_.toRight("error"))
 
-    implicit val fk: Option ~> ErrorOr =
-      λ[Option ~> ErrorOr](_.toRight("error"))
+      program[ErrorOr] shouldBe Right(3)
+    }
 
-    program[ErrorOr] shouldBe Right(3)
   }
 
 }

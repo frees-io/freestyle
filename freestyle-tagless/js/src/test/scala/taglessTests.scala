@@ -14,18 +14,17 @@
  * limitations under the License.
  */
 
-import freestyle._
-import freestyle.implicits._
 import org.scalatest.{Matchers, WordSpec}
-import cats._
-import cats.implicits._
-import algebras._
-import cats.free.Free
-import handlers._
-import modules._
-import utils._
 
 import scala.scalajs.js.JavaScriptException
+
+import cats.~>
+import cats.free.Free
+import cats.instances.option._
+
+import algebras._
+import handlers._
+import utils._
 
 class taglessTestsJS extends WordSpec with Matchers {
 
