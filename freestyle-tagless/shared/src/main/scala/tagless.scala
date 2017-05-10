@@ -146,10 +146,10 @@ object taglessImpl {
               ..${requests.map(_.freeHandlerDef(hh, MM))}
             }
 
-          implicit val $functorK: _root_.mainecoon.FunctorK[$Eff] =
-            new _root_.mainecoon.FunctorK[$Eff] {
-              def mapK[$MM[_], $NN[_]]($hh: $Eff[$MM])(fk: _root_.cats.arrow.FunctionK[$MM, $NN]): $Eff[$NN] =
-                new $Eff[$NN] {
+          implicit val $functorK: _root_.mainecoon.FunctorK[({ type λ[α[_]] = $Eff[α, ..$TTs] })#λ] =
+            new _root_.mainecoon.FunctorK[({ type λ[α[_]] = $Eff[α, ..$TTs] })#λ] {
+              def mapK[$MM[_], $NN[_]]($hh: $Eff[$MM, ..$TTs])(fk: _root_.cats.arrow.FunctionK[$MM, $NN]): $Eff[$NN, ..$TTs] =
+                new $Eff[$NN, ..$TTs] {
                   ..${requests.map(_.functorKDef(hh, NN))}
                 }
             }
