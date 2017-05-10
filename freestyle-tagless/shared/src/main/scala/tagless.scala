@@ -86,18 +86,12 @@ object taglessImpl {
           q"def $reqImpl[..$tparams](..$params): $RT[$Res] = $H.${reqDef.name}(..$args)"
       }
 
-      def stackSafeFinallyTaglessHandlerDef(H: TermName, RT: TypeName): DefDef = {
+      def functorKDef(H: TermName, RT: TypeName): DefDef = {
         val args = params.map(_.name)
         if (params.isEmpty)
-          q"""
-            def $reqImpl[..$tparams]: _root_.cats.free.Free[$RT, $Res] =
-              _root_.cats.free.Free.liftF($H.${reqDef.name}(..$args))
-          """
+          q"def $reqImpl[..$tparams]: $RT[$Res] = fk($H.${reqDef.name}(..$args))"
         else
-          q"""
-            def $reqImpl[..$tparams](..$params): _root_.cats.free.Free[$RT, $Res] =
-              _root_.cats.free.Free.liftF($H.${reqDef.name}(..$args))
-          """
+          q"def $reqImpl[..$tparams](..$params): $RT[$Res] = fk($H.${reqDef.name}(..$args))"
       }
 
       def traitDef(FF: TypeName): DefDef =
@@ -132,6 +126,9 @@ object taglessImpl {
       val hh = freshTermName("hh$")
       val stackSafeHandler = freshTermName("stackSafeHandler$")
       val stackSafeFTHandler = freshTermName("stackSafeFTHandler$")
+      val functorK = freshTermName("functorKInstance$")
+
+      val NN = freshTypeName("NN$")
 
       q"""
         object ${Eff.toTermName} {
@@ -144,19 +141,26 @@ object taglessImpl {
             ..${requests.map(_.freeDef)}
           }
 
-          implicit def $stackSafeHandler[$MM[_]: _root_.cats.Monad](implicit $hh: Handler[$MM]): StackSafe.Handler[$MM] = new StackSafe.Handler[$MM] {
-            ..${requests.map(_.freeHandlerDef(hh, MM))}
-          }
+          implicit def $stackSafeHandler[$MM[_]: _root_.cats.Monad](implicit $hh: Handler[$MM]): StackSafe.Handler[$MM] =
+            new StackSafe.Handler[$MM] {
+              ..${requests.map(_.freeHandlerDef(hh, MM))}
+            }
 
-          implicit def $stackSafeFTHandler[$MM[_]: _root_.cats.Monad](
-            implicit $hh: Handler[$MM]
-          ): Handler[({ type λ[α] = _root_.cats.free.Free[$MM, α]})#λ] =
-            new Handler[({ type λ[α] = _root_.cats.free.Free[$MM, α]})#λ] {
-              ..${requests.map(_.stackSafeFinallyTaglessHandlerDef(hh, MM))}
+          implicit val $functorK: _root_.mainecoon.FunctorK[$Eff] =
+            new _root_.mainecoon.FunctorK[$Eff] {
+              def mapK[$MM[_], $NN[_]]($hh: $Eff[$MM])(fk: _root_.cats.arrow.FunctionK[$MM, $NN]): $Eff[$NN] =
+                new $Eff[$NN] {
+                  ..${requests.map(_.functorKDef(hh, NN))}
+                }
             }
 
           def apply[$MM[_], ..$TTs](implicit $ev: $Eff[$MM, ..$tns]): $Eff[$MM, ..$tns] = $ev
 
+          implicit def derive[$MM[_], $NN[_], ..$TTs](implicit
+            h: $Eff[$MM, ..$TTs],
+            FK: _root_.mainecoon.FunctorK[$Eff],
+            fk: _root_.cats.arrow.FunctionK[$MM, $NN]
+          ): $Eff[$NN, ..$TTs] = FK.mapK(h)(fk)
         }
       """
     }

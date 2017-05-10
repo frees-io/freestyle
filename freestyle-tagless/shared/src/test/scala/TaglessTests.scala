@@ -68,6 +68,22 @@ class TaglessTests extends WordSpec with Matchers {
 
   }
 
+  "work with derived handlers" in {
+
+    def program[F[_]: TG1: Monad] =
+      for {
+        x <- TG1[F].x(1)
+        y <- TG1[F].y(2)
+      } yield x + y
+
+    type ErrorOr[A] = Either[String, A]
+
+    implicit val fk: Option ~> ErrorOr =
+      λ[Option ~> ErrorOr](_.toRight("error"))
+
+    program[ErrorOr] shouldBe Right(3)
+  }
+
 }
 
 object algebras {
@@ -103,12 +119,6 @@ object handlers  {
     def x(a: Int): Option[Int] = Some(a)
 
     def y(a: Int): Option[Int] = Some(a)
-  }
-
-  implicit val stackSafeOptionHandler1: TG1.Handler[FreeS[Option, ?]] = new TG1.Handler[FreeS[Option, ?]] {
-    def x(a: Int): FreeS[Option, Int] = FreeS.liftFA(Some(a))
-
-    def y(a: Int): FreeS[Option, Int] = FreeS.liftFA(Some(a))
   }
 
   implicit val optionHandler2: TG2.Handler[Option] = new TG2.Handler[Option] {
