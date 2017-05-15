@@ -139,7 +139,6 @@ object freeImpl {
       q"""
         object ${Eff.toTermName} {
 
-          import _root_.cats.free.Inject
           import _root_.freestyle.{ FreeS, FSHandler, InjK }
 
           sealed trait Op[$AA] extends scala.Product with java.io.Serializable
