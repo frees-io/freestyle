@@ -15,6 +15,7 @@
  */
 
 package freestyle
+package tagless
 
 import scala.reflect.macros.blackbox.Context
 
@@ -86,6 +87,14 @@ object taglessImpl {
           q"def $reqImpl[..$tparams](..$params): $RT[$Res] = $H.${reqDef.name}(..$args)"
       }
 
+      def functorKDef(H: TermName, RT: TypeName): DefDef = {
+        val args = params.map(_.name)
+        if (params.isEmpty)
+          q"def $reqImpl[..$tparams]: $RT[$Res] = fk($H.${reqDef.name}(..$args))"
+        else
+          q"def $reqImpl[..$tparams](..$params): $RT[$Res] = fk($H.${reqDef.name}(..$args))"
+      }
+
       def traitDef(FF: TypeName): DefDef =
         if (params.isEmpty)
           q"def $reqImpl[..$tparams]: $FF[$Res]"
@@ -117,6 +126,10 @@ object taglessImpl {
       val ev = freshTermName("ev$")
       val hh = freshTermName("hh$")
       val stackSafeHandler = freshTermName("stackSafeHandler$")
+      val stackSafeFTHandler = freshTermName("stackSafeFTHandler$")
+      val functorK = freshTermName("functorKInstance$")
+
+      val NN = freshTypeName("NN$")
 
       q"""
         object ${Eff.toTermName} {
@@ -129,12 +142,26 @@ object taglessImpl {
             ..${requests.map(_.freeDef)}
           }
 
-          implicit def $stackSafeHandler[$MM[_]: _root_.cats.Monad](implicit $hh: Handler[$MM]): StackSafe.Handler[$MM] = new StackSafe.Handler[$MM] {
-            ..${requests.map(_.freeHandlerDef(hh, MM))}
-          }
+          implicit def $stackSafeHandler[$MM[_]: _root_.cats.Monad](implicit $hh: Handler[$MM]): StackSafe.Handler[$MM] =
+            new StackSafe.Handler[$MM] {
+              ..${requests.map(_.freeHandlerDef(hh, MM))}
+            }
+
+          implicit val $functorK: _root_.mainecoon.FunctorK[({ type λ[α[_]] = $Eff[α, ..$TTs] })#λ] =
+            new _root_.mainecoon.FunctorK[({ type λ[α[_]] = $Eff[α, ..$TTs] })#λ] {
+              def mapK[$MM[_], $NN[_]]($hh: $Eff[$MM, ..$TTs])(fk: _root_.cats.arrow.FunctionK[$MM, $NN]): $Eff[$NN, ..$TTs] =
+                new $Eff[$NN, ..$TTs] {
+                  ..${requests.map(_.functorKDef(hh, NN))}
+                }
+            }
 
           def apply[$MM[_], ..$TTs](implicit $ev: $Eff[$MM, ..$tns]): $Eff[$MM, ..$tns] = $ev
 
+          implicit def derive[$MM[_], $NN[_], ..$TTs](implicit
+            h: $Eff[$MM, ..$TTs],
+            FK: _root_.mainecoon.FunctorK[$Eff],
+            fk: _root_.cats.arrow.FunctionK[$MM, $NN]
+          ): $Eff[$NN, ..$TTs] = FK.mapK(h)(fk)
         }
       """
     }

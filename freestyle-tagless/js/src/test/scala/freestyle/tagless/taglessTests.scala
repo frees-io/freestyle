@@ -14,29 +14,32 @@
  * limitations under the License.
  */
 
-import freestyle._
-import freestyle.implicits._
+package freestyle.tagless
+
 import org.scalatest.{Matchers, WordSpec}
-import cats._
-import cats.implicits._
-import algebras._
+
+import scala.scalajs.js.JavaScriptException
+
 import cats.free.Free
+import cats.instances.option._
+
+import algebras._
 import handlers._
-import modules._
 import utils._
 
-class taglessTestsJVM extends WordSpec with Matchers {
+class taglessTestsJS extends WordSpec with Matchers {
 
   "Tagless final algebras" should {
 
+    //Can't catch `StackOverflowError` in scala.js https://github.com/scala-js/scala-js/issues/212
     "blow up the stack when interpreted to stack unsafe monads" in {
-      assertThrows[StackOverflowError] {
+      assertThrows[JavaScriptException] {
         SOProgram[Option](0)
       }
     }
 
     "remain stack safe when interpreted to stack safe monads" in {
-      SOProgram[FreeS[Option, ?]](0).interpret[Option] shouldBe Option(iterations)
+      SOProgram[Free[Option, ?]](0).runTailRec shouldBe Option(iterations)
     }
 
   }

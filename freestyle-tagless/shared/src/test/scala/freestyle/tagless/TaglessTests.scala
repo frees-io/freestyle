@@ -14,17 +14,23 @@
  * limitations under the License.
  */
 
-import freestyle.{FreeS, _}
-import freestyle.implicits._
+ package freestyle.tagless
+
 import org.scalatest.{Matchers, WordSpec}
-import cats._
-import cats.implicits._
-import algebras._
+
+import freestyle.{free, module, tagless}
+
+import cats.{~>, Monad}
 import cats.arrow.FunctionK
 import cats.free.Free
+import cats.instances.either._
+import cats.instances.option._
+import cats.syntax.flatMap._
+import cats.syntax.functor._
+
+import algebras._
 import handlers._
 import modules._
-import utils._
 
 class TaglessTests extends WordSpec with Matchers {
 
@@ -33,7 +39,6 @@ class TaglessTests extends WordSpec with Matchers {
     "combine with other tagless algebras" in {
 
       def program[F[_] : Monad : TG1 : TG2] = {
-        import cats.implicits._
         val a1 = TG1[F]
         val a2 = TG2[F]
         for {
@@ -47,6 +52,8 @@ class TaglessTests extends WordSpec with Matchers {
     }
 
     "combine with FreeS monadic comprehensions" in {
+      import freestyle._
+      import freestyle.implicits._
 
       def program[F[_] : F1: TG1.StackSafe : TG2.StackSafe]: FreeS[F, Int] = {
         val tg1 = TG1.StackSafe[F]
@@ -64,6 +71,22 @@ class TaglessTests extends WordSpec with Matchers {
       }
       import TG1._
       program[App.Op].interpret[Option] shouldBe Option(6)
+    }
+
+    "work with derived handlers" in {
+
+      def program[F[_]: TG1: Monad] =
+        for {
+          x <- TG1[F].x(1)
+          y <- TG1[F].y(2)
+        } yield x + y
+
+      type ErrorOr[A] = Either[String, A]
+
+      implicit val fk: Option ~> ErrorOr =
+        λ[Option ~> ErrorOr](_.toRight("error"))
+
+      program[ErrorOr] shouldBe Right(3)
     }
 
   }
@@ -103,12 +126,6 @@ object handlers  {
     def x(a: Int): Option[Int] = Some(a)
 
     def y(a: Int): Option[Int] = Some(a)
-  }
-
-  implicit val stackSafeOptionHandler1: TG1.Handler[FreeS[Option, ?]] = new TG1.Handler[FreeS[Option, ?]] {
-    def x(a: Int): FreeS[Option, Int] = FreeS.liftFA(Some(a))
-
-    def y(a: Int): FreeS[Option, Int] = FreeS.liftFA(Some(a))
   }
 
   implicit val optionHandler2: TG2.Handler[Option] = new TG2.Handler[Option] {
