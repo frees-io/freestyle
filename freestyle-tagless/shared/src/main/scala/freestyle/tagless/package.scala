@@ -21,4 +21,8 @@ import cats.free.Free
 
 package object tagless {
   implicit def freestyleTaglessLiftFree[F[_]]: F ~> Free[F, ?] = λ[F ~> Free[F, ?]](Free.liftF(_))
+
+  type StackSafe[F[_]] = {
+    type λ[α] = Free[F, α]
+  }
 }
