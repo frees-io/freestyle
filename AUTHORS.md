@@ -8,7 +8,7 @@ The maintainers of the project are:
 
 ## Contributors
 
-These are the people that have contributed to the Freestyle project:
+These are the people that have contributed to the freestyle project:
 
 * [colin-passiv](https://github.com/colin-passiv)
 * 47 Degrees Dev <[47degdev](https://github.com/47degdev)>
