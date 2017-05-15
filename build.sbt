@@ -30,7 +30,7 @@ lazy val tagless = (crossProject in file("freestyle-tagless"))
   .crossDepSettings(commonDeps: _*)
   .settings(resolvers += Resolver.bintrayRepo("kailuowang", "maven"))
   .settings(
-    libraryDependencies += "com.kailuowang" %%% "mainecoon-core" % "0.0.2"
+    libraryDependencies += "com.kailuowang" %%% "mainecoon-core" % "0.0.5"
   )
 
 lazy val taglessJVM = tagless.jvm
