@@ -95,7 +95,7 @@ lazy val effects = (crossProject in file("freestyle-effects"))
 lazy val effectsJVM = effects.jvm
 lazy val effectsJS  = effects.js
 
-lazy val async = (crossProject in file("freestyle-async"))
+lazy val async = (crossProject in file("freestyle-async/async"))
   .dependsOn(freestyle)
   .settings(name := "freestyle-async")
   .jsSettings(sharedJsSettings: _*)
