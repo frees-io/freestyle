@@ -164,7 +164,6 @@ class CacheTests extends WordSpec with Matchers with CacheTestContext {
 
   }
 
-
   "DELETE" should {
 
     "nullify a preceeding PUT on same key" in {
@@ -201,6 +200,22 @@ class CacheTests extends WordSpec with Matchers with CacheTestContext {
         CacheM[F].del("b") *> CacheM[F].put("a", 0) *> CacheM[F].get("a")
 
       program[CacheM.Op].interpret[Id] shouldBe Some(0)
+    }
+  }
+
+  "HASKEY" should {
+    "Have key" in {
+      def program[F[_] : CacheM] =
+        CacheM[F].put("a", 0) *> CacheM[F].has("a")
+
+      program[CacheM.Op].interpret[Id] shouldBe true
+    }
+
+    "have not key" in {
+      def program[F[_] : CacheM] =
+        CacheM[F].put("a", 0) *> CacheM[F].clear *> CacheM[F].has("a")
+
+      program[CacheM.Op].interpret[Id] shouldBe false
     }
   }
 
