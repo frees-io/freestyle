@@ -127,7 +127,7 @@ lazy val effects = (crossProject in file("freestyle-effects"))
 lazy val effectsJVM = effects.jvm
 lazy val effectsJS  = effects.js
 
-lazy val async = (crossProject in file("async/async"))
+lazy val async = (crossProject in file("freestyle-async/async"))
   .dependsOn(freestyle)
   .settings(name := "freestyle-async")
   .jsSettings(sharedJsSettings: _*)
@@ -136,7 +136,7 @@ lazy val async = (crossProject in file("async/async"))
 lazy val asyncJVM = async.jvm
 lazy val asyncJS  = async.js
 
-lazy val asyncMonix = (crossProject in file("async/monix"))
+lazy val asyncMonix = (crossProject in file("freestyle-async/monix"))
   .dependsOn(freestyle, async)
   .settings(name := "freestyle-async-monix")
   .crossDepSettings(
@@ -149,7 +149,7 @@ lazy val asyncMonix = (crossProject in file("async/monix"))
 lazy val asyncMonixJVM = asyncMonix.jvm
 lazy val asyncMonixJS  = asyncMonix.js
 
-lazy val asyncFs = (crossProject in file("async/fs2"))
+lazy val asyncFs = (crossProject in file("freestyle-async/fs2"))
   .dependsOn(freestyle, async)
   .settings(name := "freestyle-async-fs2")
   .jsSettings(sharedJsSettings: _*)
