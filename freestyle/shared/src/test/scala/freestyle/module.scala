@@ -153,6 +153,15 @@ class moduleTests extends WordSpec with Matchers {
       o3.y shouldBe 2
     }
 
+    "allow modules be composed with algebras, having methods returning FS effects" in {
+      import comp._
+      val m1 = FSMod[FSMod.Op]
+      val program = for {
+        a <- m1.x(1)
+        b <- m1.y(1)
+      } yield a + b
+      program.interpret[Option] shouldBe Option(2)
+    }
   }
 
 }
