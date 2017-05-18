@@ -166,8 +166,9 @@ final class moduleImpl(val c: Context) {
       case q"$mods val $name: $tpt[..$args]" => q"$mods val $name: $tpt[$FF, ..$args]"
       case x => x
     }
+    val parentTrees = parents ++ List(tq"$FreeModuleLike", tq"freestyle.EffectLike[$FF]")
     ClassDef(mods, name, FFtypeConstructor :: tparams,
-      Template(parents :+ tq"$FreeModuleLike", self, body0)).validNel
+      Template(parentTrees, self, body0)).validNel
   }
 
   private[this] def makeModuleTree(
