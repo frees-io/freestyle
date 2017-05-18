@@ -66,5 +66,6 @@ class AsyncTests extends AsyncWordSpec with Matchers {
 
       program[AsyncM.Op].interpret[Future] recover { case OhNoException() => 42 } map { _ shouldBe 42 }
     }
+
   }
 }
