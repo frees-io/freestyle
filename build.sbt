@@ -81,12 +81,12 @@ lazy val docs = (project in file("docs"))
       %%("freestyle-twitter-util"),
       %%("doobie-h2-cats"),
       %%("http4s-dsl"),
-      %%("play") % "test",
+      %%("play"),
       %("h2") % "test"
     )
   )
   .settings(
-    tutScalacOptions ~= (_ filterNot Set("-Ywarn-unused-import", "-Xlint").contains)
+    scalacOptions in Tut ~= (_ filterNot Set("-Ywarn-unused-import", "-Xlint").contains)
   )
   .enablePlugins(MicrositesPlugin)
 
