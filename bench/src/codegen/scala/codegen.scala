@@ -3,6 +3,7 @@ package bench
 
 import scala.annotation.tailrec
 import scala.Predef._
+import scala.collection.immutable
 
 object BenchBoiler {
 
@@ -23,131 +24,158 @@ object BenchBoiler {
     }
   }
 
-  def generate(): String = generate((1 to 5).toList, (1 to 25).toList)
-
-  def catsFreeAlgebras(algebras: List[Int], ops: List[Int]): String = algebras.map { a =>
+  def catsFreeAlgebras(id: String, algebras: List[Int], ops: List[Int]): String = algebras.map { a =>
         s"""
-            |  sealed trait Op_$a[A] extends Product with Serializable
-            |  ${ops.map { n => s"case class Op_${a}_$n(x: Int) extends Op_$a[Int]" }.mkString("\n")}
+            |  sealed trait Op_${a}_$id[A] extends Product with Serializable
+            |  ${ops.map { n => s"case class Op_${a}_${n}_$id(x: Int) extends Op_${a}_$id[Int]" }.mkString("\n")}
             |
             |""".stripMargin
   }.mkString("\n")
 
-  def catsFreeAlgebraOps(algebras: List[Int], ops: List[Int]): String = algebras.map { a =>
+  def catsFreeAlgebraOps(id: String, algebras: List[Int], ops: List[Int]): String = algebras.map { a =>
     s"""
-       | class CatsOps_$a[F[_]](implicit I: Inject[Op_$a, F]) {
-       |   ${ops.map { n => s"def op$n(x: Int): Free[F, Int] = Free.inject[Op_$a, F](Op_${a}_$n(x))" }.mkString("\n")}
+       | class CatsOps_${a}_$id[F[_]](implicit I: Inject[Op_${a}_$id, F]) {
+       |   ${ops.map { n => s"def op${n}_$id(x: Int): Free[F, Int] = Free.inject[Op_${a}_$id, F](Op_${a}_${n}_$id(x))" }.mkString("\n")}
        | }
     """.stripMargin
   }.mkString("\n")
 
-  def catsFreeOpsInstances(algebras: List[Int]): String = algebras.map { a =>
-    s"val catsOps_$a = new CatsOps_$a[CP_${algebras.size}]"
+  def catsFreeOpsInstances(id: String, algebras: List[Int]): String = algebras.map { a =>
+    s"val catsOps_${a}_$id = new CatsOps_${a}_$id[CP_${algebras.size}_$id]"
   }.mkString("\n")
 
-  def catsFreeHandlers(algebras: List[Int], ops: List[Int]): String = algebras.map { a =>
+  def catsFreeHandlers(id: String, algebras: List[Int], ops: List[Int]): String = algebras.map { a =>
     s"""
-       | implicit val catsHandler_$a: FunctionK[Op_$a, cats.Id] = λ[Op_$a ~> Id] {
-       |   ${ops.map { n => s"case Op_${a}_$n(x) => x + 1" }.mkString("\n")}
+       | implicit val catsHandler_${a}_$id: FunctionK[Op_${a}_$id, cats.Id] = λ[Op_${a}_$id ~> Id] {
+       |   ${ops.map { n => s"case Op_${a}_${n}_$id(x) => x + 1" }.mkString("\n")}
        | }
     """.stripMargin
   }.mkString("\n")
 
-  def catsFreeProgram(algebras: List[Int], ops: List[Int]): String = algebras.flatMap { a =>
-    ops.map(n => s"catsOps_$a.op$n(1).foldMap(implicitly[FunctionK[CP_${algebras.size}, Id]])")
-  }.mkString("{", "\n", "}")
+  def catsFreeProgram(id: String, algebras: List[Int], ops: List[Int]): String = algebras.flatMap { a =>
+    ops.map(n => s"catsOps_${a}_$id.op${n}_$id(1).foldMap(implicitly[FunctionK[CP_${algebras.size}_$id, Id]])")
+  }.reverse.take(2).mkString("{", "\n", "}")
 
-  def catsFreeCoproduct(algebras: List[Int]): String = {
+  def catsFreeCoproduct(id: String, algebras: List[Int]): String = {
     def loop(current: List[Int], acc: (Int, String, String)): String = {
        val (index, cp, cpId) = acc
        current match {
          case Nil => cp
          case h :: t if (h == algebras.head) && algebras.size >= 2 =>
-            loop(t, (index + 1, List(cp, s"type CP_$index[A] = cats.data.Coproduct[Op_$index, Op_${index + 1}, A]").mkString("\n"), s"CP_$index"))
+            loop(t, (index + 1, List(cp, s"type CP_${index}_$id[A] = cats.data.Coproduct[Op_${index}_$id, Op_${index + 1}_$id, A]").mkString("\n"), s"CP_${index}_$id"))
          case h :: t =>
-            loop(t, (index + 1, List(cp, s"type CP_$index[A] = cats.data.Coproduct[Op_$index, $cpId, A]").mkString("\n"), s"CP_$index"))
+            loop(t, (index + 1, List(cp, s"type CP_${index}_$id[A] = cats.data.Coproduct[Op_${index}_$id, $cpId, A]").mkString("\n"), s"CP_${index}_$id"))
        }
     }
     loop(algebras, (1, "", ""))
   }
 
-  def freestyleAlgebras(algebras: List[Int], ops: List[Int]): String = algebras.map { a =>
+  def freestyleAlgebras(id: String, algebras: List[Int], ops: List[Int]): String = algebras.map { a =>
     s"""
-       |  @free trait Ops_$a {
-       |    ${ops.map { n => s"def op$n(x: Int): FS[Int]" }.mkString("\n")}
+       |  @free trait Ops_${a}_$id {
+       |    ${ops.map { n => s"def op${n}_$id(x: Int): FS[Int]" }.mkString("\n")}
        |  }
        |  """.stripMargin
   }.mkString("\n")
 
-  def freestyleHandlers(algebras: List[Int], ops: List[Int]): String = algebras.map { a =>
+  def freestyleHandlers(id: String, algebras: List[Int], ops: List[Int]): String = algebras.map { a =>
     s"""
-       | implicit val fsHandler_$a = new Ops_$a.Handler[Id] {
-       |   ${ops.map { n => s"def op$n(x: Int): cats.Id[Int] = x + 1" }.mkString("\n")}
+       | implicit val fsHandler_${a}_$id = new Ops_${a}_$id.Handler[Id] {
+       |   ${ops.map { n => s"def op${n}_$id(x: Int): cats.Id[Int] = x + 1" }.mkString("\n")}
        | }
     """.stripMargin
   }.mkString("\n")
 
-  def freestyleModule(algebras: List[Int]): String =
+  def freestyleModule(id: String, algebras: List[Int]): String =
     s"""
-      |@module trait App {
-      |  ${algebras.map(a => s"val a_$a: Ops_$a").mkString("\n")}
+      |@module trait App_$id {
+      |  ${algebras.map(a => s"val a_${a}_$id: Ops_${a}_$id").mkString("\n")}
       |}
     """.stripMargin
 
-  def freestyleOpsInstances(algebras: List[Int]): String = algebras.map { a =>
-    s"val freestyleOps_$a = Ops_$a[App.Op]"
+  def freestyleOpsInstances(id: String, algebras: List[Int]): String = algebras.map { a =>
+    s"val freestyleOps_${a}_$id = Ops_${a}_$id[App_$id.Op]"
   }.mkString("\n")
 
-  def freestyleProgram(algebras: List[Int], ops: List[Int]): String = algebras.flatMap { a =>
-    ops.map(n => s"freestyleOps_$a.op$n(1).foldMap(implicitly[FunctionK[App.Op, Id]])")
-  }.mkString("{", "\n", "}")
+  def freestyleProgram(id: String, algebras: List[Int], ops: List[Int]): String = algebras.flatMap { a =>
+    ops.map(n => s"freestyleOps_${a}_$id.op${n}_$id(1).foldMap(implicitly[FunctionK[App_$id.Op, Id]])")
+  }.reverse.take(2).mkString("{", "\n", "}")
 
-  def generate(algebras: List[Int], ops: List[Int]): String = {
+  def imports: String =
+    """
+      |  package freestylebench
+      |
+      |  import java.util.concurrent.TimeUnit
+      |  import org.openjdk.jmh.annotations._
+      |
+      |  import cats._
+      |  import cats.arrow._
+      |  import cats.free._
+      |  import cats.implicits._
+      |
+      |  import freestyle._
+      |  import freestyle.implicits._
+      |
+    """.stripMargin
 
+  def outterScope(id: String, algebras: List[Int], ops: List[Int]): String =
     s"""
-       |  package freestylebench
-       |
-       |  import java.util.concurrent.TimeUnit
-       |  import org.openjdk.jmh.annotations._
-       |
-       |  import cats._
-       |  import cats.arrow._
-       |  import cats.free._
-       |  import cats.implicits._
-       |
-       |  ${catsFreeAlgebras(algebras, ops)}
-       |
-       |  import freestyle._
-       |  import freestyle.implicits._
-       |
-       |  ${freestyleAlgebras(algebras, ops)}
-       |
-       |  ${freestyleModule(algebras)}
-       |
+      |  ${catsFreeAlgebras(id, algebras, ops)}
+      |
+      |  ${freestyleAlgebras(id, algebras, ops)}
+      |
+      |  ${freestyleModule(id, algebras)}
+    """.stripMargin
+
+  def benchMarkClass(id: String, algebras: List[Int], ops: List[Int]): String =
+    s"""
        |  @State(Scope.Thread)
        |  @BenchmarkMode(Array(Mode.Throughput))
        |  @OutputTimeUnit(TimeUnit.SECONDS)
-       |  class FreestyleVsCatsFunctionKBench {
+       |  class FreestyleVsCatsFunctionKBench_${id} {
        |
-       |    ${catsFreeAlgebraOps(algebras, ops)}
+       |    ${catsFreeAlgebraOps(id, algebras, ops)}
        |
-       |    ${catsFreeHandlers(algebras, ops)}
+       |    ${catsFreeHandlers(id, algebras, ops)}
        |
-       |    ${catsFreeCoproduct(algebras)}
+       |    ${catsFreeCoproduct(id, algebras)}
        |
-       |    ${catsFreeOpsInstances(algebras)}
+       |    ${catsFreeOpsInstances(id, algebras)}
        |
-       |    @Benchmark def runCatsFree: Any = ${catsFreeProgram(algebras, ops)}
+       |    @Benchmark def runCatsFree: Any = ${catsFreeProgram(id, algebras, ops)}
        |
-       |    ${freestyleHandlers(algebras, ops)}
+       |    ${freestyleHandlers(id, algebras, ops)}
        |
-       |    ${freestyleOpsInstances(algebras)}
+       |    ${freestyleOpsInstances(id, algebras)}
        |
-       |    @Benchmark def runFreestyle: Any = ${freestyleProgram(algebras, ops)}
+       |    @Benchmark def runFreestyle: Any = ${freestyleProgram(id, algebras, ops)}
        |
        |  }
     """.stripMargin
 
+  def template(numAlgebras: Int, numOps: Int): String = {
+    val algebras = (1 to numAlgebras).toList
+    val ops = (1 to numOps).toList
+    val id = f"$numAlgebras%02d_adts_$numOps%02d_ops"
+    s"""
+    |  ${outterScope(id, algebras, ops)}
+    |  ${benchMarkClass(id, algebras, ops)}
+    |""".stripMargin
+  }
+
+  def generate(): String = {
+    s"""
+       |$imports
+       |${template(2, 2)}
+       |${template(2, 3)}
+       |${template(2, 4)}
+       |${template(2, 5)}
+       |${template(2, 6)}
+       |${template(2, 7)}
+       |${template(2, 8)}
+       |${template(2, 9)}
+       |${template(2, 10)}
+     """.stripMargin
   }
 
 
