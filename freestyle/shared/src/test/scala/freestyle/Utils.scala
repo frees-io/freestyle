@@ -95,6 +95,20 @@ trait StateProp {
   val s2: S2
 }
 
+object comp {
+
+  @module
+  trait FSMod {
+
+    val sCtors1: SCtors1
+
+    def x(a: Int): FS.Seq[Int] = sCtors1.x(a)
+    def y(b: Int): FS.Seq[Int] = sCtors1.y(b)
+  }
+
+}
+
+
 object interps {
 
   implicit val optionHandler1: FSHandler[SCtors1.Op, Option] = new SCtors1.Handler[Option] {
