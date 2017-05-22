@@ -30,4 +30,5 @@ These are the people that have contributed to the freestyle project:
 * Peter Neyens <[peterneyens](https://github.com/peterneyens)>
 * Raúl Raja Martínez <[raulraja](https://github.com/raulraja)>
 * Sam Halliday <[fommil](https://github.com/fommil)>
+* Sho Kohara <[shokohara](https://github.com/shokohara)>
 * Suhas Gaddam <[suhasgaddam](https://github.com/suhasgaddam)>
