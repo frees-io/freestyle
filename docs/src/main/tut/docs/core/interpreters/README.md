@@ -97,8 +97,8 @@ import cats.implicits._
 
 implicit def logHandler: Log.Handler[KVStoreState] = 
   new Log.Handler[KVStoreState] {
-    def info(msg: String): KVStoreState[Unit] = println("INFO: $msg").pure[KVStoreState]
-    def warn(msg: String): KVStoreState[Unit] = println("WARN: $msg").pure[KVStoreState]
+    def info(msg: String): KVStoreState[Unit] = println(s"INFO: $msg").pure[KVStoreState]
+    def warn(msg: String): KVStoreState[Unit] = println(s"WARN: $msg").pure[KVStoreState]
   }
 ```
 
