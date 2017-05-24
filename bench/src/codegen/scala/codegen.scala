@@ -132,7 +132,7 @@ object BenchBoiler {
        |  @State(Scope.Thread)
        |  @BenchmarkMode(Array(Mode.Throughput))
        |  @OutputTimeUnit(TimeUnit.SECONDS)
-       |  class FreestyleVsCatsFunctionKBench_${id} {
+       |  class _$id {
        |
        |    ${catsFreeAlgebraOps(id, algebras, ops)}
        |
@@ -142,13 +142,13 @@ object BenchBoiler {
        |
        |    ${catsFreeOpsInstances(id, algebras)}
        |
-       |    @Benchmark def runCatsFree: Any = ${catsFreeProgram(id, algebras, ops)}
+       |    @Benchmark def bench_cats: Any = ${catsFreeProgram(id, algebras, ops)}
        |
        |    ${freestyleHandlers(id, algebras, ops)}
        |
        |    ${freestyleOpsInstances(id, algebras)}
        |
-       |    @Benchmark def runFreestyle: Any = ${freestyleProgram(id, algebras, ops)}
+       |    @Benchmark def bench_freestyle: Any = ${freestyleProgram(id, algebras, ops)}
        |
        |  }
     """.stripMargin
@@ -166,15 +166,16 @@ object BenchBoiler {
   def generate(): String = {
     s"""
        |$imports
-       |${template(2, 2)}
-       |${template(2, 3)}
-       |${template(2, 4)}
-       |${template(2, 5)}
-       |${template(2, 6)}
-       |${template(2, 7)}
-       |${template(2, 8)}
-       |${template(2, 9)}
-       |${template(2, 10)}
+       |${template(2, 1)}
+       |${template(3, 1)}
+       |${template(4, 1)}
+       |${template(5, 1)}
+       |${template(6, 1)}
+       |${template(7, 1)}
+       |${template(8, 1)}
+       |${template(9, 1)}
+       |${template(10, 1)}
+       |
      """.stripMargin
   }
 
