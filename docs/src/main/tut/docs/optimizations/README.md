@@ -41,11 +41,13 @@ Freestyle Coproduct implementation based on [iota](https://github.com/47deg/iota
 <script src="http://underscorejs.org/underscore-min.js">
 </script>
 <script>
-    function renderGraph(id, file) {
-        $.getJSON( file, function( data ) {
-                  Chart.defaults.global.defaultFontColor = '#fff';
-                  Chart.defaults.global.defaultFontFamily = 'pragmatapro';
-                  var ctx = document.getElementById(id);
+
+    Chart.defaults.global.defaultFontColor = '#fff';
+    Chart.defaults.global.defaultFontFamily = 'pragmatapro';
+                      
+    function renderFunctionKGraph() {
+        $.getJSON( 'bench-functionk.json', function( data ) {       
+                  var ctx = document.getElementById('bench-functionk');
                   var catsData = _.filter(data, function(d){ return d.benchmark.endsWith('cats'); })
                   var freestyleData = _.filter(data, function(d){ return d.benchmark.endsWith('freestyle'); })
                   var labels = _.map(freestyleData, function(d){ return d.benchmark.split(".")[1].replace(/_/g, ' ').trim(); })
@@ -55,13 +57,13 @@ Freestyle Coproduct implementation based on [iota](https://github.com/47deg/iota
                         labels: labels,
                         datasets: [{
                             label: 'cats.free.Free ops/sec',
-                            data: _.map(catsData, function(d){ return d.primaryMetric.score; }),
+                            data: _.map(catsData, function(d){ return Math.ceil(d.primaryMetric.score); }),
                             borderWidth: 1,
                             borderColor: 'rgba(241, 250, 140, 1)',
                             backgroundColor: 'rgba(241, 250, 140, 0.2)'
                         },{
                             label: 'freestyle ops/sec',
-                            data: _.map(freestyleData, function(d){ return d.primaryMetric.score; }),
+                            data: _.map(freestyleData, function(d){ return Math.ceil(d.primaryMetric.score); }),
                             borderWidth: 1,
                             borderColor: 'rgba(139, 233, 253, 1)',
                             backgroundColor: 'rgba(139, 233, 253, 0.2)'
@@ -70,8 +72,49 @@ Freestyle Coproduct implementation based on [iota](https://github.com/47deg/iota
                     options: {
                         scales: {
                             yAxes: [{
-                                stacked: true,
                                 ticks: {
+                                   beginAtZero: true,
+                                   callback: function(value, index, values) {
+                                     return numeral(value).format('0a');
+                                   }
+                                }
+                            }]
+                        }
+                    }
+                  });
+        });
+    }
+    
+    function renderCoproductGraph() {
+        $.getJSON( 'bench-coproduct.json', function( rawData ) {       
+                  var ctx = document.getElementById('bench-coproduct');
+                  var data = rawData.sort(function(a, b) { return a.n - b.n }); //.filter(function(d) { return d.n <= 40 });
+                  var catsData = data.filter(function(d) { return d.impl == "cats" })
+                  var iotaData = data.filter(function(d) { return d.impl == "iota" })
+                  var labels = _.map(iotaData, function(d){ return d.n; })
+                  var myChart = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: 'cats.data.Coproduct ops/sec',
+                            data: _.map(catsData, function(d){ return Math.ceil(d.score.value); }),
+                            borderWidth: 1,
+                            borderColor: 'rgba(241, 250, 140, 1)',
+                            backgroundColor: 'rgba(241, 250, 140, 0.2)'
+                        },{
+                            label: 'iota ops/sec',
+                            data: _.map(iotaData, function(d){ return Math.ceil(d.score.value); }),
+                            borderWidth: 1,
+                            borderColor: 'rgba(139, 233, 253, 1)',
+                            backgroundColor: 'rgba(139, 233, 253, 0.2)'
+                        }]
+                    },
+                    options: {
+                        scales: {
+                            yAxes: [{
+                                ticks: {
+                                   beginAtZero: true,
                                    callback: function(value, index, values) {
                                      return numeral(value).format('0a');
                                    }
@@ -84,7 +127,7 @@ Freestyle Coproduct implementation based on [iota](https://github.com/47deg/iota
     }
     
     $( document ).ready(function() {
-        renderGraph('bench-functionk', 'bench-functionk.json');
-        renderGraph('bench-coproduct', 'bench-coproduct.json');
+        renderFunctionKGraph();
+        renderCoproductGraph();
     });
 </script>

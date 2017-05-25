@@ -54,7 +54,7 @@ object BenchBoiler {
 
   def catsFreeProgram(id: String, algebras: List[Int], ops: List[Int]): String = algebras.flatMap { a =>
     ops.map(n => s"catsOps_${a}_$id.op${n}_$id(1).foldMap(implicitly[FunctionK[CP_${algebras.size}_$id, Id]])")
-  }.reverse.take(2).mkString("{", "\n", "}")
+  }.reverse.take(1).mkString("{", "\n", "}")
 
   def catsFreeCoproduct(id: String, algebras: List[Int]): String = {
     def loop(current: List[Int], acc: (Int, String, String)): String = {
@@ -98,8 +98,8 @@ object BenchBoiler {
   }.mkString("\n")
 
   def freestyleProgram(id: String, algebras: List[Int], ops: List[Int]): String = algebras.flatMap { a =>
-    ops.map(n => s"freestyleOps_${a}_$id.op${n}_$id(1).foldMap(implicitly[FunctionK[App_$id.Op, Id]])")
-  }.reverse.take(2).mkString("{", "\n", "}")
+    ops.map(n => s"freestyleOps_${a}_$id.op${n}_$id(1).interpret[Id]")
+  }.reverse.take(1).mkString("{", "\n", "}")
 
   def imports: String =
     """
@@ -132,6 +132,7 @@ object BenchBoiler {
        |  @State(Scope.Thread)
        |  @BenchmarkMode(Array(Mode.Throughput))
        |  @OutputTimeUnit(TimeUnit.SECONDS)
+       |  @Fork(jvmArgsAppend = Array("-Xms3g", "-Xmx3g"))
        |  class _$id {
        |
        |    ${catsFreeAlgebraOps(id, algebras, ops)}
@@ -166,15 +167,14 @@ object BenchBoiler {
   def generate(): String = {
     s"""
        |$imports
-       |${template(2, 1)}
-       |${template(3, 1)}
-       |${template(4, 1)}
-       |${template(5, 1)}
-       |${template(6, 1)}
-       |${template(7, 1)}
-       |${template(8, 1)}
-       |${template(9, 1)}
-       |${template(10, 1)}
+       |${template(2, 10)}
+       |${template(2, 20)}
+       |${template(2, 30)}
+       |${template(2, 40)}
+       |${template(2, 50)}
+       |${template(2, 60)}
+       |${template(2, 80)}
+       |${template(2, 90)}
        |
      """.stripMargin
   }

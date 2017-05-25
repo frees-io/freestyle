@@ -54,6 +54,9 @@ options:
       - title: Async Callbacks
         url: docs/effects/async
 
+  - title: Optimizations
+    url: docs/optimizations/
+
   - title: Example Target Stack
     url: docs/stack/
 
