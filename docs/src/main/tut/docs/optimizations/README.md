@@ -4,6 +4,10 @@ title: Optimizations
 permalink: /docs/optimizations/
 ---
 
+## Optimizations
+
+Freestyle provides several optimizations that result in more performant runtimes for applications using `Free`.
+
 # Faster ops dispatching
 
 Freestyle optimizes operations dispatched in the generated `FunctionK` handlers to increase ops throughput.
@@ -19,18 +23,20 @@ val handler = new (Op ~> Option) {
 }
 ```
 
-Freestyle is able to replace this pattern style with a JVM switch `@scala.annotation.switch` that operates over a synthetic index in the generated ADTs.
-This results in a performance boost of about 4x faster ADT evaluation when using Freestyle Handlers over traditional handcoded `FunctionK`.
+Freestyle is able to replace this pattern style with a JVM `@scala.annotation.switch` that operates over a synthetic index in the generated ADTs.
+This results in a performance boost of about 5x faster ADT evaluation when using Freestyle Handlers over traditional handcoded `FunctionK`.
+
+This is specially noticeable in apps where each algebras have a long list of operations.
 
 The graph below shows a comparison of evaluating a simple program both with `cats.free.Free + cats.data.EitherK + cats.arrow.FunctionK` using hand rolled pattern matching vs `Freestyle`.
 Higher values are higher throughput.
 
 <canvas id="bench-functionk" width="400" height="400"></canvas>
 
-Not only Freestyle optimizes the evaluation of `FucntionK` to interpret algebras but it also covers the case where `cats.data.EitherK` degrades in performance as the number of Algebras increases.
+Not only Freestyle optimizes the evaluation of `FunctionK` to interpret algebras but it also covers the case where `cats.data.EitherK` degrades in performance as the number of Algebras increases.
 `cats.data.EitherK` is a binary type constructor that when used to combine Algebras as in [Datatypes a la Carte](http://www.cs.ru.nl/~W.Swierstra/Publications/DataTypesALaCarte.pdf) suffers from performance
-degradation. This is because as algebras are nested in one side of the Coproduct and getting down to finding the right one is not a constant time operation in a Tree/LinkedList type of structure.
-Freestyle Coproduct implementation based on [iota](https://github.com/47deg/iota) keeps algebras indexed so when accessed as part of the Coproduct they are found in constant time regardless of the number of algebras.
+degradation as it is a general purpose datatype not optimized for composing monads. This is because as algebras are nested in one side of the Coproduct, getting down to finding the right one is not a constant time operation in the resulting Tree/LinkedList type of structure.
+Freestyle Coproduct implementation based on [iota](https://github.com/47deg/iota) keeps algebras indexed so when accessed as part of the Coproduct they are found in constant time regardless of the number of algebras your application is composed of.
 
 <canvas id="bench-coproduct" width="400" height="400"></canvas>
 
