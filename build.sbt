@@ -90,6 +90,34 @@ lazy val docs = (project in file("docs"))
   )
   .enablePlugins(MicrositesPlugin)
 
+lazy val bench = (project in file("bench"))
+  .dependsOn(jvmFreestyleDeps: _*)
+  .settings(
+    name := "bench",
+    description := "freestyle benchmark"
+  )
+  .enablePlugins(JmhPlugin)
+  .configs(Codegen)
+  .settings(inConfig(Codegen)(Defaults.configSettings))
+  .settings(classpathConfiguration in Codegen := Compile)
+  .settings(noPublishSettings)
+  .settings(libraryDependencies ++= Seq(
+    %%("cats-free"),
+    %%("scalacheck")))
+  .settings(inConfig(Compile)(
+    sourceGenerators += Def.task {
+      val path = (sourceManaged in(Compile, compile)).value / "bench.scala"
+      (runner in (Codegen, run)).value.run(
+        "freestyle.bench.BenchBoiler",
+        Attributed.data((fullClasspath in Codegen).value),
+        path.toString :: Nil,
+        streams.value.log)
+      path :: Nil
+    }
+  ))
+
+lazy val Codegen = sbt.config("codegen").hide
+
 lazy val effects = (crossProject in file("freestyle-effects"))
   .dependsOn(freestyle)
   .settings(name := "freestyle-effects")
