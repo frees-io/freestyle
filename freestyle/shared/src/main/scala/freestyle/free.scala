@@ -179,8 +179,6 @@ object freeImpl {
       """
     }
 
-    val x = gen()
-    println(x)
-    x
+    gen()
   }
 }
