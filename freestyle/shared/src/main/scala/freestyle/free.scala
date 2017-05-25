@@ -147,6 +147,7 @@ object freeImpl {
       q"""
         object ${Eff.toTermName} {
 
+          type OpTypes = _root_.iota.KCons[Op, _root_.iota.KNil]
           sealed trait Op[$AA] extends scala.Product with java.io.Serializable {
             val $indexName : _root_.scala.Int
           }
