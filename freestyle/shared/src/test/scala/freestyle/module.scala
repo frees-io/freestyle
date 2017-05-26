@@ -163,7 +163,7 @@ class moduleTests extends WordSpec with Matchers {
       program.interpret[Option] shouldBe Option(2)
     }
 
-    "nested allow nested coproducts" ignore {
+    "allow nested coproducts" in {
 
       """
         |object repository {
