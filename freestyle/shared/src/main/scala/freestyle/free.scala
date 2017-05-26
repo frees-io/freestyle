@@ -147,14 +147,12 @@ object freeImpl {
       q"""
         object ${Eff.toTermName} {
 
-          import _root_.freestyle.{ FreeS, FSHandler, InjK }
-
           sealed trait Op[$AA] extends scala.Product with java.io.Serializable {
             val $indexName : _root_.scala.Int
           }
           ..${requests.map(r => r.mkRequestClass(indexName, TTs))}
 
-          trait Handler[$MM[_], ..$TTs] extends FSHandler[Op, $MM] {
+          trait Handler[$MM[_], ..$TTs] extends _root_.freestyle.FSHandler[Op, $MM] {
             ..${requests.map(r => r.handlerDef )}
 
             override def apply[$AA]($fa: Op[$AA]): $MM[$AA] =
@@ -165,12 +163,12 @@ object freeImpl {
                }).asInstanceOf[$MM[$AA]]
           }
 
-          class To[$LL[_], ..$TTs](implicit $ii: InjK[Op, $LL]) extends $Eff[$LL, ..$tns] {
-            private[this] val $inj = FreeS.inject[Op, $LL]($ii)
+          class To[$LL[_], ..$TTs](implicit $ii: _root_.freestyle.InjK[Op, $LL]) extends $Eff[$LL, ..$tns] {
+            private[this] val $inj = _root_.freestyle.FreeS.inject[Op, $LL]($ii)
             ..${requests.map(_.raiser )}
           }
 
-          implicit def to[$LL[_], ..$TTs](implicit $ii: InjK[Op, $LL]):
+          implicit def to[$LL[_], ..$TTs](implicit $ii: _root_.freestyle.InjK[Op, $LL]):
               To[$LL, ..$tns] = new To[$LL, ..$TTs]
 
           def apply[$LL[_], ..$TTs](implicit $ev: $Eff[$LL, ..$tns]): $Eff[$LL, ..$tns] = $ev
