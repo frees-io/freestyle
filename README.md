@@ -5,7 +5,7 @@
 
 [comment]: # (End Badges)
 
-<a href="http://frees.io"><img src="docs/src/main/resources/microsite/img/freestyle_header.png" alt="A Cohesive & Pragmatic Framework of FP centric Scala libraries" width="100%"/></a>
+<a href="http://frees.io"><img src="http://frees.io/img/poster.png" alt="A Cohesive & Pragmatic Framework of FP centric Scala libraries" width="100%"/></a>
 
 # Build purely functional applications and libraries
 Build stack-safe purely functional applications and libraries that support parallel and sequential computations where declaration is decoupled from interpretation.
