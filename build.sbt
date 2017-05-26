@@ -58,38 +58,6 @@ lazy val tests = (project in file("tests"))
     }
   )
 
-lazy val docs = (project in file("docs"))
-  .dependsOn(jvmFreestyleDeps: _*)
-  .settings(micrositeSettings: _*)
-  .settings(noPublishSettings: _*)
-  .settings(
-    name := "docs",
-    description := "freestyle docs"
-  )
-  .settings(
-    libraryDependencies ++= Seq(
-      %%("freestyle-cache-redis"),
-      %%("freestyle-doobie"),
-      %%("freestyle-fetch"),
-      %%("freestyle-fs2"),
-      %%("freestyle-http-akka"),
-      %%("freestyle-http-finch"),
-      %%("freestyle-http-http4s"),
-      %%("freestyle-http-play"),
-      %%("freestyle-monix"),
-      %%("freestyle-slick"),
-      %%("freestyle-twitter-util"),
-      %%("doobie-h2-cats"),
-      %%("http4s-dsl"),
-      %%("play"),
-      %("h2") % "test"
-    )
-  )
-  .settings(
-    scalacOptions in Tut ~= (_ filterNot Set("-Ywarn-unused-import", "-Xlint").contains)
-  )
-  .enablePlugins(MicrositesPlugin)
-
 lazy val bench = (project in file("bench"))
   .dependsOn(jvmFreestyleDeps: _*)
   .settings(
