@@ -13,7 +13,6 @@ These are the people that have contributed to the freestyle project:
 * [colin-passiv](https://github.com/colin-passiv)
 * 47 Degrees Dev <[47degdev](https://github.com/47degdev)>
 * Adrián Ramírez Fornell <[AdrianRaFo](https://github.com/AdrianRaFo)>
-* Alejandro Gómez <[dialelo](https://github.com/dialelo)>
 * Ana Mª Marquez <[anamariamv](https://github.com/anamariamv)>
 * Andy Scott <[andyscott](https://github.com/andyscott)>
 * Diego Esteban Alonso Blas <[diesalbla](https://github.com/diesalbla)>
@@ -31,4 +30,5 @@ These are the people that have contributed to the freestyle project:
 * Peter Neyens <[peterneyens](https://github.com/peterneyens)>
 * Raúl Raja Martínez <[raulraja](https://github.com/raulraja)>
 * Sam Halliday <[fommil](https://github.com/fommil)>
+* Sho Kohara <[shokohara](https://github.com/shokohara)>
 * Suhas Gaddam <[suhasgaddam](https://github.com/suhasgaddam)>

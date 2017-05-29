@@ -153,6 +153,52 @@ class moduleTests extends WordSpec with Matchers {
       o3.y shouldBe 2
     }
 
-  }
+    "allow modules be composed with algebras, having methods returning FS effects" in {
+      import comp._
+      val m1 = FSMod[FSMod.Op]
+      val program = for {
+        a <- m1.x(1)
+        b <- m1.y(1)
+      } yield a + b
+      program.interpret[Option] shouldBe Option(2)
+    }
 
+    "nested allow nested coproducts" ignore {
+
+      """
+        |object repository {
+        |  final class RepositoryA[A] {
+        |    @free trait Ops {
+        |      def insert(input: A): FS[Option[A]]
+        |    }
+        |  }
+        |  def apply[A] = new RepositoryA[A]
+        |}
+        |
+        |object service {
+        |  final class ServiceA[A](name: String) {
+        |    val repositoryA: repository.RepositoryA[A] = repository[A]
+        |    @module
+        |    trait Ops {
+        |      val repo: repositoryA.Ops
+        |      def insert(input: A): FS.Seq[Option[A]] = repo.insert(input)
+        |    }
+        |  }
+        |  def apply[A](name: String) = new ServiceA[A](name)
+        |}
+        |
+        |object services {
+        |  case class C1(x: Int, y: String)
+        |  case class C2(a: String, b: Int)
+        |  val C1Service: service.ServiceA[C1] = service[C1]("c1")
+        |  val C2Service: service.ServiceA[C2] = service[C2]("c2")
+        |}
+        |
+        |@module
+        |trait ServicesModule {
+        |  val service1: services.C1Service.Ops
+        |  val service2: services.C2Service.Ops
+        |}""".stripMargin should compile
+    }
+  }
 }

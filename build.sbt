@@ -58,37 +58,33 @@ lazy val tests = (project in file("tests"))
     }
   )
 
-lazy val docs = (project in file("docs"))
+lazy val bench = (project in file("bench"))
   .dependsOn(jvmFreestyleDeps: _*)
-  .settings(micrositeSettings: _*)
-  .settings(noPublishSettings: _*)
   .settings(
-    name := "docs",
-    description := "freestyle docs"
+    name := "bench",
+    description := "freestyle benchmark"
   )
-  .settings(
-    libraryDependencies ++= Seq(
-      %%("freestyle-cache-redis"),
-      %%("freestyle-doobie"),
-      %%("freestyle-fetch"),
-      %%("freestyle-fs2"),
-      %%("freestyle-http-akka"),
-      %%("freestyle-http-finch"),
-      %%("freestyle-http-http4s"),
-      %%("freestyle-http-play"),
-      %%("freestyle-monix"),
-      %%("freestyle-slick"),
-      %%("freestyle-twitter-util"),
-      %%("doobie-h2-cats"),
-      %%("http4s-dsl"),
-      %%("play") % "test",
-      %("h2") % "test"
-    )
-  )
-  .settings(
-    tutScalacOptions ~= (_ filterNot Set("-Ywarn-unused-import", "-Xlint").contains)
-  )
-  .enablePlugins(MicrositesPlugin)
+  .enablePlugins(JmhPlugin)
+  .configs(Codegen)
+  .settings(inConfig(Codegen)(Defaults.configSettings))
+  .settings(classpathConfiguration in Codegen := Compile)
+  .settings(noPublishSettings)
+  .settings(libraryDependencies ++= Seq(
+    %%("cats-free"),
+    %%("scalacheck")))
+  .settings(inConfig(Compile)(
+    sourceGenerators += Def.task {
+      val path = (sourceManaged in(Compile, compile)).value / "bench.scala"
+      (runner in (Codegen, run)).value.run(
+        "freestyle.bench.BenchBoiler",
+        Attributed.data((fullClasspath in Codegen).value),
+        path.toString :: Nil,
+        streams.value.log)
+      path :: Nil
+    }
+  ))
+
+lazy val Codegen = sbt.config("codegen").hide
 
 lazy val effects = (crossProject in file("freestyle-effects"))
   .dependsOn(freestyle)
@@ -99,7 +95,7 @@ lazy val effects = (crossProject in file("freestyle-effects"))
 lazy val effectsJVM = effects.jvm
 lazy val effectsJS  = effects.js
 
-lazy val async = (crossProject in file("async/async"))
+lazy val async = (crossProject in file("freestyle-async/async"))
   .dependsOn(freestyle)
   .settings(name := "freestyle-async")
   .jsSettings(sharedJsSettings: _*)
@@ -108,7 +104,7 @@ lazy val async = (crossProject in file("async/async"))
 lazy val asyncJVM = async.jvm
 lazy val asyncJS  = async.js
 
-lazy val asyncMonix = (crossProject in file("async/monix"))
+lazy val asyncMonix = (crossProject in file("freestyle-async/monix"))
   .dependsOn(freestyle, async)
   .settings(name := "freestyle-async-monix")
   .crossDepSettings(
@@ -121,7 +117,7 @@ lazy val asyncMonix = (crossProject in file("async/monix"))
 lazy val asyncMonixJVM = asyncMonix.jvm
 lazy val asyncMonixJS  = asyncMonix.js
 
-lazy val asyncFs = (crossProject in file("async/fs2"))
+lazy val asyncFs = (crossProject in file("freestyle-async/fs2"))
   .dependsOn(freestyle, async)
   .settings(name := "freestyle-async-fs2")
   .jsSettings(sharedJsSettings: _*)

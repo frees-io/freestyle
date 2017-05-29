@@ -72,7 +72,7 @@ object freeImpl {
       ClassDef(mods, name, ffTParam :: tparams, Template(parents :+ tq"freestyle.EffectLike[$FF]", self, body))
     }
 
-    class Request(reqDef: DefDef) {
+    class Request(val indexValue: Int, reqDef: DefDef) {
 
       import reqDef.tparams
 
@@ -84,15 +84,16 @@ object freeImpl {
       private[this] val ReqC = Req.toTermName
 
       val params: List[ValDef] = reqDef.vparamss.flatten
+      val typeParamsNames: List[TypeName] = tparams.map(_ => typeNames.WILDCARD)
 
-      def handlerCase: CaseDef  =
+      def handlerCase(boundVal: TermName): CaseDef  =
         if (params.isEmpty)
-          cq"$ReqC() => $reqImpl"
+          cq"$indexValue => $reqImpl"
         else {
           // filter: !v.mods.hasFlag(Flag.IMPLICIT)
           val ffs = params.map( v => q"l.${v.name}")
           val uss = params.map( v => pq"_")
-          cq"l @ $ReqC(..$uss) => $reqImpl(..$ffs)"
+          cq"$indexValue => { val l: $Req[..$typeParamsNames] = $boundVal.asInstanceOf[$Req[..$typeParamsNames]]; $reqImpl(..$ffs) }"
         }
 
       def handlerDef: DefDef =
@@ -102,13 +103,19 @@ object freeImpl {
           q"protected[this] def $reqImpl[..$tparams](..$params): $MM[$Res]"
 
 
-      def mkRequestClass(effTTs: List[TypeDef]): ClassDef = {
+      def mkRequestClass(indexName: TermName, effTTs: List[TypeDef]): ClassDef = {
         // Note: Effect trait type params are added to the request case class because its args may contain them
         val TTs = effTTs ++ tparams
         if (params.isEmpty)
-          q"case class $Req[..$TTs]() extends $OP[$Res]"
+          q"""case class $Req[..$TTs]() extends $OP[$Res] {
+                 override val $indexName: _root_.scala.Int = $indexValue
+              }
+           """
         else
-          q"case class $Req[..$TTs](..$params) extends $OP[$Res]"
+          q"""case class $Req[..$TTs](..$params) extends $OP[$Res] {
+                 override val $indexName: _root_.scala.Int = $indexValue
+              }
+           """
       }
 
       def raiser: DefDef =
@@ -120,7 +127,7 @@ object freeImpl {
 
     def collectRequests(effectTrait: ClassDef): List[Request] = effectTrait.impl.collect {
       case dd @ q"$mods def $name[..$tparams](...$paramss): $tyRes" => tyRes match {
-        case tq"FS[..$args]" => new Request(dd.asInstanceOf[DefDef])
+        case tq"FS[..$args]" => new Request(effectTrait.impl.children.indexOf(dd), dd.asInstanceOf[DefDef])
         case _ => fail(s"$invalid in definition of method $name in ${effectTrait.name}. $onlyReqs")
       }
     }
@@ -135,29 +142,33 @@ object freeImpl {
       val ev =  freshTermName("ev$")
       val ii =  freshTermName("ii$")
       val fa =  freshTermName("fa$")
+      val indexName = TermName("FSAlgebraIndex")
 
       q"""
         object ${Eff.toTermName} {
 
-          import _root_.freestyle.{ FreeS, FSHandler, InjK }
+          sealed trait Op[$AA] extends scala.Product with java.io.Serializable {
+            val $indexName : _root_.scala.Int
+          }
+          ..${requests.map(r => r.mkRequestClass(indexName, TTs))}
 
-          sealed trait Op[$AA] extends scala.Product with java.io.Serializable
-          ..${requests.map( _.mkRequestClass(TTs))}
+          trait Handler[$MM[_], ..$TTs] extends _root_.freestyle.FSHandler[Op, $MM] {
+            ..${requests.map(r => r.handlerDef )}
 
-          trait Handler[$MM[_], ..$TTs] extends FSHandler[Op, $MM] {
-            ..${requests.map( _.handlerDef )}
-
-            override def apply[$AA]($fa: Op[$AA]): $MM[$AA] = $fa match {
-              case ..${requests.map(_.handlerCase )}
-            }
+            override def apply[$AA]($fa: Op[$AA]): $MM[$AA] =
+               (($fa.$indexName : @_root_.scala.annotation.switch) match {
+                 case ..${requests.map(_.handlerCase(fa))}
+                 case i => throw new _root_.java.lang.Exception(
+                    s"freestyle internal error: index " + i + " out of bounds for " + this)
+               }).asInstanceOf[$MM[$AA]]
           }
 
-          class To[$LL[_], ..$TTs](implicit $ii: InjK[Op, $LL]) extends $Eff[$LL, ..$tns] {
-            private[this] val $inj = FreeS.inject[Op, $LL]($ii)
+          class To[$LL[_], ..$TTs](implicit $ii: _root_.freestyle.InjK[Op, $LL]) extends $Eff[$LL, ..$tns] {
+            private[this] val $inj = _root_.freestyle.FreeS.inject[Op, $LL]($ii)
             ..${requests.map(_.raiser )}
           }
 
-          implicit def to[$LL[_], ..$TTs](implicit $ii: InjK[Op, $LL]):
+          implicit def to[$LL[_], ..$TTs](implicit $ii: _root_.freestyle.InjK[Op, $LL]):
               To[$LL, ..$tns] = new To[$LL, ..$TTs]
 
           def apply[$LL[_], ..$TTs](implicit $ev: $Eff[$LL, ..$tns]): $Eff[$LL, ..$tns] = $ev
