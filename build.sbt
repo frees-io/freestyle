@@ -7,7 +7,7 @@ lazy val root = (project in file("."))
 lazy val freestyle = (crossProject in file("freestyle"))
   .settings(name := "freestyle")
   .jsSettings(sharedJsSettings: _*)
-  .settings(libraryDependencies ++= Seq(%("scala-reflect", scalaVersion.value)))
+  .settings(scalametaSettings)
   .crossDepSettings(
     commonDeps ++ Seq(
       %("iota-core"),
@@ -26,6 +26,7 @@ lazy val freestyleJS  = freestyle.js
 lazy val tagless = (crossProject in file("freestyle-tagless"))
   .dependsOn(freestyle)
   .settings(name := "freestyle-tagless")
+  .settings(scalametaSettings)
   .jsSettings(sharedJsSettings: _*)
   .crossDepSettings(commonDeps: _*)
   .settings(
@@ -88,6 +89,7 @@ lazy val Codegen = sbt.config("codegen").hide
 lazy val effects = (crossProject in file("freestyle-effects"))
   .dependsOn(freestyle)
   .settings(name := "freestyle-effects")
+  .settings(scalametaSettings)
   .jsSettings(sharedJsSettings: _*)
   .crossDepSettings(commonDeps: _*)
 
@@ -97,6 +99,7 @@ lazy val effectsJS  = effects.js
 lazy val async = (crossProject in file("freestyle-async/async"))
   .dependsOn(freestyle)
   .settings(name := "freestyle-async")
+  .settings(scalametaSettings)
   .jsSettings(sharedJsSettings: _*)
   .crossDepSettings(commonDeps: _*)
 
@@ -106,6 +109,7 @@ lazy val asyncJS  = async.js
 lazy val asyncMonix = (crossProject in file("freestyle-async/monix"))
   .dependsOn(freestyle, async)
   .settings(name := "freestyle-async-monix")
+  .settings(scalametaSettings)
   .crossDepSettings(
     commonDeps ++ Seq(
       %("monix-eval"),
@@ -119,6 +123,7 @@ lazy val asyncMonixJS  = asyncMonix.js
 lazy val asyncFs = (crossProject in file("freestyle-async/fs2"))
   .dependsOn(freestyle, async)
   .settings(name := "freestyle-async-fs2")
+  .settings(scalametaSettings)
   .jsSettings(sharedJsSettings: _*)
   .crossDepSettings(commonDeps ++ Seq(%("fs2-core"), %("fs2-cats")): _*)
 
@@ -128,6 +133,7 @@ lazy val asyncFsJS  = asyncFs.js
 lazy val cache = (crossProject in file("freestyle-cache"))
   .dependsOn(freestyle)
   .settings(name := "freestyle-cache")
+  .settings(scalametaSettings)
   .jsSettings(sharedJsSettings: _*)
   .crossDepSettings(commonDeps: _*)
 
@@ -136,6 +142,7 @@ lazy val cacheJS  = cache.js
 
 lazy val config = (project in file("freestyle-config"))
   .dependsOn(freestyleJVM)
+  .settings(scalametaSettings)
   .settings(
     name := "freestyle-config",
     fixResources := {
@@ -148,17 +155,14 @@ lazy val config = (project in file("freestyle-config"))
         )
       }
     },
-    compile in Test := ((compile in Test) dependsOn fixResources).value
-  )
-  .settings(
-    libraryDependencies ++= Seq(
-      %("config", "1.2.1")
-    ) ++ commonDeps
+    compile in Test := ((compile in Test) dependsOn fixResources).value,
+    libraryDependencies ++= Seq( %("config", "1.2.1") ) ++ commonDeps
   )
 
 lazy val logging = (crossProject in file("freestyle-logging"))
   .dependsOn(freestyle)
   .settings(name := "freestyle-logging")
+  .settings(scalametaSettings)
   .jvmSettings(
     libraryDependencies += %%("journal-core")
   )
@@ -206,3 +210,9 @@ lazy val allModules: Seq[ProjectReference] = jvmModules ++ jsModules
 
 lazy val jvmFreestyleDeps: Seq[ClasspathDependency] =
   jvmModules.map(ClasspathDependency(_, None))
+
+lazy val scalametaSettings = Seq(
+  addCompilerPlugin("org.scalameta" %% "paradise" % "3.0.0-M8" cross CrossVersion.full),
+  libraryDependencies += "org.scalameta" %% "scalameta" % "1.8.0",
+  scalacOptions += "-Xplugin-require:macroparadise"
+)
