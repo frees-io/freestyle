@@ -16,38 +16,109 @@
 
 package freestyle
 
-import cats.implicits._
 import cats.Id
+import cats.instances.option._
+import cats.instances.list._
+import cats.syntax.cartesian._
+import freestyle.implicits._
 import org.scalatest.{Matchers, WordSpec}
 
 class freeTests extends WordSpec with Matchers {
 
+  "the @free macro annotation should be accepted if it is applied to" when {
+
+    "a trait with at least one request" in {
+      "@free trait X { def bar(x:Int): FS[Int] }" should compile
+    }
+
+    "an abstract class with at least one request" in {
+      "@free abstract class X { def bar(x:Int): FS[Int] }" should compile
+    }
+
+    "a trait with an abstact method of type FS" in {
+      "@free trait X { def f(a: Char) : FS[Int] }" should compile
+    }
+
+    "a trait with type parameters" ignore {
+      "@free trait X[A] { def ix(a: A) : FS[A] }" should compile
+    }
+
+    "a trait with some concrete non-FS members" in {
+      """@free trait X {
+        def x: FS[Int]
+        def y: Int = 5
+        val z: Int = 6
+      }""" should compile
+    }
+
+    "a trait with a request with multiple params" in {
+      "@free trait X { def f(a: Int, b: Int): FS[Int] }" should compile
+    }
+
+    "a trait with a curridied request, with multiple params lists" in {
+      "@free trait X { def f(a: Int)(b: Int): FS[Int] }" should compile
+    }
+
+    "a trait with some implicit parameters, with many params lists" ignore {
+      "@free trait X { def f(a: Int)(implicit b: Int): FS[Int] }" should compile
+    }
+
+    "a trait with a request with no argsd" in {
+      "@free trait X { def f: FS[Int] }" should compile
+    }
+
+  }
+
+  "the @free macro annotation should be rejected, and the compilation fail, if it is applied to" when {
+
+    "an empty trait" in (
+      "@free trait X" shouldNot compile
+    )
+
+    "an empty abstract class" in (
+      "@free abstract class X" shouldNot compile
+    )
+
+    "a non-abstract class" in {
+      "@free class X" shouldNot compile
+    }
+
+    "a trait with companion object" in {
+      "@free trait X {def f: FS[Int]} ; object X" shouldNot compile
+    }
+
+    "an abstract class with a companion object" in {
+      "@free trait X {def f: FS[Int]} ; object X" shouldNot compile
+    }
+
+    "a trait with any non-abstact methods of type FS" in {
+      "@free trait X { def f(a: Char) : FS[Int] = 0 } " shouldNot compile
+    }
+
+  }
+
+  "a @free trait can define methods of type FS.Par and FS.Seq by combining FS through" when {
+
+    "the use of the `map` operation from Functor, to derive a  FS.Par" in {
+      "@free trait X { def a: FS[Int] ; def b: FS.Par[Int] = a.map(x => x+1) }" should compile
+    }
+
+    "using the Applicative instance to combine operations into a FS.Par" in {
+      """
+        import cats.syntax.cartesian._
+        @free trait X {
+          def a: FS[Int]
+          def b: FS.Par[Int] = (a |@| a).map(_+_)
+        }
+      """ should compile
+    }
+
+  }
+
   "the @free annotation" should {
 
-    import freestyle.implicits._
-
-    "be accepted if applied to an empty trait" in {
-      "@free trait Foo" shouldNot compile
-    }
-
-    "be accepted if applied to a trait with a request" in {
-      "@free trait Foo { def bar(x:Int): FS[Int] }" should compile
-    }
-
-    "be accepted if applied to an abstract class with requests" in {
-      "@free abstract class Foo { def bar(x:Int): FS[Int] }" should compile
-    }
-
-    "be rejected if applied to a non-abstract class" in {
-      """@free class Foo { val x: Int}""" shouldNot compile
-    }
-
-    "be rejected if applied to a trait with companion object" in {
-      """ @free trait Foo {def f: FS[Int]} ; object Foo """ shouldNot compile
-    }
-
     "create a companion with a `Op` type alias" in {
-      type Op[A] = SCtors1.Op[A]
+      "type Op[A] = SCtors1.Op[A]" should compile
     }
 
     "provide instances through it's companion `apply`" in {
@@ -65,6 +136,50 @@ class freeTests extends WordSpec with Matchers {
         b <- s.y(1)
       } yield a + b
       "(program: FreeS[SCtors1.Op, Int])" should compile
+    }
+
+    "generate ADTs with friendly names and expose them as dependent types" in {
+      """
+        @free
+        trait FriendlyFreeS {
+          def sc1(a: Int, b: Int, c: Int): FS[Int]
+          def sc2(a: Int, b: Int, c: Int): FS[Int]
+        }
+        implicitly[FriendlyFreeS.Op[_] =:= FriendlyFreeS.Op[_]]
+        implicitly[FriendlyFreeS.Sc1OP <:< FriendlyFreeS.Op[Int]]
+        implicitly[FriendlyFreeS.Sc2OP <:< FriendlyFreeS.Op[Int]]
+      """ should compile
+    }
+
+    "allow smart constructors with type arguments" in {
+      """@free
+      trait KVStore {
+        def put[A](key: String, value: A): FS[Unit]
+        def get[A](key: String): FS[Option[A]]
+        def delete(key: String): FS[Unit]
+      }
+      val interpreter = new KVStore.Handler[List] {
+        def put[A](key: String, value: A): List[Unit] = Nil
+        def get[A](key: String): List[Option[A]]      = Nil
+        def delete(key: String): List[Unit]           = Nil
+      }""" should compile
+    }
+
+
+  }
+
+  "The @free annotation should generate interpreters or Handlers that" should {
+
+    "allow `FreeS` operations that use other abstract operations" in {
+      @free trait Combine {
+        def x(a: Int): FS[Int]
+        def y(a: Int): FS[Boolean] = x(a).map { _ >= 0 }
+      }
+      val v = Combine[Combine.Op]
+      implicit val interpreter = new Combine.Handler[Id]{
+        override def x(a: Int): Int = 4
+      }
+      v.y(5).interpret[Id] shouldBe(true)
     }
 
     "respond to implicit evidences with compilable runtimes" in {
@@ -87,46 +202,6 @@ class freeTests extends WordSpec with Matchers {
       } yield a + b
       program.interpret[Option] shouldBe Option(2)
       program.interpret[List] shouldBe List(2)
-    }
-
-    "allow multiple args in smart constructors" in {
-      @free
-      trait MultiArgs {
-        def x(a: Int, b: Int, c: Int): FS[Int]
-      }
-    }
-
-    "allow smart constructors with no args" in {
-      @free
-      trait NoArgs {
-        def x: FS[Int]
-      }
-    }
-
-    "generate ADTs with friendly names and expose them as dependent types" in {
-      @free
-      trait FriendlyFreeS {
-        def sc1(a: Int, b: Int, c: Int): FS[Int]
-        def sc2(a: Int, b: Int, c: Int): FS[Int]
-      }
-      implicitly[FriendlyFreeS.Op[_] =:= FriendlyFreeS.Op[_]]
-      implicitly[FriendlyFreeS.Sc1OP <:< FriendlyFreeS.Op[Int]]
-      implicitly[FriendlyFreeS.Sc2OP <:< FriendlyFreeS.Op[Int]]
-      ()
-    }
-
-    "allow smart constructors with type arguments" in {
-      @free
-      trait KVStore {
-        def put[A](key: String, value: A): FS[Unit]
-        def get[A](key: String): FS[Option[A]]
-        def delete(key: String): FS[Unit]
-      }
-      val interpreter = new KVStore.Handler[List] {
-        def put[A](key: String, value: A): List[Unit] = Nil
-        def get[A](key: String): List[Option[A]]      = Nil
-        def delete(key: String): List[Unit]           = Nil
-      }
     }
 
     "allow evaluation of abstract members that return FreeS.Pars" in {
@@ -168,6 +243,10 @@ class freeTests extends WordSpec with Matchers {
       } yield n + m
       program.interpret[Option] shouldBe Some("1ab")
     }
+
+  }
+
+  "@free annotation, other things:" should {
 
     "allow non-FreeS concrete definitions in the trait" in {
       @free trait WithExtra {
