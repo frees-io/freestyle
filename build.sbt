@@ -10,7 +10,7 @@ lazy val freestyle = (crossProject in file("freestyle"))
   .settings(libraryDependencies ++= Seq(%("scala-reflect", scalaVersion.value)))
   .crossDepSettings(
     commonDeps ++ Seq(
-      %("iota-core"),
+      %("iota-core", "0.2.0"), // TODO fold with sbt-org-policies
       %("cats-free"),
       %("shapeless"),
       %("monix-eval") % "test",
