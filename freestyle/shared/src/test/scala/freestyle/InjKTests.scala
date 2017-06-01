@@ -77,12 +77,12 @@ class InjKTests extends Properties("InjK") {
     implicit def left[F[_], G[_], A](implicit
       arbFA: Arbitrary[F[A]]
     ): Arbitrary[CopK[F ::: G ::: KNil, A]] =
-      Arbitrary(arbFA.arbitrary.map(v => CopK(0, v)))
+      Arbitrary(arbFA.arbitrary.map(v => CopK.unsafeApply(0, v)))
 
     implicit def right[F[_], G[_], A](implicit
       arbGA: Arbitrary[G[A]]
     ): Arbitrary[CopK[F ::: G ::: KNil, A]] =
-      Arbitrary(arbGA.arbitrary.map(v => CopK(1, v)))
+      Arbitrary(arbGA.arbitrary.map(v => CopK.unsafeApply(1, v)))
 
     implicit def both[F[_], G[_], A](implicit
       arbFA: Arbitrary[F[A]],

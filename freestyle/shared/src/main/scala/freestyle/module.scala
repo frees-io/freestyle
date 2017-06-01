@@ -18,9 +18,11 @@ package freestyle
 
 import scala.annotation.tailrec
 import scala.reflect.macros.whitebox.Context
+import scala.util.Try
 
 import cats.data.NonEmptyList
 import cats.data.{ Validated, ValidatedNel }
+import cats.syntax.either._
 import cats.syntax.flatMap._
 import cats.syntax.traverse._
 import cats.syntax.validated._
@@ -31,7 +33,7 @@ trait FreeModuleLike
 // $COVERAGE-OFF$ ScalaJS + coverage = fails with NoClassDef exceptions
 
 final class moduleImpl(val c: Context) {
-  import c.universe._
+  import c.universe.{ Try => _, _ }
   import c.universe.internal.reificationSupport.{ ConstantType => _, _ }
   import compat._
 
@@ -65,23 +67,9 @@ final class moduleImpl(val c: Context) {
       cls             <- decodeAnnotationTarget(annottees.toList)
       effectTuples     = gatherEffects(cls)
       classTree       <- makeClassTree(cls)
-      objectTree      <- makeModuleTree(cls, effectTuples)
+      coproductTree   <- makeCoproductTree(effectTuples)
+      objectTree      <- makeModuleTree(cls, coproductTree, effectTuples)
     } yield q"$classTree; $objectTree")
-
-  def computeCoproductImpl: Tree =
-    foldAbort(for {
-      tpe             <- compassionateCompanionTypeOf(c.internal.enclosingOwner.owner)
-      fullEffectTypes =  expandEffectType(tpe)
-      fullEffectTrees <- fullEffectTypes.traverse(typeToTypeTree)
-      //coproductTree  = makeCatsCoproduct(fullEffectTrees) // TODO: make this configurable?
-      coproductTree    = makeIotaCoproduct(fullEffectTrees)
-    } yield q"""new { ..$coproductTree }""")
-
-  def compassionateCompanionTypeOf(sym: Symbol): ValidatedNel[String, Type] =
-    if (sym.companion.isType)
-      sym.companion.asType.toType.validNel
-    else
-      s"unable to find companion for $sym when expanding coproduct".invalidNel
 
   private[this] def decodeAnnotationTarget(annottees: List[c.Expr[Any]]) =
     annottees.map(_.tree) match {
@@ -100,66 +88,6 @@ final class moduleImpl(val c: Context) {
     cls.impl.body.collect {
       case valDef: ValDef if valDef.rhs.isEmpty => (valDef.name, valDef.tpt) }
 
-  private[this] def expandEffectType(tpe: Type): List[Type] = {
-    def isModuleFS(cs: ClassSymbol): Boolean =
-      cs.baseClasses.exists(_.name == TypeName("FreeModuleLike"))
-
-    def expandClass(cs: ClassSymbol): List[Type] =
-      cs.info.decls.toList
-        .collect { case met: MethodSymbol if met.isAbstract => met }
-        .flatMap(x => expandEffectType(x.returnType))
-
-    tpe.typeSymbol match {
-      case cs: ClassSymbol =>
-        if (isModuleFS(cs)) expandClass(cs) else List(tpe.typeConstructor)
-      case _ => Nil
-    }
-  }
-
-  private[this] def typeToTypeTree(tpe: Type): ValidatedNel[String, Tree] =
-    Validated.catchNonFatal(c.parse(tpe.toString)).leftMap(t =>
-      NonEmptyList.of(s"unable to convert type $tpe to tree"))
-
-  private[this] lazy val defaultf0: Tree =
-    q"type Op[$AA] = Nothing"
-  private[this] def defaultf1(tpt: Tree): Tree =
-    q"type Op[$AA] = $tpt.Op[$AA]"
-
-  private[this] def makeCatsCoproduct(
-    tpts: List[Tree]
-  ): Tree = tpts match {
-    case Nil                    => defaultf0
-    case tpt :: Nil             => defaultf1(tpt)
-    case head1 :: head2 :: tail =>
-
-      val max = tail.length
-      def Op(i: Int) = (max - i - 1) match {
-        case 0 => TypeName("Op")
-        case n => TypeName(s"Op$n")
-      }
-
-      tail.zipWithIndex.foldLeft(
-        q"type ${Op(-1)}[$AA] = $Coproduct[$head2.Op, $head1.Op, $AA]": Tree
-      ) { (prefix, tup) =>
-        val (tpt, i) = tup
-        q"""
-          ..$prefix
-          type ${Op(i)}[$AA] = $Coproduct[$tpt.Op, ${Op(i - 1)}, $AA]
-        """
-      }
-  }
-
-  private[this] def makeIotaCoproduct(
-    tpts: List[Tree]
-  ): Tree = tpts match {
-    case Nil        => defaultf0
-    case tpt :: Nil => defaultf1(tpt)
-    case _          =>
-      val klist = tpts.foldLeft(tq"$KNil": Tree)((tail, head) =>
-        tq"$KCons[$head.Op, $tail]")
-      q"type Op[$AA] = $CopK[$klist, $AA]"
-  }
-
   private[this] def makeClassTree(cls: ClassDef): ValidatedNel[String, ClassDef] = {
     val ClassDef(mods, name, tparams, Template(parents, self, body)) = cls
     val body0 = body.map {
@@ -171,8 +99,34 @@ final class moduleImpl(val c: Context) {
       Template(parentTrees, self, body0)).validNel
   }
 
+  private[this] def makeCoproductTree(effectTuples: List[(Name, Tree)]): ValidatedNel[String, Tree] = {
+
+    val Ltpes = effectTuples.map(_._2).traverse { t =>
+      val treeCode = s"type Z = $t.OpTypes"
+      // (‡▼益▼)<!! would love to find a better solution (instead of c.parse)
+      try {
+        val q"type Z = $select" = c.parse(treeCode)
+        select.validNel
+      } catch {
+        case t: Throwable => s"Error ${t.getMessage} when parsing $treeCode".invalidNel
+      }
+    }
+
+    Ltpes
+      .map {
+        case Nil         => tq"_root_.iota.KNil"
+        case tree :: Nil => tree
+        case trees       => trees.reduce((l, r) => tq"_root_.iota.KList.Op.Concat[$l, $r]")
+      }
+      .map(L =>
+        q"""
+          type OpTypes = $L
+          type Op[A]  = _root_.iota.CopK[OpTypes, A]""")
+  }
+
   private[this] def makeModuleTree(
     cls: ClassDef,
+    coproductTree: Tree,
     effects: List[(Name, Tree)]
   ): ValidatedNel[String, ModuleDef] = {
 
@@ -185,8 +139,7 @@ final class moduleImpl(val c: Context) {
 
     builtArgs.map(args => q"""
       object ${name.toTermName} {
-        val _computeOp = _root_.freestyle.moduleImpl.computeCoproduct
-        type Op[$AA] = _computeOp.Op[$AA]
+        ..$coproductTree
         def apply[$LL[_], ..$tparams](implicit ev: $name[$LL, ..$tparams]): $name[$LL, ..$tparams] = ev
         implicit def to[$LL[_], ..$tparams](implicit ..$args): To[$LL, ..$tparams] =
           new To[$LL, ..$tparams]()
@@ -198,10 +151,4 @@ final class moduleImpl(val c: Context) {
     v fold (
       errors => c.abort(c.enclosingPosition, errors.toList.mkString(", and\n")),
       a      => a)
-}
-
-object moduleImpl {
-  // a nested macro used to delay expansion of the coproduct types until
-  // after the free/module high level code is generated
-  def computeCoproduct: Any = macro moduleImpl.computeCoproductImpl
 }

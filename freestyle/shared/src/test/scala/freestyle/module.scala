@@ -163,41 +163,19 @@ class moduleTests extends WordSpec with Matchers {
       program.interpret[Option] shouldBe Option(2)
     }
 
-    "nested allow nested coproducts" ignore {
+    "allow nested coproducts" in {
 
       """
-        |object repository {
-        |  final class RepositoryA[A] {
-        |    @free trait Ops {
-        |      def insert(input: A): FS[Option[A]]
-        |    }
+        |@free trait X {
+        |  def x: FS[Int]
+        |}
+        |object P {
+        |  @module trait Y {
+        |    val repo: X
         |  }
-        |  def apply[A] = new RepositoryA[A]
         |}
-        |
-        |object service {
-        |  final class ServiceA[A](name: String) {
-        |    val repositoryA: repository.RepositoryA[A] = repository[A]
-        |    @module
-        |    trait Ops {
-        |      val repo: repositoryA.Ops
-        |      def insert(input: A): FS.Seq[Option[A]] = repo.insert(input)
-        |    }
-        |  }
-        |  def apply[A](name: String) = new ServiceA[A](name)
-        |}
-        |
-        |object services {
-        |  case class C1(x: Int, y: String)
-        |  case class C2(a: String, b: Int)
-        |  val C1Service: service.ServiceA[C1] = service[C1]("c1")
-        |  val C2Service: service.ServiceA[C2] = service[C2]("c2")
-        |}
-        |
-        |@module
-        |trait ServicesModule {
-        |  val service1: services.C1Service.Ops
-        |  val service2: services.C2Service.Ops
+        |@module trait Z {
+        |  val a: P.Y
         |}""".stripMargin should compile
     }
   }
