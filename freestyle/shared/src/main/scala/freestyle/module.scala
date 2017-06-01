@@ -18,9 +18,11 @@ package freestyle
 
 import scala.annotation.tailrec
 import scala.reflect.macros.whitebox.Context
+import scala.util.Try
 
 import cats.data.NonEmptyList
 import cats.data.{ Validated, ValidatedNel }
+import cats.syntax.either._
 import cats.syntax.flatMap._
 import cats.syntax.traverse._
 import cats.syntax.validated._
@@ -31,7 +33,7 @@ trait FreeModuleLike
 // $COVERAGE-OFF$ ScalaJS + coverage = fails with NoClassDef exceptions
 
 final class moduleImpl(val c: Context) {
-  import c.universe._
+  import c.universe.{ Try => _, _ }
   import c.universe.internal.reificationSupport.{ ConstantType => _, _ }
   import compat._
 
@@ -65,7 +67,7 @@ final class moduleImpl(val c: Context) {
       cls             <- decodeAnnotationTarget(annottees.toList)
       effectTuples     = gatherEffects(cls)
       classTree       <- makeClassTree(cls)
-      coproductTree    = makeCoproductTree(effectTuples)
+      coproductTree   <- makeCoproductTree(effectTuples)
       objectTree      <- makeModuleTree(cls, coproductTree, effectTuples)
     } yield q"$classTree; $objectTree")
 
@@ -97,19 +99,29 @@ final class moduleImpl(val c: Context) {
       Template(parentTrees, self, body0)).validNel
   }
 
-  private[this] def makeCoproductTree(effectTuples: List[(Name, Tree)]): Tree = {
-    val L = effectTuples.map(_._2).map(t => tq"$t.OpTypes": Tree) match {
-      case Nil         => tq"_root_.iota.KNil"
-      case tree :: Nil => tree
-      case trees       => trees.reduce((l, r) => tq"_root_.iota.KList.Op.Concat[$l, $r]")
+  private[this] def makeCoproductTree(effectTuples: List[(Name, Tree)]): ValidatedNel[String, Tree] = {
+
+    val Ltpes = effectTuples.map(_._2).traverse { t =>
+      val treeCode = s"type Z = $t.OpTypes"
+      // (‡▼益▼)<!! would love to find a better solution (instead of c.parse)
+      try {
+        val q"type Z = $select" = c.parse(treeCode)
+        select.validNel
+      } catch {
+        case t: Throwable => s"Error ${t.getMessage} when parsing $treeCode".invalidNel
+      }
     }
 
-    println("parsing " + q"type OpTypes = $L".toString)
-    // (‡▼益▼)<!! would love to find a better solution for this line
-    val OpTypes = c.parse(q"type OpTypes = $L".toString)
-    q"""
-      $OpTypes
-      type Op[A]  = _root_.iota.CopK[OpTypes, A]"""
+    Ltpes
+      .map {
+        case Nil         => tq"_root_.iota.KNil"
+        case tree :: Nil => tree
+        case trees       => trees.reduce((l, r) => tq"_root_.iota.KList.Op.Concat[$l, $r]")
+      }
+      .map(L =>
+        q"""
+          type OpTypes = $L
+          type Op[A]  = _root_.iota.CopK[OpTypes, A]""")
   }
 
   private[this] def makeModuleTree(
