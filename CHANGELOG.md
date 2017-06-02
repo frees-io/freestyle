@@ -1,5 +1,30 @@
 # Changelog
 
+## 06/02/2017 - Version 0.2.0
+
+Release changes:
+
+* Updates Docs and catches the new sbt-freestyle plugin config ([#303](https://github.com/frees-io/freestyle/pull/303))
+* Adds section describing current Freestyle dependencies ([#305](https://github.com/frees-io/freestyle/pull/305))
+* Add FunctorK for finally tagless ([#310](https://github.com/frees-io/freestyle/pull/310))
+* Fixing async module's codecov reports ([#306](https://github.com/frees-io/freestyle/pull/306))
+* Upgrades Tut config ([#320](https://github.com/frees-io/freestyle/pull/320))
+* Fix no string interpolation ([#323](https://github.com/frees-io/freestyle/pull/323))
+* Allows FS type aliases in @module traits ([#318](https://github.com/frees-io/freestyle/pull/318))
+* Adds failing test (for nested coproducts) as ignored ([#324](https://github.com/frees-io/freestyle/pull/324))
+* Optimization: Replace FunctionK pattern matching with JVM switch for faster @free programs ([#315](https://github.com/frees-io/freestyle/pull/315))
+* My apologies for this println ([#327](https://github.com/frees-io/freestyle/pull/327))
+* Removes docs module since it has been moved to its own repository ([#328](https://github.com/frees-io/freestyle/pull/328))
+* Fixes img broken link in README ([#329](https://github.com/frees-io/freestyle/pull/329))
+* All types should be FQN pointing to _root_.freestyle.InjK ([#331](https://github.com/frees-io/freestyle/pull/331))
+* Checks Docs project in CI ([#330](https://github.com/frees-io/freestyle/pull/330))
+* Use nested coproduct list support from Iota 0.2.x ([#326](https://github.com/frees-io/freestyle/pull/326))
+* Git Docs: branch and swallow clone ([#336](https://github.com/frees-io/freestyle/pull/336))
+* Disables docs check until CI is fixed ([#338](https://github.com/frees-io/freestyle/pull/338))
+* Docs Setup Conditional ([#334](https://github.com/frees-io/freestyle/pull/334))
+* Releases 0.2.0 ([#340](https://github.com/frees-io/freestyle/pull/340))
+
+
 ## 05/08/2017 - Version 0.1.1
 
 Release changes:
