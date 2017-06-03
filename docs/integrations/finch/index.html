@@ -12,7 +12,7 @@ ga('send', 'pageview');
 
 <p>You can add the <em>freestyle-finch</em> module as follows:</p>
 
-<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="n">libraryDependencies</span> <span class="o">+=</span> <span class="s">"io.frees"</span> <span class="o">%%</span> <span class="s">"freestyle-http-finch"</span> <span class="o">%</span> <span class="s">"0.1.1"</span>
+<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="n">libraryDependencies</span> <span class="o">+=</span> <span class="s">"io.frees"</span> <span class="o">%%</span> <span class="s">"freestyle-http-finch"</span> <span class="o">%</span> <span class="s">"0.2.0"</span>
 </code></pre>
 </div>
 
@@ -66,7 +66,7 @@ ga('send', 'pageview');
 <span class="k">implicit</span> <span class="k">val</span> <span class="n">futureHandler</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">Calc</span><span class="o">.</span><span class="nc">Handler</span><span class="o">[</span><span class="kt">Future</span><span class="o">]</span> <span class="o">{</span>
   <span class="k">def</span> <span class="n">gcd</span><span class="o">(</span><span class="n">a</span><span class="k">:</span> <span class="kt">Int</span><span class="o">,</span> <span class="n">b</span><span class="k">:</span><span class="kt">Int</span><span class="o">)</span><span class="k">:</span> <span class="kt">Future</span><span class="o">[</span><span class="kt">Int</span><span class="o">]</span> <span class="k">=</span> <span class="n">gcdFuture</span><span class="o">(</span><span class="n">a</span><span class="o">,</span> <span class="n">b</span><span class="o">)</span>
 <span class="o">}</span>
-<span class="c1">// futureHandler: Calc.Handler[com.twitter.util.Future] = $anon$1@66e6aed4
+<span class="c1">// futureHandler: Calc.Handler[com.twitter.util.Future] = $anon$1@73db3ab2
 </span></code></pre>
 </div>
 
@@ -83,7 +83,7 @@ ga('send', 'pageview');
 <p>We can use a freestyle program within <code class="highlighter-rouge">Endpoint#apply</code>:</p>
 
 <div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="n">cats</span><span class="o">.</span><span class="nc">Monad</span><span class="o">[</span><span class="kt">Future</span><span class="o">]</span>
-<span class="c1">// res2: cats.Monad[com.twitter.util.Future] = io.catbird.util.FutureInstances$$anon$1@5ad35a9c
+<span class="c1">// res2: cats.Monad[com.twitter.util.Future] = io.catbird.util.FutureInstances$$anon$1@1c41697b
 </span>
 <span class="k">val</span> <span class="n">gcdEndpointTwo</span> <span class="k">=</span> <span class="n">get</span><span class="o">(</span><span class="n">int</span> <span class="o">::</span> <span class="n">int</span><span class="o">)</span> <span class="o">{</span> <span class="o">(</span><span class="n">a</span><span class="k">:</span> <span class="kt">Int</span><span class="o">,</span> <span class="n">b</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span> <span class="k">=&gt;</span>
   <span class="nc">Calc</span><span class="o">[</span><span class="kt">Calc.Op</span><span class="o">].</span><span class="n">gcd</span><span class="o">(</span><span class="n">a</span><span class="o">,</span> <span class="n">b</span><span class="o">).</span><span class="n">map</span><span class="o">(</span><span class="nc">Ok</span><span class="o">(</span><span class="k">_</span><span class="o">))</span>

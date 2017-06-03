@@ -13,7 +13,7 @@ It includes most of the well-known operations found in loggers as well as differ
 
 <p>In order to enable this integration, you can depend on <em>freestyle-logging</em>:</p>
 
-<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="n">libraryDependencies</span> <span class="o">+=</span> <span class="s">"io.frees"</span> <span class="o">%%</span> <span class="s">"freestyle-logging"</span> <span class="o">%</span> <span class="s">"0.1.1"</span>
+<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="n">libraryDependencies</span> <span class="o">+=</span> <span class="s">"io.frees"</span> <span class="o">%%</span> <span class="s">"freestyle-logging"</span> <span class="o">%</span> <span class="s">"0.2.0"</span>
 </code></pre>
 </div>
 
@@ -65,7 +65,7 @@ The JVM handler interpreter is based on the <a href="https://github.com/Verizon/
 <span class="k">implicit</span> <span class="k">val</span> <span class="n">customerServiceHandler</span><span class="k">:</span> <span class="kt">CustomerService.Handler</span><span class="o">[</span><span class="kt">Try</span><span class="o">]</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">CustomerService</span><span class="o">.</span><span class="nc">Handler</span><span class="o">[</span><span class="kt">Try</span><span class="o">]</span> <span class="o">{</span>
   <span class="k">def</span> <span class="n">customers</span><span class="k">:</span> <span class="kt">Try</span><span class="o">[</span><span class="kt">List</span><span class="o">[</span><span class="kt">String</span><span class="o">]]</span> <span class="k">=</span> <span class="nc">Try</span><span class="o">(</span><span class="nc">List</span><span class="o">(</span><span class="s">"John"</span><span class="o">,</span> <span class="s">"Jane"</span><span class="o">,</span> <span class="s">"Luis"</span><span class="o">))</span>
 <span class="o">}</span>
-<span class="c1">// customerServiceHandler: CustomerService.Handler[scala.util.Try] = $anon$1@588e5412
+<span class="c1">// customerServiceHandler: CustomerService.Handler[scala.util.Try] = $anon$1@14c7e6a7
 </span></code></pre>
 </div>
 
@@ -112,7 +112,6 @@ target monad. Learn more about the writer effect in the <a href="../../effects/w
 <h3 id="a-note-on-performance">A note on performance</h3>
 
 <p>Using pure functional logging is ideal, but it can affect performance in an application’s hot paths because Free algebras are reified in memory, then interpreted. While this is a non-issue in most applications whose bottleneck are IO/Network bound, you should be aware that traditional logging placed in handlers may yield better overall performance in specific cases.</p>
-
 </section></div></div></div></div><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script><script src="/highlight/highlight.pack.js"></script><script>hljs.configure({
 languages:['scala','java','bash']
 });
