@@ -24,13 +24,18 @@ lazy val freestyleJVM = freestyle.jvm
 lazy val freestyleJS  = freestyle.js
 
 lazy val tagless = (crossProject in file("freestyle-tagless"))
-  .dependsOn(freestyle)
+  .dependsOn(freestyle % "test -> compile")
   .settings(name := "freestyle-tagless")
   .jsSettings(sharedJsSettings: _*)
   .crossDepSettings(commonDeps: _*)
   .settings(
     libraryDependencies += "com.kailuowang" %%% "mainecoon-core" % "0.1.1"
   )
+  .crossDepSettings( commonDeps ++ Seq(
+    "com.kailuowang" %%% "mainecoon-core" % "0.0.5",
+    %("cats-core"),
+    %("cats-free")
+  ))
 
 lazy val taglessJVM = tagless.jvm
 lazy val taglessJS  = tagless.js
