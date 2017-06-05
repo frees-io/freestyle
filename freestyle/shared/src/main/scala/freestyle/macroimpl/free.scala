@@ -29,6 +29,7 @@ trait EffectLike[F[_]] {
   }
 }
 
+// $COVERAGE-OFF$ ScalaJS + coverage = fails with NoClassDef exceptions
 object freeImpl {
 
   import errors._
