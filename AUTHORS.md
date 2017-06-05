@@ -32,3 +32,4 @@ These are the people that have contributed to the freestyle project:
 * Sam Halliday <[fommil](https://github.com/fommil)>
 * Sho Kohara <[shokohara](https://github.com/shokohara)>
 * Suhas Gaddam <[suhasgaddam](https://github.com/suhasgaddam)>
+* Witold Czaplewski <[witi83](https://github.com/witi83)>
