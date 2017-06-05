@@ -14,16 +14,6 @@ before_install:
     openssl aes-256-cbc -K $encrypted_86276aecec54_key -iv $encrypted_86276aecec54_iv -in secring.gpg.enc -out secring.gpg -d;
   fi
 - export PATH=${PATH}:./vendor/bundle
-#- if [ "$TRAVIS_SCALA_VERSION" = "2.12.2" ]; then
-#    set -x;
-#    DOCS_REPO="https://github.com/frees-io/freestyle-docs.git" ;
-#    if [ $(git ls-remote $DOCS_REPO | grep "refs/heads/$TRAVIS_BRANCH" | wc -l) = 1 ] ; then
-#        git clone --branch $TRAVIS_BRANCH --depth=1 $DOCS_REPO  ;
-#    else
-#        git clone --branch master --depth=1 $DOCS_REPO  ;
-#    fi ;
-#    set +x;
-#  fi
 
 install:
 - if [ "$TRAVIS_SCALA_VERSION" = "2.12.2" ]; then
@@ -36,10 +26,7 @@ install:
 script:
 - sbt ++$TRAVIS_SCALA_VERSION test:fastOptJS
 - sbt ++$TRAVIS_SCALA_VERSION orgScriptCI
-#- if [ "$TRAVIS_SCALA_VERSION" = "2.12.2" ]; then
-#     sbt ++$TRAVIS_SCALA_VERSION publishLocal;
-#     cd freestyle-docs && sbt ++$TRAVIS_SCALA_VERSION "clean" "tut"  && cd ..;
-#  fi
+- ./scripts/build.sh
 
 after_success:
 - bash <(curl -s https://codecov.io/bash)
