@@ -214,5 +214,6 @@ lazy val jvmFreestyleDeps: Seq[ClasspathDependency] =
 lazy val scalametaSettings = Seq(
   addCompilerPlugin("org.scalameta" %% "paradise" % "3.0.0-M8" cross CrossVersion.full),
   libraryDependencies += "org.scalameta" %% "scalameta" % "1.8.0",
-  scalacOptions += "-Xplugin-require:macroparadise"
+  scalacOptions += "-Xplugin-require:macroparadise",
+  publishArtifact in (Compile, packageDoc) := false
 )
