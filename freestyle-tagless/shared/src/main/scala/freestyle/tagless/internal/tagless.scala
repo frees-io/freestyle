@@ -14,8 +14,7 @@
  * limitations under the License.
  */
 
-package freestyle
-package tagless
+package freestyle.tagless.internal
 
 import scala.reflect.macros.blackbox.Context
 

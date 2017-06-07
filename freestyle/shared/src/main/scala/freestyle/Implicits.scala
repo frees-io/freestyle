@@ -31,7 +31,7 @@ trait Interpreters {
     fm or gm.value
 
   implicit def interpretIotaCopK[F[a] <: CopK[_, a], G[_]]: FSHandler[F, G] =
-    macro internal.CopKFunctionKMacros.summon[F, G]
+    macro _root_.iota.internal.CopKFunctionKMacros.summon[F, G]
 
   // workaround for https://github.com/typelevel/cats/issues/1505
   implicit def catsFreeRightInjectInstanceLazy[F[_], G[_], H[_]](

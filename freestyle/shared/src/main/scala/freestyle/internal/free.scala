@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package freestyle.macroimpl
+package freestyle.internal
 
 import freestyle.FreeS
 import scala.collection.immutable.Seq
@@ -57,7 +57,7 @@ object freeImpl {
 
 }
 
-private[macroimpl] case class Algebra(
+private[internal] case class Algebra(
   mods: Seq[Mod],
   name: Type.Name,
   tparams: Seq[Type.Param],
@@ -76,7 +76,7 @@ private[macroimpl] case class Algebra(
    * and adds `EffectLike[$ff]` to the parents */
   def enrich: Algebra = {
     val ff: Type.Name = Type.fresh("FF$")
-    val pat = q"trait Foo[${tparamK(ff)}] extends _root_.freestyle.macroimpl.EffectLike[$ff]"
+    val pat = q"trait Foo[${tyParamK(ff)}] extends _root_.freestyle.internal.EffectLike[$ff]"
     Algebra(mods, name, pat.tparams, ctor, templ.copy(parents = pat.templ.parents))
   }
 
@@ -110,11 +110,11 @@ private[macroimpl] case class Algebra(
         requests.map(_.handlerCase(fa)) :+ errorCase
       )
 
-      q"override def apply[${tparam(aa)}]($fa: $OP[$aa]): $mm[$aa] = ($matchE).asInstanceOf[$mm[$aa]]"
+      q"override def apply[${tyParam(aa)}]($fa: $OP[$aa]): $mm[$aa] = ($matchE).asInstanceOf[$mm[$aa]]"
     }
 
     q"""
-      trait Handler[${tparamK(mm)}, ..$tparams] extends _root_.freestyle.FSHandler[$OP, $mm] {
+      trait Handler[${tyParamK(mm)}, ..$tparams] extends _root_.freestyle.FSHandler[$OP, $mm] {
         ..${requests.map(_.handlerDef(mm))}
         $applyDef
       }
@@ -123,7 +123,7 @@ private[macroimpl] case class Algebra(
 
   def lifterStats: (Class, Defn.Def, Defn.Def) = {
     val gg: Type.Name = Type.fresh("LL$") // LL is the target of the Lifter's Injection
-    val injTParams: Seq[Type.Param] = tparamK(gg) +: tparams
+    val injTParams: Seq[Type.Param] = tyParamK(gg) +: tparams
     val injTArgs: Seq[Type] = gg +: tparams.map(toType)
     val ii = Term.fresh("ii$")
 
@@ -168,7 +168,7 @@ private[macroimpl] case class Algebra(
 
 }
 
-private[macroimpl] class Request(reqDef: Decl.Def, indexValue: Int) {
+private[internal] class Request(reqDef: Decl.Def, indexValue: Int) {
 
   import reqDef.{tparams, paramss}
   import ScalametaUtil._
@@ -239,7 +239,7 @@ private[macroimpl] class Request(reqDef: Decl.Def, indexValue: Int) {
 
 }
 
-private[macroimpl] object errors {
+private[internal] object errors {
   // Messages of error
   val invalid = "Invalid use of `@free`"
   val abstractOnly = "`@free` can only annotate a trait or abstract class"

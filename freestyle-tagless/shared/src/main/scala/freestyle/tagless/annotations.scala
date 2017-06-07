@@ -21,8 +21,15 @@ import scala.annotation.{StaticAnnotation, compileTimeOnly}
 
 @compileTimeOnly("enable macro paradise to expand @tagless macro annotations")
 class tagless extends StaticAnnotation {
-  def macroTransform(annottees: Any*): Any = macro taglessImpl.tagless
+  def macroTransform(annottees: Any*): Any = macro internal.taglessImpl.tagless
 }
+
+//@compileTimeOnly("enable macro paradise to expand @tagless macro annotations")
+//class tagless extends StaticAnnotation {
+//  import scala.meta._
+//  inline def apply(defn: Any): Any = meta { internal.taglessMetaImpl.tagless(defn) }
+//}
+
 
 trait TaglessEffectLike[F[_]] {
   final type FS[A] = F[A]
