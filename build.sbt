@@ -1,3 +1,5 @@
+import sbtorgpolicies.runnable.syntax._
+
 lazy val root = (project in file("."))
   .settings(moduleName := "root")
   .settings(name := "freestyle")
@@ -217,3 +219,16 @@ lazy val scalametaSettings = Seq(
   scalacOptions += "-Xplugin-require:macroparadise",
   publishArtifact in (Compile, packageDoc) := false
 )
+
+coverageExcludedFiles in Global  := ".*<macro>"
+
+def toCompileTestList(sequence: Seq[ProjectReference]): List[String] =
+  sequence.toList.map(p => s"${p.asInstanceOf[LocalProject].project}/test")
+
+addCommandAlias("validateJVM", (toCompileTestList(jvmModules) ++ List("project root")).asCmd)
+addCommandAlias("validateJS", (toCompileTestList(jsModules) ++ List("project root")).asCmd)
+addCommandAlias(
+  "validate",
+  ";clean;compile;coverage;validateJVM;coverageReport;coverageAggregate;coverageOff")
+
+orgScriptTaskListSetting := List("validate".asRunnableItemFull)
