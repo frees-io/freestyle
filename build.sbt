@@ -1,3 +1,5 @@
+import sbtorgpolicies.runnable.syntax._
+
 lazy val root = (project in file("."))
   .settings(moduleName := "root")
   .settings(name := "freestyle")
@@ -206,3 +208,18 @@ lazy val allModules: Seq[ProjectReference] = jvmModules ++ jsModules
 
 lazy val jvmFreestyleDeps: Seq[ClasspathDependency] =
   jvmModules.map(ClasspathDependency(_, None))
+
+coverageExcludedFiles in Global  := ".*<macro>"
+
+def toCompileTestList(sequence: Seq[ProjectReference]): List[String] = sequence.toList.map { p =>
+  val project: String = p.asInstanceOf[LocalProject].project
+  s"$project/test"
+}
+
+addCommandAlias("validateJVM", (toCompileTestList(jvmModules) ++ List("project root")).asCmd)
+addCommandAlias("validateJS", (toCompileTestList(jsModules) ++ List("project root")).asCmd)
+addCommandAlias(
+  "validate",
+  ";clean;compile;coverage;validateJVM;coverageReport;coverageAggregate;coverageOff")
+
+orgScriptTaskListSetting := List("validate".asRunnableItemFull)
