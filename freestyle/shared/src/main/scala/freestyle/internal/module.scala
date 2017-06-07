@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package freestyle.macroimpl
+package freestyle.internal
 
 import freestyle.FreeS
 import scala.collection.immutable.Seq
@@ -43,7 +43,7 @@ object moduleImpl {
 
 }
 
-private[macroimpl] case class FreeSModule(
+private[internal] case class FreeSModule(
   mods: Seq[Mod],
   name: Type.Name,
   tparams: Seq[Type.Param],
@@ -68,7 +68,7 @@ private[macroimpl] case class FreeSModule(
   /* The effects are Val Declarations (no value definition) */
   def makeClass: Defn = {
     val ff: Type.Name = Type.fresh("FF$")
-    val pat = q"trait Foo[${tparamK(ff)}] extends _root_.freestyle.macroimpl.EffectLike[$ff]"
+    val pat = q"trait Foo[${tyParamK(ff)}] extends _root_.freestyle.internal.EffectLike[$ff]"
 
     val nstats = templ.stats.map(_.map(stat => enrichStat(ff,stat)))
     val ntempl = templ.copy( parents = pat.templ.parents, stats = nstats)
@@ -84,7 +84,7 @@ private[macroimpl] case class FreeSModule(
 
   def lifterStats: (Class, Defn.Def, Defn.Def) = {
     val gg: Type.Name = Type.fresh("GG$")
-    val toTParams: Seq[Type.Param] = tparamK(gg) +: tparams
+    val toTParams: Seq[Type.Param] = tyParamK(gg) +: tparams
     val toTArgs: Seq[Type] = gg +: tparams.map(toType)
 
     val sup: Term.ApplyType = Term.ApplyType( Ctor.Ref.Name(name.value), toTArgs)
@@ -108,7 +108,7 @@ private[macroimpl] case class FreeSModule(
     val (toClass, toDef, applyDef) = lifterStats
     val opType: Defn.Type = {
       val aa: Type.Name = Type.fresh("AA$")
-      q"type Op[${tparam(aa)}] = _root_.iota.CopK[OpTypes, $aa]"
+      q"type Op[${tyParam(aa)}] = _root_.iota.CopK[OpTypes, $aa]"
     }
     val opTypes = q"type OpTypes = T".copy(body = makeOpTypesBody)
 
@@ -126,7 +126,7 @@ private[macroimpl] case class FreeSModule(
 
 }
 
-private[macroimpl] case class ModEffect(effVal: Decl.Val) {
+private[internal] case class ModEffect(effVal: Decl.Val) {
 
   // buildParam(x, t) = q"def foo(implicit $x: $t[$gg])"
   def buildDefParam(gg: Type.Name): Term.Param =
@@ -155,7 +155,7 @@ private[macroimpl] case class ModEffect(effVal: Decl.Val) {
 
 }
 
-private[macroimpl] object ModuleUtil {
+private[internal] object ModuleUtil {
   // Messages of error
   val invalid = "Invalid use of `@module`"
   val abstractOnly = "The `@module` annotation can only be applied to a trait or an abstract class."
