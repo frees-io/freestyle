@@ -109,7 +109,7 @@ private[internal] case class Algebra(
       val errorCase: Case =
         q"""
           x match { case i => throw new _root_.java.lang.Exception(
-            "freestyle internal error: index " + i + " out of bounds for " + this)
+            "freestyle internal error: index " + i.toString() + " out of bounds for " + this.toString())
           }
         """.cases.head
 
@@ -168,7 +168,12 @@ private[internal] case class Algebra(
     val opTypes                    = q"type OpTypes = _root_.iota.KCons[$OP, _root_.iota.KNil]"
     val adt: Seq[Stat]             = opTrait +: requests.map(_.reqClass(OP, tparams, indexName))
     val (toClass, toDef, applyDef) = lifterStats
-    val prot                       = q"object X {}"
+    val prot                       = q"""@_root_.java.lang.SuppressWarnings(_root_.scala.Array(
+                                           "org.wartremover.warts.Any",
+                                           "org.wartremover.warts.AsInstanceOf",
+                                           "org.wartremover.warts.Throw"
+                                         ))
+                                         object X {}"""
 
     prot.copy(
       name = Term.Name(name.value),
@@ -203,7 +208,7 @@ private[internal] class Request(reqDef: Decl.Def, indexValue: Int) {
     val sup: Term.ApplyType = Term.ApplyType(Ctor.Ref.Name(OP.value), Seq(res)) // this means $OP[$res]
     val ix                  = Pat.Var.Term(indexName)
     q"""
-      case class $req[..$tts](..$params) extends _root_.scala.AnyRef with $sup {
+      final case class $req[..$tts](..$params) extends _root_.scala.AnyRef with $sup {
         override val $ix: _root_.scala.Int = $indexValue
       }
     """
