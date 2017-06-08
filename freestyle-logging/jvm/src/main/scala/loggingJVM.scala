@@ -50,6 +50,6 @@ object loggingJVM {
           ME.catchNonFatal(logger.warn(msg, cause))
       }
   }
-  object implicits extends Implicits
 
+  object implicits extends Implicits
 }
