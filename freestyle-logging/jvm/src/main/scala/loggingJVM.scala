@@ -22,7 +22,7 @@ import journal._
 
 object loggingJVM {
 
-  object implicits {
+  trait Implicits {
     implicit def freeStyleLoggingHandler[M[_], C: Manifest](
         implicit ME: MonadError[M, Throwable]): LoggingM.Handler[M] =
       new LoggingM.Handler[M] {
@@ -50,4 +50,6 @@ object loggingJVM {
           ME.catchNonFatal(logger.warn(msg, cause))
       }
   }
+  object implicits extends Implicits
+
 }
