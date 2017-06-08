@@ -26,6 +26,20 @@ import scala.util.control.NoStackTrace
 
 class LoggingTests extends AsyncWordSpec with Matchers {
 
+  import slogging._
+
+  LoggerConfig.factory = FilterLoggerFactory()
+  LoggerConfig.level = LogLevel.TRACE
+
+  FilterLogger.filter = {
+    // use PrintLogger for all trace statements from sources starting with "foo.bar"
+    case (LogLevel.TRACE, source) if source.startsWith("foo.bar") => PrintLogger
+    // ignore all other trace statements
+    case (LogLevel.TRACE, _) => NullLogger
+    // log all other levels
+    case _ => PrintLogger
+  }
+
   implicit override def executionContext = ExecutionContext.Implicits.global
 
   import algebras._
@@ -37,7 +51,7 @@ class LoggingTests extends AsyncWordSpec with Matchers {
 
       val program = for {
         a <- app.nonLogging.x
-        _ <- app.loggingM.debug("Debug Message")
+        _ <- app.loggingM.debug("Debug Message", sourceAndLineInfo = true)
         _ <- app.loggingM.debugWithCause("Debug Message", Cause)
         _ <- app.loggingM.error("Error Message")
         _ <- app.loggingM.errorWithCause("Error Message", Cause)
