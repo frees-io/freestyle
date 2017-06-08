@@ -70,12 +70,10 @@ lazy val bench = (project in file("bench"))
   .settings(inConfig(Codegen)(Defaults.configSettings))
   .settings(classpathConfiguration in Codegen := Compile)
   .settings(noPublishSettings)
-  .settings(libraryDependencies ++= Seq(
-    %%("cats-free"),
-    %%("scalacheck")))
+  .settings(libraryDependencies ++= Seq(%%("cats-free"), %%("scalacheck")))
   .settings(inConfig(Compile)(
     sourceGenerators += Def.task {
-      val path = (sourceManaged in(Compile, compile)).value / "bench.scala"
+      val path = (sourceManaged in (Compile, compile)).value / "bench.scala"
       (runner in (Codegen, run)).value.run(
         "freestyle.bench.BenchBoiler",
         Attributed.data((fullClasspath in Codegen).value),
@@ -173,10 +171,6 @@ lazy val logging = (crossProject in file("freestyle-logging"))
 lazy val loggingJVM = logging.jvm
 lazy val loggingJS  = logging.js
 
-addCommandAlias("debug", "; clean ; test")
-
-addCommandAlias("validate", "; +clean ; +test; makeMicrosite")
-
 pgpPassphrase := Some(getEnvVar("PGP_PASSPHRASE").getOrElse("").toCharArray)
 pgpPublicRing := file(s"$gpgFolder/pubring.gpg")
 pgpSecretRing := file(s"$gpgFolder/secring.gpg")
@@ -209,17 +203,8 @@ lazy val allModules: Seq[ProjectReference] = jvmModules ++ jsModules
 lazy val jvmFreestyleDeps: Seq[ClasspathDependency] =
   jvmModules.map(ClasspathDependency(_, None))
 
-coverageExcludedFiles in Global  := ".*<macro>"
-
-def toCompileTestList(sequence: Seq[ProjectReference]): List[String] = sequence.toList.map { p =>
-  val project: String = p.asInstanceOf[LocalProject].project
-  s"$project/test"
-}
-
 addCommandAlias("validateJVM", (toCompileTestList(jvmModules) ++ List("project root")).asCmd)
 addCommandAlias("validateJS", (toCompileTestList(jsModules) ++ List("project root")).asCmd)
 addCommandAlias(
   "validate",
   ";clean;compile;coverage;validateJVM;coverageReport;coverageAggregate;coverageOff")
-
-orgScriptTaskListSetting := List("validate".asRunnableItemFull)
