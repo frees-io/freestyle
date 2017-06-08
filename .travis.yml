@@ -6,6 +6,10 @@ scala:
 - 2.11.11
 - 2.12.2
 
+env:
+- SCALAENV=jvm
+- SCALAENV=js
+
 jdk:
 - oraclejdk8
 
@@ -24,9 +28,13 @@ install:
   fi
 
 script:
-- sbt ++$TRAVIS_SCALA_VERSION test:fastOptJS
-- sbt ++$TRAVIS_SCALA_VERSION orgScriptCI
-- ./scripts/build.sh
+- if [ "$SCALAENV" = "jvm" ]; then
+    sbt ++$TRAVIS_SCALA_VERSION orgScriptCI;
+    ./scripts/build.sh;
+  fi
+- if [ "$SCALAENV" = "js" ]; then
+    sbt ++$TRAVIS_SCALA_VERSION test:fastOptJS validateJS;
+  fi
 
 after_success:
 - bash <(curl -s https://codecov.io/bash)
