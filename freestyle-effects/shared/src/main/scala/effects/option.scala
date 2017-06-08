@@ -26,12 +26,12 @@ object option {
     def none[A]: FS[A]
   }
 
-  trait OptionImplicits {
-    implicit def freeStyleOptionMHandler[M[_]](
-        implicit MF: MonadFilter[M]): OptionM.Handler[M] = new OptionM.Handler[M] {
-      def option[A](fa: Option[A]): M[A] = fa.map(MF.pure[A]).getOrElse(MF.empty[A])
-      def none[A]: M[A]                  = MF.empty[A]
-    }
+  trait Implicits {
+    implicit def freeStyleOptionMHandler[M[_]](implicit MF: MonadFilter[M]): OptionM.Handler[M] =
+      new OptionM.Handler[M] {
+        def option[A](fa: Option[A]): M[A] = fa.map(MF.pure[A]).getOrElse(MF.empty[A])
+        def none[A]: M[A]                  = MF.empty[A]
+      }
 
     class OptionFreeSLift[F[_]: OptionM] extends FreeSLift[F, Option] {
       def liftFSPar[A](fa: Option[A]): FreeS.Par[F, A] = OptionM[F].option(fa)
@@ -40,5 +40,5 @@ object option {
     implicit def freeSLiftOption[F[_]: OptionM]: FreeSLift[F, Option] = new OptionFreeSLift[F]
   }
 
-  object implicits extends OptionImplicits
+  object implicits extends Implicits
 }

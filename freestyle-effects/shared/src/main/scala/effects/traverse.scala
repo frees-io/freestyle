@@ -33,7 +33,7 @@ object traverse {
     /** Interpretable as long as Foldable instance for G[_] and a MonadCombine for M[_] exists
      * in scope
      */
-    object implicits {
+    trait Implicits {
       implicit def freestyleTraverseMHandler[F[_], M[_]](
           implicit MC: MonadCombine[M],
           FT: Foldable[G]): TraverseM.Handler[M] =
@@ -50,6 +50,7 @@ object traverse {
     implicit def freeSLiftTraverse[F[_]: TraverseM]: FreeSLift[F, G] =
       new TraverseFreeSLift[F]
 
+    object implicits extends Implicits
   }
 
   def apply[T[_]] = new TraverseProvider[T]

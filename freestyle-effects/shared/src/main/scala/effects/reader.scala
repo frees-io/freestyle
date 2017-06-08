@@ -28,15 +28,17 @@ object reader {
       def reader[B](f: R => B): FS[B]
     }
 
-    object implicits {
+    trait Implicits {
 
-      implicit def freestyleReaderMHandler[M[_]](implicit MR: MonadReader[M, R]): ReaderM.Handler[M] =
+      implicit def freestyleReaderMHandler[M[_]](
+          implicit MR: MonadReader[M, R]): ReaderM.Handler[M] =
         new ReaderM.Handler[M] {
           def ask: M[R]                  = MR.ask
           def reader[B](f: R => B): M[B] = MR.reader(f)
         }
     }
 
+    object implicits extends Implicits
   }
 
   def apply[R] = new EnvironmentProvider[R]
