@@ -17,6 +17,8 @@
 package freestyle
 
 import cats.MonadError
+import cats.data.Kleisli
+import cats.arrow.FunctionK
 import freestyle.logging._
 import journal._
 import org.slf4j.LoggerFactory
@@ -99,4 +101,50 @@ object loggingJVM {
           ME.catchNonFatal(logger.warn(formatMessage(msg, sourceAndLineInfo, line, file), cause))
       }
   }
+
+  implicit def freeStyleLoggingKleisli[M[_], C: Manifest](
+      implicit ME: MonadError[M, Throwable]): FSHandler[LoggingM.Op, Kleisli[M, Logger, ?]] =
+    λ[FunctionK[LoggingM.Op, Kleisli[M, Logger, ?]]](_ match {
+      case LoggingM.DebugOP(msg) =>
+        Kleisli { logger =>
+          ME.catchNonFatal(logger.debug(msg))
+        }
+      case LoggingM.DebugWithCauseOP(msg, cause) =>
+        Kleisli { logger =>
+          ME.catchNonFatal(logger.debug(msg, cause))
+        }
+      case LoggingM.ErrorOP(msg) =>
+        Kleisli { logger =>
+          ME.catchNonFatal(logger.error(msg))
+        }
+      case LoggingM.ErrorWithCauseOP(msg, cause) =>
+        Kleisli { logger =>
+          ME.catchNonFatal(logger.error(msg, cause))
+        }
+      case LoggingM.InfoOP(msg) =>
+        Kleisli { logger =>
+          ME.catchNonFatal(logger.info(msg))
+        }
+      case LoggingM.InfoWithCauseOP(msg, cause) =>
+        Kleisli { logger =>
+          ME.catchNonFatal(logger.info(msg, cause))
+        }
+      case LoggingM.WarnOP(msg) =>
+        Kleisli { logger =>
+          ME.catchNonFatal(logger.warn(msg))
+        }
+      case LoggingM.WarnWithCauseOP(msg, cause) =>
+        Kleisli { logger =>
+          ME.catchNonFatal(logger.warn(msg, cause))
+        }
+    })
+
+  implicit def freeStyleLoggingKleisliRunner[M[_]](
+      log: Logger): FunctionK[Kleisli[M, Logger, ?], M] =
+    λ[FunctionK[Kleisli[M, Logger, ?], M]](_.run(log))
+
+  implicit def freeStyleLoggingToM[M[_]: MonadError[?[_], Throwable]](
+      log: Logger): FunctionK[LoggingM.Op, M] =
+    freeStyleLoggingKleisli andThen freeStyleLoggingKleisliRunner(log)
+
 }
