@@ -216,8 +216,9 @@ private[internal] class Request(reqDef: Decl.Def, indexValue: Int) {
       else {
         val tt: Type =
           if (tparams.isEmpty) req else {
-            val us: Type = Type.Placeholder(Type.Bounds(None, None) )
-            Type.Apply(req, tparams.map(t => us))
+            // Wildcard types are not working for function params like this f: (B, A) => B
+            // val us: Type = Type.Placeholder(Type.Bounds(None, None) )
+            Type.Apply(req, tparams.map(t => t"Any"))
           }
 
         val alias = Term.fresh()
