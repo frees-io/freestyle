@@ -104,47 +104,36 @@ object loggingJVM {
 
   implicit def freeStyleLoggingKleisli[M[_], C: Manifest](
       implicit ME: MonadError[M, Throwable]): FSHandler[LoggingM.Op, Kleisli[M, Logger, ?]] =
-    λ[FunctionK[LoggingM.Op, Kleisli[M, Logger, ?]]](_ match {
-      case LoggingM.DebugOP(msg) =>
-        Kleisli { logger =>
-          ME.catchNonFatal(logger.debug(msg))
-        }
-      case LoggingM.DebugWithCauseOP(msg, cause) =>
-        Kleisli { logger =>
-          ME.catchNonFatal(logger.debug(msg, cause))
-        }
-      case LoggingM.ErrorOP(msg) =>
-        Kleisli { logger =>
-          ME.catchNonFatal(logger.error(msg))
-        }
-      case LoggingM.ErrorWithCauseOP(msg, cause) =>
-        Kleisli { logger =>
-          ME.catchNonFatal(logger.error(msg, cause))
-        }
-      case LoggingM.InfoOP(msg) =>
-        Kleisli { logger =>
-          ME.catchNonFatal(logger.info(msg))
-        }
-      case LoggingM.InfoWithCauseOP(msg, cause) =>
-        Kleisli { logger =>
-          ME.catchNonFatal(logger.info(msg, cause))
-        }
-      case LoggingM.WarnOP(msg) =>
-        Kleisli { logger =>
-          ME.catchNonFatal(logger.warn(msg))
-        }
-      case LoggingM.WarnWithCauseOP(msg, cause) =>
-        Kleisli { logger =>
-          ME.catchNonFatal(logger.warn(msg, cause))
+    λ[FunctionK[LoggingM.Op, Kleisli[M, Logger, ?]]](op =>
+      Kleisli { logger =>
+        ME.catchNonFatal {
+          op match {
+            case LoggingM.DebugOP(msg) =>
+              logger.debug(msg)
+            case LoggingM.DebugWithCauseOP(msg, cause) =>
+              logger.debug(msg, cause)
+            case LoggingM.ErrorOP(msg) =>
+              logger.error(msg)
+            case LoggingM.ErrorWithCauseOP(msg, cause) =>
+              logger.error(msg, cause)
+            case LoggingM.InfoOP(msg) =>
+              logger.info(msg)
+            case LoggingM.InfoWithCauseOP(msg, cause) =>
+              logger.info(msg, cause)
+            case LoggingM.WarnOP(msg) =>
+              logger.warn(msg)
+            case LoggingM.WarnWithCauseOP(msg, cause) =>
+              logger.warn(msg, cause)
+          }
         }
     })
 
   implicit def freeStyleLoggingKleisliRunner[M[_]](
-      log: Logger): FunctionK[Kleisli[M, Logger, ?], M] =
+      log: Logger): FSHandler[Kleisli[M, Logger, ?], M] =
     λ[FunctionK[Kleisli[M, Logger, ?], M]](_.run(log))
 
   implicit def freeStyleLoggingToM[M[_]: MonadError[?[_], Throwable]](
-      log: Logger): FunctionK[LoggingM.Op, M] =
+      log: Logger): FSHandler[LoggingM.Op, M] =
     freeStyleLoggingKleisli andThen freeStyleLoggingKleisliRunner(log)
 
 }
