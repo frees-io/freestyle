@@ -19,7 +19,7 @@ package freestyle.internal
 import freestyle.FreeS
 import scala.collection.immutable.Seq
 import scala.meta._
-import scala.meta.Defn.{ Class, Trait, Object }
+import scala.meta.Defn.{Class, Object, Trait}
 
 trait EffectLike[F[_]] {
   final type FS[A] = FreeS.Par[F, A]
@@ -29,7 +29,7 @@ trait EffectLike[F[_]] {
   }
 }
 
-// $COVERAGE-OFF$ ScalaJS + coverage = fails with NoClassDef exceptions
+// $COVERAGE-OFF$ScalaJS + coverage = fails with NoClassDef exceptions
 object freeImpl {
 
   import errors._
@@ -37,14 +37,14 @@ object freeImpl {
   def free(defn: Any): Stat = defn match {
 
     case cls: Trait =>
-      freeAlg( Algebra(cls.mods, cls.name, cls.tparams, cls.ctor, cls.templ), true)
+      freeAlg(Algebra(cls.mods, cls.name, cls.tparams, cls.ctor, cls.templ), true)
 
     case cls: Class if ScalametaUtil.isAbstract(cls) =>
-      freeAlg( Algebra(cls.mods, cls.name, cls.tparams, cls.ctor, cls.templ), false)
+      freeAlg(Algebra(cls.mods, cls.name, cls.tparams, cls.ctor, cls.templ), false)
 
-    case c: Class /* ! isAbstract */ => abort( s"$invalid in ${c.name}. $abstractOnly" )
-    case Term.Block( Seq( _, c: Object) ) => abort( s"$invalid in ${c.name}. $noCompanion")
-    case _ => abort(s"$invalid. $abstractOnly")
+    case c: Class /* ! isAbstract */   => abort(s"$invalid in ${c.name}. $abstractOnly")
+    case Term.Block(Seq(_, c: Object)) => abort(s"$invalid in ${c.name}. $noCompanion")
+    case _                             => abort(s"$invalid. $abstractOnly")
   }
 
   def freeAlg(alg: Algebra, isTrait: Boolean): Term.Block =
@@ -52,18 +52,18 @@ object freeImpl {
       abort(s"$invalid in ${alg.name}. $nonEmpty")
     else {
       val enriched = if (isTrait) alg.enrich.toTrait else alg.enrich.toClass
-      Term.Block( Seq( enriched, alg.mkCompanion ))
+      Term.Block(Seq(enriched, alg.mkCompanion))
     }
 
 }
 
 private[internal] case class Algebra(
-  mods: Seq[Mod],
-  name: Type.Name,
-  tparams: Seq[Type.Param],
-  ctor: Ctor.Primary,
-  templ: Template
-){
+    mods: Seq[Mod],
+    name: Type.Name,
+    tparams: Seq[Type.Param],
+    ctor: Ctor.Primary,
+    templ: Template
+) {
   //An Algebra has the same members as a Class or Trait in Scalameta: it abstracts on both */
 
   import ScalametaUtil._
@@ -76,20 +76,23 @@ private[internal] case class Algebra(
    * and adds `EffectLike[$ff]` to the parents */
   def enrich: Algebra = {
     val ff: Type.Name = Type.fresh("FF$")
-    val pat = q"trait Foo[${tyParamK(ff)}] extends _root_.freestyle.internal.EffectLike[$ff]"
+    val pat           = q"trait Foo[${tyParamK(ff)}] extends _root_.freestyle.internal.EffectLike[$ff]"
     Algebra(mods, name, pat.tparams, ctor, templ.copy(parents = pat.templ.parents))
   }
 
   val requestDecls: Seq[Decl.Def] = templ.stats.get.collect {
-    case dd: Decl.Def => dd.decltpe match {
-      case Type.Apply(Type.Name("FS"), args) => dd
-      case _ => abort(s"$invalid in definition of method ${dd.name} in $name. $onlyReqs")
-    }
+    case dd: Decl.Def =>
+      dd.decltpe match {
+        case Type.Apply(Type.Name("FS"), args) => dd
+        case _                                 => abort(s"$invalid in definition of method ${dd.name} in $name. $onlyReqs")
+      }
   }
 
-  val requests: Seq[Request] = requestDecls.zipWithIndex.map { case (dd, ix) => new Request(dd, ix) }
+  val requests: Seq[Request] = requestDecls.zipWithIndex.map {
+    case (dd, ix) => new Request(dd, ix)
+  }
 
-  val OP = Type.Name("Op") // Root trait of the Effect ADT
+  val OP        = Type.Name("Op") // Root trait of the Effect ADT
   val indexName = Term.fresh("FSAlgebraIndex")
 
   def handlerTrait: Trait = {
@@ -122,20 +125,20 @@ private[internal] case class Algebra(
   }
 
   def lifterStats: (Class, Defn.Def, Defn.Def) = {
-    val gg: Type.Name = Type.fresh("LL$") // LL is the target of the Lifter's Injection
+    val gg: Type.Name               = Type.fresh("LL$") // LL is the target of the Lifter's Injection
     val injTParams: Seq[Type.Param] = tyParamK(gg) +: tparams
-    val injTArgs: Seq[Type] = gg +: tparams.map(toType)
-    val ii = Term.fresh("ii$")
+    val injTArgs: Seq[Type]         = gg +: tparams.map(toType)
+    val ii                          = Term.fresh("ii$")
 
     val toClass: Class = {
-      val inj = Term.fresh("toInj")
+      val inj    = Term.fresh("toInj")
       def injPat = Pat.Var.Term(inj)
 
-      val sup: Term.ApplyType = Term.ApplyType( Ctor.Ref.Name(name.value), injTArgs)
+      val sup: Term.ApplyType = Term.ApplyType(Ctor.Ref.Name(name.value), injTArgs)
       q"""
           class To[..$injTParams](implicit $ii: _root_.freestyle.InjK[$OP, $gg]) extends $sup {
             private[this] val $injPat = _root_.freestyle.FreeS.inject[$OP, $gg]($ii)
-            ..${requests.map(_.toDef(inj) )}
+            ..${requests.map(_.toDef(inj))}
           }
         """
     }
@@ -156,41 +159,43 @@ private[internal] case class Algebra(
       val index: Decl.Val = q"val ${toVar(indexName)} : _root_.scala.Int"
       q"sealed trait $OP[_] extends scala.Product with java.io.Serializable { $index }"
     }
-    val opTypes = q"type OpTypes = _root_.iota.KCons[$OP, _root_.iota.KNil]"
-    val adt: Seq[Stat] = opTrait +: requests.map(_.reqClass(OP, tparams, indexName))
+    val opTypes                    = q"type OpTypes = _root_.iota.KCons[$OP, _root_.iota.KNil]"
+    val adt: Seq[Stat]             = opTrait +: requests.map(_.reqClass(OP, tparams, indexName))
     val (toClass, toDef, applyDef) = lifterStats
-    val prot = q"object X {}"
+    val prot                       = q"object X {}"
 
-    prot.copy(name = Term.Name(name.value), templ = prot.templ.copy(
-      stats = Some(adt ++ Seq( opTypes, handlerTrait, toClass, toDef, applyDef) )
-    ))
+    prot.copy(
+      name = Term.Name(name.value),
+      templ = prot.templ.copy(
+        stats = Some(adt ++ Seq(opTypes, handlerTrait, toClass, toDef, applyDef))
+      ))
   }
 
 }
 
 private[internal] class Request(reqDef: Decl.Def, indexValue: Int) {
 
-  import reqDef.{tparams, paramss}
+  import reqDef.{paramss, tparams}
   import ScalametaUtil._
 
   // Name of the Request ADT Class
   private[this] val reqName: String = reqDef.name.value
-  private[this] val req: Type.Name = Type.Name(reqName.capitalize + "OP")
+  private[this] val req: Type.Name  = Type.Name(reqName.capitalize + "OP")
 
   private[this] val res: Type = reqDef.decltpe match {
     case Type.Apply(_, args) => args.last
-    case _ => abort("Internal @free failure. Attempted to do request of non-applied type")
+    case _                   => abort("Internal @free failure. Attempted to do request of non-applied type")
   }
 
-  private[this] val reqC = Term.Name(req.value)
+  private[this] val reqC    = Term.Name(req.value)
   private[this] val reqImpl = Term.Name(reqName)
 
   val params: Seq[Term.Param] = reqDef.paramss.flatten
 
   def reqClass(OP: Type.Name, effTTs: Seq[Type.Param], indexName: Term.Name): Class = {
-    val tts = effTTs ++ tparams
-    val sup: Term.ApplyType = Term.ApplyType( Ctor.Ref.Name(OP.value), Seq(res)) // this means $OP[$res]
-    val ix = Pat.Var.Term(indexName)
+    val tts                 = effTTs ++ tparams
+    val sup: Term.ApplyType = Term.ApplyType(Ctor.Ref.Name(OP.value), Seq(res)) // this means $OP[$res]
+    val ix                  = Pat.Var.Term(indexName)
     q"""
       case class $req[..$tts](..$params) extends AnyRef with $sup {
         override val $ix: _root_.scala.Int = $indexValue
@@ -205,7 +210,7 @@ private[internal] class Request(reqDef: Decl.Def, indexValue: Int) {
       else
         q"$reqC[..${tparams.map(toType)} ](..${params.map(toName)})"
 
-    addBody(reqDef, q"$inj($body)").copy( mods = Seq(Mod.Override() ) )
+    addBody(reqDef, q"$inj($body)").copy(mods = Seq(Mod.Override()))
   }
 
   def handlerCase(fa: Term.Name): Case = {
@@ -215,21 +220,22 @@ private[internal] class Request(reqDef: Decl.Def, indexValue: Int) {
         q"$reqImpl"
       else {
         val tt: Type =
-          if (tparams.isEmpty) req else {
+          if (tparams.isEmpty) req
+          else {
             // Wildcard types are not working for function params like this f: (B, A) => B
             // val us: Type = Type.Placeholder(Type.Bounds(None, None) )
-            Type.Apply(req, tparams.map(t => t"Any"))
+            Type.Apply(req, tparams.map(_ => t"Any"))
           }
 
         val alias = Term.fresh()
-        val ffs = params.map( v => q"$alias.${toName(v)}")
+        val ffs   = params.map(v => q"$alias.${toName(v)}")
         q"""
           val ${toVar(alias)}: $tt = $fa.asInstanceOf[$tt]
           $reqImpl(..$ffs)
         """
       }
 
-    Case( Lit.Int(indexValue), None, mexp) // case ix => mexp
+    Case(Lit.Int(indexValue), None, mexp) // case ix => mexp
   }
 
   def handlerDef(mm: Type.Name): Decl.Def =
@@ -242,10 +248,11 @@ private[internal] class Request(reqDef: Decl.Def, indexValue: Int) {
 
 private[internal] object errors {
   // Messages of error
-  val invalid = "Invalid use of `@free`"
+  val invalid      = "Invalid use of `@free`"
   val abstractOnly = "`@free` can only annotate a trait or abstract class"
-  val noCompanion = "`@free` can only annotate a trait (or class) without companion"
-  val onlyReqs = "In a `@free`-trait (or class), all abstract methods declarations should be of type FS[_]"
+  val noCompanion  = "`@free` can only annotate a trait (or class) without companion"
+  val onlyReqs =
+    "In a `@free`-trait (or class), all abstract methods declarations should be of type FS[_]"
   val nonEmpty = "A `@free` trait or class  must have at least one abstract method of type `FS[_]`"
 }
-
+// $COVERAGE-ON$

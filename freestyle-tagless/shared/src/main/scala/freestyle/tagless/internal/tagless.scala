@@ -16,155 +16,205 @@
 
 package freestyle.tagless.internal
 
-import scala.reflect.macros.blackbox.Context
+import scala.collection.immutable.Seq
+import scala.meta._
+import scala.meta.Defn.{Class, Object, Trait}
+import freestyle.internal.ScalametaUtil._
 
+trait TaglessEffectLike[F[_]] {
+  final type FS[A] = F[A]
+}
+
+// $COVERAGE-OFF$ScalaJS + coverage = fails with NoClassDef exceptions
 object taglessImpl {
+  import Util._
 
-  def tagless(c: Context)(annottees: c.Expr[Any]*): c.universe.Tree = {
-    import c.universe._
-    import c.universe.internal.reificationSupport._
+  def tagless(defn: Any): Stat = defn match {
+    case cls: Trait =>
+      freeAlg(Algebra(cls.mods, cls.name, cls.tparams, cls.ctor, cls.templ), isTrait = true)
+    case cls: Class if isAbstract(cls) =>
+      freeAlg(Algebra(cls.mods, cls.name, cls.tparams, cls.ctor, cls.templ), isTrait = false)
+    case c: Class /* ! isAbstract */   => abort(s"$invalid in ${c.name}. $abstractOnly")
+    case Term.Block(Seq(_, c: Object)) => abort(s"$invalid in ${c.name}. $noCompanion")
+    case _                             => abort(s"$invalid. $abstractOnly")
+  }
 
-    /* Macro Hygiene: we first declare a list of fresh names for term and types. */
-    val MM = freshTypeName("MM$") // MM Target of the Handler's target M[_]
-
-    def fail(msg: String) = c.abort(c.enclosingPosition, msg)
-
-    // Messages of error
-    val invalid = "Invalid use of the `@tagless` annotation"
-    val abstractOnly = "The `@tagless` annotation can only be applied to a trait or to an abstract class."
-    val noCompanion = "The trait (or class) annotated with `@tagless` must have no companion object."
-    val onlyReqs = "In a `@tagless`-annotated trait (or class), all abstract method declarations should be of type FS[_]"
-
-    def gen(): Tree = annottees match {
-      case Expr(cls: ClassDef) :: Nil =>
-        if (cls.mods.hasFlag(Flag.TRAIT | Flag.ABSTRACT)) {
-          val effectTrait = cls.duplicate
-          q"""
-            ${mkEffectTrait(effectTrait.duplicate)}
-            ${mkEffectObject(effectTrait.duplicate)}
-          """
-        } else fail(s"$invalid in ${cls.name}. $abstractOnly")
-
-      case Expr(cls: ClassDef) :: Expr(_) :: _ => fail(s"$invalid in ${cls.name}. $noCompanion")
-
-      case _ => fail(s"$invalid. $abstractOnly")
+  def freeAlg(alg: Algebra, isTrait: Boolean): Term.Block =
+    if (alg.requestDecls.isEmpty)
+      abort(s"$invalid in ${alg.name}. $nonEmpty")
+    else {
+      val enriched = if (isTrait) alg.enrich.toTrait else alg.enrich.toClass
+      Term.Block(Seq(enriched, alg.mkObject))
     }
 
+}
 
-    def mkEffectTrait(effectTrait: ClassDef): ClassDef = {
-      val FF = freshTypeName("FF$")
-      val requests: List[Request] = collectRequests(effectTrait)
-      val body = requests.map(_.traitDef(FF))
-      // this is to make a TypeDef for `$FF[_]`
-      val wildcard = TypeDef(Modifiers(Flag.PARAM), typeNames.WILDCARD, List(), TypeBoundsTree(EmptyTree, EmptyTree))
-      val ffTParam = TypeDef(Modifiers(Flag.PARAM), FF, List(wildcard), TypeBoundsTree(EmptyTree, EmptyTree))
-      val ClassDef(mods, name, tparams, Template(parents, self, _)) = effectTrait
-      ClassDef(mods, name, ffTParam :: tparams, Template(parents, self, body))
-    }
+case class Algebra(
+    mods: Seq[Mod],
+    name: Type.Name,
+    tparams: Seq[Type.Param],
+    ctor: Ctor.Primary,
+    templ: Template
+) {
+  import Util._
 
-    class Request(reqDef: DefDef) {
+  def toTrait: Trait = Trait(mods, name, tparams, ctor, templ)
+  def toClass: Class = Class(mods, name, tparams, ctor, templ)
 
-      import reqDef.tparams
-
-      val reqImpl = TermName(reqDef.name.toTermName.encodedName.toString)
-
-      private[this] val Res = reqDef.tpt.asInstanceOf[AppliedTypeTree].args.last
-
-      val params: List[ValDef] = reqDef.vparamss.flatten
-
-      def freeDef: DefDef =
-        if (params.isEmpty)
-          q"def $reqImpl[..$tparams]: FS[$Res]"
-        else
-          q"def $reqImpl[..$tparams](..$params): FS[$Res]"
-
-      def freeHandlerDef(H: TermName, RT: TypeName): DefDef = {
-        val args = params.map(_.name)
-        if (params.isEmpty)
-          q"def $reqImpl[..$tparams]: $RT[$Res] = $H.${reqDef.name}(..$args)"
-        else
-          q"def $reqImpl[..$tparams](..$params): $RT[$Res] = $H.${reqDef.name}(..$args)"
+  val requestDecls: Seq[Decl.Def] = templ.stats.get.collect {
+    case dd: Decl.Def =>
+      dd.decltpe match {
+        case Type.Apply(Type.Name("FS"), _) => dd
+        case _                              => abort(s"$invalid in definition of method ${dd.name} in $name. $onlyReqs")
       }
+  }
 
-      def functorKDef(H: TermName, RT: TypeName): DefDef = {
-        val args = params.map(_.name)
-        if (params.isEmpty)
-          q"def $reqImpl[..$tparams]: $RT[$Res] = fk($H.${reqDef.name}(..$args))"
-        else
-          q"def $reqImpl[..$tparams](..$params): $RT[$Res] = fk($H.${reqDef.name}(..$args))"
+  // The enrich method adds a kind-1 type parameter `$ff[_]` to the algebra type,
+  // making that trait extends from AnyRef.
+  def enrich: Algebra = {
+    val ff: Type.Name = Type.fresh("FF$")
+    val pat: Trait =
+      q"trait Foo[${tyParamK(ff)}] extends _root_.freestyle.tagless.internal.TaglessEffectLike[$ff]"
+    Algebra(mods, name, pat.tparams, ctor, templ.copy(parents = pat.templ.parents))
+  }
+
+  val requests: Seq[Request] = requestDecls.map(dd => new Request(dd))
+
+  def mkObject: Object = {
+    val mm = Type.fresh("MM$")
+    val nn = Type.fresh("NN$")
+    val hh = Term.fresh("hh$")
+
+    val stackSafeHandler = Term.fresh("stackSafeHandler$")
+    val functorK         = Pat.Var.Term.apply(Term.fresh("functorKInstance$"))
+
+    val runTParams: Seq[Type.Param] = tyParamK(mm) +: tparams
+    val runTArgs: Seq[Type]         = mm +: tparams.map(toType)
+
+    val sup: Term.ApplyType = Term.ApplyType(Ctor.Ref.Name(name.value), runTArgs)
+
+    val handlerT: Trait = q"""
+      trait Handler[..$runTParams] extends $sup {
+         ..${requests.map(_.handlerDef(mm))}
       }
+    """
 
-      def traitDef(FF: TypeName): DefDef =
-        if (params.isEmpty)
-          q"def $reqImpl[..$tparams]: $FF[$Res]"
-        else
-          q"def $reqImpl[..$tparams](..$params): $FF[$Res]"
-
-      def handlerDef: DefDef =
-        if (params.isEmpty)
-          q"def $reqImpl[..$tparams]: $MM[$Res]"
-        else
-          q"def $reqImpl[..$tparams](..$params): $MM[$Res]"
-
-    }
-
-    def collectRequests(effectTrait: ClassDef): List[Request] = effectTrait.impl.collect {
-      case dd@q"$mods def $name[..$tparams](...$paramss): $tyRes" => tyRes match {
-        case tq"FS[..$args]" => new Request(dd.asInstanceOf[DefDef])
-        case _ => fail(s"$invalid in definition of method $name in ${effectTrait.name}. $onlyReqs")
+    val stackSafeT: Trait = q"""
+      @_root_.freestyle.free 
+      trait StackSafe {
+        ..${requests.map(_.freeDef)}
       }
-    }
+    """
 
-    def mkEffectObject(effectTrait: ClassDef): ModuleDef = {
-
-      val requests: List[Request] = collectRequests(effectTrait)
-
-      val Eff = effectTrait.name
-      val TTs = effectTrait.tparams
-      val tns = TTs.map(_.name)
-      val ev = freshTermName("ev$")
-      val hh = freshTermName("hh$")
-      val stackSafeHandler = freshTermName("stackSafeHandler$")
-      val stackSafeFTHandler = freshTermName("stackSafeFTHandler$")
-      val functorK = freshTermName("functorKInstance$")
-
-      val NN = freshTypeName("NN$")
-
+    val stackSafeD: Defn.Def = {
+      val ev = Term.fresh("ev$")
       q"""
-        object ${Eff.toTermName} {
-
-          trait Handler[$MM[_], ..$TTs] extends $Eff[$MM, ..$tns] {
-            ..${requests.map(_.handlerDef)}
-          }
-
-          @_root_.freestyle.free trait StackSafe {
-            ..${requests.map(_.freeDef)}
-          }
-
-          implicit def $stackSafeHandler[$MM[_]: _root_.cats.Monad](implicit $hh: Handler[$MM]): StackSafe.Handler[$MM] =
-            new StackSafe.Handler[$MM] {
-              ..${requests.map(_.freeHandlerDef(hh, MM))}
-            }
-
-          implicit val $functorK: _root_.mainecoon.FunctorK[({ type λ[α[_]] = $Eff[α, ..$TTs] })#λ] =
-            new _root_.mainecoon.FunctorK[({ type λ[α[_]] = $Eff[α, ..$TTs] })#λ] {
-              def mapK[$MM[_], $NN[_]]($hh: $Eff[$MM, ..$TTs])(fk: _root_.cats.arrow.FunctionK[$MM, $NN]): $Eff[$NN, ..$TTs] =
-                new $Eff[$NN, ..$TTs] {
-                  ..${requests.map(_.functorKDef(hh, NN))}
-                }
-            }
-
-          def apply[$MM[_], ..$TTs](implicit $ev: $Eff[$MM, ..$tns]): $Eff[$MM, ..$tns] = $ev
-
-          implicit def derive[$MM[_], $NN[_], ..$TTs](implicit
-            h: $Eff[$MM, ..$TTs],
-            FK: _root_.mainecoon.FunctorK[$Eff],
-            fk: _root_.cats.arrow.FunctionK[$MM, $NN]
-          ): $Eff[$NN, ..$TTs] = FK.mapK(h)(fk)
+      implicit def $stackSafeHandler[${tyParamK(mm)}](implicit $ev: _root_.cats.Monad[$mm], $hh: Handler[$mm]): StackSafe.Handler[$mm] =
+        new StackSafe.Handler[$mm] {
+          ..${requests.map(_.freeHandlerDef(hh, mm))}
         }
+    """
+    }
+
+    val deriveDef: Defn.Def = {
+      val deriveTTs = tyParamK(mm) +: tyParamK(nn) +: tparams
+      val nnTTs     = nn +: tparams.map(toType)
+      q"""
+        implicit def derive[..$deriveTTs](
+          implicit h: $name[..$runTArgs],
+          FK: _root_.mainecoon.FunctorK[$name],
+          fk: _root_.cats.arrow.FunctionK[$mm, $nn]
+      ): $name[..$nnTTs] = FK.mapK(h)(fk)
       """
     }
 
-    gen()
+    val applyDef: Defn.Def = {
+      val ev = Term.fresh("ev$")
+      q"def apply[..$runTParams](implicit $ev: $name[..$runTArgs]): $name[..$runTArgs] = $ev"
+    }
+
+    val functorKDef: Defn.Val = {
+      val mapKTTs        = tyParamK(mm) +: tyParamK(nn) +: tparams
+      val tParamsAsTypes = tparams.map(toType)
+      val nnTTs          = nn +: tParamsAsTypes
+      val ctor           = Ctor.Ref.Name(name.value)
+
+      q"""
+      implicit val $functorK: _root_.mainecoon.FunctorK[({ type λ[α[_]] = $name[α, ..$tParamsAsTypes] })#λ] =
+        new _root_.mainecoon.FunctorK[({ type λ[α[_]] = $name[α, ..$tParamsAsTypes] })#λ] {
+          def mapK[..$mapKTTs]($hh: $name[$mm, ..$tParamsAsTypes])(
+            fk: _root_.cats.arrow.FunctionK[$mm, ..$nnTTs]): $name[..$nnTTs] =
+              new $ctor[$nn, ..$tParamsAsTypes] {
+                ..${requests.map(_.functorKDef(hh, nn))}
+              }
+        }"""
+    }
+
+    val prot = q"object X {}"
+    prot.copy(
+      name = Term.Name(name.value),
+      templ = prot.templ.copy(
+        stats = Some(Seq(applyDef, functorKDef, deriveDef, stackSafeT, stackSafeD, handlerT))
+      ))
   }
+
 }
+
+class Request(reqDef: Decl.Def) {
+
+  import reqDef.tparams
+
+  // Name of the Request ADT Class
+  private[this] val reqName: String = reqDef.name.value
+
+  private[this] val res: Type = reqDef.decltpe match {
+    case Type.Apply(_, args) => args.last
+    case _                   => abort("Internal @tagless failure. Attempted to do request of non-applied type")
+  }
+
+  private[this] val reqImpl = Term.Name(reqName)
+
+  val params: Seq[Term.Param] = reqDef.paramss.flatten
+
+  def freeDef: Decl.Def =
+    if (params.isEmpty)
+      q"def $reqImpl[..$tparams]: FS[$res]"
+    else
+      q"def $reqImpl[..$tparams](..$params): FS[$res]"
+
+  def freeHandlerDef(hH: Term.Name, rt: Type.Name): Defn.Def = {
+    val args: Seq[Term.Name] = params.map(toName)
+    if (params.isEmpty)
+      q"def $reqImpl[..$tparams]: $rt[$res] = $hH.${reqDef.name}(..$args)"
+    else
+      q"def $reqImpl[..$tparams](..$params): $rt[$res] = $hH.${reqDef.name}(..$args)"
+  }
+
+  def functorKDef(hH: Term.Name, rt: Type.Name): Defn.Def = {
+    val args: Seq[Term.Name] = params.map(toName)
+    if (params.isEmpty)
+      q"def $reqImpl[..$tparams]: $rt[$res] = fk($hH.${reqDef.name}(..$args))"
+    else
+      q"def $reqImpl[..$tparams](..$params): $rt[$res] = fk($hH.${reqDef.name}(..$args))"
+  }
+
+  def handlerDef(mm: Type.Name): Decl.Def =
+    if (params.isEmpty)
+      q"def $reqImpl[..$tparams]: $mm[$res]"
+    else
+      q"def $reqImpl[..$tparams](..$params): $mm[$res]"
+
+}
+
+object Util {
+  // Messages of error
+  val invalid = "Invalid use of the `@tagless` annotation"
+  val abstractOnly =
+    "The `@tagless` annotation can only be applied to a trait or to an abstract class."
+  val noCompanion = "The trait (or class) annotated with `@tagless` must have no companion object."
+  val onlyReqs =
+    "In a `@tagless`-annotated trait (or class), all abstract method declarations should be of type FS[_]"
+  val nonEmpty =
+    "A `@tagless`-annotated trait or class  must have at least one abstract method of type `FS[_]`"
+}
+// $COVERAGE-ON$
