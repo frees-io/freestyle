@@ -24,7 +24,14 @@ object ProjectPlugin extends AutoPlugin {
   override def projectSettings: Seq[Def.Setting[_]] = Seq(
     coverageExcludedFiles in Global := ".*<macro>",
     orgScriptTaskListSetting := List("validate".asRunnableItemFull),
-    publishArtifact in (Compile, packageDoc) := false
+    packageDoc in Compile := {
+      val sourceFile = (baseDirectory in LocalRootProject).value / "README.md"
+      val targetFile = crossTarget.value / s"${name.value}-javadoc.jar"
+
+      IO.copy(Seq(sourceFile -> targetFile), overwrite = true).toSeq
+
+      targetFile
+    }
   )
 
 }
