@@ -100,12 +100,12 @@ Freestyle integrations are located at https://github.com/frees-io/freestyle-inte
 
 Freestyle is compatible with both Scala JVM and Scala.js.
 
-This project supports Scala 2.11 and 2.12. The project is based on macro paradise.
+This project supports Scala 2.11 and 2.12. The project is based on [scalameta](http://scalameta.org/).
 
 To use the project, add the following to your build.sbt:
 
 ```scala
-addCompilerPlugin("org.scalamacros" % "paradise" % "2.1.0" cross CrossVersion.full)
+addCompilerPlugin("org.scalameta" % "paradise" % "3.0.0-M8" cross CrossVersion.full)
 ```
 
 [comment]: # (Start Replace)
