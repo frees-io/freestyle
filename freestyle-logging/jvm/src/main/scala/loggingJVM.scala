@@ -25,20 +25,20 @@ import org.slf4j.LoggerFactory
 
 object loggingJVM {
 
+  private[this] def formatMessage(
+    msg: String,
+    sourceAndLineInfo: Boolean,
+    line: sourcecode.Line,
+    file: sourcecode.File): String =
+    if (sourceAndLineInfo) s"$file:$line: $msg"
+    else msg
+
   object implicits {
     implicit def freeStyleLoggingHandler[M[_]](
         implicit ME: MonadError[M, Throwable]): LoggingM.Handler[M] =
       new LoggingM.Handler[M] {
 
         val logger = Logger("")
-
-        private[this] def formatMessage(
-            msg: String,
-            sourceAndLineInfo: Boolean,
-            line: sourcecode.Line,
-            file: sourcecode.File): String =
-          if (sourceAndLineInfo) s"$file:$line: $msg"
-          else msg
 
         def debug(
             msg: String,
@@ -108,22 +108,22 @@ object loggingJVM {
       Kleisli { logger =>
         ME.catchNonFatal {
           op match {
-            case LoggingM.DebugOP(msg) =>
-              logger.debug(msg)
-            case LoggingM.DebugWithCauseOP(msg, cause) =>
-              logger.debug(msg, cause)
-            case LoggingM.ErrorOP(msg) =>
-              logger.error(msg)
-            case LoggingM.ErrorWithCauseOP(msg, cause) =>
-              logger.error(msg, cause)
-            case LoggingM.InfoOP(msg) =>
-              logger.info(msg)
-            case LoggingM.InfoWithCauseOP(msg, cause) =>
-              logger.info(msg, cause)
-            case LoggingM.WarnOP(msg) =>
-              logger.warn(msg)
-            case LoggingM.WarnWithCauseOP(msg, cause) =>
-              logger.warn(msg, cause)
+            case LoggingM.DebugOP(msg, sourceAndLineInfo, line, file) =>
+              logger.debug(formatMessage(msg, sourceAndLineInfo, line, file))
+            case LoggingM.DebugWithCauseOP(msg, cause, sourceAndLineInfo, line, file) =>
+              logger.debug(formatMessage(msg, sourceAndLineInfo, line, file), cause)
+            case LoggingM.ErrorOP(msg, sourceAndLineInfo, line, file) =>
+              logger.error(formatMessage(msg, sourceAndLineInfo, line, file))
+            case LoggingM.ErrorWithCauseOP(msg, cause, sourceAndLineInfo, line, file) =>
+              logger.error(formatMessage(msg, sourceAndLineInfo, line, file), cause)
+            case LoggingM.InfoOP(msg, sourceAndLineInfo, line, file) =>
+              logger.info(formatMessage(msg, sourceAndLineInfo, line, file))
+            case LoggingM.InfoWithCauseOP(msg, cause, sourceAndLineInfo, line, file) =>
+              logger.info(formatMessage(msg, sourceAndLineInfo, line, file), cause)
+            case LoggingM.WarnOP(msg, sourceAndLineInfo, line, file) =>
+              logger.warn(formatMessage(msg, sourceAndLineInfo, line, file))
+            case LoggingM.WarnWithCauseOP(msg, cause, sourceAndLineInfo, line, file) =>
+              logger.warn(formatMessage(msg, sourceAndLineInfo, line, file), cause)
           }
         }
     })
