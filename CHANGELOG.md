@@ -1,5 +1,15 @@
 # Changelog
 
+## 06/12/2017 - Version 0.3.0
+
+Release changes:
+
+* bump mainecoon-core to 0.1.1 ([#342](https://github.com/frees-io/freestyle/pull/342))
+* Enables CI checks for Freestyle Projects ([#343](https://github.com/frees-io/freestyle/pull/343))
+* Calculates coverage only for JVM, excluding JS tests ([#350](https://github.com/frees-io/freestyle/pull/350))
+* DA-73 Scalameta migration ([#344](https://github.com/frees-io/freestyle/pull/344))
+
+
 ## 06/02/2017 - Version 0.2.0
 
 Release changes:
