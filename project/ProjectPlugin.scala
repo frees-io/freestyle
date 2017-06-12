@@ -1,5 +1,6 @@
 import freestyle.FreestylePlugin
 import sbt._
+import sbt.Keys._
 import sbtorgpolicies.OrgPoliciesPlugin.autoImport.orgScriptTaskListSetting
 import sbtorgpolicies.runnable.syntax._
 import scoverage.ScoverageKeys.coverageExcludedFiles
@@ -22,7 +23,8 @@ object ProjectPlugin extends AutoPlugin {
 
   override def projectSettings: Seq[Def.Setting[_]] = Seq(
     coverageExcludedFiles in Global := ".*<macro>",
-    orgScriptTaskListSetting := List("validate".asRunnableItemFull)
+    orgScriptTaskListSetting := List("validate".asRunnableItemFull),
+    publishArtifact in (Compile, packageDoc) := false
   )
 
 }
