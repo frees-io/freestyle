@@ -34,7 +34,8 @@ echo "Checking projects $DOCS_REPO and $INTEGRATIONS_REPO for freestyle version 
 
 # Checking freestyle-integrations
 (clone_repo $INTEGRATIONS_REPO) || EXIT_STATUS=$?
-(cd freestyle-integrations && sbt ++$TRAVIS_SCALA_VERSION -Dfrees.version=$VERSION "clean" "compile" "test" "publishLocal" && cd ..) || EXIT_STATUS=$?
+(cd freestyle-integrations && sbt ++$TRAVIS_SCALA_VERSION -Dfrees.version=$VERSION "clean" "compile" "test") || EXIT_STATUS=$?
+(sbt ++$TRAVIS_SCALA_VERSION -Dfrees.version=$VERSION "publishLocal" && cd ..) || EXIT_STATUS=$?
 
 # Checking freestyle-docs
 if [ "$TRAVIS_SCALA_VERSION" = "2.12.2" ]; then
