@@ -133,7 +133,7 @@ object loggingJVM {
     λ[FunctionK[Kleisli[M, Logger, ?], M]](_.run(log))
 
   implicit def freeStyleLoggingToM[M[_]: MonadError[?[_], Throwable]](
-      log: Logger): FSHandler[LoggingM.Op, M] =
+      implicit log: Logger): FSHandler[LoggingM.Op, M] =
     freeStyleLoggingKleisli andThen freeStyleLoggingKleisliRunner(log)
 
 }
