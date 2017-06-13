@@ -13,7 +13,7 @@ It includes most of the well-known operations found in loggers as well as differ
 
 <p>In order to enable this integration, you can depend on <em>freestyle-logging</em>:</p>
 
-<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="n">libraryDependencies</span> <span class="o">+=</span> <span class="s">"io.frees"</span> <span class="o">%%</span> <span class="s">"freestyle-logging"</span> <span class="o">%</span> <span class="s">"0.2.0"</span>
+<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="n">libraryDependencies</span> <span class="o">+=</span> <span class="s">"io.frees"</span> <span class="o">%%</span> <span class="s">"freestyle-logging"</span> <span class="o">%</span> <span class="s">"0.3.0"</span>
 </code></pre>
 </div>
 
@@ -65,7 +65,7 @@ The JVM handler interpreter is based on the <a href="https://github.com/Verizon/
 <span class="k">implicit</span> <span class="k">val</span> <span class="n">customerServiceHandler</span><span class="k">:</span> <span class="kt">CustomerService.Handler</span><span class="o">[</span><span class="kt">Try</span><span class="o">]</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">CustomerService</span><span class="o">.</span><span class="nc">Handler</span><span class="o">[</span><span class="kt">Try</span><span class="o">]</span> <span class="o">{</span>
   <span class="k">def</span> <span class="n">customers</span><span class="k">:</span> <span class="kt">Try</span><span class="o">[</span><span class="kt">List</span><span class="o">[</span><span class="kt">String</span><span class="o">]]</span> <span class="k">=</span> <span class="nc">Try</span><span class="o">(</span><span class="nc">List</span><span class="o">(</span><span class="s">"John"</span><span class="o">,</span> <span class="s">"Jane"</span><span class="o">,</span> <span class="s">"Luis"</span><span class="o">))</span>
 <span class="o">}</span>
-<span class="c1">// customerServiceHandler: CustomerService.Handler[scala.util.Try] = $anon$1@3cdc9228
+<span class="c1">// customerServiceHandler: CustomerService.Handler[scala.util.Try] = $anon$1@7064e9be
 </span></code></pre>
 </div>
 

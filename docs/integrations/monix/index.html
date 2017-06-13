@@ -65,7 +65,7 @@ ga('send', 'pageview');
     <span class="k">def</span> <span class="n">isEven</span><span class="k">:</span> <span class="kt">ValidateInt</span><span class="o">[</span><span class="kt">Boolean</span><span class="o">]</span> <span class="k">=</span>
       <span class="nc">Kleisli</span><span class="o">(</span><span class="n">i</span> <span class="k">=&gt;</span> <span class="nc">Task</span><span class="o">.</span><span class="n">eval</span> <span class="o">{</span> <span class="n">blockAndPrint</span><span class="o">(</span><span class="n">i</span> <span class="o">*</span> <span class="mi">250L</span><span class="o">,</span> <span class="n">s</span><span class="s">"isEven($i)"</span><span class="o">);</span> <span class="n">i</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">==</span> <span class="mi">0</span> <span class="o">})</span>
   <span class="o">}</span>
-<span class="c1">// validateIntTaskHandler: Validator.Handler[ValidateInt] = $anon$1@4cb5d07c
+<span class="c1">// validateIntTaskHandler: Validator.Handler[ValidateInt] = $anon$1@12dec7ed
 </span></code></pre>
 </div>
 
@@ -78,7 +78,7 @@ ga('send', 'pageview');
 <span class="c1">// import monix.cats._
 </span>
 <span class="k">val</span> <span class="n">check</span> <span class="k">=</span> <span class="n">isPositiveEven</span><span class="o">[</span><span class="kt">Validator.Op</span><span class="o">].</span><span class="n">interpret</span><span class="o">[</span><span class="kt">ValidateInt</span><span class="o">]</span>
-<span class="c1">// check: ValidateInt[Boolean] = Kleisli(cats.data.Kleisli$$Lambda$3733/1195267415@2c73d98)
+<span class="c1">// check: ValidateInt[Boolean] = Kleisli(cats.data.Kleisli$$Lambda$3733/1756877938@6e11c1dd)
 </span></code></pre>
 </div>
 
@@ -120,7 +120,7 @@ ga('send', 'pageview');
 <span class="c1">// import Task.nondeterminism
 </span>
 <span class="k">val</span> <span class="n">check2</span> <span class="k">=</span> <span class="n">isPositiveEven</span><span class="o">[</span><span class="kt">Validator.Op</span><span class="o">].</span><span class="n">interpret</span><span class="o">[</span><span class="kt">ValidateInt</span><span class="o">]</span>
-<span class="c1">// check2: ValidateInt[Boolean] = Kleisli(cats.data.Kleisli$$Lambda$3733/1195267415@8afd97b)
+<span class="c1">// check2: ValidateInt[Boolean] = Kleisli(cats.data.Kleisli$$Lambda$3733/1756877938@510f9548)
 </span>
 <span class="nc">Await</span><span class="o">.</span><span class="n">result</span><span class="o">(</span><span class="n">check2</span><span class="o">.</span><span class="n">run</span><span class="o">(</span><span class="mi">1</span><span class="o">).</span><span class="n">runAsync</span><span class="o">,</span> <span class="nc">Duration</span><span class="o">.</span><span class="nc">Inf</span><span class="o">)</span>
 <span class="c1">// isEven(1)

@@ -13,7 +13,7 @@ It declares several abstract operations to read and write data into the store.</
 
 <p>In order to enable this algebra, you can depend on <em>freestyle-cache</em>:</p>
 
-<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="n">libraryDependencies</span> <span class="o">+=</span> <span class="s">"io.frees"</span> <span class="o">%%</span> <span class="s">"freestyle-cache"</span> <span class="o">%</span> <span class="s">"0.2.0"</span>
+<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="n">libraryDependencies</span> <span class="o">+=</span> <span class="s">"io.frees"</span> <span class="o">%%</span> <span class="s">"freestyle-cache"</span> <span class="o">%</span> <span class="s">"0.3.0"</span>
 </code></pre>
 </div>
 
@@ -52,7 +52,7 @@ For the same reason, it poses no type constraint on <code class="highlighter-rou
 <span class="c1">// import cats.implicits._
 </span>
 <span class="k">val</span> <span class="n">prov</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">KeyValueProvider</span><span class="o">[</span><span class="kt">Char</span>, <span class="kt">Int</span><span class="o">]</span>
-<span class="c1">// prov: freestyle.cache.KeyValueProvider[Char,Int] = freestyle.cache.KeyValueProvider@472e61e0
+<span class="c1">// prov: freestyle.cache.KeyValueProvider[Char,Int] = freestyle.cache.KeyValueProvider@1a12385e
 </span>
 <span class="k">import</span> <span class="nn">prov.CacheM</span>
 <span class="c1">// import prov.CacheM
