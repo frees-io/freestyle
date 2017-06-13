@@ -30,8 +30,10 @@ script:
 - ./scripts/build.sh
 
 after_success:
-- bash <(curl -s https://codecov.io/bash)
-- sbt ++$TRAVIS_SCALA_VERSION orgAfterCISuccess
+- if [ "$TRAVIS_SCALA_VERSION" = "2.12.2" -a "$SCALAENV" = "jvm" ]; then
+    bash <(curl -s https://codecov.io/bash);
+    sbt ++$TRAVIS_SCALA_VERSION orgAfterCISuccess;
+  fi
 
 cache:
   directories:

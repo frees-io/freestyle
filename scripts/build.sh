@@ -37,7 +37,7 @@ PUBLISH_PROJECT="sbt ++$TRAVIS_SCALA_VERSION publishLocal"
 CLONE_INTEGRATIONS_REPO="clone_repo $INTEGRATIONS_REPO"
 CLONE_DOCS_REPO="clone_repo $DOCS_REPO"
 
-INTEGRATIONS_SCRIPT="cd freestyle-integrations && sbt ++$TRAVIS_SCALA_VERSION -Dfrees.version=$VERSION 'clean' 'compile' 'test' 'publishLocal' && cd .."
+INTEGRATIONS_SCRIPT="cd freestyle-integrations && sbt ++$TRAVIS_SCALA_VERSION -Dfrees.version=$VERSION 'clean' 'compile' 'test' && cd .."
 DOCS_SCRIPT="cd freestyle-docs && sbt ++$TRAVIS_SCALA_VERSION -Dfrees.version=$VERSION 'tut' && cd .."
 
 if [ "$SCALAENV" = "jvm" ]; then
