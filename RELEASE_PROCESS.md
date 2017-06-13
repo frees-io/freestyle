@@ -12,4 +12,3 @@ Freestyle Release Process is semi-automated thanks to [sbt-org-policies](https:/
 
 5. Regarding documentation, in this step, we are going to release the [freestyle-docs](https://github.com/frees-io/freestyle-docs) project. As in the previous step, the build version must also fit with the one released for `freestyle` core project. Finally, as we did in the above, we have to modify the latest released version as a default value [here](https://github.com/frees-io/freestyle-docs/blob/65fa2944e5a2f8dd420804b26ae0dcbb17a22e9e/build.sbt#L5).
 
-6. Should we do the same for the rest of the project in the Freestyle's ecosystem?
