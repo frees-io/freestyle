@@ -23,7 +23,7 @@ import org.slf4j.LoggerFactory
 
 object loggingJVM {
 
-  object implicits {
+  trait Implicits {
     implicit def freeStyleLoggingHandler[M[_]](
         implicit ME: MonadError[M, Throwable]): LoggingM.Handler[M] =
       new LoggingM.Handler[M] {
@@ -99,4 +99,6 @@ object loggingJVM {
           ME.catchNonFatal(logger.warn(formatMessage(msg, sourceAndLineInfo, line, file), cause))
       }
   }
+
+  object implicits extends Implicits
 }

@@ -17,13 +17,13 @@
 package freestyle
 package tagless
 
+import freestyle.tagless.internal.taglessImpl
+
 import scala.annotation.{StaticAnnotation, compileTimeOnly}
 
 @compileTimeOnly("enable macro paradise to expand @tagless macro annotations")
 class tagless extends StaticAnnotation {
-  def macroTransform(annottees: Any*): Any = macro taglessImpl.tagless
-}
+  import scala.meta._
 
-trait TaglessEffectLike[F[_]] {
-  final type FS[A] = F[A]
+  inline def apply(defn: Any): Any = meta { taglessImpl.tagless(defn) }
 }

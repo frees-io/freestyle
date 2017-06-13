@@ -30,15 +30,15 @@ object state {
       def inspect[A](f: S => A): FS[A]
     }
 
-    object implicits {
+    trait Implicits {
 
-      implicit def freestyleStateMHandler[M[_]](
-          implicit MS: MonadState[M, S]): StateM.Handler[M] = new StateM.Handler[M] {
-        def get: M[S]                   = MS.get
-        def set(s: S): M[Unit]          = MS.set(s)
-        def modify(f: S => S): M[Unit]  = MS.modify(f)
-        def inspect[A](f: S => A): M[A] = MS.inspect(f)
-      }
+      implicit def freestyleStateMHandler[M[_]](implicit MS: MonadState[M, S]): StateM.Handler[M] =
+        new StateM.Handler[M] {
+          def get: M[S]                   = MS.get
+          def set(s: S): M[Unit]          = MS.set(s)
+          def modify(f: S => S): M[Unit]  = MS.modify(f)
+          def inspect[A](f: S => A): M[A] = MS.inspect(f)
+        }
 
       class StateInspectFreeSLift[F[_]: StateM] extends FreeSLift[F, Function1[S, ?]] {
         def liftFSPar[A](fa: S => A): FreeS.Par[F, A] = StateM[F].inspect(fa)
@@ -49,6 +49,7 @@ object state {
 
     }
 
+    object implicits extends Implicits
   }
 
   def apply[S] = new StateSeedProvider[S]

@@ -9,6 +9,16 @@ scala:
 env:
 - SCALAENV=jvm
 - SCALAENV=js
+- FREESBUILD=docs
+- FREESBUILD=integrations
+
+matrix:
+  exclude:
+  - scala: 2.11.11
+    env: FREESBUILD=docs
+  # Excluding docs check for now
+  - scala: 2.12.2
+    env: FREESBUILD=docs
 
 jdk:
 - oraclejdk8
@@ -19,25 +29,13 @@ before_install:
   fi
 - export PATH=${PATH}:./vendor/bundle
 
-install:
-- if [ "$TRAVIS_SCALA_VERSION" = "2.12.2" ]; then
-      rvm use 2.2.3 --install --fuzzy ;
-      gem update --system ;
-      gem install sass ;
-      gem install jekyll -v 3.2.1 ;
-  fi
-
 script:
-- if [ "$SCALAENV" = "jvm" ]; then
-    sbt ++$TRAVIS_SCALA_VERSION orgScriptCI;
-    ./scripts/build.sh;
-  fi
-- if [ "$SCALAENV" = "js" ]; then
-    sbt ++$TRAVIS_SCALA_VERSION test:fastOptJS validateJS;
-  fi
+- ./scripts/build.sh
 
 after_success:
-- bash <(curl -s https://codecov.io/bash)
+- if [ "$TRAVIS_SCALA_VERSION" = "2.12.2" -a "$SCALAENV" = "jvm" ]; then
+    bash <(curl -s https://codecov.io/bash);
+  fi
 - sbt ++$TRAVIS_SCALA_VERSION orgAfterCISuccess
 
 cache:

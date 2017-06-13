@@ -33,7 +33,7 @@ object async {
     def async[A](fa: Proc[A]): FS[A]
   }
 
-  object implicits {
+  trait Implicits {
     implicit def futureAsyncContext(
         implicit ec: ExecutionContext
     ) = new AsyncContext[Future] {
@@ -56,4 +56,6 @@ object async {
           MA.runAsync(fa)
       }
   }
+
+  object implicits extends Implicits
 }
