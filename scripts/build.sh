@@ -29,18 +29,35 @@ INTEGRATIONS_REPO="https://github.com/frees-io/freestyle-integrations.git"
 
 VERSION="$(grep -F -m 1 'version in ThisBuild :=' version.sbt)"; VERSION="${VERSION#*\"}"; VERSION="${VERSION%\"*}"
 
-(sbt ++$TRAVIS_SCALA_VERSION publishLocal) || EXIT_STATUS=$?
-echo "Checking projects $DOCS_REPO and $INTEGRATIONS_REPO for freestyle version $VERSION"
+SCALA_JS_SCRIPT="sbt ++$TRAVIS_SCALA_VERSION test:fastOptJS validateJS"
+SCALA_JVM_SCRIPT="sbt ++$TRAVIS_SCALA_VERSION orgScriptCI"
 
-# Checking freestyle-integrations
-(clone_repo $INTEGRATIONS_REPO) || EXIT_STATUS=$?
-(cd freestyle-integrations && sbt ++$TRAVIS_SCALA_VERSION -Dfrees.version=$VERSION "clean" "compile" "test") || EXIT_STATUS=$?
-(sbt ++$TRAVIS_SCALA_VERSION -Dfrees.version=$VERSION "publishLocal" && cd ..) || EXIT_STATUS=$?
+PUBLISH_PROJECT="sbt ++$TRAVIS_SCALA_VERSION publishLocal"
 
-# Checking freestyle-docs
-if [ "$TRAVIS_SCALA_VERSION" = "2.12.2" ]; then
-  (clone_repo $DOCS_REPO) || EXIT_STATUS=$?
-  (cd freestyle-docs && sbt ++$TRAVIS_SCALA_VERSION -Dfrees.version=$VERSION "clean" "tut"  && cd ..) || EXIT_STATUS=$?
+CLONE_INTEGRATIONS_REPO="clone_repo $INTEGRATIONS_REPO"
+CLONE_DOCS_REPO="clone_repo $DOCS_REPO"
+
+INTEGRATIONS_SCRIPT="cd freestyle-integrations && sbt ++$TRAVIS_SCALA_VERSION -Dfrees.version=$VERSION 'clean' 'compile' 'test' && cd .."
+DOCS_SCRIPT="cd freestyle-docs && sbt ++$TRAVIS_SCALA_VERSION -Dfrees.version=$VERSION 'tut' && cd .."
+
+if [ "$SCALAENV" = "jvm" ]; then
+  eval $SCALA_JVM_SCRIPT || EXIT_STATUS=$?
+fi
+
+if [ "$SCALAENV" = "js" ]; then
+  eval $SCALA_JS_SCRIPT || EXIT_STATUS=$?
+fi
+
+if [ "$FREESBUILD" = "integrations" ]; then
+  eval $PUBLISH_PROJECT || EXIT_STATUS=$?
+  eval $CLONE_INTEGRATIONS_REPO || EXIT_STATUS=$?
+  eval $INTEGRATIONS_SCRIPT || EXIT_STATUS=$?
+fi
+
+if [ "$FREESBUILD" = "docs" ]; then
+  eval $PUBLISH_PROJECT || EXIT_STATUS=$?
+  eval $CLONE_DOCS_REPO || EXIT_STATUS=$?
+  eval $DOCS_SCRIPT || EXIT_STATUS=$?
 fi
 
 exit $EXIT_STATUS
