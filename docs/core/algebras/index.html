@@ -32,13 +32,16 @@ ga('send', 'pageview');
 
 <p>This is similar to the simplified manual encoding below:</p>
 
-<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">freestyle.</span><span class="o">{</span><span class="nc">FreeS</span><span class="o">,</span> <span class="nc">EffectLike</span><span class="o">}</span>
-<span class="c1">// import freestyle.{FreeS, EffectLike}
+<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">freestyle.FreeS</span>
+<span class="c1">// import freestyle.FreeS
+</span>
+<span class="k">import</span> <span class="nn">freestyle.internal.EffectLike</span>
+<span class="c1">// import freestyle.internal.EffectLike
 </span>
 <span class="k">case</span> <span class="k">class</span> <span class="nc">User</span><span class="o">(</span><span class="n">id</span><span class="k">:</span> <span class="kt">Long</span><span class="o">,</span> <span class="n">name</span><span class="k">:</span> <span class="kt">String</span><span class="o">)</span>
 <span class="c1">// defined class User
 </span>
-<span class="k">trait</span> <span class="nc">UserRepository</span><span class="o">[</span><span class="kt">F</span><span class="o">[</span><span class="k">_</span><span class="o">]]</span> <span class="nc">extends</span> <span class="n">freestyle</span><span class="o">.</span><span class="nc">EffectLike</span><span class="o">[</span><span class="kt">F</span><span class="o">]</span> <span class="o">{</span>
+<span class="k">trait</span> <span class="nc">UserRepository</span><span class="o">[</span><span class="kt">F</span><span class="o">[</span><span class="k">_</span><span class="o">]]</span> <span class="nc">extends</span> <span class="nc">EffectLike</span><span class="o">[</span><span class="kt">F</span><span class="o">]</span> <span class="o">{</span>
   <span class="k">def</span> <span class="n">get</span><span class="o">(</span><span class="n">id</span><span class="k">:</span> <span class="kt">Long</span><span class="o">)</span><span class="k">:</span> <span class="kt">FS</span><span class="o">[</span><span class="kt">User</span><span class="o">]</span>
   <span class="k">def</span> <span class="n">save</span><span class="o">(</span><span class="n">user</span><span class="k">:</span> <span class="kt">User</span><span class="o">)</span><span class="k">:</span> <span class="kt">FS</span><span class="o">[</span><span class="kt">User</span><span class="o">]</span>
   <span class="k">def</span> <span class="n">getAll</span><span class="o">(</span><span class="n">filter</span><span class="k">:</span> <span class="kt">String</span><span class="o">)</span><span class="k">:</span> <span class="kt">FS</span><span class="o">[</span><span class="kt">List</span><span class="o">[</span><span class="kt">User</span><span class="o">]]</span>
@@ -113,7 +116,7 @@ This effectively enables implicits based Dependency Injection where you may choo
 using the implicits scoping rules to place different implementations where appropriate.</p>
 
 <div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">val</span> <span class="n">userRepository</span> <span class="k">=</span> <span class="nc">UserRepository</span><span class="o">[</span><span class="kt">UserRepository.Op</span><span class="o">]</span>
-<span class="c1">// userRepository: UserRepository[UserRepository.Op] = UserRepository$To@7a09950a
+<span class="c1">// userRepository: UserRepository[UserRepository.Op] = UserRepository$To@2c2da767
 </span></code></pre>
 </div>
 
@@ -173,7 +176,7 @@ languages:['scala','java','bash']
 });
 hljs.initHighlighting();
              </script><script>((window.gitter = {}).chat = {}).options = {
-room: 'frees-io/freestyle'};</script><script src="https://sidecar.gitter.im/dist/sidecar.v1.js"></script><script src="/js/main.js"></script><script src="/js/kazari.js"></script><script>
+room: '47deg/freestyle'};</script><script src="https://sidecar.gitter.im/dist/sidecar.v1.js"></script><script src="/js/main.js"></script><script src="/js/kazari.js"></script><script>
 $(document).ready(function() {
 	kazari.KazariPlugin().decorateCode('https://scala-evaluator-212.herokuapp.com/eval', 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.S2F6YXJp.Jl2eqMfw8IakJF93PjxTbrf-8YUJgX5OoOfy5JHE8Yw', '', 'monokai')
 })

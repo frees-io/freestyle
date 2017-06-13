@@ -66,7 +66,7 @@ ga('send', 'pageview');
 <span class="k">implicit</span> <span class="k">val</span> <span class="n">futureHandler</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">Calc</span><span class="o">.</span><span class="nc">Handler</span><span class="o">[</span><span class="kt">Future</span><span class="o">]</span> <span class="o">{</span>
   <span class="k">def</span> <span class="n">gcd</span><span class="o">(</span><span class="n">a</span><span class="k">:</span> <span class="kt">Int</span><span class="o">,</span> <span class="n">b</span><span class="k">:</span><span class="kt">Int</span><span class="o">)</span><span class="k">:</span> <span class="kt">Future</span><span class="o">[</span><span class="kt">Int</span><span class="o">]</span> <span class="k">=</span> <span class="n">gcdFuture</span><span class="o">(</span><span class="n">a</span><span class="o">,</span> <span class="n">b</span><span class="o">)</span>
 <span class="o">}</span>
-<span class="c1">// futureHandler: Calc.Handler[com.twitter.util.Future] = $anon$1@73db3ab2
+<span class="c1">// futureHandler: Calc.Handler[com.twitter.util.Future] = $anon$1@79e663cd
 </span></code></pre>
 </div>
 
@@ -83,7 +83,7 @@ ga('send', 'pageview');
 <p>We can use a freestyle program within <code class="highlighter-rouge">Endpoint#apply</code>:</p>
 
 <div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="n">cats</span><span class="o">.</span><span class="nc">Monad</span><span class="o">[</span><span class="kt">Future</span><span class="o">]</span>
-<span class="c1">// res2: cats.Monad[com.twitter.util.Future] = io.catbird.util.FutureInstances$$anon$1@1c41697b
+<span class="c1">// res2: cats.Monad[com.twitter.util.Future] = io.catbird.util.FutureInstances$$anon$1@77d9eb4c
 </span>
 <span class="k">val</span> <span class="n">gcdEndpointTwo</span> <span class="k">=</span> <span class="n">get</span><span class="o">(</span><span class="n">int</span> <span class="o">::</span> <span class="n">int</span><span class="o">)</span> <span class="o">{</span> <span class="o">(</span><span class="n">a</span><span class="k">:</span> <span class="kt">Int</span><span class="o">,</span> <span class="n">b</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span> <span class="k">=&gt;</span>
   <span class="nc">Calc</span><span class="o">[</span><span class="kt">Calc.Op</span><span class="o">].</span><span class="n">gcd</span><span class="o">(</span><span class="n">a</span><span class="o">,</span> <span class="n">b</span><span class="o">).</span><span class="n">map</span><span class="o">(</span><span class="nc">Ok</span><span class="o">(</span><span class="k">_</span><span class="o">))</span>
@@ -125,7 +125,7 @@ languages:['scala','java','bash']
 });
 hljs.initHighlighting();
              </script><script>((window.gitter = {}).chat = {}).options = {
-room: 'frees-io/freestyle'};</script><script src="https://sidecar.gitter.im/dist/sidecar.v1.js"></script><script src="/js/main.js"></script><script src="/js/kazari.js"></script><script>
+room: '47deg/freestyle'};</script><script src="https://sidecar.gitter.im/dist/sidecar.v1.js"></script><script src="/js/main.js"></script><script src="/js/kazari.js"></script><script>
 $(document).ready(function() {
 	kazari.KazariPlugin().decorateCode('https://scala-evaluator-212.herokuapp.com/eval', 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.S2F6YXJp.Jl2eqMfw8IakJF93PjxTbrf-8YUJgX5OoOfy5JHE8Yw', '', 'monokai')
 })

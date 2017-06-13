@@ -58,7 +58,7 @@ member in your algebras companion.</p>
   <span class="k">def</span> <span class="n">delete</span><span class="o">(</span><span class="n">key</span><span class="k">:</span> <span class="kt">String</span><span class="o">)</span><span class="k">:</span> <span class="kt">KVStoreState</span><span class="o">[</span><span class="kt">Unit</span><span class="o">]</span> <span class="k">=</span>
     <span class="nc">State</span><span class="o">.</span><span class="n">modify</span><span class="o">(</span><span class="k">_</span> <span class="o">-</span> <span class="n">key</span><span class="o">)</span>
 <span class="o">}</span>
-<span class="c1">// kvStoreHandler: KVStore.Handler[KVStoreState] = $anon$1@72a79f96
+<span class="c1">// kvStoreHandler: KVStore.Handler[KVStoreState] = $anon$1@6f477f52
 </span></code></pre>
 </div>
 
@@ -155,7 +155,7 @@ below:</p>
 <span class="c1">// import freestyle.implicits._
 </span>
 <span class="n">program</span><span class="o">[</span><span class="kt">Backend.Op</span><span class="o">].</span><span class="n">interpret</span><span class="o">[</span><span class="kt">KVStoreState</span><span class="o">]</span>
-<span class="c1">// res0: KVStoreState[Option[Int]] = cats.data.StateT@1086eb0
+<span class="c1">// res0: KVStoreState[Option[Int]] = cats.data.StateT@6bfbdef
 </span></code></pre>
 </div>
 
@@ -176,7 +176,7 @@ languages:['scala','java','bash']
 });
 hljs.initHighlighting();
              </script><script>((window.gitter = {}).chat = {}).options = {
-room: 'frees-io/freestyle'};</script><script src="https://sidecar.gitter.im/dist/sidecar.v1.js"></script><script src="/js/main.js"></script><script src="/js/kazari.js"></script><script>
+room: '47deg/freestyle'};</script><script src="https://sidecar.gitter.im/dist/sidecar.v1.js"></script><script src="/js/main.js"></script><script src="/js/kazari.js"></script><script>
 $(document).ready(function() {
 	kazari.KazariPlugin().decorateCode('https://scala-evaluator-212.herokuapp.com/eval', 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.S2F6YXJp.Jl2eqMfw8IakJF93PjxTbrf-8YUJgX5OoOfy5JHE8Yw', '', 'monokai')
 })

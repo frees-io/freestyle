@@ -10,7 +10,7 @@ ga('send', 'pageview');
 
 <p>Freestyle programs are easy to use as a result of a Play Framework Action with the  <em>freestyle-http-play</em> module. This module provides an implicit conversion <code class="highlighter-rouge">FreeS[F, A] =&gt; Future[A]</code> which allows a user to define a Free program as the result of any Play Action that expects a Future as a response.</p>
 
-<p>To enable this integration you can depend on <em>freestyle-http-play</em>:</p>
+<p>To enable this integration you can depend on <em>freestyle-http-play</em> with <a href="https://playframework.com/documentation/2.6.x/Migration26">Play framework 2.6</a>:</p>
 
 <div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="n">libraryDependencies</span> <span class="o">+=</span> <span class="s">"io.frees"</span> <span class="o">%%</span> <span class="s">"freestyle-http-play"</span> <span class="o">%</span> <span class="s">"0.2.0"</span>
 </code></pre>
@@ -29,9 +29,12 @@ ga('send', 'pageview');
 
 <div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">freestyle.http.play.implicits._</span>
 
+<span class="k">import</span> <span class="nn">javax.inject._</span>
+
 <span class="k">import</span> <span class="nn">play.api.mvc._</span>
 <span class="k">import</span> <span class="nn">play.api.http._</span>
-<span class="k">import</span> <span class="nn">play.api.libs.concurrent.Execution.Implicits._</span>
+
+<span class="k">import</span> <span class="nn">scala.concurrent.ExecutionContext</span>
 
 <span class="k">import</span> <span class="nn">akka.actor.ActorSystem</span>
 <span class="k">import</span> <span class="nn">akka.stream.</span><span class="o">{</span><span class="nc">ActorMaterializer</span><span class="o">,</span> <span class="nc">Materializer</span><span class="o">}</span>
@@ -40,13 +43,30 @@ ga('send', 'pageview');
 
 <p>For demonstration purposes, we will create a very simple program that returns an <code class="highlighter-rouge">OK</code> http status response:</p>
 
-<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">object</span> <span class="nc">algebras</span> <span class="o">{</span>
+<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">freestyle._</span>
+<span class="c1">// import freestyle._
+</span>
+<span class="k">object</span> <span class="nc">algebras</span> <span class="o">{</span>
   <span class="nd">@free</span>
   <span class="k">trait</span> <span class="nc">Noop</span> <span class="o">{</span>
     <span class="k">def</span> <span class="n">ok</span><span class="k">:</span> <span class="kt">FS</span><span class="o">[</span><span class="kt">String</span><span class="o">]</span>
   <span class="o">}</span>
 <span class="o">}</span>
 <span class="c1">// defined object algebras
+</span></code></pre>
+</div>
+
+<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">freestyle._</span>
+<span class="c1">// import freestyle._
+</span>
+<span class="k">import</span> <span class="nn">freestyle.implicits._</span>
+<span class="c1">// import freestyle.implicits._
+</span>
+<span class="k">import</span> <span class="nn">cats._</span>
+<span class="c1">// import cats._
+</span>
+<span class="k">import</span> <span class="nn">cats.implicits._</span>
+<span class="c1">// import cats.implicits._
 </span>
 <span class="k">object</span> <span class="nc">handlers</span> <span class="o">{</span>
   <span class="k">import</span> <span class="nn">algebras._</span>
@@ -58,8 +78,10 @@ ga('send', 'pageview');
   <span class="o">}</span>
 <span class="o">}</span>
 <span class="c1">// defined object handlers
-</span>
-<span class="k">import</span> <span class="nn">algebras._</span>
+</span></code></pre>
+</div>
+
+<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">algebras._</span>
 <span class="c1">// import algebras._
 </span>
 <span class="k">import</span> <span class="nn">handlers._</span>
@@ -75,7 +97,10 @@ ga('send', 'pageview');
 
 <p>Once our program is defined we may simply return it as a result of any <code class="highlighter-rouge">Action</code> without the need to explicitly interpret it to <code class="highlighter-rouge">Future</code>:</p>
 
-<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">object</span> <span class="nc">AppController</span> <span class="k">extends</span> <span class="nc">Controller</span> <span class="o">{</span>
+<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">algebras._</span>
+<span class="k">import</span> <span class="nn">handlers._</span>
+
+<span class="k">class</span> <span class="nc">AppController</span> <span class="nd">@Inject</span><span class="o">()(</span><span class="k">val</span> <span class="n">controllerComponents</span><span class="k">:</span> <span class="kt">ControllerComponents</span><span class="o">)(</span><span class="k">implicit</span> <span class="n">ec</span><span class="k">:</span> <span class="kt">ExecutionContext</span><span class="o">)</span> <span class="k">extends</span> <span class="nc">BaseController</span> <span class="o">{</span>
   <span class="k">def</span> <span class="n">endpoint</span> <span class="k">=</span> <span class="nc">Action</span><span class="o">.</span><span class="n">async</span> <span class="o">{</span> <span class="k">_</span> <span class="k">=&gt;</span> <span class="n">program</span><span class="o">[</span><span class="kt">Noop.Op</span><span class="o">]</span> <span class="o">}</span>
 <span class="o">}</span>
 </code></pre>
@@ -85,7 +110,7 @@ languages:['scala','java','bash']
 });
 hljs.initHighlighting();
              </script><script>((window.gitter = {}).chat = {}).options = {
-room: 'frees-io/freestyle'};</script><script src="https://sidecar.gitter.im/dist/sidecar.v1.js"></script><script src="/js/main.js"></script><script src="/js/kazari.js"></script><script>
+room: '47deg/freestyle'};</script><script src="https://sidecar.gitter.im/dist/sidecar.v1.js"></script><script src="/js/main.js"></script><script src="/js/kazari.js"></script><script>
 $(document).ready(function() {
 	kazari.KazariPlugin().decorateCode('https://scala-evaluator-212.herokuapp.com/eval', 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.S2F6YXJp.Jl2eqMfw8IakJF93PjxTbrf-8YUJgX5OoOfy5JHE8Yw', '', 'monokai')
 })

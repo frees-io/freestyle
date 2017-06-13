@@ -83,7 +83,7 @@ ga('send', 'pageview');
 
 <div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">val</span> <span class="n">getSorted</span><span class="k">:</span> <span class="kt">Author</span> <span class="o">=&gt;</span> <span class="nc">FreeS</span><span class="o">[</span><span class="kt">AsyncM.Op</span>, <span class="kt">List</span><span class="o">[</span><span class="kt">Book</span><span class="o">]]</span> <span class="k">=</span>
   <span class="n">sortedBooks</span><span class="o">[</span><span class="kt">AsyncM.Op</span><span class="o">](</span><span class="nc">Library</span><span class="o">)</span> <span class="k">_</span>
-<span class="c1">// getSorted: Author =&gt; freestyle.FreeS[freestyle.async.AsyncM.Op,List[Book]] = $$Lambda$2805/2139030408@50cb058
+<span class="c1">// getSorted: Author =&gt; freestyle.FreeS[freestyle.async.AsyncM.Op,List[Book]] = $$Lambda$4457/1165040558@6b09a518
 </span>
 <span class="k">val</span> <span class="n">dickensBooks</span> <span class="k">=</span> <span class="n">getSorted</span><span class="o">(</span><span class="nc">Author</span><span class="o">(</span><span class="s">"Dickens"</span><span class="o">))</span>
 <span class="c1">// dickensBooks: freestyle.FreeS[freestyle.async.AsyncM.Op,List[Book]] = Free(...)
@@ -162,13 +162,13 @@ ga('send', 'pageview');
 <span class="c1">// import monix.execution.Scheduler
 </span>
 <span class="k">implicit</span> <span class="k">val</span> <span class="n">executionContext</span> <span class="k">=</span> <span class="nc">Scheduler</span><span class="o">.</span><span class="nc">Implicits</span><span class="o">.</span><span class="n">global</span>
-<span class="c1">// executionContext: monix.execution.Scheduler = monix.execution.schedulers.AsyncScheduler@5ccc3363
+<span class="c1">// executionContext: monix.execution.Scheduler = monix.execution.schedulers.AsyncScheduler@13bfea24
 </span>
 <span class="k">val</span> <span class="n">monixTask1</span> <span class="k">=</span> <span class="n">dickensBooks</span><span class="o">.</span><span class="n">interpret</span><span class="o">[</span><span class="kt">MonixTask</span><span class="o">]</span>
-<span class="c1">// monixTask1: monix.eval.Task[List[Book]] = Task.FlatMap(Task@133369966, monix.eval.Task$$$Lambda$2870/1180318807@70b0f092)
+<span class="c1">// monixTask1: monix.eval.Task[List[Book]] = Task.FlatMap(Task@1389435453, monix.eval.Task$$$Lambda$4524/1566775800@4824d2ab)
 </span>
 <span class="k">val</span> <span class="n">monixTask2</span> <span class="k">=</span> <span class="n">otherBooks</span><span class="o">.</span><span class="n">interpret</span><span class="o">[</span><span class="kt">MonixTask</span><span class="o">]</span>
-<span class="c1">// monixTask2: monix.eval.Task[List[Book]] = Task.FlatMap(Task@751441333, monix.eval.Task$$$Lambda$2870/1180318807@2c609919)
+<span class="c1">// monixTask2: monix.eval.Task[List[Book]] = Task.FlatMap(Task@1724428229, monix.eval.Task$$$Lambda$4524/1566775800@77cb63b9)
 </span></code></pre>
 </div>
 
@@ -204,7 +204,7 @@ ga('send', 'pageview');
 <span class="c1">// import cats.implicits._
 </span>
 <span class="k">val</span> <span class="n">fut1</span> <span class="k">=</span> <span class="n">dickensBooks</span><span class="o">.</span><span class="n">interpret</span><span class="o">[</span><span class="kt">Future</span><span class="o">]</span>
-<span class="c1">// fut1: scala.concurrent.Future[List[Book]] = Future(&lt;not completed&gt;)
+<span class="c1">// fut1: scala.concurrent.Future[List[Book]] = Future(Failure(NoBooksFound: No books found from Dickens))
 </span>
 <span class="k">val</span> <span class="n">fut2</span> <span class="k">=</span> <span class="n">otherBooks</span><span class="o">.</span><span class="n">interpret</span><span class="o">[</span><span class="kt">Future</span><span class="o">]</span>
 <span class="c1">// fut2: scala.concurrent.Future[List[Book]] = Future(&lt;not completed&gt;)
@@ -234,7 +234,7 @@ languages:['scala','java','bash']
 });
 hljs.initHighlighting();
              </script><script>((window.gitter = {}).chat = {}).options = {
-room: 'frees-io/freestyle'};</script><script src="https://sidecar.gitter.im/dist/sidecar.v1.js"></script><script src="/js/main.js"></script><script src="/js/kazari.js"></script><script>
+room: '47deg/freestyle'};</script><script src="https://sidecar.gitter.im/dist/sidecar.v1.js"></script><script src="/js/main.js"></script><script src="/js/kazari.js"></script><script>
 $(document).ready(function() {
 	kazari.KazariPlugin().decorateCode('https://scala-evaluator-212.herokuapp.com/eval', 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.S2F6YXJp.Jl2eqMfw8IakJF93PjxTbrf-8YUJgX5OoOfy5JHE8Yw', '', 'monokai')
 })
