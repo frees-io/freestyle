@@ -9,6 +9,13 @@ scala:
 env:
 - SCALAENV=jvm
 - SCALAENV=js
+- FREESBUILD=docs
+- FREESBUILD=integrations
+
+matrix:
+  exclude:
+  - scala: 2.11.11
+    env: FREESBUILD=docs
 
 jdk:
 - oraclejdk8
