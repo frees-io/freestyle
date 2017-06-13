@@ -10,6 +10,6 @@ Freestyle Release Process is semi-automated thanks to [sbt-org-policies](https:/
 
 4. Before starting with this step, double check the new `sbt-freestyle` SNAPSHOT is already at [Sonatype](https://oss.sonatype.org/content/repositories/snapshots/io/frees/sbt-freestyle_2.10_0.13/0.0.1-SNAPSHOT/). Afterwards, we are going to release the [freestyle-integrations](https://github.com/frees-io/freestyle-integrations) project, where the version must fit (version.sbt file) with the released version in step 1 for `Freestyle` core project. Also, it's important to set up the latest released version as a default value [here](https://github.com/frees-io/freestyle-integrations/blob/d3e398700e15809e049b5bb8fec6c551b9d4c0d0/build.sbt#L1-L1).
 
-5. Regarding documentation, in this step, we are going to release the [freestyle-docs](https://github.com/frees-io/freestyle-docs) project. As in the previous step, version must also fit with the one released for `freestyle` core project.
+5. Regarding documentation, in this step, we are going to release the [freestyle-docs](https://github.com/frees-io/freestyle-docs) project. As in the previous step, the build version must also fit with the one released for `freestyle` core project. Finally, as we did in the above, we have to modify the latest released version as a default value [here](https://github.com/frees-io/freestyle-docs/blob/65fa2944e5a2f8dd420804b26ae0dcbb17a22e9e/build.sbt#L5).
 
 6. Should we do the same for the rest of the project in the Freestyle's ecosystem?
