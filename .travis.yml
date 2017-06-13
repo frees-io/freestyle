@@ -17,8 +17,8 @@ matrix:
   - scala: 2.11.11
     env: FREESBUILD=docs
   # Excluding docs check for now
-  - scala: 2.12.2
-    env: FREESBUILD=docs
+  #- scala: 2.12.2
+  #  env: FREESBUILD=docs
 
 jdk:
 - oraclejdk8
