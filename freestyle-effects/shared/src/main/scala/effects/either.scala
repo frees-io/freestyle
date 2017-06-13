@@ -30,7 +30,7 @@ object either {
       def catchNonFatal[A](a: Eval[A], f: Throwable => E): FS[A]
     }
 
-    object implicits {
+    trait Implicits {
       implicit def freeStyleEitherMHandler[M[_]](
           implicit ME: MonadError[M, E]): EitherM.Handler[M] = new EitherM.Handler[M] {
         def either[A](fa: Either[E, A]): M[A] = fa.fold(ME.raiseError[A], ME.pure[A])
@@ -50,6 +50,7 @@ object either {
         new EitherFreeSLift[F]
     }
 
+    object implicits extends Implicits
   }
 
   def apply[E]: ErrorProvider[E] = new ErrorProvider
