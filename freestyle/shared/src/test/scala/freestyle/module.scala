@@ -35,7 +35,6 @@ class moduleTests extends WordSpec with Matchers {
       """@module trait  Foo[F[_]] { val x: Int} ; object Foo """ shouldNot compile
     }
 
-
     "[simple] create a companion with a `T` type alias" in {
       type T[A] = M1.Op[A]
     }
@@ -178,5 +177,24 @@ class moduleTests extends WordSpec with Matchers {
         |  val a: P.Y
         |}""".stripMargin should compile
     }
+  }
+
+  "@module @free and @debug annotations work together" when {
+
+    "a trait with @module and @debug macro annotations work as expected, printing the generated code" in {
+      """
+        |@free @debug trait X {
+        |  def x: FS[Int]
+        |}
+        |object P {
+        |  @module trait Y {
+        |    val repo: X
+        |  }
+        |}
+        |@module @debug trait Z {
+        |  val a: P.Y
+        |}""".stripMargin should compile
+    }
+
   }
 }

@@ -14,23 +14,34 @@
  * limitations under the License.
  */
 
-package freestyle
+package freestyle.internal
 
-import scala.annotation.{compileTimeOnly, StaticAnnotation}
-import freestyle.internal.{ freeImpl, moduleImpl }
+import scala.collection.immutable.Seq
+import scala.meta._
 
-@compileTimeOnly("enable macro paradise to expand @free macro annotations")
-class free extends StaticAnnotation {
-  import scala.meta._
+object syntax {
 
-  inline def apply(defn: Any): Any = meta { freeImpl.free(defn) }
+  implicit def debugSyntax(block: Term.Block): DebugOps = new DebugOps(block)
+
+  implicit def filterModifiers(mods: Seq[Mod]): ModOps = new ModOps(mods)
+
+  final class DebugOps(block: Term.Block) {
+
+    def `debug?`(mods: Seq[Mod]): Term.Block = {
+      mods foreach {
+        case mod"@debug" => println(block)
+        case _           =>
+      }
+      block
+    }
+  }
+
+  final class ModOps(mods: Seq[Mod]) {
+
+    def filtered: Seq[Mod] = mods.filter {
+      case mod"@debug" => false
+      case _           => true
+    }
+  }
+
 }
-
-@compileTimeOnly("enable macro paradise to expand @module macro annotations")
-class module extends StaticAnnotation {
-  import scala.meta._
-
-  inline def apply(defn: Any): Any = meta { moduleImpl.module(defn) }
-}
-
-class debug extends StaticAnnotation
