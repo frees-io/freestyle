@@ -33,14 +33,20 @@ trait EffectLike[F[_]] {
 object freeImpl {
 
   import errors._
+  import syntax._
 
   def free(defn: Any): Stat = defn match {
 
     case cls: Trait =>
-      freeAlg(Algebra(cls.mods, cls.name, cls.tparams, cls.ctor, cls.templ), true)
-
+      freeAlg(
+        Algebra(cls.mods.filtered, cls.name, cls.tparams, cls.ctor, cls.templ),
+        isTrait = true)
+        .`debug?`(cls.mods)
     case cls: Class if ScalametaUtil.isAbstract(cls) =>
-      freeAlg(Algebra(cls.mods, cls.name, cls.tparams, cls.ctor, cls.templ), false)
+      freeAlg(
+        Algebra(cls.mods.filtered, cls.name, cls.tparams, cls.ctor, cls.templ),
+        isTrait = false)
+        .`debug?`(cls.mods)
 
     case c: Class /* ! isAbstract */   => abort(s"$invalid in ${c.name}. $abstractOnly")
     case Term.Block(Seq(_, c: Object)) => abort(s"$invalid in ${c.name}. $noCompanion")
@@ -92,8 +98,8 @@ private[internal] case class Algebra(
     case (dd, ix) => new Request(dd, ix)
   }
 
-  val OP        = Type.Name("Op") // Root trait of the Effect ADT
-  val indexName = Term.fresh("FSAlgebraIndex")
+  val OP: Type.Name        = Type.Name("Op") // Root trait of the Effect ADT
+  val indexName: Term.Name = Term.fresh("FSAlgebraIndex")
 
   def handlerTrait: Trait = {
     val mm = Type.fresh("MM$")

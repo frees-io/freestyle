@@ -25,14 +25,21 @@ import scala.meta.Defn.{Class, Object, Trait}
 object moduleImpl {
 
   import ModuleUtil._
+  import syntax._
 
   def module(defn: Any): Term.Block = defn match {
     case cls: Trait =>
-      val fsmod = FreeSModule(cls.mods, cls.name, cls.tparams, cls.ctor, cls.templ, true)
-      Term.Block(Seq(fsmod.makeClass, fsmod.makeObject))
+      val fsmod =
+        FreeSModule(cls.mods.filtered, cls.name, cls.tparams, cls.ctor, cls.templ, isTrait = true)
+      Term
+        .Block(Seq(fsmod.makeClass, fsmod.makeObject))
+        .`debug?`(cls.mods)
     case cls: Class if ScalametaUtil.isAbstract(cls) =>
-      val fsmod = FreeSModule(cls.mods, cls.name, cls.tparams, cls.ctor, cls.templ, false)
-      Term.Block(Seq(fsmod.makeClass, fsmod.makeObject))
+      val fsmod =
+        FreeSModule(cls.mods.filtered, cls.name, cls.tparams, cls.ctor, cls.templ, isTrait = false)
+      Term
+        .Block(Seq(fsmod.makeClass, fsmod.makeObject))
+        .`debug?`(cls.mods)
     case c: Class /* ! isAbstract */ =>
       abort(abstractOnly)
     case Term.Block(Seq(_, c: Object)) =>

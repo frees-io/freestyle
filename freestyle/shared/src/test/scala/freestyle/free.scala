@@ -168,6 +168,22 @@ class freeTests extends WordSpec with Matchers {
 
   }
 
+  "the @free macro annotation works together with @debug annotation" when {
+
+    "a trait without @free macro annotation is ignored" ignore {
+      "@debug trait X { def f(a: Char) : FS[Int] }" should compile
+    }
+
+    "a trait with at least one request" in {
+      "@free @debug trait Y { def bar(x:Int): FS[Int] }" should compile
+    }
+
+    "an abstract class with at least one request" in {
+      "@debug @free abstract class Z { def bar(x:Int): FS[Int] }" should compile
+    }
+
+  }
+
   "The @free annotation should generate interpreters or Handlers that" should {
 
     "allow `FreeS` operations that use other abstract operations" in {

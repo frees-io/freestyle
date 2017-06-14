@@ -17,21 +17,20 @@
 package freestyle.internal
 
 import scala.collection.immutable.Seq
+import scala.meta.Defn.{Class, Object}
 import scala.meta._
-import scala.meta.Defn.{ Class, Trait, Object }
 
 /* Utilities for scalameta independents of freestyle*/
 object ScalametaUtil {
 
   def isAbstract(cls: Class): Boolean = cls.mods.exists {
     case Mod.Abstract() => true
-    case _ => false
+    case _              => false
   }
 
-
-  def toVar(name: Term.Name) = Pat.Var.Term(name)
+  def toVar(name: Term.Name)             = Pat.Var.Term(name)
   def toName(par: Term.Param): Term.Name = Term.Name(par.name.value)
-  def toType(par: Type.Param): Type = Type.Name(par.name.value)
+  def toType(par: Type.Param): Type      = Type.Name(par.name.value)
 
   def tyParam(ty: Type.Name): Type.Param =
     q"type X[Y]".tparams.head.copy(name = ty) // take Y, replace Y name with tyn
@@ -43,9 +42,8 @@ object ScalametaUtil {
 
   def tyAddArg(tyApp: Type, tyArg: Type): Type.Apply = tyApp match {
     case Type.Apply(tyFun, tyArgs) => Type.Apply(tyFun, tyArg +: tyArgs)
-    case ty => Type.Apply( ty, Seq(tyArg) )
+    case ty                        => Type.Apply(ty, Seq(tyArg))
   }
-
 
   /* Given a Decl.Def, that represents an abstract method, make a concrete method Defn.Def
    *   by giving it a Term that serves as its body */
@@ -53,11 +51,11 @@ object ScalametaUtil {
     Defn.Def(decl.mods, decl.name, decl.tparams, decl.paramss, Some(decl.decltpe), body)
 
   def mkObject(
-    mods: Seq[Mod] = Nil,
-    name: Term.Name,
-    early: Seq[Stat] = Nil,
-    parents: Seq[Ctor.Call] = Nil,
-    self: Term.Param = Term.Param(Nil, Name.Anonymous(), None, None),
-    stats: Seq[Stat]) = Object( mods, name, Template(early, parents, self, if (stats.isEmpty) Some(stats) else None))
+      mods: Seq[Mod] = Nil,
+      name: Term.Name,
+      early: Seq[Stat] = Nil,
+      parents: Seq[Ctor.Call] = Nil,
+      self: Term.Param = Term.Param(Nil, Name.Anonymous(), None, None),
+      stats: Seq[Stat]) =
+    Object(mods, name, Template(early, parents, self, if (stats.isEmpty) Some(stats) else None))
 }
-
