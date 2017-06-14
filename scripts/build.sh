@@ -33,7 +33,6 @@ SCALA_JS_SCRIPT="sbt ++$TRAVIS_SCALA_VERSION test:fastOptJS validateJS"
 SCALA_JVM_SCRIPT="sbt ++$TRAVIS_SCALA_VERSION orgScriptCI"
 
 PUBLISH_PROJECT="sbt ++$TRAVIS_SCALA_VERSION publishLocal"
-PUBLISH_INTEGRATIONS_PROJECT="cd freestyle-integrations && sbt ++$TRAVIS_SCALA_VERSION -Dfrees.version=$VERSION publishLocal && cd .."
 
 CLONE_INTEGRATIONS_REPO="clone_repo $INTEGRATIONS_REPO"
 CLONE_DOCS_REPO="clone_repo $DOCS_REPO"
@@ -57,7 +56,6 @@ fi
 
 if [ "$FREESBUILD" = "docs" ]; then
   eval $PUBLISH_PROJECT || EXIT_STATUS=$?
-  eval $PUBLISH_INTEGRATIONS_PROJECT || EXIT_STATUS=$?
   eval $CLONE_DOCS_REPO || EXIT_STATUS=$?
   eval $DOCS_SCRIPT || EXIT_STATUS=$?
 fi
