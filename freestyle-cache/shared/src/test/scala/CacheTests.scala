@@ -211,7 +211,7 @@ class CacheTests extends WordSpec with Matchers with CacheTestContext {
       program[CacheM.Op].interpret[Id] shouldBe true
     }
 
-    "have not key" in {
+    "Not have a key" in {
       def program[F[_] : CacheM] =
         CacheM[F].put("a", 0) *> CacheM[F].clear *> CacheM[F].has("a")
 
