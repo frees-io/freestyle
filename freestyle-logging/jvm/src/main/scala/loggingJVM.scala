@@ -19,35 +19,84 @@ package freestyle
 import cats.MonadError
 import freestyle.logging._
 import journal._
+import org.slf4j.LoggerFactory
 
 object loggingJVM {
 
   trait Implicits {
-    implicit def freeStyleLoggingHandler[M[_], C: Manifest](
+    implicit def freeStyleLoggingHandler[M[_]](
         implicit ME: MonadError[M, Throwable]): LoggingM.Handler[M] =
       new LoggingM.Handler[M] {
 
-        val logger = Logger[C]
+        val logger = Logger("")
 
-        def debug(msg: String): M[Unit] = ME.catchNonFatal(logger.debug(msg))
+        private[this] def formatMessage(
+            msg: String,
+            sourceAndLineInfo: Boolean,
+            line: sourcecode.Line,
+            file: sourcecode.File): String =
+          if (sourceAndLineInfo) s"$file:$line: $msg"
+          else msg
 
-        def debugWithCause(msg: String, cause: Throwable): M[Unit] =
-          ME.catchNonFatal(logger.debug(msg, cause))
+        def debug(
+            msg: String,
+            sourceAndLineInfo: Boolean,
+            line: sourcecode.Line,
+            file: sourcecode.File): M[Unit] =
+          ME.catchNonFatal(logger.debug(formatMessage(msg, sourceAndLineInfo, line, file)))
 
-        def error(msg: String): M[Unit] = ME.catchNonFatal(logger.error(msg))
+        def debugWithCause(
+            msg: String,
+            cause: Throwable,
+            sourceAndLineInfo: Boolean,
+            line: sourcecode.Line,
+            file: sourcecode.File): M[Unit] =
+          ME.catchNonFatal(logger.debug(formatMessage(msg, sourceAndLineInfo, line, file), cause))
 
-        def errorWithCause(msg: String, cause: Throwable): M[Unit] =
-          ME.catchNonFatal(logger.error(msg, cause))
+        def error(
+            msg: String,
+            sourceAndLineInfo: Boolean,
+            line: sourcecode.Line,
+            file: sourcecode.File): M[Unit] =
+          ME.catchNonFatal(logger.error(formatMessage(msg, sourceAndLineInfo, line, file)))
 
-        def info(msg: String): M[Unit] = ME.catchNonFatal(logger.info(msg))
+        def errorWithCause(
+            msg: String,
+            cause: Throwable,
+            sourceAndLineInfo: Boolean,
+            line: sourcecode.Line,
+            file: sourcecode.File): M[Unit] =
+          ME.catchNonFatal(logger.error(formatMessage(msg, sourceAndLineInfo, line, file), cause))
 
-        def infoWithCause(msg: String, cause: Throwable): M[Unit] =
-          ME.catchNonFatal(logger.info(msg, cause))
+        def info(
+            msg: String,
+            sourceAndLineInfo: Boolean,
+            line: sourcecode.Line,
+            file: sourcecode.File): M[Unit] =
+          ME.catchNonFatal(logger.info(formatMessage(msg, sourceAndLineInfo, line, file)))
 
-        def warn(msg: String): M[Unit] = ME.catchNonFatal(logger.warn(msg))
+        def infoWithCause(
+            msg: String,
+            cause: Throwable,
+            sourceAndLineInfo: Boolean,
+            line: sourcecode.Line,
+            file: sourcecode.File): M[Unit] =
+          ME.catchNonFatal(logger.info(formatMessage(msg, sourceAndLineInfo, line, file), cause))
 
-        def warnWithCause(msg: String, cause: Throwable): M[Unit] =
-          ME.catchNonFatal(logger.warn(msg, cause))
+        def warn(
+            msg: String,
+            sourceAndLineInfo: Boolean,
+            line: sourcecode.Line,
+            file: sourcecode.File): M[Unit] =
+          ME.catchNonFatal(logger.warn(formatMessage(msg, sourceAndLineInfo, line, file)))
+
+        def warnWithCause(
+            msg: String,
+            cause: Throwable,
+            sourceAndLineInfo: Boolean,
+            line: sourcecode.Line,
+            file: sourcecode.File): M[Unit] =
+          ME.catchNonFatal(logger.warn(formatMessage(msg, sourceAndLineInfo, line, file), cause))
       }
   }
 
