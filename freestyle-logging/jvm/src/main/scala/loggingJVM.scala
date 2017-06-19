@@ -16,7 +16,7 @@
 
 package freestyle
 
-import cats.MonadError
+import cats.Monad
 import freestyle.logging._
 import journal._
 
@@ -24,30 +24,30 @@ object loggingJVM {
 
   trait Implicits {
     implicit def freeStyleLoggingHandler[M[_], C: Manifest](
-        implicit ME: MonadError[M, Throwable]): LoggingM.Handler[M] =
+        implicit M: Monad[M]): LoggingM.Handler[M] =
       new LoggingM.Handler[M] {
 
         val logger = Logger[C]
 
-        def debug(msg: String): M[Unit] = ME.catchNonFatal(logger.debug(msg))
+        def debug(msg: String): M[Unit] = M.pure(logger.debug(msg))
 
         def debugWithCause(msg: String, cause: Throwable): M[Unit] =
-          ME.catchNonFatal(logger.debug(msg, cause))
+          M.pure(logger.debug(msg, cause))
 
-        def error(msg: String): M[Unit] = ME.catchNonFatal(logger.error(msg))
+        def error(msg: String): M[Unit] = M.pure(logger.error(msg))
 
         def errorWithCause(msg: String, cause: Throwable): M[Unit] =
-          ME.catchNonFatal(logger.error(msg, cause))
+          M.pure(logger.error(msg, cause))
 
-        def info(msg: String): M[Unit] = ME.catchNonFatal(logger.info(msg))
+        def info(msg: String): M[Unit] = M.pure(logger.info(msg))
 
         def infoWithCause(msg: String, cause: Throwable): M[Unit] =
-          ME.catchNonFatal(logger.info(msg, cause))
+          M.pure(logger.info(msg, cause))
 
-        def warn(msg: String): M[Unit] = ME.catchNonFatal(logger.warn(msg))
+        def warn(msg: String): M[Unit] = M.pure(logger.warn(msg))
 
         def warnWithCause(msg: String, cause: Throwable): M[Unit] =
-          ME.catchNonFatal(logger.warn(msg, cause))
+          M.pure(logger.warn(msg, cause))
       }
   }
 

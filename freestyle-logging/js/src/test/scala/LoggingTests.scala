@@ -32,9 +32,9 @@ class LoggingTests extends AsyncWordSpec with Matchers {
 
   "Logging Freestyle integration" should {
 
-    "allow a log message to be interleaved inside a program monadic flow" in {
-      case object Cause extends Exception("kaboom") with NoStackTrace
+    case object Cause extends Exception("kaboom") with NoStackTrace
 
+    "allow a log message to be interleaved inside a program monadic flow" in {
       val program = for {
         a <- app.nonLogging.x
         _ <- app.loggingM.debug("Debug Message")
@@ -48,6 +48,16 @@ class LoggingTests extends AsyncWordSpec with Matchers {
         b <- FreeS.pure(1)
       } yield a + b
       program.interpret[Future] map { _ shouldBe 2 }
+    }
+
+    "not depend on MonadError, thus allowing use of Monads without MonadError, like Id, for test algebras" in {
+      val program = for {
+        a <- app.nonLogging.x
+        _ <- app.loggingM.info("Info Message")
+        _ <- app.loggingM.infoWithCause("Info Message", Cause)
+        b <- FreeS.pure(1)
+      } yield a + b
+      program.interpret[TestAlgebra].run("configHere") shouldBe 2
     }
 
   }
