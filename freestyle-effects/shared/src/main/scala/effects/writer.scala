@@ -28,7 +28,7 @@ object writer {
       def tell(w: W): FS[Unit]
     }
 
-    object implicits {
+    trait Implicits {
 
       implicit def freestyleWriterMHandler[M[_]](
           implicit MW: MonadWriter[M, W]): WriterM.Handler[M] = new WriterM.Handler[M] {
@@ -38,6 +38,7 @@ object writer {
 
     }
 
+    object implicits extends Implicits
   }
 
   def apply[W] = new AccumulatorProvider[W]

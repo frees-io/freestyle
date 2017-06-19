@@ -96,7 +96,7 @@ package cache {
      *
      */
 
-    object implicits {
+    trait Implicits {
       implicit def cacheHandler[F[_], G[_]](
           implicit rawMap: KeyValueMap[F, Key, Val],
           interpret: F ~> G
@@ -111,10 +111,10 @@ package cache {
           interpret(rawMap.get(key))
         override def put(key: Key, newVal: Val): G[Unit] =
           interpret(rawMap.put(key, newVal))
-        override def putAll(keyValues: Map[Key, Val]):G[Unit] =
+        override def putAll(keyValues: Map[Key, Val]): G[Unit] =
           interpret(rawMap.putAll(keyValues))
-        override def putIfAbsent(key: Key, newVal: Val) : G[Unit]=
-          interpret(rawMap.putIfAbsent(key,newVal))
+        override def putIfAbsent(key: Key, newVal: Val): G[Unit] =
+          interpret(rawMap.putIfAbsent(key, newVal))
         override def del(key: Key): G[Unit] =
           interpret(rawMap.delete(key))
         override def has(key: Key): G[Boolean] =
@@ -123,13 +123,15 @@ package cache {
           interpret(rawMap.keys)
         override def clear: G[Unit] =
           interpret(rawMap.clear)
-        override def replace(key: Key,newVal: Val): G[Unit] =
-          interpret(rawMap.replace(key,newVal))
+        override def replace(key: Key, newVal: Val): G[Unit] =
+          interpret(rawMap.replace(key, newVal))
         override def isEmpty: G[Boolean] =
           interpret(rawMap.isEmpty)
       }
 
     }
+
+    object implicits extends Implicits
   }
 
   trait KeyValueMap[F[_], Key, Val] {
@@ -138,9 +140,9 @@ package cache {
 
     def put(key: Key, newVal: Val): F[Unit]
 
-    def putAll(keyValues: Map[Key, Val]) : F[Unit]
+    def putAll(keyValues: Map[Key, Val]): F[Unit]
 
-    def putIfAbsent(key: Key, newVal: Val) : F[Unit]
+    def putIfAbsent(key: Key, newVal: Val): F[Unit]
 
     def delete(key: Key): F[Unit]
 
@@ -150,7 +152,7 @@ package cache {
 
     def clear: F[Unit]
 
-    def replace(key: Key, newVal: Val) : F[Unit]
+    def replace(key: Key, newVal: Val): F[Unit]
 
     def isEmpty: F[Boolean]
   }

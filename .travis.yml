@@ -6,6 +6,20 @@ scala:
 - 2.11.11
 - 2.12.2
 
+env:
+- SCALAENV=jvm
+- SCALAENV=js
+- FREESBUILD=docs
+- FREESBUILD=integrations
+
+matrix:
+  exclude:
+  - scala: 2.11.11
+    env: FREESBUILD=docs
+  # Excluding docs check for now
+  #- scala: 2.12.2
+  #  env: FREESBUILD=docs
+
 jdk:
 - oraclejdk8
 
@@ -14,24 +28,14 @@ before_install:
     openssl aes-256-cbc -K $encrypted_86276aecec54_key -iv $encrypted_86276aecec54_iv -in secring.gpg.enc -out secring.gpg -d;
   fi
 - export PATH=${PATH}:./vendor/bundle
-- git clone https://github.com/frees-io/freestyle-docs.git
-
-install:
-- rvm use 2.2.3 --install --fuzzy
-- gem update --system
-- gem install sass
-- gem install jekyll -v 3.2.1
 
 script:
-- sbt ++$TRAVIS_SCALA_VERSION test:fastOptJS
-- sbt ++$TRAVIS_SCALA_VERSION orgScriptCI
-- if [ "$TRAVIS_SCALA_VERSION" = "2.12.2" ]; then
-     sbt ++$TRAVIS_SCALA_VERSION publishLocal;
-     cd freestyle-docs && sbt ++$TRAVIS_SCALA_VERSION "clean" "tut"  && cd ..;
-  fi
+- ./scripts/build.sh
 
 after_success:
-- bash <(curl -s https://codecov.io/bash)
+- if [ "$TRAVIS_SCALA_VERSION" = "2.12.2" -a "$SCALAENV" = "jvm" ]; then
+    bash <(curl -s https://codecov.io/bash);
+  fi
 - sbt ++$TRAVIS_SCALA_VERSION orgAfterCISuccess
 
 cache:

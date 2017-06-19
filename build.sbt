@@ -1,3 +1,5 @@
+import sbtorgpolicies.runnable.syntax._
+
 lazy val root = (project in file("."))
   .settings(moduleName := "root")
   .settings(name := "freestyle")
@@ -28,9 +30,8 @@ lazy val tagless = (crossProject in file("freestyle-tagless"))
   .settings(name := "freestyle-tagless")
   .jsSettings(sharedJsSettings: _*)
   .crossDepSettings(commonDeps: _*)
-  .settings(resolvers += Resolver.bintrayRepo("kailuowang", "maven"))
   .settings(
-    libraryDependencies += "com.kailuowang" %%% "mainecoon-core" % "0.0.5"
+    libraryDependencies += "com.kailuowang" %%% "mainecoon-core" % "0.1.1"
   )
 
 lazy val taglessJVM = tagless.jvm
@@ -69,12 +70,10 @@ lazy val bench = (project in file("bench"))
   .settings(inConfig(Codegen)(Defaults.configSettings))
   .settings(classpathConfiguration in Codegen := Compile)
   .settings(noPublishSettings)
-  .settings(libraryDependencies ++= Seq(
-    %%("cats-free"),
-    %%("scalacheck")))
+  .settings(libraryDependencies ++= Seq(%%("cats-free"), %%("scalacheck")))
   .settings(inConfig(Compile)(
     sourceGenerators += Def.task {
-      val path = (sourceManaged in(Compile, compile)).value / "bench.scala"
+      val path = (sourceManaged in (Compile, compile)).value / "bench.scala"
       (runner in (Codegen, run)).value.run(
         "freestyle.bench.BenchBoiler",
         Attributed.data((fullClasspath in Codegen).value),
@@ -172,10 +171,6 @@ lazy val logging = (crossProject in file("freestyle-logging"))
 lazy val loggingJVM = logging.jvm
 lazy val loggingJS  = logging.js
 
-addCommandAlias("debug", "; clean ; test")
-
-addCommandAlias("validate", "; +clean ; +test; makeMicrosite")
-
 pgpPassphrase := Some(getEnvVar("PGP_PASSPHRASE").getOrElse("").toCharArray)
 pgpPublicRing := file(s"$gpgFolder/pubring.gpg")
 pgpSecretRing := file(s"$gpgFolder/secring.gpg")
@@ -207,3 +202,9 @@ lazy val allModules: Seq[ProjectReference] = jvmModules ++ jsModules
 
 lazy val jvmFreestyleDeps: Seq[ClasspathDependency] =
   jvmModules.map(ClasspathDependency(_, None))
+
+addCommandAlias("validateJVM", (toCompileTestList(jvmModules) ++ List("project root")).asCmd)
+addCommandAlias("validateJS", (toCompileTestList(jsModules) ++ List("project root")).asCmd)
+addCommandAlias(
+  "validate",
+  ";clean;compile;coverage;validateJVM;coverageReport;coverageAggregate;coverageOff")
