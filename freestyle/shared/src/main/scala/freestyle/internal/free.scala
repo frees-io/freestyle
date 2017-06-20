@@ -109,7 +109,7 @@ private[internal] case class Algebra(
       val errorCase: Case =
         q"""
           x match { case i => throw new _root_.java.lang.Exception(
-            s"freestyle internal error: index " + i + " out of bounds for " + this)
+            "freestyle internal error: index " + i + " out of bounds for " + this)
           }
         """.cases.head
 
@@ -163,7 +163,7 @@ private[internal] case class Algebra(
   def mkCompanion: Object = {
     val opTrait = {
       val index: Decl.Val = q"val ${toVar(indexName)} : _root_.scala.Int"
-      q"sealed trait $OP[_] extends scala.Product with java.io.Serializable { $index }"
+      q"sealed trait $OP[_] extends _root_.scala.Product with _root_.java.io.Serializable { $index }"
     }
     val opTypes                    = q"type OpTypes = _root_.iota.KCons[$OP, _root_.iota.KNil]"
     val adt: Seq[Stat]             = opTrait +: requests.map(_.reqClass(OP, tparams, indexName))
@@ -203,7 +203,7 @@ private[internal] class Request(reqDef: Decl.Def, indexValue: Int) {
     val sup: Term.ApplyType = Term.ApplyType(Ctor.Ref.Name(OP.value), Seq(res)) // this means $OP[$res]
     val ix                  = Pat.Var.Term(indexName)
     q"""
-      case class $req[..$tts](..$params) extends AnyRef with $sup {
+      case class $req[..$tts](..$params) extends _root_.scala.AnyRef with $sup {
         override val $ix: _root_.scala.Int = $indexValue
       }
     """
@@ -230,7 +230,7 @@ private[internal] class Request(reqDef: Decl.Def, indexValue: Int) {
           else {
             // Wildcard types are not working for function params like this f: (B, A) => B
             // val us: Type = Type.Placeholder(Type.Bounds(None, None) )
-            Type.Apply(req, tparams.map(_ => t"Any"))
+            Type.Apply(req, tparams.map(_ => t"_root_.scala.Any"))
           }
 
         val alias = Term.fresh()
