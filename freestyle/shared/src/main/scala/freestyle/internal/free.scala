@@ -201,7 +201,9 @@ private[internal] class Request(reqDef: Decl.Def, indexValue: Int) {
   private[this] val reqC    = Term.Name(req.value)
   private[this] val reqImpl = Term.Name(reqName)
 
-  val params: Seq[Term.Param] = reqDef.paramss.flatten
+  val params: Seq[Term.Param] = reqDef.paramss.flatten.map { param =>
+    param.copy(mods = param.mods.filterNot(_.is[Mod.Implicit]))
+  }
 
   def reqClass(OP: Type.Name, effTTs: Seq[Type.Param], indexName: Term.Name): Class = {
     val tts                 = effTTs ++ tparams
