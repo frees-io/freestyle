@@ -27,6 +27,7 @@ These are the people that have contributed to the freestyle project:
 * Juan Pedro Moreno <[juanpedromoreno](https://github.com/juanpedromoreno)>
 * Juan Ramón González <[jrgonzalezg](https://github.com/jrgonzalezg)>
 * Maureen Elsberry  <[MaureenElsberry](https://github.com/MaureenElsberry)>
+* Pere Villega <[pvillega](https://github.com/pvillega)>
 * Peter Neyens <[peterneyens](https://github.com/peterneyens)>
 * Raúl Raja Martínez <[raulraja](https://github.com/raulraja)>
 * Sam Halliday <[fommil](https://github.com/fommil)>
