@@ -10,6 +10,7 @@ lazy val freestyle = (crossProject in file("freestyle"))
   .settings(name := "freestyle")
   .jsSettings(sharedJsSettings: _*)
   .settings(libraryDependencies ++= Seq(%("scala-reflect", scalaVersion.value)))
+  .settings(wartremoverWarnings in (Test, compile) := Warts.unsafe ++ Seq(Wart.FinalCaseClass, Wart.ExplicitImplicitTypes))
   .crossDepSettings(
     commonDeps ++ Seq(
       %("iota-core"),
