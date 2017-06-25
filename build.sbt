@@ -157,7 +157,9 @@ lazy val config = (project in file("freestyle-config"))
   )
   .settings(
     libraryDependencies ++= Seq(
-      %("config", "1.2.1")
+      %("config", "1.2.1"),
+      %%("classy-config-typesafe"),
+      %%("classy-core")
     ) ++ commonDeps
   )
 

@@ -16,12 +16,14 @@
 
 package freestyle
 
-import scala.collection.JavaConverters._
-import scala.concurrent.duration._
-
 import cats.MonadError
 import cats.syntax.either._
+import classy._
+import classy.config._
 import com.typesafe.config.{ConfigException, ConfigFactory}
+
+import scala.collection.JavaConverters._
+import scala.concurrent.duration._
 
 object config {
 
@@ -44,6 +46,8 @@ object config {
     def load: FS[Config]
     def empty: FS[Config]
     def parseString(s: String): FS[Config]
+    def loadAs[T](implicit dec: ConfigDecoder[T]): FS[Either[DecodeError, T]]
+    def parseStringAs[T](s: String)(implicit dec: ConfigDecoder[T]): FS[Either[DecodeError, T]]
   }
 
   object implicits {
@@ -74,6 +78,10 @@ object config {
         def empty: M[Config] = ME.pure(loadConfig(ConfigFactory.empty()))
         def parseString(s: String): M[Config] =
           ME.catchNonFatal(loadConfig(ConfigFactory.parseString(s)))
+        def loadAs[T](decoder: ConfigDecoder[T]): M[Either[DecodeError, T]] =
+          ME.pure(decoder.load())
+        def parseStringAs[T](s: String, decoder: ConfigDecoder[T]): M[Either[DecodeError, T]] =
+          ME.pure(decoder.fromString(s))
       }
   }
 
