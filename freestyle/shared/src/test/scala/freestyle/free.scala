@@ -129,6 +129,25 @@ class freeTests extends WordSpec with Matchers {
       "implicitly[SCtors1[SCtors1.Op]]" should compile 
     }
 
+    "allow implicit parameters in algebra members" in {
+      """
+        trait Bar[T]
+        @free trait Wibble {
+          def wobble[T](foo: String)(implicit bar: Bar[T]): FS[Unit]
+        }
+      """ should compile
+    }
+
+    // https://github.com/frees-io/freestyle/issues/365
+    "allow context bounds in algebra members" ignore {
+      """
+        trait Bar[T]
+        @free trait Wibble {
+          def wobble[T: Bar](foo: String): FS[Unit]
+        }
+      """ should compile
+    }
+
     "provide automatic implementations for smart constructors" in {
       val s = SCtors1[SCtors1.Op]
       val program = for {
