@@ -228,7 +228,7 @@ private[internal] class Request(reqDef: Decl.Def, indexValue: Int) {
     """
   }
 
-  private[this] def nameOrImplicitlyBounds(param : Term.Param): Term.Name = param match {
+  private[this] def nameOrImplicitly(param : Term.Param): Term.Name = param match {
     case Term.Param(_, paramname, Some(atpeopt), _) if paramname.value.startsWith(cboundPrefix) =>
       val targ"${tpe: Type}" = atpeopt
       Term.Name(s"_root_.scala.Predef.implicitly[$tpe]")
@@ -240,8 +240,7 @@ private[internal] class Request(reqDef: Decl.Def, indexValue: Int) {
       if (tparams.isEmpty)
         q"$reqC(..${params.map(toName)})"
       else {
-
-        q"$reqC[..${tparams.map(toType)} ](..${params.map(nameOrImplicitlyBounds)})"
+        q"$reqC[..${tparams.map(toType)} ](..${params.map(nameOrImplicitly)})"
       }
 
     addBody(reqDef, q"$inj($body)").copy(mods = Seq(Mod.Override()))
