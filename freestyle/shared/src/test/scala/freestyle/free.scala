@@ -198,6 +198,73 @@ class freeTests extends WordSpec with Matchers {
       v.y(5).interpret[Id] shouldBe(true)
     }
 
+    "let implicits args reach handlers as explicit args" in {
+      type X = String
+      implicit val x: X = "x"
+      @free trait AlgWithImplicits {
+        def x(a: Int)(implicit ev: X): FS[X]
+      }
+      implicit val h: AlgWithImplicits.Handler[Id] = new AlgWithImplicits.Handler[Id] {
+        def x(a: Int, ev: X): Id[X] = ev + a
+      }
+      AlgWithImplicits[AlgWithImplicits.Op].x(1).interpret[Id] shouldBe (x + 1)
+    }
+
+    "let context bound implicits reach handlers as explicit args" in {
+      trait X[A] {
+        def z: String
+      }
+      @free trait AlgWithImplicits {
+        def x[A: X](a: A): FS[X[A]]
+      }
+      implicit def xa[A]: X[A] = new X[A] {
+        def z = "a"
+      }
+      implicit val h: AlgWithImplicits.Handler[Id] = new AlgWithImplicits.Handler[Id] {
+        def x[A](a: A, ev: X[A]): Id[X[A]] = ev
+      }
+      AlgWithImplicits[AlgWithImplicits.Op].x(1).interpret[Id].z shouldBe (xa.z)
+    }
+
+    "let multiple context bound implicits reach handlers as explicit args" in {
+      trait X[A] {
+        def z: String
+      }
+      trait Y[A] {
+        def z: String
+      }
+      @free trait AlgWithImplicits {
+        def x[A: X : Y](a: A): FS[(X[A], Y[A])]
+      }
+      implicit def xa[A]: X[A] = new X[A] {
+        def z = "xa"
+      }
+      implicit def ya[A]: Y[A] = new Y[A] {
+        def z = "ya"
+      }
+      implicit val h: AlgWithImplicits.Handler[Id] = new AlgWithImplicits.Handler[Id] {
+        def x[A](a: A, x: X[A], y: Y[A]): Id[(X[A], Y[A])] = (x, y)
+      }
+      val (x, y) = AlgWithImplicits[AlgWithImplicits.Op].x(1).interpret[Id]
+      (x.z, y.z) shouldBe (("xa", "ya"))
+    }
+
+    "let mixed args and context bounds implicits reach handlers as explicit args" in {
+      trait X[A] {
+        def y: String = "x"
+      }
+      type S = String
+      @free trait AlgWithImplicits {
+        def x[A: X](a: A)(implicit s: S): FS[String]
+      }
+      implicit val s: S = "s"
+      implicit def xa[A]: X[A] = new X[A] {}
+      implicit val h: AlgWithImplicits.Handler[Id] = new AlgWithImplicits.Handler[Id] {
+        def x[A](a: A, s: S, ev: X[A]): Id[String] = ev.y + s
+      }
+      AlgWithImplicits[AlgWithImplicits.Op].x(1).interpret[Id] shouldBe (xa.y + s)
+    }
+
     "respond to implicit evidences with compilable runtimes" in {
       implicit val optionHandler = interps.optionHandler1
       val s                      = SCtors1[SCtors1.Op]

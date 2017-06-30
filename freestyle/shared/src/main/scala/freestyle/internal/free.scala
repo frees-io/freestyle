@@ -186,12 +186,12 @@ private[internal] case class Algebra(
 
 private[internal] class Request(reqDef: Decl.Def, indexValue: Int) {
 
-  import reqDef.{paramss, tparams}
   import ScalametaUtil._
 
   // Name of the Request ADT Class
   private[this] val reqName: String = reqDef.name.value
   private[this] val req: Type.Name  = Type.Name(reqName.capitalize + "OP")
+  private[this] val cboundPrefix = "__$cbound"
 
   private[this] val res: Type = reqDef.decltpe match {
     case Type.Apply(_, args) => args.last
@@ -201,7 +201,21 @@ private[internal] class Request(reqDef: Decl.Def, indexValue: Int) {
   private[this] val reqC    = Term.Name(req.value)
   private[this] val reqImpl = Term.Name(reqName)
 
-  val params: Seq[Term.Param] = reqDef.paramss.flatten
+  val cbtparams = for {
+    tps <- reqDef.tparams.filter(_.cbounds.nonEmpty)
+    cbound <- tps.cbounds
+  } yield Term.Param(Nil, Term.fresh(cboundPrefix), Some(Type.Apply(cbound, Seq(Type.Name(tps.name.value)))), None)
+
+  val tparams = reqDef.tparams.map {
+    case p if p.cbounds.nonEmpty => p.copy(cbounds = Nil)
+    case p => p
+  }
+
+  val params: Seq[Term.Param] = reqDef.paramss.flatten.map {
+    case p @ param"..$mods $paramname: $atpeopt = $expropt" /* if p.hasMod(mod"implicit")*/ =>
+      p.copy(mods = Nil)
+    case p => p
+  } ++ cbtparams
 
   def reqClass(OP: Type.Name, effTTs: Seq[Type.Param], indexName: Term.Name): Class = {
     val tts                 = effTTs ++ tparams
@@ -214,12 +228,21 @@ private[internal] class Request(reqDef: Decl.Def, indexValue: Int) {
     """
   }
 
+  private[this] def nameOrImplicitlyBounds(param : Term.Param): Term.Name = param match {
+    case Term.Param(_, paramname, Some(atpeopt), _) if paramname.value.startsWith(cboundPrefix) =>
+      val targ"${tpe: Type}" = atpeopt
+      Term.Name(s"_root_.scala.Predef.implicitly[$tpe]")
+    case p => toName(p)
+  }
+
   def toDef(inj: Term.Name): Defn.Def = {
     val body: Term =
       if (tparams.isEmpty)
         q"$reqC(..${params.map(toName)})"
-      else
-        q"$reqC[..${tparams.map(toType)} ](..${params.map(toName)})"
+      else {
+
+        q"$reqC[..${tparams.map(toType)} ](..${params.map(nameOrImplicitlyBounds)})"
+      }
 
     addBody(reqDef, q"$inj($body)").copy(mods = Seq(Mod.Override()))
   }
