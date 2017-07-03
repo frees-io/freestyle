@@ -13,7 +13,7 @@ The current implementation exposes the most important combinators found in <a hr
 
 <p>In order to enable this integration, you can depend on <em>freestyle-config</em>:</p>
 
-<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="n">libraryDependencies</span> <span class="o">+=</span> <span class="s">"io.frees"</span> <span class="o">%%</span> <span class="s">"freestyle-config"</span> <span class="o">%</span> <span class="s">"0.3.0"</span>
+<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="n">libraryDependencies</span> <span class="o">+=</span> <span class="s">"io.frees"</span> <span class="o">%%</span> <span class="s">"freestyle-config"</span> <span class="o">%</span> <span class="s">"0.3.1"</span>
 </code></pre>
 </div>
 
@@ -74,7 +74,7 @@ The current implementation exposes the most important combinators found in <a hr
 <span class="k">implicit</span> <span class="k">val</span> <span class="n">issuesServiceHandler</span><span class="k">:</span> <span class="kt">IssuesService.Handler</span><span class="o">[</span><span class="kt">Try</span><span class="o">]</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">IssuesService</span><span class="o">.</span><span class="nc">Handler</span><span class="o">[</span><span class="kt">Try</span><span class="o">]</span> <span class="o">{</span>
   <span class="k">def</span> <span class="n">states</span><span class="k">:</span> <span class="kt">Try</span><span class="o">[</span><span class="kt">List</span><span class="o">[</span><span class="kt">String</span><span class="o">]]</span> <span class="k">=</span> <span class="nc">Try</span><span class="o">(</span><span class="nc">List</span><span class="o">(</span><span class="s">"open"</span><span class="o">,</span> <span class="s">"reverted"</span><span class="o">,</span> <span class="s">"in progress"</span><span class="o">,</span> <span class="s">"closed"</span><span class="o">))</span>
 <span class="o">}</span>
-<span class="c1">// issuesServiceHandler: IssuesService.Handler[scala.util.Try] = $anon$1@24adf54d
+<span class="c1">// issuesServiceHandler: IssuesService.Handler[scala.util.Try] = $anon$1@618479d9
 </span></code></pre>
 </div>
 
