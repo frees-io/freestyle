@@ -14,33 +14,34 @@
  * limitations under the License.
  */
 
-package freestyle
-package effects
+package freestyle.internal
 
-import cats.MonadReader
+import scala.collection.immutable.Seq
+import scala.meta._
 
-object reader {
+object syntax {
 
-  final class EnvironmentProvider[R] {
+  implicit def debugSyntax(block: Term.Block): DebugOps = new DebugOps(block)
 
-    @free abstract class ReaderM {
-      def ask: FS[R]
-      def reader[B](f: R => B): FS[B]
+  implicit def filterModifiers(mods: Seq[Mod]): ModOps = new ModOps(mods)
+
+  final class DebugOps(block: Term.Block) {
+
+    def `debug?`(mods: Seq[Mod]): Term.Block = {
+      mods foreach {
+        case mod"@debug" => println(block)
+        case _           =>
+      }
+      block
     }
-
-    trait Implicits {
-
-      implicit def freestyleReaderMHandler[M[_]](
-          implicit MR: MonadReader[M, R]): ReaderM.Handler[M] =
-        new ReaderM.Handler[M] {
-          def ask: M[R]                  = MR.ask
-          def reader[B](f: R => B): M[B] = MR.reader(f)
-        }
-    }
-
-    object implicits extends Implicits
   }
 
-  def apply[R] = new EnvironmentProvider[R]
+  final class ModOps(mods: Seq[Mod]) {
+
+    def filtered: Seq[Mod] = mods.filter {
+      case mod"@debug" => false
+      case _           => true
+    }
+  }
 
 }

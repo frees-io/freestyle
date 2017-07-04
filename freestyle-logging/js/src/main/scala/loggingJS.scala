@@ -16,15 +16,14 @@
 
 package freestyle
 
-import cats.MonadError
+import cats.Monad
 import freestyle.logging._
 import slogging._
 
 object loggingJS {
 
-  object implicits {
-    implicit def freeStyleLoggingHandler[M[_]](
-        implicit ME: MonadError[M, Throwable]): LoggingM.Handler[M] =
+  trait Implicits {
+    implicit def freeStyleLoggingHandler[M[_]](implicit M: Monad[M]): LoggingM.Handler[M] =
       new LoggingM.Handler[M] with LazyLogging {
 
         private[this] def formatMessage(
@@ -40,7 +39,7 @@ object loggingJS {
             sourceAndLineInfo: Boolean,
             line: sourcecode.Line,
             file: sourcecode.File): M[Unit] =
-          ME.catchNonFatal(logger.debug(formatMessage(msg, sourceAndLineInfo, line, file)))
+          M.pure(logger.debug(formatMessage(msg, sourceAndLineInfo, line, file)))
 
         def debugWithCause(
             msg: String,
@@ -48,14 +47,14 @@ object loggingJS {
             sourceAndLineInfo: Boolean,
             line: sourcecode.Line,
             file: sourcecode.File): M[Unit] =
-          ME.catchNonFatal(logger.debug(formatMessage(msg, sourceAndLineInfo, line, file), cause))
+          M.pure(logger.debug(formatMessage(msg, sourceAndLineInfo, line, file), cause))
 
         def error(
             msg: String,
             sourceAndLineInfo: Boolean,
             line: sourcecode.Line,
             file: sourcecode.File): M[Unit] =
-          ME.catchNonFatal(logger.error(formatMessage(msg, sourceAndLineInfo, line, file)))
+          M.pure(logger.error(formatMessage(msg, sourceAndLineInfo, line, file)))
 
         def errorWithCause(
             msg: String,
@@ -63,14 +62,14 @@ object loggingJS {
             sourceAndLineInfo: Boolean,
             line: sourcecode.Line,
             file: sourcecode.File): M[Unit] =
-          ME.catchNonFatal(logger.error(formatMessage(msg, sourceAndLineInfo, line, file), cause))
+          M.pure(logger.error(formatMessage(msg, sourceAndLineInfo, line, file), cause))
 
         def info(
             msg: String,
             sourceAndLineInfo: Boolean,
             line: sourcecode.Line,
             file: sourcecode.File): M[Unit] =
-          ME.catchNonFatal(logger.info(formatMessage(msg, sourceAndLineInfo, line, file)))
+          M.pure(logger.info(formatMessage(msg, sourceAndLineInfo, line, file)))
 
         def infoWithCause(
             msg: String,
@@ -78,14 +77,14 @@ object loggingJS {
             sourceAndLineInfo: Boolean,
             line: sourcecode.Line,
             file: sourcecode.File): M[Unit] =
-          ME.catchNonFatal(logger.info(formatMessage(msg, sourceAndLineInfo, line, file), cause))
+          M.pure(logger.info(formatMessage(msg, sourceAndLineInfo, line, file), cause))
 
         def warn(
             msg: String,
             sourceAndLineInfo: Boolean,
             line: sourcecode.Line,
             file: sourcecode.File): M[Unit] =
-          ME.catchNonFatal(logger.warn(formatMessage(msg, sourceAndLineInfo, line, file)))
+          M.pure(logger.warn(formatMessage(msg, sourceAndLineInfo, line, file)))
 
         def warnWithCause(
             msg: String,
@@ -93,7 +92,9 @@ object loggingJS {
             sourceAndLineInfo: Boolean,
             line: sourcecode.Line,
             file: sourcecode.File): M[Unit] =
-          ME.catchNonFatal(logger.warn(formatMessage(msg, sourceAndLineInfo, line, file), cause))
+          M.pure(logger.warn(formatMessage(msg, sourceAndLineInfo, line, file), cause))
       }
   }
+
+  object implicits extends Implicits
 }

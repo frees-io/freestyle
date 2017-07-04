@@ -1,5 +1,31 @@
 # Changelog
 
+## 07/02/2017 - Version 0.3.1
+
+Release changes:
+
+* Freestyle Build Matrix ([#358](https://github.com/frees-io/freestyle/pull/358))
+* Release Process Guide ([#356](https://github.com/frees-io/freestyle/pull/356))
+* Refactor Implicits ([#351](https://github.com/frees-io/freestyle/pull/351))
+* Enables freestyle-docs build check  ([#359](https://github.com/frees-io/freestyle/pull/359))
+* @debug StaticAnnotation ([#360](https://github.com/frees-io/freestyle/pull/360))
+* Adding tests to freestyle-cache CacheTests ([#316](https://github.com/frees-io/freestyle/pull/316))
+* Remove MonadError requirement for logging algebra ([#363](https://github.com/frees-io/freestyle/pull/363))
+* reduce deps on scala imports ([#366](https://github.com/frees-io/freestyle/pull/366))
+* Uses scalaMetaSettings through the project plugin ([#376](https://github.com/frees-io/freestyle/pull/376))
+* Enable implicit args and context bound implicits in @free traits ([#377](https://github.com/frees-io/freestyle/pull/377))
+
+
+## 06/12/2017 - Version 0.3.0
+
+Release changes:
+
+* bump mainecoon-core to 0.1.1 ([#342](https://github.com/frees-io/freestyle/pull/342))
+* Enables CI checks for Freestyle Projects ([#343](https://github.com/frees-io/freestyle/pull/343))
+* Calculates coverage only for JVM, excluding JS tests ([#350](https://github.com/frees-io/freestyle/pull/350))
+* DA-73 Scalameta migration ([#344](https://github.com/frees-io/freestyle/pull/344))
+
+
 ## 06/02/2017 - Version 0.2.0
 
 Release changes:

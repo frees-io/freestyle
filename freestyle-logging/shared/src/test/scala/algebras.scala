@@ -16,6 +16,8 @@
 
 package freestyle
 
+import cats.Id
+import cats.data.Kleisli
 import freestyle.logging.LoggingM
 
 import scala.concurrent.Future
@@ -27,9 +29,16 @@ object algebras {
     def x: FS[Int]
   }
 
-  implicit def nonLoggingHandler: NonLogging.Handler[Future] =
+  implicit def nonLoggingFutureHandler: NonLogging.Handler[Future] =
     new NonLogging.Handler[Future] {
       def x: Future[Int] = Future.successful(1)
+    }
+
+  type TestAlgebra[A] = Kleisli[Id, String, A]
+
+  implicit def nonLoggingTestAlgebraHandler: NonLogging.Handler[TestAlgebra] =
+    new NonLogging.Handler[TestAlgebra] {
+      def x: TestAlgebra[Int] = Kleisli.pure(1)
     }
 
   @module
