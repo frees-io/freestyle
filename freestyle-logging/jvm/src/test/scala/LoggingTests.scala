@@ -17,6 +17,7 @@
 package freestyle
 
 import cats.instances.future._
+import cats.{Id, Monad}
 import freestyle.implicits._
 import freestyle.loggingJVM.implicits._
 import org.scalatest.{AsyncWordSpec, Matchers}
@@ -58,6 +59,21 @@ class LoggingTests extends AsyncWordSpec with Matchers {
         b <- FreeS.pure(1)
       } yield a + b
       program.interpret[TestAlgebra].run("configHere") shouldBe 2
+    }
+
+    "allow injecting a Logger instance" in {
+      val program = for {
+        a <- FreeS.pure(1)
+        _ <- app.loggingM.info("Info Message")
+        _ <- app.loggingM.error("Error Message")
+        b <- FreeS.pure(1)
+      } yield a + b
+
+      implicit val logger = journal.Logger("Potatoes")
+
+      program
+        .interpret[TestAlgebra]
+        .run("configHere") shouldEqual 2
     }
   }
 }
