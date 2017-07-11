@@ -77,7 +77,7 @@ class ConfigTests extends AsyncWordSpec with Matchers {
     "allow configuration to load classpath files and convert into case class" in {
       case class MyConfig(s: Int)
       implicit val decoder = readConfig[Int]("s") map MyConfig.apply
-      app.configM.loadAs[MyConfig].interpret[Future] map { _ shouldBe Right(MyConfig(3)) }
+      app.configM.loadAs[MyConfig].interpret[Future] map { _ shouldBe MyConfig(3) }
     }
 
     "allow configuration to parse strings and convert into case class" in {
@@ -91,7 +91,7 @@ class ConfigTests extends AsyncWordSpec with Matchers {
       val config = """{n = 1, s = "foo", b = true}"""
 
       app.configM.parseStringAs[MyConfig](config).interpret[Future] map {
-        _ shouldBe Right(MyConfig(1, "foo", true))
+        _ shouldBe MyConfig(1, "foo", true)
       }
     }
   }
