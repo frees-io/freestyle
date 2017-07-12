@@ -171,7 +171,7 @@ lazy val logging = (crossProject in file("freestyle-logging"))
     libraryDependencies += %%%("slogging")
   )
   .jsSettings(sharedJsSettings: _*)
-  .crossDepSettings(commonDeps: _*)
+  .crossDepSettings(commonDeps ++ Seq("com.lihaoyi" %% "sourcecode" % "0.1.3"): _*)
 
 lazy val loggingJVM = logging.jvm
 lazy val loggingJS  = logging.js

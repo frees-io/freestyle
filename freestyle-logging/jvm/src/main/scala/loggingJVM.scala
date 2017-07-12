@@ -16,39 +16,59 @@
 
 package freestyle
 
+import cats.data.Kleisli
+import cats.arrow.FunctionK
 import cats.Monad
 import freestyle.logging._
 import journal._
+import org.slf4j.LoggerFactory
 
 object loggingJVM {
 
+  private[this] def formatMessage(
+      msg: String,
+      sourceAndLineInfo: Boolean,
+      line: sourcecode.Line,
+      file: sourcecode.File): String =
+    if (sourceAndLineInfo) s"$file:$line: $msg"
+    else msg
+
   trait Implicits {
-    implicit def freeStyleLoggingHandler[M[_], C: Manifest](
-        implicit M: Monad[M]): LoggingM.Handler[M] =
-      new LoggingM.Handler[M] {
+    implicit def freeStyleLoggingKleisli[M[_]: Monad, C: Manifest]: FSHandler[
+      LoggingM.Op,
+      Kleisli[M, Logger, ?]] =
+      λ[FunctionK[LoggingM.Op, Kleisli[M, Logger, ?]]](op =>
+        Kleisli { logger =>
+          Monad[M].pure {
+            op match {
+              case LoggingM.DebugOP(msg, sourceAndLineInfo, line, file) =>
+                logger.debug(formatMessage(msg, sourceAndLineInfo, line, file))
+              case LoggingM.DebugWithCauseOP(msg, cause, sourceAndLineInfo, line, file) =>
+                logger.debug(formatMessage(msg, sourceAndLineInfo, line, file), cause)
+              case LoggingM.ErrorOP(msg, sourceAndLineInfo, line, file) =>
+                logger.error(formatMessage(msg, sourceAndLineInfo, line, file))
+              case LoggingM.ErrorWithCauseOP(msg, cause, sourceAndLineInfo, line, file) =>
+                logger.error(formatMessage(msg, sourceAndLineInfo, line, file), cause)
+              case LoggingM.InfoOP(msg, sourceAndLineInfo, line, file) =>
+                logger.info(formatMessage(msg, sourceAndLineInfo, line, file))
+              case LoggingM.InfoWithCauseOP(msg, cause, sourceAndLineInfo, line, file) =>
+                logger.info(formatMessage(msg, sourceAndLineInfo, line, file), cause)
+              case LoggingM.WarnOP(msg, sourceAndLineInfo, line, file) =>
+                logger.warn(formatMessage(msg, sourceAndLineInfo, line, file))
+              case LoggingM.WarnWithCauseOP(msg, cause, sourceAndLineInfo, line, file) =>
+                logger.warn(formatMessage(msg, sourceAndLineInfo, line, file), cause)
+            }
+          }
+      })
 
-        val logger = Logger[C]
+    implicit def freeStyleLoggingKleisliRunner[M[_]](
+        log: Logger): FSHandler[Kleisli[M, Logger, ?], M] =
+      λ[FunctionK[Kleisli[M, Logger, ?], M]](_.run(log))
 
-        def debug(msg: String): M[Unit] = M.pure(logger.debug(msg))
+    implicit def freeStyleLoggingToM[M[_]: Monad](
+        implicit log: Logger = Logger("")): FSHandler[LoggingM.Op, M] =
+      freeStyleLoggingKleisli andThen freeStyleLoggingKleisliRunner(log)
 
-        def debugWithCause(msg: String, cause: Throwable): M[Unit] =
-          M.pure(logger.debug(msg, cause))
-
-        def error(msg: String): M[Unit] = M.pure(logger.error(msg))
-
-        def errorWithCause(msg: String, cause: Throwable): M[Unit] =
-          M.pure(logger.error(msg, cause))
-
-        def info(msg: String): M[Unit] = M.pure(logger.info(msg))
-
-        def infoWithCause(msg: String, cause: Throwable): M[Unit] =
-          M.pure(logger.info(msg, cause))
-
-        def warn(msg: String): M[Unit] = M.pure(logger.warn(msg))
-
-        def warnWithCause(msg: String, cause: Throwable): M[Unit] =
-          M.pure(logger.warn(msg, cause))
-      }
   }
 
   object implicits extends Implicits

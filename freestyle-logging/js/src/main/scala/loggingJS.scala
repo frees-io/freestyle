@@ -26,27 +26,73 @@ object loggingJS {
     implicit def freeStyleLoggingHandler[M[_]](implicit M: Monad[M]): LoggingM.Handler[M] =
       new LoggingM.Handler[M] with LazyLogging {
 
-        LoggerConfig.factory = PrintLoggerFactory()
+        private[this] def formatMessage(
+            msg: String,
+            sourceAndLineInfo: Boolean,
+            line: sourcecode.Line,
+            file: sourcecode.File): String =
+          if (sourceAndLineInfo) s"$file:$line: $msg"
+          else msg
 
-        def debug(msg: String): M[Unit] = M.pure(logger.debug(msg))
+        def debug(
+            msg: String,
+            sourceAndLineInfo: Boolean,
+            line: sourcecode.Line,
+            file: sourcecode.File): M[Unit] =
+          M.pure(logger.debug(formatMessage(msg, sourceAndLineInfo, line, file)))
 
-        def debugWithCause(msg: String, cause: Throwable): M[Unit] =
-          M.pure(logger.debug(msg, cause))
+        def debugWithCause(
+            msg: String,
+            cause: Throwable,
+            sourceAndLineInfo: Boolean,
+            line: sourcecode.Line,
+            file: sourcecode.File): M[Unit] =
+          M.pure(logger.debug(formatMessage(msg, sourceAndLineInfo, line, file), cause))
 
-        def error(msg: String): M[Unit] = M.pure(logger.error(msg))
+        def error(
+            msg: String,
+            sourceAndLineInfo: Boolean,
+            line: sourcecode.Line,
+            file: sourcecode.File): M[Unit] =
+          M.pure(logger.error(formatMessage(msg, sourceAndLineInfo, line, file)))
 
-        def errorWithCause(msg: String, cause: Throwable): M[Unit] =
-          M.pure(logger.error(msg, cause))
+        def errorWithCause(
+            msg: String,
+            cause: Throwable,
+            sourceAndLineInfo: Boolean,
+            line: sourcecode.Line,
+            file: sourcecode.File): M[Unit] =
+          M.pure(logger.error(formatMessage(msg, sourceAndLineInfo, line, file), cause))
 
-        def info(msg: String): M[Unit] = M.pure(logger.info(msg))
+        def info(
+            msg: String,
+            sourceAndLineInfo: Boolean,
+            line: sourcecode.Line,
+            file: sourcecode.File): M[Unit] =
+          M.pure(logger.info(formatMessage(msg, sourceAndLineInfo, line, file)))
 
-        def infoWithCause(msg: String, cause: Throwable): M[Unit] =
-          M.pure(logger.info(msg, cause))
+        def infoWithCause(
+            msg: String,
+            cause: Throwable,
+            sourceAndLineInfo: Boolean,
+            line: sourcecode.Line,
+            file: sourcecode.File): M[Unit] =
+          M.pure(logger.info(formatMessage(msg, sourceAndLineInfo, line, file), cause))
 
-        def warn(msg: String): M[Unit] = M.pure(logger.warn(msg))
+        def warn(
+            msg: String,
+            sourceAndLineInfo: Boolean,
+            line: sourcecode.Line,
+            file: sourcecode.File): M[Unit] =
+          M.pure(logger.warn(formatMessage(msg, sourceAndLineInfo, line, file)))
 
-        def warnWithCause(msg: String, cause: Throwable): M[Unit] =
-          M.pure(logger.warn(msg, cause))
+        def warnWithCause(
+            msg: String,
+            cause: Throwable,
+            sourceAndLineInfo: Boolean,
+            line: sourcecode.Line,
+            file: sourcecode.File): M[Unit] =
+          M.pure(logger.warn(formatMessage(msg, sourceAndLineInfo, line, file), cause))
       }
   }
 
