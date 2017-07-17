@@ -14,7 +14,6 @@ These are the people that have contributed to the freestyle project:
 * 47 Degrees Dev <[47degdev](https://github.com/47degdev)>
 * Adrián Ramírez Fornell <[AdrianRaFo](https://github.com/AdrianRaFo)>
 * Ana Mª Marquez <[anamariamv](https://github.com/anamariamv)>
-* Andy Scott <[andyscott](https://github.com/andyscott)>
 * Diego Esteban Alonso Blas <[diesalbla](https://github.com/diesalbla)>
 * Domingo Valera <[dominv](https://github.com/dominv)>
 * Fede Fernández <[fedefernandez](https://github.com/fedefernandez)>
@@ -27,6 +26,7 @@ These are the people that have contributed to the freestyle project:
 * Juan Pedro Moreno <[juanpedromoreno](https://github.com/juanpedromoreno)>
 * Juan Ramón González <[jrgonzalezg](https://github.com/jrgonzalezg)>
 * Maureen Elsberry  <[MaureenElsberry](https://github.com/MaureenElsberry)>
+* Pepe García <[pepegar](https://github.com/pepegar)>
 * Pere Villega <[pvillega](https://github.com/pvillega)>
 * Peter Neyens <[peterneyens](https://github.com/peterneyens)>
 * Raúl Raja Martínez <[raulraja](https://github.com/raulraja)>
@@ -34,3 +34,4 @@ These are the people that have contributed to the freestyle project:
 * Sho Kohara <[shokohara](https://github.com/shokohara)>
 * Suhas Gaddam <[suhasgaddam](https://github.com/suhasgaddam)>
 * Witold Czaplewski <[witi83](https://github.com/witi83)>
+* andy scott <[andyscott](https://github.com/andyscott)>
