@@ -16,14 +16,21 @@
 
 package freestyle
 
+import cats.MonadError
+import cats.syntax.either._
+import classy._
+import classy.config._
+import com.typesafe.config.{ConfigException, ConfigFactory}
+
 import scala.collection.JavaConverters._
 import scala.concurrent.duration._
 
-import cats.MonadError
-import cats.syntax.either._
-import com.typesafe.config.{ConfigException, ConfigFactory}
-
 object config {
+
+  case class ConfigError(msg: String, underlying: Option[Throwable] = None)
+      extends Throwable(msg) {
+    underlying foreach initCause
+  }
 
   sealed abstract class Config {
     def hasPath(path: String): Config.Result[Boolean]
@@ -37,13 +44,15 @@ object config {
   }
 
   object Config {
-    type Result[A] = Either[ConfigException, A]
+    type Result[A] = Either[ConfigError, A]
   }
 
   @free sealed trait ConfigM {
     def load: FS[Config]
     def empty: FS[Config]
     def parseString(s: String): FS[Config]
+    def loadAs[T: ConfigDecoder]: FS[T]
+    def parseStringAs[T: ConfigDecoder](s: String): FS[T]
   }
 
   object implicits {
@@ -63,7 +72,10 @@ object config {
     }
 
     private[config] def catchConfig[A](a: => A): Config.Result[A] =
-      Either.catchOnly[ConfigException](a)
+      Either.catchOnly[ConfigException](a).leftMap(e => ConfigError(e.getMessage, Option(e)))
+
+    private[config] def toConfigError[A](a: => Either[DecodeError, A]): Either[ConfigError, A] =
+      a.leftMap(e => ConfigError(e.toPrettyString))
 
     private[config] lazy val underlying = loadConfig(ConfigFactory.load())
 
@@ -74,6 +86,10 @@ object config {
         def empty: M[Config] = ME.pure(loadConfig(ConfigFactory.empty()))
         def parseString(s: String): M[Config] =
           ME.catchNonFatal(loadConfig(ConfigFactory.parseString(s)))
+        def loadAs[T](decoder: ConfigDecoder[T]): M[T] =
+          toConfigError(decoder.load()).fold(ME.raiseError, ME.pure)
+        def parseStringAs[T](s: String, decoder: ConfigDecoder[T]): M[T] =
+          toConfigError(decoder.fromString(s)).fold(ME.raiseError, ME.pure)
       }
   }
 

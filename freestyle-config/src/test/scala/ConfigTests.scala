@@ -27,6 +27,8 @@ import cats.instances.either._
 import cats.instances.future._
 import cats.syntax.cartesian._
 import cats.syntax.either._
+import classy.config._
+import com.typesafe.config.{Config => TypesafeConfig}
 
 class ConfigTests extends AsyncWordSpec with Matchers {
 
@@ -72,6 +74,26 @@ class ConfigTests extends AsyncWordSpec with Matchers {
       }
     }
 
+    "allow configuration to load classpath files and convert into case class" in {
+      case class MyConfig(s: Int)
+      implicit val decoder = readConfig[Int]("s") map MyConfig.apply
+      app.configM.loadAs[MyConfig].interpret[Future] map { _ shouldBe MyConfig(3) }
+    }
+
+    "allow configuration to parse strings and convert into case class" in {
+      case class MyConfig(n: Int, s: String, b: Boolean)
+      implicit val decoder = for {
+        n <- readConfig[Int]("n")
+        s <- readConfig[String]("s")
+        b <- readConfig[Boolean]("b")
+      } yield MyConfig(n, s, b)
+
+      val config = """{n = 1, s = "foo", b = true}"""
+
+      app.configM.parseStringAs[MyConfig](config).interpret[Future] map {
+        _ shouldBe MyConfig(1, "foo", true)
+      }
+    }
   }
 
 }
