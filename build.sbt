@@ -12,7 +12,9 @@ lazy val freestyle = (crossProject in file("freestyle"))
   .settings(libraryDependencies ++= Seq(%("scala-reflect", scalaVersion.value)))
   .settings(
     wartremoverWarnings in (Test, compile) := Warts.unsafe,
-    wartremoverWarnings in (Test, compile) ++= Seq(Wart.FinalCaseClass, Wart.ExplicitImplicitTypes),
+    wartremoverWarnings in (Test, compile) ++= Seq(
+      Wart.FinalCaseClass,
+      Wart.ExplicitImplicitTypes),
     wartremoverWarnings in (Test, compile) -= Wart.NonUnitStatements
   )
   .crossDepSettings(
@@ -129,6 +131,13 @@ lazy val asyncFs = (crossProject in file("freestyle-async/fs2"))
 
 lazy val asyncFsJVM = asyncFs.jvm
 lazy val asyncFsJS  = asyncFs.js
+
+lazy val asyncGuava = (project in file("freestyle-async/guava"))
+  .dependsOn(freestyleJVM, asyncJVM)
+  .settings(name := "freestyle-async-guava")
+  .settings(libraryDependencies ++= commonDeps ++ Seq(
+    "com.google.guava" % "guava" % "22.0"
+  ))
 
 lazy val cache = (crossProject in file("freestyle-cache"))
   .dependsOn(freestyle)
