@@ -74,6 +74,28 @@ class ConfigTests extends AsyncWordSpec with Matchers {
       }
     }
 
+    "allow nested config to be read from a parsed config" in {
+      val config1 =
+        """{n = 1, config2: {n2 = 2, s = "bar"}, s = "foo", b = true, xs = ["a", "b"], delay = "1000ms"}"""
+      val program = app.configM.parseString(config1) map { cfg =>
+        (cfg.hasPath("n") |@|
+          cfg.int("n") |@|
+          cfg.config("config2").map { cfg2 =>
+            (cfg2.int("n2") |@|
+              cfg2.string("s")).tupled
+          } |@|
+          cfg.double("n") |@|
+          cfg.string("s") |@|
+          cfg.boolean("b") |@|
+          cfg.stringList("xs") |@|
+          cfg.duration("delay", TimeUnit.SECONDS)).tupled
+      }
+
+      program.interpret[Future] map {
+        _ shouldBe Right((true, 1, Right((2, "bar")), 1d, "foo", true, List("a", "b"), 1L))
+      }
+    }
+
     "allow configuration to load classpath files and convert into case class" in {
       case class MyConfig(s: Int)
       implicit val decoder = readConfig[Int]("s") map MyConfig.apply
