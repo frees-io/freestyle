@@ -23,7 +23,7 @@ interface AnnotationMessages {
   "\n                                               " +
   "\nFor automatic handler resolution to work, ensure you provide an implicit handler for each one of your defined @free algebras." +
   "\nUber handlers considered for evaluating grouped algebras in `@module` or `Coproduct` are automatically derived and implicitly provided" +
-  "\nthere is a Handler for each one of the `@free` algebras available in the implicit scope." +
+  "\nthere is a handler for each one of the `@free` algebras available in the implicit scope. Ensure you have imported `freestyle.implicits._`." +
   "\n\n To learn more about `handlers` and how they relate to `@free` algebras visit:" +
   "\n\n http://frees.io/docs/core/interpreters/\n\n" +
   "\n-------";
