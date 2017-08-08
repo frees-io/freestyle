@@ -60,11 +60,12 @@ class parallelTests extends WordSpec with Matchers {
       val test = new NonDeterminismTestShared
       import test._
 
-      implicit val interpreter = new MixedFreeS.Handler[Future] {
-        override def x: Future[Int] = Future(blocker(1, 1000L))
-        override def y: Future[Int] = Future(blocker(2, 0L))
-        override def z: Future[Int] = Future(blocker(3, 2000L))
-      }
+      implicit val interpreter: FSHandler[MixedFreeS.Op, Future] =
+        new MixedFreeS.Handler[Future] {
+          override def x: Future[Int] = Future(blocker(1, 1000L))
+          override def y: Future[Int] = Future(blocker(2, 0L))
+          override def z: Future[Int] = Future(blocker(3, 2000L))
+        }
 
       Await.result(program.interpret[Future], Duration.Inf) shouldBe List(3, 1, 2, 3)
       buf.toArray shouldBe Array(3, 2, 1, 3)
@@ -80,11 +81,12 @@ class parallelTests extends WordSpec with Matchers {
       val test = new NonDeterminismTestShared
       import test._
 
-      implicit val interpreter = new MixedFreeS.Handler[Task] {
-        override def x: Task[Int] = Task(blocker(1, 1000L))
-        override def y: Task[Int] = Task(blocker(2, 0L))
-        override def z: Task[Int] = Task(blocker(3, 2000L))
-      }
+      implicit val interpreter: FSHandler[MixedFreeS.Op, Task] =
+        new MixedFreeS.Handler[Task] {
+          override def x: Task[Int] = Task(blocker(1, 1000L))
+          override def y: Task[Int] = Task(blocker(2, 0L))
+          override def z: Task[Int] = Task(blocker(3, 2000L))
+        }
 
       Await.result(program.interpret[Task].runAsync, Duration.Inf) shouldBe List(3, 1, 2, 3)
       buf.toArray shouldBe Array(3, 2, 1, 3)
@@ -97,11 +99,12 @@ class parallelTests extends WordSpec with Matchers {
       val test = new NonDeterminismTestShared
       import test._
 
-      implicit val interpreter = new MixedFreeS.Handler[Option] {
-        override def x: Option[Int] = Option(blocker(1, 1000L))
-        override def y: Option[Int] = Option(blocker(2, 0L))
-        override def z: Option[Int] = Option(blocker(3, 2000L))
-      }
+      implicit val interpreter: FSHandler[MixedFreeS.Op, Option] =
+        new MixedFreeS.Handler[Option] {
+          override def x: Option[Int] = Option(blocker(1, 1000L))
+          override def y: Option[Int] = Option(blocker(2, 0L))
+          override def z: Option[Int] = Option(blocker(3, 2000L))
+        }
 
       program.interpret[Option] shouldBe Option(List(3, 1, 2, 3))
       buf.toArray shouldBe Array(3, 1, 2, 3)
@@ -126,12 +129,13 @@ class parallelTests extends WordSpec with Matchers {
         def hasNumber: FS[Boolean]
       }
 
-      implicit val interpreter = new Validation.Handler[ParValidator] {
-        override def minSize(n: Int): ParValidator[Boolean] =
-          Kleisli(s => Future(s.size >= n))
-        override def hasNumber: ParValidator[Boolean] =
-          Kleisli(s => Future(s.exists(c => "0123456789".contains(c))))
-      }
+      implicit val interpreter: Validation.Handler[ParValidator] =
+        new Validation.Handler[ParValidator] {
+          override def minSize(n: Int): ParValidator[Boolean] =
+            Kleisli(s => Future(s.size >= n))
+          override def hasNumber: ParValidator[Boolean] =
+            Kleisli(s => Future(s.exists(c => "0123456789".contains(c))))
+        }
 
       val validation = Validation[Validation.Op]
       import validation._

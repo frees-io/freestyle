@@ -16,6 +16,7 @@
 
 package freestyle
 
+@debug
 @free
 trait SCtors1 {
   def x(a: Int): FS[Int]
@@ -57,7 +58,7 @@ trait S2 {
   def y(n: Int): FS[Int]
 }
 
-
+@debug
 @module
 trait M1 {
   val sctors1: SCtors1
@@ -70,10 +71,12 @@ trait M2 {
   val sctors4: SCtors4
 }
 
+@debug
 @module
 trait O1 {
   val m1: M1
   val m2: M2
+  /*test*/
 }
 
 @module

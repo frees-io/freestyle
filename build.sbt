@@ -20,13 +20,16 @@ lazy val freestyle = (crossProject in file("freestyle"))
   .crossDepSettings(
     commonDeps ++ Seq(
       %("cats-free", "1.0.0-MF"),
-      %("iota-core"),
+      // %("iota-core"),
+      // %("iota-core", "0.3.0-SNAPSHOT"),
       %("shapeless", "2.3.2"),
       %("simulacrum", "0.11.0"),
       %("cats-laws", "1.0.0-MF") % "test",
       %("monix-eval", "3.0.0-SNAPSHOT") % "test"
     ): _*
   )
+  .settings(libraryDependencies += "io.frees" %%% "iota-core" % "0.3.0-SNAPSHOT")
+  .settings(resolvers+=Resolver.mavenLocal)
 
 lazy val freestyleJVM = freestyle.jvm
 lazy val freestyleJS  = freestyle.js

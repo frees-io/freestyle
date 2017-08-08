@@ -129,7 +129,7 @@ private[internal] case class FreeSModule(
 
   def makeOpTypesBody: Type =
     if (effects.isEmpty)
-      iotaKNilT
+      iotaTNilKT
     else
       effects.map(_.opType).reduce(iotaConcatApply)
 
@@ -171,8 +171,8 @@ private[internal] object ModuleUtil {
     "The `@module` annotation can only be applied to a trait or an abstract class."
   val noCompanion = "The trait or class annotated with `@module` must have no companion object."
 
-  val iotaKNilT: Type   = q"type T = _root_.iota.KNil".body
-  val iotaConcatT: Type = q"type T = _root_.iota.KList.Op.Concat".body
+  val iotaTNilKT: Type  = q"type T = _root_.iota.TNilK".body
+  val iotaConcatT: Type = q"type T = _root_.iota.TListK.Op.Concat".body
 
   def iotaConcatApply(ta: Type, tb: Type): Type.Apply = Type.Apply(iotaConcatT, Seq(ta, tb))
 }

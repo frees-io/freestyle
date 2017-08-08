@@ -40,7 +40,7 @@ object InjKChecks {
 }
 
 class InjKTests extends Properties("InjK") {
-  import KList.:::
+  import TListK.:::
 
   case class Foo[A](foo: A)
   case class Bar[A](bar: A)
@@ -75,18 +75,18 @@ class InjKTests extends Properties("InjK") {
 
     implicit def left[F[_], G[_], A](implicit
       arbFA: Arbitrary[F[A]]
-    ): Arbitrary[CopK[F ::: G ::: KNil, A]] =
+    ): Arbitrary[CopK[F ::: G ::: TNilK, A]] =
       Arbitrary(arbFA.arbitrary.map(v => CopK.unsafeApply(0, v)))
 
     implicit def right[F[_], G[_], A](implicit
       arbGA: Arbitrary[G[A]]
-    ): Arbitrary[CopK[F ::: G ::: KNil, A]] =
+    ): Arbitrary[CopK[F ::: G ::: TNilK, A]] =
       Arbitrary(arbGA.arbitrary.map(v => CopK.unsafeApply(1, v)))
 
     implicit def both[F[_], G[_], A](implicit
       arbFA: Arbitrary[F[A]],
       arbGA: Arbitrary[G[A]]
-    ): Arbitrary[CopK[F ::: G ::: KNil, A]] =
+    ): Arbitrary[CopK[F ::: G ::: TNilK, A]] =
       Arbitrary(arbitrary[Boolean].flatMap(toggle =>
         if (toggle) left[F, G, A].arbitrary else right[F, G, A].arbitrary
       ))
@@ -114,20 +114,20 @@ class InjKTests extends Properties("InjK") {
 
   property("roundtrip inj [CopK]") = {
     type F[A] = Foo[A]
-    type G[A] = CopK[Foo ::: Bar ::: KNil, A]
+    type G[A] = CopK[Foo ::: Bar ::: TNilK, A]
     InjKChecks.roundTripInj[F, G, String]
   }
 
   property("roundtrip prj [CopK, left]") = {
     type F[A] = Foo[A]
-    type G[A] = CopK[Foo ::: Bar ::: KNil, A]
+    type G[A] = CopK[Foo ::: Bar ::: TNilK, A]
     import arbCopK.left
     InjKChecks.roundTripPrj[F, G, String]
   }
 
   property("roundtrip prj [CopK, right]") = {
     type F[A] = Bar[A]
-    type G[A] = CopK[Foo ::: Bar ::: KNil, A]
+    type G[A] = CopK[Foo ::: Bar ::: TNilK, A]
     import arbCopK.right
     InjKChecks.roundTripPrj[F, G, String]
   }

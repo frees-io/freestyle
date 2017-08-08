@@ -47,7 +47,7 @@ private[freestyle] sealed trait InjKInstances1 {
     def prj = λ[G ~> λ[α => Option[F[α]]]](ev.prj(_))
   }
 
-  implicit def injKfromIotaCopKInjectL[F[_], L <: KList](
+  implicit def injKfromIotaCopKInjectL[F[_], L <: TListK](
     implicit ev: CopK.InjectL[F, L]
   ): InjK[F, CopK[L, ?]] = new InjK[F, CopK[L, ?]] {
     def inj = λ[F ~> CopK[L, ?]](ev.inj(_))

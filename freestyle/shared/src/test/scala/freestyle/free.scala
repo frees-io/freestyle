@@ -19,7 +19,7 @@ package freestyle
 import cats.Id
 import cats.instances.option._
 import cats.instances.list._
-import cats.syntax.cartesian._
+import cats.syntax.apply._
 import freestyle.implicits._
 import org.scalatest.{Matchers, WordSpec}
 
@@ -105,10 +105,10 @@ class freeTests extends WordSpec with Matchers {
 
     "using the Applicative instance to combine operations into a FS.Par" in {
       """
-        import cats.syntax.cartesian._
+        import cats.syntax.apply._
         @free trait X {
           def a: FS[Int]
-          def b: FS.Par[Int] = (a |@| a).map(_+_)
+          def b: FS.Par[Int] = (a, a).mapN(_+_)
         }
       """ should compile
     }
@@ -192,9 +192,10 @@ class freeTests extends WordSpec with Matchers {
         def y(a: Int): FS[Boolean] = x(a).map { _ >= 0 }
       }
       val v = Combine[Combine.Op]
-      implicit val interpreter = new Combine.Handler[Id]{
-        override def x(a: Int): Int = 4
-      }
+      implicit val interpreter: Combine.Handler[Id] =
+        new Combine.Handler[Id]{
+          override def x(a: Int): Int = 4
+        }
       v.y(5).interpret[Id] shouldBe(true)
     }
 
@@ -204,10 +205,11 @@ class freeTests extends WordSpec with Matchers {
       @free trait AlgWithImplicits {
         def x(a: Int)(implicit ev: X): FS[X]
       }
-      implicit val h: AlgWithImplicits.Handler[Id] = new AlgWithImplicits.Handler[Id] {
-        def x(a: Int, ev: X): Id[X] = ev + a
-      }
-      AlgWithImplicits[AlgWithImplicits.Op].x(1).interpret[Id] shouldBe (x + 1)
+      implicit val h: AlgWithImplicits.Handler[Id] =
+        new AlgWithImplicits.Handler[Id] {
+          def x(a: Int, ev: X): Id[X] = ev.toString + a.toString
+        }
+      AlgWithImplicits[AlgWithImplicits.Op].x(1).interpret[Id] shouldBe ("x1")
     }
 
     "let context bound implicits reach handlers as explicit args" in {
@@ -266,23 +268,29 @@ class freeTests extends WordSpec with Matchers {
     }
 
     "respond to implicit evidences with compilable runtimes" in {
-      implicit val optionHandler = interps.optionHandler1
-      val s                      = SCtors1[SCtors1.Op]
+      implicit val optionHandler: FSHandler[SCtors1.Op, Option] = interps.optionHandler1
+
+      val s = SCtors1[SCtors1.Op]
+
       val program = for {
         a <- s.x(1)
         b <- s.y(1)
       } yield a + b
+
       program.interpret[Option] shouldBe Option(2)
     }
 
     "reuse program interpretation in diferent runtimes" in {
-      implicit val optionHandler = interps.optionHandler1
-      implicit val listHandler   = interps.listHandler1
-      val s                      = SCtors1[SCtors1.Op]
+      implicit val optionHandler: FSHandler[SCtors1.Op, Option] = interps.optionHandler1
+      implicit val listHandler:   FSHandler[SCtors1.Op, List]   = interps.listHandler1
+
+      val s = SCtors1[SCtors1.Op]
+
       val program = for {
         a <- s.x(1)
         b <- s.y(1)
       } yield a + b
+
       program.interpret[Option] shouldBe Option(2)
       program.interpret[List] shouldBe List(2)
     }
@@ -294,14 +302,15 @@ class freeTests extends WordSpec with Matchers {
         def y(key: String): FS[String]
         def z(key: String): FS[String]
       }
-      implicit val interpreter = new ApplicativesServ.Handler[Option] {
-        override def x(key: String): Option[String] = Some(key)
-        override def y(key: String): Option[String] = Some(key)
-        override def z(key: String): Option[String] = Some(key)
-      }
+      implicit val interpreter: ApplicativesServ.Handler[Option] =
+        new ApplicativesServ.Handler[Option] {
+          override def x(key: String): Option[String] = Some(key)
+          override def y(key: String): Option[String] = Some(key)
+          override def z(key: String): Option[String] = Some(key)
+        }
       val v = ApplicativesServ[ApplicativesServ.Op]
       import v._
-      val program = (x("a") |@| y("b") |@| z("c")).map { _ + _ + _ }.freeS
+      val program = (x("a"), y("b"), z("c")).mapN { _ + _ + _ }.freeS
       program.interpret[Option] shouldBe Some("abc")
     }
 
@@ -312,14 +321,15 @@ class freeTests extends WordSpec with Matchers {
         def y(key: String): FS[String]
         def z(key: String): FS[String]
       }
-      implicit val interpreter = new MixedFreeS.Handler[Option] {
-        override def x(key: String): Option[String] = Some(key)
-        override def y(key: String): Option[String] = Some(key)
-        override def z(key: String): Option[String] = Some(key)
-      }
+      implicit val interpreter: MixedFreeS.Handler[Option] =
+        new MixedFreeS.Handler[Option] {
+          override def x(key: String): Option[String] = Some(key)
+          override def y(key: String): Option[String] = Some(key)
+          override def z(key: String): Option[String] = Some(key)
+        }
       val v = MixedFreeS[MixedFreeS.Op]
       import v._
-      val apProgram = (x("a") |@| y("b")).map { _ + _ }
+      val apProgram = (x("a"), y("b")).mapN { _ + _ }
       val program = for {
         n <- z("1")
         m <- apProgram.freeS
@@ -341,9 +351,10 @@ class freeTests extends WordSpec with Matchers {
       v.y shouldBe 5
       v.z shouldBe 6
 
-      implicit val interpreter = new WithExtra.Handler[Id]{
-        override def x(a: Int): String = a.toString
-      }
+      implicit val interpreter: WithExtra.Handler[Id] =
+        new WithExtra.Handler[Id]{
+          override def x(a: Int): String = a.toString
+        }
       v.x(v.z).interpret[Id] shouldBe "6"
     }
 
@@ -353,9 +364,10 @@ class freeTests extends WordSpec with Matchers {
         def y(a: Int): FS[Boolean] = x(a).map { _ >= 0 }
       }
       val v = Combine[Combine.Op]
-      implicit val interpreter = new Combine.Handler[Id]{
-        override def x(a: Int): Int = 4
-      }
+      implicit val interpreter: Combine.Handler[Id] =
+        new Combine.Handler[Id]{
+          override def x(a: Int): Int = 4
+        }
       v.y(5).interpret[Id] shouldBe(true)
     }
 
