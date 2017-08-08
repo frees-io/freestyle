@@ -19,13 +19,12 @@ lazy val freestyle = (crossProject in file("freestyle"))
   )
   .crossDepSettings(
     commonDeps ++ Seq(
+      %("cats-free", "1.0.0-MF"),
       %("iota-core"),
-      %("cats-free"),
-      %("shapeless"),
-      %("monix-eval") % "test",
-      %("monix-cats") % "test",
-      %("cats-laws")  % "test",
-      %("discipline") % "test"
+      %("shapeless", "2.3.2"),
+      %("simulacrum", "0.11.0"),
+      %("cats-laws", "1.0.0-MF") % "test",
+      %("monix-eval", "3.0.0-SNAPSHOT") % "test"
     ): _*
   )
 
@@ -38,7 +37,7 @@ lazy val tagless = (crossProject in file("freestyle-tagless"))
   .jsSettings(sharedJsSettings: _*)
   .crossDepSettings(commonDeps: _*)
   .settings(
-    libraryDependencies += "com.kailuowang" %%% "mainecoon-core" % "0.1.1"
+    libraryDependencies += "com.kailuowang" %%% "mainecoon-core" % "0.4.0"
   )
 
 lazy val taglessJVM = tagless.jvm
@@ -97,6 +96,7 @@ lazy val effects = (crossProject in file("freestyle-effects"))
   .settings(name := "freestyle-effects")
   .jsSettings(sharedJsSettings: _*)
   .crossDepSettings(commonDeps: _*)
+  .settings(libraryDependencies += "org.typelevel" %%% "cats-mtl-core" % "0.0.2")
 
 lazy val effectsJVM = effects.jvm
 lazy val effectsJS  = effects.js
@@ -110,27 +110,15 @@ lazy val async = (crossProject in file("freestyle-async/async"))
 lazy val asyncJVM = async.jvm
 lazy val asyncJS  = async.js
 
-lazy val asyncMonix = (crossProject in file("freestyle-async/monix"))
+lazy val asyncCatsEffect = (crossProject in file("freestyle-async/cats-effect"))
   .dependsOn(freestyle, async)
-  .settings(name := "freestyle-async-monix")
-  .crossDepSettings(
-    commonDeps ++ Seq(
-      %("monix-eval"),
-      %("monix-cats")
-    ): _*)
+  .settings(name := "freestyle-async-cats-effect")
   .jsSettings(sharedJsSettings: _*)
+  .crossDepSettings(commonDeps: _*)
+  .settings(libraryDependencies += "org.typelevel" %%% "cats-effect" % "0.4")
 
-lazy val asyncMonixJVM = asyncMonix.jvm
-lazy val asyncMonixJS  = asyncMonix.js
-
-lazy val asyncFs = (crossProject in file("freestyle-async/fs2"))
-  .dependsOn(freestyle, async)
-  .settings(name := "freestyle-async-fs2")
-  .jsSettings(sharedJsSettings: _*)
-  .crossDepSettings(commonDeps ++ Seq(%("fs2-core"), %("fs2-cats")): _*)
-
-lazy val asyncFsJVM = asyncFs.jvm
-lazy val asyncFsJS  = asyncFs.js
+lazy val asyncCatsEffectJVM = asyncCatsEffect.jvm
+lazy val asyncCatsEffectJS  = asyncCatsEffect.js
 
 lazy val asyncGuava = (project in file("freestyle-async/guava"))
   .dependsOn(freestyleJVM, asyncJVM)
@@ -196,8 +184,8 @@ lazy val jvmModules: Seq[ProjectReference] = Seq(
   taglessJVM,
   effectsJVM,
   asyncJVM,
-  asyncMonixJVM,
-  asyncFsJVM,
+  asyncCatsEffectJVM,
+  asyncGuava,
   cacheJVM,
   config,
   loggingJVM
@@ -208,8 +196,7 @@ lazy val jsModules: Seq[ProjectReference] = Seq(
   taglessJS,
   effectsJS,
   asyncJS,
-  asyncMonixJS,
-  asyncFsJS,
+  asyncCatsEffectJS,
   cacheJS,
   loggingJS
 )

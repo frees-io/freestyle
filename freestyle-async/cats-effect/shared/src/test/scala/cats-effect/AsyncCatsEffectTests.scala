@@ -14,34 +14,32 @@
  * limitations under the License.
  */
 
-package freestyle.asyncMonix
+package freestyle.asyncCatsEffect
 
-import org.scalatest._
-
+import cats.effect.IO
 import freestyle._
 import freestyle.implicits._
 import freestyle.async._
 import freestyle.async.implicits._
-import freestyle.asyncMonix.implicits._
+import freestyle.asyncCatsEffect.implicits._
+import org.scalatest.{AsyncWordSpec, Matchers}
+import scala.concurrent.ExecutionContext
 
-import monix.eval.Task
-import monix.cats._
-import monix.execution.Scheduler
+class AsyncFs2Tests extends AsyncWordSpec with Matchers {
 
-class AsyncMonixTests extends AsyncWordSpec with Matchers {
-  implicit override def executionContext = Scheduler.Implicits.global
+  implicit override def executionContext = ExecutionContext.Implicits.global
 
-  "Async Monix Freestyle integration" should {
-    "support Task as the target runtime" in {
+  "Async Cats Effect Freestyle integration" should {
+    "support IO as the target runtime" in {
       def program[F[_]: AsyncM] =
         for {
           a <- FreeS.pure(1)
-          b <- AsyncM[F].async[Int](cb => cb(Right(42)))
+          b <- AsyncM[F].async[Int](cb => cb(Right(a + 41)))
           c <- FreeS.pure(1)
-          d <- AsyncM[F].async[Int](cb => cb(Right(10)))
+          d <- AsyncM[F].async[Int](cb => cb(Right(c + 9)))
         } yield a + b + c + d
 
-      program[AsyncM.Op].interpret[Task].runAsync map { _ shouldBe 54 }
+      program[AsyncM.Op].interpret[IO].unsafeToFuture map { _ shouldBe 54 }
     }
   }
 }

@@ -16,13 +16,12 @@
 
 package freestyle
 
-import cats.data._
+import cats.data.EitherK
 import iota._
 
 import org.scalacheck._
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Prop._
-
 
 object InjKChecks {
   def roundTripInj[F[_], G[_], A](implicit
@@ -55,18 +54,18 @@ class InjKTests extends Properties("InjK") {
 
     implicit def left[F[_], G[_], A](implicit
       arbFA: Arbitrary[F[A]]
-    ): Arbitrary[Coproduct[F, G, A]] =
-      Arbitrary(arbFA.arbitrary.map(v => Coproduct.left(v)))
+    ): Arbitrary[EitherK[F, G, A]] =
+      Arbitrary(arbFA.arbitrary.map(v => EitherK.left(v)))
 
     implicit def right[F[_], G[_], A](implicit
       arbGA: Arbitrary[G[A]]
-    ): Arbitrary[Coproduct[F, G, A]] =
-      Arbitrary(arbGA.arbitrary.map(v => Coproduct.right(v)))
+    ): Arbitrary[EitherK[F, G, A]] =
+      Arbitrary(arbGA.arbitrary.map(v => EitherK.right(v)))
 
     implicit def both[F[_], G[_], A](implicit
       arbFA: Arbitrary[F[A]],
       arbGA: Arbitrary[G[A]]
-    ): Arbitrary[Coproduct[F, G, A]] =
+    ): Arbitrary[EitherK[F, G, A]] =
       Arbitrary(arbitrary[Boolean].flatMap(toggle =>
         if (toggle) left[F, G, A].arbitrary else right[F, G, A].arbitrary
       ))
@@ -93,22 +92,22 @@ class InjKTests extends Properties("InjK") {
       ))
   }
 
-  property("roundtrip inj [Coproduct]") = {
+  property("roundtrip inj [EitherK]") = {
     type F[A] = Foo[A]
-    type G[A] = Coproduct[Foo, Bar, A]
+    type G[A] = EitherK[Foo, Bar, A]
     InjKChecks.roundTripInj[F, G, String]
   }
 
-  property("roundtrip prj [Coproduct, left]") = {
+  property("roundtrip prj [EitherK, left]") = {
     type F[A] = Foo[A]
-    type G[A] = Coproduct[Foo, Bar, A]
+    type G[A] = EitherK[Foo, Bar, A]
     import arbCoproduct.left
     InjKChecks.roundTripPrj[F, G, String]
   }
 
-  property("roundtrip prj [Coproduct, right]") = {
+  property("roundtrip prj [EitherK, right]") = {
     type F[A] = Bar[A]
-    type G[A] = Coproduct[Foo, Bar, A]
+    type G[A] = EitherK[Foo, Bar, A]
     import arbCoproduct.right
     InjKChecks.roundTripPrj[F, G, String]
   }

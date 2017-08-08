@@ -17,7 +17,8 @@
 package freestyle
 package effects
 
-import cats.MonadState
+import cats.Monad
+import cats.mtl.MonadState
 
 object state {
 
@@ -32,7 +33,7 @@ object state {
 
     trait Implicits {
 
-      implicit def freestyleStateMHandler[M[_]](implicit MS: MonadState[M, S]): StateM.Handler[M] =
+      implicit def freestyleStateMHandler[M[_]](implicit M: Monad[M], MS: MonadState[M, S]): StateM.Handler[M] =
         new StateM.Handler[M] {
           def get: M[S]                   = MS.get
           def set(s: S): M[Unit]          = MS.set(s)

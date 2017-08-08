@@ -17,4 +17,4 @@
 package freestyle
 package effects
 
-object implicits extends option.Implicits with error.Implicits
+object implicits extends error.Implicits

@@ -95,6 +95,7 @@ trait StateProp {
   val s2: S2
 }
 
+
 object comp {
 
   @module

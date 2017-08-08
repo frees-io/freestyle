@@ -44,7 +44,7 @@ class parallelTests extends WordSpec with Matchers {
 
       val program = for {
         a  <- z //3
-        bc <- (x |@| y).tupled.freeS //(1,2)
+        bc <- (x, y).tupled.freeS //(1,2)
         (b, c) = bc
         d <- z //3
       } yield a :: b :: c :: d :: Nil // List(3,1,2,3)
@@ -74,7 +74,6 @@ class parallelTests extends WordSpec with Matchers {
       import freestyle.nondeterminism._
       import freestyle.implicits._
 
-      import monix.cats._
       import monix.eval.Task.nondeterminism
       import monix.execution.Scheduler.Implicits.global
 
@@ -137,7 +136,7 @@ class parallelTests extends WordSpec with Matchers {
       val validation = Validation[Validation.Op]
       import validation._
 
-      val parValidation = (minSize(3) |@| hasNumber).map(_ :: _ :: Nil)
+      val parValidation = (minSize(3), hasNumber).mapN(_ :: _ :: Nil)
       val validator     = parValidation.interpret[ParValidator]
 
       Await.result(validator.run("a"), Duration.Inf) shouldBe List(false, false)

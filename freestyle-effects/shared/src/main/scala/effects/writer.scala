@@ -17,7 +17,8 @@
 package freestyle
 package effects
 
-import cats.MonadWriter
+import cats.Monad
+import cats.mtl.FunctorTell
 
 object writer {
 
@@ -30,10 +31,11 @@ object writer {
 
     trait Implicits {
 
-      implicit def freestyleWriterMHandler[M[_]](
-          implicit MW: MonadWriter[M, W]): WriterM.Handler[M] = new WriterM.Handler[M] {
-        def writer[A](aw: (W, A)): M[A] = MW.writer(aw)
-        def tell(w: W): M[Unit]         = MW.tell(w)
+    implicit def freestyleWriterMHandler[M[_]](
+        implicit M: Monad[M], FT: FunctorTell[M, W]): WriterM.Handler[M] =
+      new WriterM.Handler[M] {
+        def writer[A](aw: (W, A)): M[A] = FT.tuple(aw)
+        def tell(w: W): M[Unit]         = FT.tell(w)
       }
 
     }
