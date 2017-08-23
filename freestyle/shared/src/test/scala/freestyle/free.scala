@@ -146,8 +146,8 @@ class freeTests extends WordSpec with Matchers {
           def sc2(a: Int, b: Int, c: Int): FS[Int]
         }
         implicitly[FriendlyFreeS.Op[_] =:= FriendlyFreeS.Op[_]]
-        implicitly[FriendlyFreeS.Sc1OP <:< FriendlyFreeS.Op[Int]]
-        implicitly[FriendlyFreeS.Sc2OP <:< FriendlyFreeS.Op[Int]]
+        implicitly[FriendlyFreeS.Sc1Op <:< FriendlyFreeS.Op[Int]]
+        implicitly[FriendlyFreeS.Sc2Op <:< FriendlyFreeS.Op[Int]]
       """ should compile
     }
 

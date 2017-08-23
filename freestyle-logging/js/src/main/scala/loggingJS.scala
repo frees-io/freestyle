@@ -25,74 +25,62 @@ object loggingJS {
   trait Implicits {
     implicit def freeStyleLoggingHandler[M[_]](implicit M: Monad[M]): LoggingM.Handler[M] =
       new LoggingM.Handler[M] with LazyLogging {
+        import sourcecode.{File, Line}
 
         private[this] def formatMessage(
             msg: String,
             sourceAndLineInfo: Boolean,
-            line: sourcecode.Line,
-            file: sourcecode.File): String =
+            line: Line,
+            file: File): String =
           if (sourceAndLineInfo) s"$file:$line: $msg"
           else msg
 
-        def debug(
-            msg: String,
-            sourceAndLineInfo: Boolean,
-            line: sourcecode.Line,
-            file: sourcecode.File): M[Unit] =
-          M.pure(logger.debug(formatMessage(msg, sourceAndLineInfo, line, file)))
+        private def withLogger[A](f: Logger => A): M[A] =
+          M.pure(f(logger))
+
+        def debug(msg: String, sourceAndLineInfo: Boolean, line: Line, file: File): M[Unit] =
+          withLogger(_.debug(formatMessage(msg, sourceAndLineInfo, line, file)))
 
         def debugWithCause(
             msg: String,
             cause: Throwable,
             sourceAndLineInfo: Boolean,
-            line: sourcecode.Line,
-            file: sourcecode.File): M[Unit] =
-          M.pure(logger.debug(formatMessage(msg, sourceAndLineInfo, line, file), cause))
+            line: Line,
+            file: File): M[Unit] =
+          withLogger(_.debug(formatMessage(msg, sourceAndLineInfo, line, file), cause))
 
-        def error(
-            msg: String,
-            sourceAndLineInfo: Boolean,
-            line: sourcecode.Line,
-            file: sourcecode.File): M[Unit] =
-          M.pure(logger.error(formatMessage(msg, sourceAndLineInfo, line, file)))
+        def error(msg: String, sourceAndLineInfo: Boolean, line: Line, file: File): M[Unit] =
+          withLogger(_.error(formatMessage(msg, sourceAndLineInfo, line, file)))
 
         def errorWithCause(
             msg: String,
             cause: Throwable,
             sourceAndLineInfo: Boolean,
-            line: sourcecode.Line,
-            file: sourcecode.File): M[Unit] =
-          M.pure(logger.error(formatMessage(msg, sourceAndLineInfo, line, file), cause))
+            line: Line,
+            file: File): M[Unit] =
+          withLogger(_.error(formatMessage(msg, sourceAndLineInfo, line, file), cause))
 
-        def info(
-            msg: String,
-            sourceAndLineInfo: Boolean,
-            line: sourcecode.Line,
-            file: sourcecode.File): M[Unit] =
-          M.pure(logger.info(formatMessage(msg, sourceAndLineInfo, line, file)))
+        def info(msg: String, sourceAndLineInfo: Boolean, line: Line, file: File): M[Unit] =
+          withLogger(_.info(formatMessage(msg, sourceAndLineInfo, line, file)))
 
         def infoWithCause(
             msg: String,
             cause: Throwable,
             sourceAndLineInfo: Boolean,
-            line: sourcecode.Line,
-            file: sourcecode.File): M[Unit] =
-          M.pure(logger.info(formatMessage(msg, sourceAndLineInfo, line, file), cause))
+            line: Line,
+            file: File): M[Unit] =
+          withLogger(_.info(formatMessage(msg, sourceAndLineInfo, line, file), cause))
 
-        def warn(
-            msg: String,
-            sourceAndLineInfo: Boolean,
-            line: sourcecode.Line,
-            file: sourcecode.File): M[Unit] =
-          M.pure(logger.warn(formatMessage(msg, sourceAndLineInfo, line, file)))
+        def warn(msg: String, sourceAndLineInfo: Boolean, line: Line, file: File): M[Unit] =
+          withLogger(_.warn(formatMessage(msg, sourceAndLineInfo, line, file)))
 
         def warnWithCause(
             msg: String,
             cause: Throwable,
             sourceAndLineInfo: Boolean,
-            line: sourcecode.Line,
-            file: sourcecode.File): M[Unit] =
-          M.pure(logger.warn(formatMessage(msg, sourceAndLineInfo, line, file), cause))
+            line: Line,
+            file: File): M[Unit] =
+          withLogger(_.warn(formatMessage(msg, sourceAndLineInfo, line, file), cause))
       }
   }
 
