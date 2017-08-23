@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package freestyle
+package freestyle.tests
 
 import org.scalatest.{Matchers, WordSpec}
 import cats.implicits._
