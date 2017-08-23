@@ -17,39 +17,16 @@
 package freestyle
 
 import cats.data.Kleisli
-import cats.implicits._
-import monix.eval.Task
+import cats.instances.future._
+import cats.instances.option._
+import cats.syntax.cartesian._
 import org.scalatest.{Matchers, WordSpec}
 import scala.concurrent.{Await, Future}
 import scala.concurrent.duration.Duration
 
-class parallelTests extends WordSpec with Matchers {
+class ParallelTests extends WordSpec with Matchers {
 
   "Applicative Parallel Support" should {
-
-    class NonDeterminismTestShared {
-      import freestyle.nondeterminism._
-      import freestyle.implicits._
-
-      val buf = scala.collection.mutable.ArrayBuffer.empty[Int]
-
-      def blocker(value: Int, waitTime: Long): Int = {
-        Thread.sleep(waitTime)
-        buf += value
-        value
-      }
-
-      val v = MixedFreeS[MixedFreeS.Op]
-      import v._
-
-      val program = for {
-        a  <- z //3
-        bc <- (x |@| y).tupled.freeS //(1,2)
-        (b, c) = bc
-        d <- z //3
-      } yield a :: b :: c :: d :: Nil // List(3,1,2,3)
-
-    }
 
     "allow non deterministic execution when interpreting to scala.concurrent.Future" in {
       import freestyle.nondeterminism._
@@ -67,27 +44,6 @@ class parallelTests extends WordSpec with Matchers {
       }
 
       Await.result(program.interpret[Future], Duration.Inf) shouldBe List(3, 1, 2, 3)
-      buf.toArray shouldBe Array(3, 2, 1, 3)
-    }
-
-    "allow non deterministic execution when interpreting to monix.eval.Task" in {
-      import freestyle.nondeterminism._
-      import freestyle.implicits._
-
-      import monix.cats._
-      import monix.eval.Task.nondeterminism
-      import monix.execution.Scheduler.Implicits.global
-
-      val test = new NonDeterminismTestShared
-      import test._
-
-      implicit val interpreter = new MixedFreeS.Handler[Task] {
-        override def x: Task[Int] = Task(blocker(1, 1000L))
-        override def y: Task[Int] = Task(blocker(2, 0L))
-        override def z: Task[Int] = Task(blocker(3, 2000L))
-      }
-
-      Await.result(program.interpret[Task].runAsync, Duration.Inf) shouldBe List(3, 1, 2, 3)
       buf.toArray shouldBe Array(3, 2, 1, 3)
     }
 
@@ -146,5 +102,29 @@ class parallelTests extends WordSpec with Matchers {
       Await.result(validator.run("1a"), Duration.Inf) shouldBe List(false, true)
     }
   }
+
+}
+
+class NonDeterminismTestShared {
+  import freestyle.nondeterminism._
+  import freestyle.implicits._
+
+  val buf = scala.collection.mutable.ArrayBuffer.empty[Int]
+
+  def blocker(value: Int, waitTime: Long): Int = {
+    Thread.sleep(waitTime)
+    buf += value
+    value
+  }
+
+  val v = MixedFreeS[MixedFreeS.Op]
+  import v._
+
+  val program = for {
+    a  <- z //3
+    bc <- (x |@| y).tupled.freeS //(1,2)
+    (b, c) = bc
+    d <- z //3
+  } yield a :: b :: c :: d :: Nil // List(3,1,2,3)
 
 }

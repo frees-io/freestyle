@@ -22,8 +22,6 @@ lazy val freestyle = (crossProject in file("freestyle"))
       %("iota-core"),
       %("cats-free"),
       %("shapeless"),
-      %("monix-eval") % "test",
-      %("monix-cats") % "test",
       %("cats-laws")  % "test",
       %("discipline") % "test"
     ): _*
@@ -45,12 +43,14 @@ lazy val taglessJVM = tagless.jvm
 lazy val taglessJS  = tagless.js
 
 lazy val tests = (project in file("tests"))
-  .dependsOn(freestyleJVM)
+  .dependsOn(freestyleJVM % "compile->compile;test->test")
   .settings(noPublishSettings: _*)
   .settings(
     libraryDependencies ++= commonDeps ++ Seq(
       %("scala-reflect", scalaVersion.value),
-      %%("pcplod") % "test"
+      %%("pcplod") % "test",
+      %%("monix-eval") % "test",
+      %%("monix-cats") % "test"
     ),
     fork in Test := true,
     javaOptions in Test ++= {
@@ -201,6 +201,7 @@ lazy val jvmModules: Seq[ProjectReference] = Seq(
   cacheJVM,
   config,
   loggingJVM
+  // ,tests
 )
 
 lazy val jsModules: Seq[ProjectReference] = Seq(
