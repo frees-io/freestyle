@@ -190,7 +190,7 @@ private[internal] class Request(reqDef: Decl.Def, indexValue: Int) {
 
   // Name of the Request ADT Class
   private[this] val reqName: String = reqDef.name.value
-  private[this] val req: Type.Name  = Type.Name(reqName.capitalize + "OP")
+  private[this] val req: Type.Name  = Type.Name(reqName.capitalize + "Op")
   private[this] val cboundPrefix = "__$cbound"
 
   private[this] val res: Type = reqDef.decltpe match {

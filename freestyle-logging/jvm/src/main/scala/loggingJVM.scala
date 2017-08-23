@@ -27,39 +27,67 @@ object loggingJVM {
 
   private[this] def formatMessage(
       msg: String,
-      sourceAndLineInfo: Boolean,
+      srcInfo: Boolean,
       line: sourcecode.Line,
       file: sourcecode.File): String =
-    if (sourceAndLineInfo) s"$file:$line: $msg"
+    if (srcInfo) s"$file:$line: $msg"
     else msg
 
   trait Implicits {
-    implicit def freeStyleLoggingKleisli[M[_]: Monad, C: Manifest]: FSHandler[
-      LoggingM.Op,
-      Kleisli[M, Logger, ?]] =
-      λ[FunctionK[LoggingM.Op, Kleisli[M, Logger, ?]]](op =>
-        Kleisli { logger =>
-          Monad[M].pure {
-            op match {
-              case LoggingM.DebugOP(msg, sourceAndLineInfo, line, file) =>
-                logger.debug(formatMessage(msg, sourceAndLineInfo, line, file))
-              case LoggingM.DebugWithCauseOP(msg, cause, sourceAndLineInfo, line, file) =>
-                logger.debug(formatMessage(msg, sourceAndLineInfo, line, file), cause)
-              case LoggingM.ErrorOP(msg, sourceAndLineInfo, line, file) =>
-                logger.error(formatMessage(msg, sourceAndLineInfo, line, file))
-              case LoggingM.ErrorWithCauseOP(msg, cause, sourceAndLineInfo, line, file) =>
-                logger.error(formatMessage(msg, sourceAndLineInfo, line, file), cause)
-              case LoggingM.InfoOP(msg, sourceAndLineInfo, line, file) =>
-                logger.info(formatMessage(msg, sourceAndLineInfo, line, file))
-              case LoggingM.InfoWithCauseOP(msg, cause, sourceAndLineInfo, line, file) =>
-                logger.info(formatMessage(msg, sourceAndLineInfo, line, file), cause)
-              case LoggingM.WarnOP(msg, sourceAndLineInfo, line, file) =>
-                logger.warn(formatMessage(msg, sourceAndLineInfo, line, file))
-              case LoggingM.WarnWithCauseOP(msg, cause, sourceAndLineInfo, line, file) =>
-                logger.warn(formatMessage(msg, sourceAndLineInfo, line, file), cause)
-            }
-          }
-      })
+    implicit def freeStyleLoggingKleisli[M[_], C: Manifest](
+        implicit M: Monad[M]): LoggingM.Handler[Kleisli[M, Logger, ?]] =
+      new LoggingM.Handler[Kleisli[M, Logger, ?]] {
+        import sourcecode.{File, Line}
+
+        type KL[A] = Kleisli[M, Logger, A]
+
+        private def withLogger[A](f: Logger => A): KL[A] =
+          Kleisli.ask[M, Logger].map(f)
+
+        def debug(msg: String, srcInfo: Boolean, line: Line, file: File): KL[Unit] =
+          withLogger(_.debug(formatMessage(msg, srcInfo, line, file)))
+
+        def debugWithCause(
+            msg: String,
+            cause: Throwable,
+            srcInfo: Boolean,
+            line: Line,
+            file: File): KL[Unit] =
+          withLogger(_.debug(formatMessage(msg, srcInfo, line, file), cause))
+
+        def error(msg: String, srcInfo: Boolean, line: Line, file: File): KL[Unit] =
+          withLogger(_.error(formatMessage(msg, srcInfo, line, file)))
+
+        def errorWithCause(
+            msg: String,
+            cause: Throwable,
+            srcInfo: Boolean,
+            line: Line,
+            file: File): KL[Unit] =
+          withLogger(_.error(formatMessage(msg, srcInfo, line, file), cause))
+
+        def info(msg: String, srcInfo: Boolean, line: Line, file: File): KL[Unit] =
+          withLogger(_.info(formatMessage(msg, srcInfo, line, file)))
+
+        def infoWithCause(
+            msg: String,
+            cause: Throwable,
+            srcInfo: Boolean,
+            line: Line,
+            file: File): KL[Unit] =
+          withLogger(_.info(formatMessage(msg, srcInfo, line, file), cause))
+
+        def warn(msg: String, srcInfo: Boolean, line: Line, file: File): KL[Unit] =
+          withLogger(_.warn(formatMessage(msg, srcInfo, line, file)))
+
+        def warnWithCause(
+            msg: String,
+            cause: Throwable,
+            srcInfo: Boolean,
+            line: Line,
+            file: File): KL[Unit] =
+          withLogger(_.warn(formatMessage(msg, srcInfo, line, file), cause))
+      }
 
     implicit def freeStyleLoggingKleisliRunner[M[_]](
         log: Logger): FSHandler[Kleisli[M, Logger, ?], M] =
