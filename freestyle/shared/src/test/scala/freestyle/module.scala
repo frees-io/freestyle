@@ -177,6 +177,23 @@ class moduleTests extends WordSpec with Matchers {
         |  val a: P.Y
         |}""".stripMargin should compile
     }
+
+    "allow single generator for comprehensions" in {
+      """
+        @free trait Foo {
+          def foo: FS[Int]
+        }
+        @module trait Bar {
+          val foo: Foo
+
+          def bar: FS[Double] = for {
+            f <- foo.foo
+            bar = f.toDouble
+          } yield bar
+        }
+      """ should compile
+
+    }
   }
 
   "@module @free and @debug annotations work together" when {
