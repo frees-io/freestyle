@@ -6,8 +6,7 @@ lazy val root = (project in file("."))
   .settings(noPublishSettings: _*)
   .aggregate(allModules: _*)
 
-lazy val freestyle = (crossProject in file("freestyle"))
-  .settings(name := "freestyle")
+lazy val core = module("core")
   .jsSettings(sharedJsSettings: _*)
   .settings(libraryDependencies ++= Seq(%("scala-reflect", scalaVersion.value)))
   .settings(
@@ -27,12 +26,11 @@ lazy val freestyle = (crossProject in file("freestyle"))
     ): _*
   )
 
-lazy val freestyleJVM = freestyle.jvm
-lazy val freestyleJS  = freestyle.js
+lazy val coreJVM = core.jvm
+lazy val coreJS  = core.js
 
-lazy val tagless = (crossProject in file("freestyle-tagless"))
-  .dependsOn(freestyle)
-  .settings(name := "freestyle-tagless")
+lazy val tagless = module("tagless")
+  .dependsOn(core)
   .jsSettings(sharedJsSettings: _*)
   .crossDepSettings(commonDeps: _*)
   .settings(
@@ -42,8 +40,8 @@ lazy val tagless = (crossProject in file("freestyle-tagless"))
 lazy val taglessJVM = tagless.jvm
 lazy val taglessJS  = tagless.js
 
-lazy val tests = (project in file("tests"))
-  .dependsOn(freestyleJVM % "compile->compile;test->test")
+lazy val tests = jvmModule("tests")
+  .dependsOn(coreJVM % "compile->compile;test->test")
   .settings(noPublishSettings: _*)
   .settings(
     libraryDependencies ++= commonDeps ++ Seq(
@@ -66,7 +64,7 @@ lazy val tests = (project in file("tests"))
     }
   )
 
-lazy val bench = (project in file("bench"))
+lazy val bench = jvmModule("bench")
   .dependsOn(jvmFreestyleDeps: _*)
   .settings(
     name := "bench",
@@ -92,27 +90,26 @@ lazy val bench = (project in file("bench"))
 
 lazy val Codegen = sbt.config("codegen").hide
 
-lazy val effects = (crossProject in file("freestyle-effects"))
-  .dependsOn(freestyle)
-  .settings(name := "freestyle-effects")
+lazy val effects = module("effects")
+  .dependsOn(core)
   .jsSettings(sharedJsSettings: _*)
   .crossDepSettings(commonDeps: _*)
 
 lazy val effectsJVM = effects.jvm
 lazy val effectsJS  = effects.js
 
-lazy val async = (crossProject in file("freestyle-async/async"))
-  .dependsOn(freestyle)
-  .settings(name := "freestyle-async")
+lazy val async = (crossProject in file("modules/async/async"))
+  .settings(name := "frees-async")
+  .dependsOn(core)
   .jsSettings(sharedJsSettings: _*)
   .crossDepSettings(commonDeps: _*)
 
 lazy val asyncJVM = async.jvm
 lazy val asyncJS  = async.js
 
-lazy val asyncMonix = (crossProject in file("freestyle-async/monix"))
-  .dependsOn(freestyle, async)
-  .settings(name := "freestyle-async-monix")
+lazy val asyncMonix = (crossProject in file("modules/async/monix"))
+  .dependsOn(core, async)
+  .settings(name := "frees-async-monix")
   .crossDepSettings(
     commonDeps ++ Seq(
       %("monix-eval"),
@@ -123,38 +120,36 @@ lazy val asyncMonix = (crossProject in file("freestyle-async/monix"))
 lazy val asyncMonixJVM = asyncMonix.jvm
 lazy val asyncMonixJS  = asyncMonix.js
 
-lazy val asyncFs = (crossProject in file("freestyle-async/fs2"))
-  .dependsOn(freestyle, async)
-  .settings(name := "freestyle-async-fs2")
+lazy val asyncFs = (crossProject in file("modules/async/fs2"))
+  .dependsOn(core, async)
+  .settings(name := "frees-async-fs2")
   .jsSettings(sharedJsSettings: _*)
   .crossDepSettings(commonDeps ++ Seq(%("fs2-core"), %("fs2-cats")): _*)
 
 lazy val asyncFsJVM = asyncFs.jvm
 lazy val asyncFsJS  = asyncFs.js
 
-lazy val asyncGuava = (project in file("freestyle-async/guava"))
-  .dependsOn(freestyleJVM, asyncJVM)
-  .settings(name := "freestyle-async-guava")
+lazy val asyncGuava = (project in file("modules/async/guava"))
+  .dependsOn(coreJVM, asyncJVM)
+  .settings(name := "frees-async-guava")
   .settings(libraryDependencies ++= commonDeps ++ Seq(
     "com.google.guava" % "guava" % "22.0"
   ))
 
-lazy val cache = (crossProject in file("freestyle-cache"))
-  .dependsOn(freestyle)
-  .settings(name := "freestyle-cache")
+lazy val cache = module("cache")
+  .dependsOn(core)
   .jsSettings(sharedJsSettings: _*)
   .crossDepSettings(commonDeps: _*)
 
 lazy val cacheJVM = cache.jvm
 lazy val cacheJS  = cache.js
 
-lazy val config = (project in file("freestyle-config"))
-  .dependsOn(freestyleJVM)
+lazy val config = jvmModule("config")
+  .dependsOn(coreJVM)
   .settings(
-    name := "freestyle-config",
     fixResources := {
       val testConf   = (resourceDirectory in Test).value / "application.conf"
-      val targetFile = (classDirectory in (freestyleJVM, Compile)).value / "application.conf"
+      val targetFile = (classDirectory in (coreJVM, Compile)).value / "application.conf"
       if (testConf.exists) {
         IO.copyFile(
           testConf,
@@ -172,9 +167,8 @@ lazy val config = (project in file("freestyle-config"))
     ) ++ commonDeps
   )
 
-lazy val logging = (crossProject in file("freestyle-logging"))
-  .dependsOn(freestyle)
-  .settings(name := "freestyle-logging")
+lazy val logging = module("logging")
+  .dependsOn(core)
   .jvmSettings(
     libraryDependencies += %%("journal-core")
   )
@@ -192,7 +186,7 @@ pgpPublicRing := file(s"$gpgFolder/pubring.gpg")
 pgpSecretRing := file(s"$gpgFolder/secring.gpg")
 
 lazy val jvmModules: Seq[ProjectReference] = Seq(
-  freestyleJVM,
+  coreJVM,
   taglessJVM,
   effectsJVM,
   asyncJVM,
@@ -205,7 +199,7 @@ lazy val jvmModules: Seq[ProjectReference] = Seq(
 )
 
 lazy val jsModules: Seq[ProjectReference] = Seq(
-  freestyleJS,
+  coreJS,
   taglessJS,
   effectsJS,
   asyncJS,
