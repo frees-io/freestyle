@@ -163,14 +163,6 @@ libraryDependencies += "io.frees" %%% "freestyle-monix"       % "0.3.1"
 
 [comment]: # (End Replace)
 
-## Freestyle in the wild
-
-If you wish to add your library here please consider a PR to include it in the list below.
-
-★ | ★ | ★
---- | --- | ---
-![scala-exercises](https://www.scala-exercises.org/assets/images/navbar_brand.svg) | [**scala-exercises**](https://www.scala-exercises.org/) | Scala Exercises is an Open Source project for learning different technologies based in the Scala Programming Language.
-
 ## Commercial Support
 
 47 Degrees offers commercial support for the Freestyle framework and associated technologies. To find out more, visit [47 Degrees' Open Source Support](https://www.47deg.com/services/open-source-support/).
