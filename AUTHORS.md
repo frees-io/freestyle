@@ -19,7 +19,6 @@ These are the people that have contributed to the freestyle project:
 * Fede Fernández <[fedefernandez](https://github.com/fedefernandez)>
 * Francisco Diaz <[franciscodr](https://github.com/franciscodr)>
 * Giovanni Ruggiero <[gruggiero](https://github.com/gruggiero)>
-* Javi Pacheco <[javipacheco](https://github.com/javipacheco)>
 * Javier de Silóniz Sandino <[jdesiloniz](https://github.com/jdesiloniz)>
 * Jisoo Park <[guersam](https://github.com/guersam)>
 * Jorge Galindo <[jorgegalindocruces](https://github.com/jorgegalindocruces)>
