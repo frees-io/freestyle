@@ -27,8 +27,7 @@ import scala.concurrent.duration._
 
 object config {
 
-  case class ConfigError(msg: String, underlying: Option[Throwable] = None)
-      extends Throwable(msg) {
+  case class ConfigError(msg: String, underlying: Option[Throwable] = None) extends Throwable(msg) {
     underlying foreach initCause
   }
 
