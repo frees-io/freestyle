@@ -20,7 +20,7 @@ lazy val core = module("core")
     commonDeps ++ Seq(
       %("iota-core"),
       %("cats-free"),
-      %("shapeless"),
+      %("shapeless") % "test",
       %("cats-laws")  % "test",
       %("discipline") % "test"
     ): _*

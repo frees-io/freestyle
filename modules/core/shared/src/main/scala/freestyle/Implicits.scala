@@ -17,27 +17,13 @@
 package freestyle
 
 import cats.{ Applicative, Monad }
-import cats.data.Coproduct
 import cats.free.{Free, FreeApplicative, Inject}
 
 import iota._
-import shapeless.Lazy
 
 trait Interpreters {
-
-  implicit def interpretCatsCoproduct[F[_], G[_], M[_]](
-      implicit fm: FSHandler[F, M],
-      gm: Lazy[FSHandler[G, M]]): FSHandler[Coproduct[F, G, ?], M] =
-    fm or gm.value
-
   implicit def interpretIotaCopK[F[a] <: CopK[_, a], G[_]]: FSHandler[F, G] =
     macro _root_.iota.internal.CopKFunctionKMacros.summon[F, G]
-
-  // workaround for https://github.com/typelevel/cats/issues/1505
-  implicit def catsFreeRightInjectInstanceLazy[F[_], G[_], H[_]](
-      implicit I: Lazy[Inject[F, G]]): Inject[F, Coproduct[H, G, ?]] =
-    Inject.catsFreeRightInjectInstance(I.value)
-
 }
 
 trait FreeSInstances {
