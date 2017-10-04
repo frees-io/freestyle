@@ -18,10 +18,10 @@ lazy val core = module("core")
   )
   .crossDepSettings(
     commonDeps ++ Seq(
-      %("iota-core"),
-      %("cats-free"),
+      "com.47deg" %% "iota-core" % "0.2.0",
+      %("cats-free", "0.9.0"),
       %("shapeless"),
-      %("cats-laws")  % "test",
+      %("cats-laws", "0.9.0")  % "test",
       %("discipline") % "test"
     ): _*
   )
@@ -47,8 +47,8 @@ lazy val tests = jvmModule("tests")
     libraryDependencies ++= commonDeps ++ Seq(
       %("scala-reflect", scalaVersion.value),
       %%("pcplod") % "test",
-      %%("monix-eval") % "test",
-      %%("monix-cats") % "test"
+      %%("monix-eval", "2.3.0") % "test",
+      %%("monix-cats", "2.3.0") % "test"
     ),
     fork in Test := true,
     javaOptions in Test ++= {
@@ -75,7 +75,7 @@ lazy val bench = jvmModule("bench")
   .settings(inConfig(Codegen)(Defaults.configSettings))
   .settings(classpathConfiguration in Codegen := Compile)
   .settings(noPublishSettings)
-  .settings(libraryDependencies ++= Seq(%%("cats-free"), %%("scalacheck")))
+  .settings(libraryDependencies ++= Seq(%%("cats-free", "0.9.0"), %%("scalacheck")))
   .settings(inConfig(Compile)(
     sourceGenerators += Def.task {
       val path = (sourceManaged in (Compile, compile)).value / "bench.scala"
@@ -112,8 +112,8 @@ lazy val asyncMonix = (crossProject in file("modules/async/monix"))
   .settings(name := "frees-async-monix")
   .crossDepSettings(
     commonDeps ++ Seq(
-      %("monix-eval"),
-      %("monix-cats")
+      %("monix-eval", "2.3.0"),
+      %("monix-cats", "2.3.0")
     ): _*)
   .jsSettings(sharedJsSettings: _*)
 
@@ -124,7 +124,7 @@ lazy val asyncFs = (crossProject in file("modules/async/fs2"))
   .dependsOn(core, async)
   .settings(name := "frees-async-fs2")
   .jsSettings(sharedJsSettings: _*)
-  .crossDepSettings(commonDeps ++ Seq(%("fs2-core"), %("fs2-cats")): _*)
+  .crossDepSettings(commonDeps ++ Seq(%("fs2-core"), %("fs2-cats", "0.3.0")): _*)
 
 lazy val asyncFsJVM = asyncFs.jvm
 lazy val asyncFsJS  = asyncFs.js
@@ -161,7 +161,7 @@ lazy val config = jvmModule("config")
   )
   .settings(
     libraryDependencies ++= Seq(
-      %("config", "1.2.1"),
+      %("config", "1.3.1"),
       %%("classy-config-typesafe"),
       %%("classy-core")
     ) ++ commonDeps
