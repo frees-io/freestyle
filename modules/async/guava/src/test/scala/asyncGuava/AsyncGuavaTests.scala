@@ -19,11 +19,7 @@ package freestyle.asyncGuava
 import java.util.concurrent.{Callable, Executors}
 
 import cats.~>
-import com.google.common.util.concurrent.{
-  ListenableFuture,
-  ListeningExecutorService,
-  MoreExecutors
-}
+import com.google.common.util.concurrent.{ListenableFuture, ListeningExecutorService, MoreExecutors}
 import org.scalatest._
 import freestyle.async.implicits._
 

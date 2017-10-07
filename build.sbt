@@ -18,13 +18,13 @@ lazy val core = module("core")
   )
   .crossDepSettings(
     commonDeps ++ Seq(
-      %("cats-free", "1.0.0-MF"),
-      %("shapeless", "2.3.2"),
-      %("simulacrum", "0.11.0"),
-      %("cats-laws", "1.0.0-MF") % "test"
+      %("cats-free"),
+      %("shapeless"),
+      %("simulacrum"),
+      %("cats-laws") % "test"
     ): _*
   )
-  .settings(libraryDependencies += "io.frees" %%% "iota-core" % "0.3.0")
+  .settings(libraryDependencies += %%%("iota-core"))
 
 lazy val coreJVM = core.jvm
 lazy val coreJS  = core.js
@@ -74,7 +74,7 @@ lazy val bench = jvmModule("bench")
   .settings(inConfig(Codegen)(Defaults.configSettings))
   .settings(classpathConfiguration in Codegen := Compile)
   .settings(noPublishSettings)
-  .settings(libraryDependencies ++= Seq(%%("cats-free", "1.0.0-MF"), %%("scalacheck")))
+  .settings(libraryDependencies ++= Seq(%%("cats-free"), %%("scalacheck")))
   .settings(inConfig(Compile)(
     sourceGenerators += Def.task {
       val path = (sourceManaged in (Compile, compile)).value / "bench.scala"
@@ -93,7 +93,7 @@ lazy val effects = module("effects")
   .dependsOn(core)
   .jsSettings(sharedJsSettings: _*)
   .crossDepSettings(commonDeps: _*)
-  .settings(libraryDependencies += "org.typelevel" %%% "cats-mtl-core" % "0.0.2")
+  .settings(libraryDependencies += %%%("cats-mtl-core"))
 
 lazy val effectsJVM = effects.jvm
 lazy val effectsJS  = effects.js
@@ -149,7 +149,7 @@ lazy val config = jvmModule("config")
   )
   .settings(
     libraryDependencies ++= Seq(
-      %("config", "1.2.1"),
+      %("config"),
       %%("classy-config-typesafe"),
       %%("classy-core")
     ) ++ commonDeps

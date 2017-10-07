@@ -15,8 +15,8 @@ object ProjectPlugin extends AutoPlugin {
 
     def module(modName: String, hideFolder: Boolean = false, full: Boolean = true): CrossProject =
       CrossProject(
-        modName, 
-        file(s"""modules/${if (hideFolder) "." else ""}$modName"""), 
+        modName,
+        file(s"""modules/${if (hideFolder) "." else ""}$modName"""),
         if (full) CrossType.Full else CrossType.Pure
       ).settings(moduleName := s"frees-$modName")
 
