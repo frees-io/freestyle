@@ -19,12 +19,13 @@ lazy val core = module("core")
   .crossDepSettings(
     commonDeps ++ Seq(
       %("cats-free", "1.0.0-MF"),
-      %("shapeless", "2.3.2"),
       %("simulacrum", "0.11.0"),
-      %("cats-laws", "1.0.0-MF") % "test"
+      %("shapeless") % "test",
+      %("cats-laws", "1.0.0-MF")  % "test"
     ): _*
+  ).settings(
+    libraryDependencies += "io.frees" %%% "iota-core" % "0.3.1"
   )
-  .settings(libraryDependencies += "io.frees" %%% "iota-core" % "0.3.1")
 
 lazy val coreJVM = core.jvm
 lazy val coreJS  = core.js
