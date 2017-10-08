@@ -24,7 +24,7 @@ lazy val core = module("core")
       %("cats-laws", "1.0.0-MF") % "test"
     ): _*
   )
-  .settings(libraryDependencies += "io.frees" %%% "iota-core" % "0.3.0")
+  .settings(libraryDependencies += "io.frees" %%% "iota-core" % "0.3.1")
 
 lazy val coreJVM = core.jvm
 lazy val coreJS  = core.js
