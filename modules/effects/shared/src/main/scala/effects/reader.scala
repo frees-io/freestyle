@@ -17,7 +17,6 @@
 package freestyle
 package effects
 
-import cats.Monad
 import cats.mtl.ApplicativeAsk
 
 object reader {
@@ -32,7 +31,7 @@ object reader {
     trait Implicits {
 
       implicit def freestyleReaderMHandler[M[_]](
-          implicit M: Monad[M], AL: ApplicativeAsk[M, R]): ReaderM.Handler[M] =
+          implicit AL: ApplicativeAsk[M, R]): ReaderM.Handler[M] =
         new ReaderM.Handler[M] {
           def ask: M[R]                  = AL.ask
           def reader[B](f: R => B): M[B] = AL.reader(f)

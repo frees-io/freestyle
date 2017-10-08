@@ -31,6 +31,46 @@ class EffectsTests extends AsyncWordSpec with Matchers {
 
   implicit override def executionContext = ExecutionContext.Implicits.global
 
+  "Option Freestyle integration" should {
+
+    import freestyle.effects.option._
+    import freestyle.effects.option.implicits._
+
+    import cats.instances.option._
+    import cats.mtl.implicits._
+
+    "allow an Option to be interleaved inside a program monadic flow" in {
+      def program[F[_]: OptionM] =
+        for {
+          a <- FreeS.pure(1)
+          b <- OptionM[F].option(Option(1))
+          c <- FreeS.pure(1)
+        } yield a + b + c
+      program[OptionM.Op].interpret[Option] shouldBe Some(3)
+    }
+
+    "allow an Option to shortcircuit inside a program monadic flow" in {
+      def program[F[_]: OptionM] =
+        for {
+          a <- FreeS.pure(1)
+          b <- OptionM[F].none[Int]
+          c <- FreeS.pure(1)
+        } yield a + b + c
+      program[OptionM.Op].interpret[Option] shouldBe None
+    }
+
+    "allow an Option to be interleaved inside a program monadic flow using syntax" in {
+      def program[F[_]: OptionM] =
+        for {
+          a <- FreeS.pure(1)
+          b <- Option(1).liftFS
+          c <- FreeS.pure(1)
+        } yield a + b + c
+      program[OptionM.Op].interpret[Option] shouldBe Some(3)
+    }
+  }
+
+
   "Error Freestyle integration" should {
 
     val ex = new RuntimeException("BOOM")
