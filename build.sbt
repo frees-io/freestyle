@@ -18,12 +18,13 @@ lazy val core = module("core")
   )
   .crossDepSettings(
     commonDeps ++ Seq(
-      %("iota-core"),
-      %("cats-free"),
+      %("cats-free", "1.0.0-MF"),
+      %("simulacrum", "0.11.0"),
       %("shapeless") % "test",
-      %("cats-laws")  % "test",
-      %("discipline") % "test"
+      %("cats-laws", "1.0.0-MF")  % "test"
     ): _*
+  ).settings(
+    libraryDependencies += "io.frees" %%% "iota-core" % "0.3.1"
   )
 
 lazy val coreJVM = core.jvm
@@ -34,7 +35,7 @@ lazy val tagless = module("tagless")
   .jsSettings(sharedJsSettings: _*)
   .crossDepSettings(commonDeps: _*)
   .settings(
-    libraryDependencies += "com.kailuowang" %%% "mainecoon-core" % "0.1.1"
+    libraryDependencies += "com.kailuowang" %%% "mainecoon-core" % "0.4.0"
   )
 
 lazy val taglessJVM = tagless.jvm
@@ -47,8 +48,7 @@ lazy val tests = jvmModule("tests")
     libraryDependencies ++= commonDeps ++ Seq(
       %("scala-reflect", scalaVersion.value),
       %%("pcplod") % "test",
-      %%("monix-eval") % "test",
-      %%("monix-cats") % "test"
+      %%("monix-eval", "3.0.0-M1") % "test"
     ),
     fork in Test := true,
     javaOptions in Test ++= {
@@ -75,7 +75,7 @@ lazy val bench = jvmModule("bench")
   .settings(inConfig(Codegen)(Defaults.configSettings))
   .settings(classpathConfiguration in Codegen := Compile)
   .settings(noPublishSettings)
-  .settings(libraryDependencies ++= Seq(%%("cats-free"), %%("scalacheck")))
+  .settings(libraryDependencies ++= Seq(%%("cats-free", "1.0.0-MF"), %%("scalacheck")))
   .settings(inConfig(Compile)(
     sourceGenerators += Def.task {
       val path = (sourceManaged in (Compile, compile)).value / "bench.scala"
@@ -94,6 +94,7 @@ lazy val effects = module("effects")
   .dependsOn(core)
   .jsSettings(sharedJsSettings: _*)
   .crossDepSettings(commonDeps: _*)
+  .settings(libraryDependencies += "org.typelevel" %%% "cats-mtl-core" % "0.0.2")
 
 lazy val effectsJVM = effects.jvm
 lazy val effectsJS  = effects.js
@@ -107,27 +108,15 @@ lazy val async = (crossProject in file("modules/async/async"))
 lazy val asyncJVM = async.jvm
 lazy val asyncJS  = async.js
 
-lazy val asyncMonix = (crossProject in file("modules/async/monix"))
+lazy val asyncCatsEffect = (crossProject in file("modules/async/cats-effect"))
   .dependsOn(core, async)
-  .settings(name := "frees-async-monix")
-  .crossDepSettings(
-    commonDeps ++ Seq(
-      %("monix-eval"),
-      %("monix-cats")
-    ): _*)
+  .settings(name := "frees-async-cats-effect")
   .jsSettings(sharedJsSettings: _*)
+  .crossDepSettings(commonDeps: _*)
+  .settings(libraryDependencies += "org.typelevel" %%% "cats-effect" % "0.4")
 
-lazy val asyncMonixJVM = asyncMonix.jvm
-lazy val asyncMonixJS  = asyncMonix.js
-
-lazy val asyncFs = (crossProject in file("modules/async/fs2"))
-  .dependsOn(core, async)
-  .settings(name := "frees-async-fs2")
-  .jsSettings(sharedJsSettings: _*)
-  .crossDepSettings(commonDeps ++ Seq(%("fs2-core"), %("fs2-cats")): _*)
-
-lazy val asyncFsJVM = asyncFs.jvm
-lazy val asyncFsJS  = asyncFs.js
+lazy val asyncCatsEffectJVM = asyncCatsEffect.jvm
+lazy val asyncCatsEffectJS  = asyncCatsEffect.js
 
 lazy val asyncGuava = (project in file("modules/async/guava"))
   .dependsOn(coreJVM, asyncJVM)
@@ -190,8 +179,8 @@ lazy val jvmModules: Seq[ProjectReference] = Seq(
   taglessJVM,
   effectsJVM,
   asyncJVM,
-  asyncMonixJVM,
-  asyncFsJVM,
+  asyncCatsEffectJVM,
+  asyncGuava,
   cacheJVM,
   config,
   loggingJVM
@@ -203,8 +192,7 @@ lazy val jsModules: Seq[ProjectReference] = Seq(
   taglessJS,
   effectsJS,
   asyncJS,
-  asyncMonixJS,
-  asyncFsJS,
+  asyncCatsEffectJS,
   cacheJS,
   loggingJS
 )

@@ -17,7 +17,7 @@
 package freestyle
 
 import cats.{ Applicative, Monad }
-import cats.free.{Free, FreeApplicative, Inject}
+import cats.free.{Free, FreeApplicative }
 
 import iota._
 

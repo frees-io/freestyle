@@ -17,7 +17,7 @@
 package freestyle
 package effects
 
-import cats.{~>, Foldable, MonadCombine}
+import cats.{~>, Alternative, Foldable, Monad}
 
 object traverse {
 
@@ -30,16 +30,17 @@ object traverse {
       def fromTraversable[A](ta: G[A]): FS[A]
     }
 
-    /** Interpretable as long as Foldable instance for G[_] and a MonadCombine for M[_] exists
-     * in scope
+    /** Interpretable as long as a `Foldable` instance for G[_] and a `Monad` and
+     * an `Alternative` instnace for M[_] exists in scope.
      */
     trait Implicits {
       implicit def freestyleTraverseMHandler[F[_], M[_]](
-          implicit MC: MonadCombine[M],
+          implicit M: Monad[M],
+          MA: Alternative[M],
           FT: Foldable[G]): TraverseM.Handler[M] =
         new TraverseM.Handler[M] {
-          def empty[A]: M[A]                     = MC.empty[A]
-          def fromTraversable[A](ta: G[A]): M[A] = FT.foldMap(ta)(MC.pure)(MC.algebra[A])
+          def empty[A]: M[A]                     = MA.empty[A]
+          def fromTraversable[A](ta: G[A]): M[A] = FT.foldMap(ta)(MA.pure)(MA.algebra[A])
         }
     }
 

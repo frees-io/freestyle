@@ -28,11 +28,11 @@ class moduleTests extends WordSpec with Matchers {
     import interps._
 
     "be rejected if applied to a non-abstract class" in {
-      """@module class Foo[F[_]] { val x: Int}""" shouldNot compile
+      """@module class Foo[F[_]] { val x: Int }""" shouldNot compile
     }
 
     "be rejected if applied to a trait with companion object" in {
-      """@module trait  Foo[F[_]] { val x: Int} ; object Foo """ shouldNot compile
+      """@module trait Foo[F[_]] { val x: Int} ; object Foo """ shouldNot compile
     }
 
     "[simple] create a companion with a `T` type alias" in {
@@ -119,6 +119,7 @@ class moduleTests extends WordSpec with Matchers {
         c <- m1.sctors2.i(1)
         d <- m1.sctors2.j(1)
       } yield a + b + c + d
+
       program.interpret[Option] shouldBe Option(4)
       program.interpret[List] shouldBe List(4)
     }
@@ -159,6 +160,11 @@ class moduleTests extends WordSpec with Matchers {
         a <- m1.x(1)
         b <- m1.y(1)
       } yield a + b
+
+      val iotaSummon   = iota.CopK.FunctionK.summon[FSMod.Op, Option]
+      val freeShandler = interpretIotaCopK[FSMod.Op, Option]
+      val auto         = implicitly[FSHandler[FSMod.Op, Option]]
+
       program.interpret[Option] shouldBe Option(2)
     }
 

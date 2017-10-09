@@ -17,8 +17,8 @@
 package freestyle
 package effects
 
-import cats.{MonadState}
 import cats.data.{NonEmptyList, State, Validated, ValidatedNel}
+import cats.mtl.MonadState
 
 object validation {
   final class ValidationProvider[E] {
@@ -41,7 +41,7 @@ object validation {
       implicit def freeStyleValidationMStateInterpreter[M[_]](
           implicit MS: MonadState[M, Errors]
       ): ValidationM.Handler[M] = new ValidationM.Handler[M] {
-        def valid[A](x: A): M[A] = MS.pure(x)
+        def valid[A](x: A): M[A] = MS.monad.pure(x)
 
         def errors: M[Errors] = MS.get
 
@@ -49,18 +49,15 @@ object validation {
 
         def fromEither[A](x: Either[E, A]): M[Either[E, A]] =
           x match {
-            case Left(err) => MS.flatMap(invalid(err))((unit) => MS.pure(x))
-            case Right(_)  => MS.pure(x)
+            case Left(err) => MS.monad.as(invalid(err), x)
+            case Right(_)  => MS.monad.pure(x)
           }
 
         def fromValidatedNel[A](x: ValidatedNel[E, A]): M[ValidatedNel[E, A]] =
           x match {
-            case Validated.Invalid(errs: NonEmptyList[E]) =>
-              MS.flatMap(
-                MS.modify(
-                  (s: Errors) => s ++ errs.toList
-                ))((unit) => MS.pure(x))
-            case Validated.Valid(_) => MS.pure(x)
+            case Validated.Invalid(errs) =>
+              MS.monad.as(MS.modify((s: Errors) => s ++ errs.toList), x)
+            case Validated.Valid(_) => MS.monad.pure(x)
           }
       }
 

@@ -31,9 +31,9 @@ class implicitsTests extends WordSpec with Matchers {
       "Monad[G]" should compile
     }
 
-    "enable traverseU" in {
+    "enable traverse" in {
       implicit val optionHandler = interps.optionHandler1
-      val program = List(1, 2).traverseU(SCtors1[SCtors1.Op].x)
+      val program = List(1, 2).traverse(SCtors1[SCtors1.Op].x)
       program.interpret[Option] shouldBe (Some(List(1, 2)))
     }
 

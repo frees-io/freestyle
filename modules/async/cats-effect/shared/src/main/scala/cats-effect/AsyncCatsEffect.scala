@@ -14,22 +14,14 @@
  * limitations under the License.
  */
 
-package freestyle.asyncMonix
+package freestyle.asyncCatsEffect
 
 import freestyle.async._
-
-import monix.eval.Task
-import monix.execution.Cancelable
+import cats.effect.Effect
 
 object implicits {
-  implicit val monixTaskAsyncContext = new AsyncContext[Task] {
-    def runAsync[A](fa: Proc[A]): Task[A] = {
-      Task.create { (scheduler, callback) =>
-        scheduler.execute(new Runnable {
-          def run() = fa(_.fold(callback.onError, callback.onSuccess))
-        })
-        Cancelable.empty
-      }
+  implicit def catsEffectAsyncContext[F[_]](implicit F: Effect[F]): AsyncContext[F] =
+    new AsyncContext[F] {
+      def runAsync[A](fa: Proc[A]): F[A] = F.async(fa)
     }
-  }
 }

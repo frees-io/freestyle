@@ -17,7 +17,8 @@
 package freestyle
 package effects
 
-import cats.MonadFilter
+import cats.Applicative
+import cats.mtl.FunctorEmpty
 
 object option {
 
@@ -27,10 +28,11 @@ object option {
   }
 
   trait Implicits {
-    implicit def freeStyleOptionMHandler[M[_]](implicit MF: MonadFilter[M]): OptionM.Handler[M] =
+    implicit def freeStyleOptionMHandler[M[_]](
+        implicit FE: FunctorEmpty[M], A: Applicative[M]): OptionM.Handler[M] =
       new OptionM.Handler[M] {
-        def option[A](fa: Option[A]): M[A] = fa.map(MF.pure[A]).getOrElse(MF.empty[A])
-        def none[A]: M[A]                  = MF.empty[A]
+        def option[A](fa: Option[A]): M[A] = FE.flattenOption(A.pure(fa))
+        def none[A]: M[A]                  = option(Option.empty[A])
       }
 
     class OptionFreeSLift[F[_]: OptionM] extends FreeSLift[F, Option] {

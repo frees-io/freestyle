@@ -165,7 +165,7 @@ private[internal] case class Algebra(
       val index: Decl.Val = q"val ${toVar(indexName)} : _root_.scala.Int"
       q"sealed trait $OP[_] extends _root_.scala.Product with _root_.java.io.Serializable { $index }"
     }
-    val opTypes                    = q"type OpTypes = _root_.iota.KCons[$OP, _root_.iota.KNil]"
+    val opTypes                    = q"type OpTypes = _root_.iota.TConsK[$OP, _root_.iota.TNilK]"
     val adt: Seq[Stat]             = opTrait +: requests.map(_.reqClass(OP, tparams, indexName))
     val (toClass, toDef, applyDef) = lifterStats
     val prot                       = q"""@_root_.java.lang.SuppressWarnings(_root_.scala.Array(

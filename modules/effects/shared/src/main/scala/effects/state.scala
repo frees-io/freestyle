@@ -17,7 +17,7 @@
 package freestyle
 package effects
 
-import cats.MonadState
+import cats.mtl.MonadState
 
 object state {
 
