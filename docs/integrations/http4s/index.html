@@ -39,15 +39,77 @@ ga('send', 'pageview');
 
 <p>In this example, we will create an algebra to calculate the VAT of a product’s price:</p>
 
-<p>```scala
-import scala.math.BigDecimal
-// import scala.math.BigDecimal</p>
+<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">scala.math.BigDecimal</span>
+<span class="c1">// import scala.math.BigDecimal
+</span>
+<span class="nd">@free</span> <span class="k">trait</span> <span class="nc">CalcVAT</span> <span class="o">{</span>
+  <span class="k">def</span> <span class="n">vat</span><span class="o">(</span><span class="n">price</span><span class="k">:</span> <span class="kt">BigDecimal</span><span class="o">)</span><span class="k">:</span> <span class="kt">FS</span><span class="o">[</span><span class="kt">BigDecimal</span><span class="o">]</span>
+  <span class="k">def</span> <span class="n">withVat</span><span class="o">(</span><span class="n">price</span><span class="k">:</span> <span class="kt">BigDecimal</span><span class="o">)</span><span class="k">:</span> <span class="kt">FS</span><span class="o">[</span><span class="kt">BigDecimal</span><span class="o">]</span> <span class="k">=</span>
+    <span class="n">vat</span><span class="o">(</span><span class="n">price</span><span class="o">).</span><span class="n">map</span><span class="o">(</span><span class="k">_</span> <span class="o">+</span> <span class="n">price</span><span class="o">)</span>
+<span class="o">}</span>
+<span class="c1">// defined trait CalcVAT
+// defined object CalcVAT
+</span></code></pre>
+</div>
 
-<p>@free trait CalcVAT {
-  def vat(price: BigDecimal): FS[BigDecimal]
-  def withVat(price: BigDecimal): FS[BigDecimal] =
-    vat(price).map(_ + price)
-}</p>
+<p>A handler for the <code class="highlighter-rouge">CalcVAT</code> algebra with <code class="highlighter-rouge">fs2.Task</code> as target type:</p>
+
+<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">cats.effect.IO</span>
+<span class="c1">// import cats.effect.IO
+</span>
+<span class="k">implicit</span> <span class="k">val</span> <span class="n">calcIoHandler</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">CalcVAT</span><span class="o">.</span><span class="nc">Handler</span><span class="o">[</span><span class="kt">IO</span><span class="o">]</span> <span class="o">{</span>
+  <span class="k">private</span> <span class="k">val</span> <span class="n">rate</span><span class="k">:</span> <span class="kt">BigDecimal</span> <span class="o">=</span> <span class="nc">BigDecimal</span><span class="o">(</span><span class="mi">20</span><span class="o">)</span> <span class="o">/</span> <span class="nc">BigDecimal</span><span class="o">(</span><span class="mi">100</span><span class="o">)</span>
+  <span class="k">def</span> <span class="n">vat</span><span class="o">(</span><span class="n">price</span><span class="k">:</span> <span class="kt">BigDecimal</span><span class="o">)</span><span class="k">:</span> <span class="kt">IO</span><span class="o">[</span><span class="kt">BigDecimal</span><span class="o">]</span> <span class="k">=</span>
+    <span class="nc">IO</span><span class="o">.</span><span class="n">pure</span><span class="o">(</span><span class="n">price</span> <span class="o">*</span> <span class="n">rate</span><span class="o">)</span>
+<span class="o">}</span>
+<span class="c1">// calcIoHandler: CalcVAT.Handler[cats.effect.IO] = $anon$1@946f063
+</span></code></pre>
+</div>
+
+<p>Some imports for http4s:</p>
+
+<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">org.http4s._</span>
+<span class="k">import</span> <span class="nn">org.http4s.dsl.io._</span>
+</code></pre>
+</div>
+
+<p>We can now create a simple <code class="highlighter-rouge">HttpService</code>:</p>
+
+<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">object</span> <span class="nc">Price</span> <span class="o">{</span>
+  <span class="k">def</span> <span class="n">unapply</span><span class="o">(</span><span class="n">s</span><span class="k">:</span> <span class="kt">String</span><span class="o">)</span><span class="k">:</span> <span class="kt">Option</span><span class="o">[</span><span class="kt">BigDecimal</span><span class="o">]</span> <span class="k">=</span>
+    <span class="k">if</span> <span class="o">(</span><span class="n">s</span><span class="o">.</span><span class="n">isEmpty</span><span class="o">)</span> <span class="nc">None</span> <span class="k">else</span> <span class="nc">Some</span><span class="o">(</span><span class="nc">BigDecimal</span><span class="o">(</span><span class="n">s</span><span class="o">))</span>
+<span class="o">}</span>
+<span class="c1">// defined object Price
+</span>
+<span class="k">val</span> <span class="n">userService</span> <span class="k">=</span> <span class="nc">HttpService</span><span class="o">[</span><span class="kt">IO</span><span class="o">]</span> <span class="o">{</span>
+  <span class="k">case</span> <span class="nc">GET</span> <span class="o">-&gt;</span> <span class="nc">Root</span> <span class="o">/</span> <span class="s">"calc-vat"</span> <span class="o">/</span> <span class="nc">Price</span><span class="o">(</span><span class="n">p</span><span class="o">)</span> <span class="k">=&gt;</span>
+    <span class="nc">Ok</span><span class="o">(</span><span class="nc">CalcVAT</span><span class="o">[</span><span class="kt">CalcVAT.Op</span><span class="o">].</span><span class="n">vat</span><span class="o">(</span><span class="n">p</span><span class="o">).</span><span class="n">map</span><span class="o">(</span><span class="n">vat</span> <span class="k">=&gt;</span> <span class="n">s</span><span class="s">"The VAT for $p is $vat"</span><span class="o">))</span>
+  <span class="k">case</span> <span class="nc">GET</span> <span class="o">-&gt;</span> <span class="nc">Root</span> <span class="o">/</span> <span class="s">"calc-total"</span> <span class="o">/</span> <span class="nc">Price</span><span class="o">(</span><span class="n">p</span><span class="o">)</span> <span class="k">=&gt;</span>
+    <span class="nc">Ok</span><span class="o">(</span><span class="nc">CalcVAT</span><span class="o">[</span><span class="kt">CalcVAT.Op</span><span class="o">].</span><span class="n">withVat</span><span class="o">(</span><span class="n">p</span><span class="o">).</span><span class="n">map</span><span class="o">(</span><span class="n">total</span> <span class="k">=&gt;</span> <span class="n">s</span><span class="s">"The total price including VAT is $total"</span><span class="o">))</span>
+<span class="o">}</span>
+<span class="c1">// userService: org.http4s.HttpService[cats.effect.IO] = Kleisli(org.http4s.HttpService$$$Lambda$9458/405795667@e2a72ae)
+</span></code></pre>
+</div>
+
+<p>Trying out our <code class="highlighter-rouge">HttpService</code>:</p>
+
+<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">val</span> <span class="n">getVAT</span> <span class="k">=</span> <span class="nc">Request</span><span class="o">[</span><span class="kt">IO</span><span class="o">](</span><span class="nc">Method</span><span class="o">.</span><span class="nc">GET</span><span class="o">,</span> <span class="n">uri</span><span class="o">(</span><span class="s">"/calc-vat/100.50"</span><span class="o">))</span>
+<span class="c1">// getVAT: org.http4s.Request[cats.effect.IO] = Request(method=GET, uri=/calc-vat/100.50, headers=Headers())
+</span>
+<span class="k">val</span> <span class="n">getTotal</span> <span class="k">=</span> <span class="nc">Request</span><span class="o">[</span><span class="kt">IO</span><span class="o">](</span><span class="nc">Method</span><span class="o">.</span><span class="nc">GET</span><span class="o">,</span> <span class="n">uri</span><span class="o">(</span><span class="s">"/calc-total/100.50"</span><span class="o">))</span>
+<span class="c1">// getTotal: org.http4s.Request[cats.effect.IO] = Request(method=GET, uri=/calc-total/100.50, headers=Headers())
+</span>
+<span class="k">def</span> <span class="n">getResult</span><span class="o">(</span><span class="n">req</span><span class="k">:</span> <span class="kt">Request</span><span class="o">[</span><span class="kt">IO</span><span class="o">])</span><span class="k">:</span> <span class="kt">IO</span><span class="o">[</span><span class="kt">String</span><span class="o">]</span> <span class="k">=</span>
+  <span class="n">userService</span><span class="o">.</span><span class="n">orNotFound</span><span class="o">(</span><span class="n">req</span><span class="o">).</span><span class="n">flatMap</span><span class="o">(</span><span class="nc">EntityDecoder</span><span class="o">.</span><span class="n">decodeString</span><span class="o">[</span><span class="kt">IO</span><span class="o">])</span>
+<span class="c1">// getResult: (req: org.http4s.Request[cats.effect.IO])cats.effect.IO[String]
+</span>
+<span class="n">println</span><span class="o">(</span><span class="n">getResult</span><span class="o">(</span><span class="n">getVAT</span><span class="o">).</span><span class="n">unsafeRunSync</span><span class="o">)</span>
+<span class="c1">// The VAT for 100.50 is 20.100
+</span>
+<span class="n">println</span><span class="o">(</span><span class="n">getResult</span><span class="o">(</span><span class="n">getTotal</span><span class="o">).</span><span class="n">unsafeRunSync</span><span class="o">)</span>
+<span class="c1">// The total price including VAT is 120.600
+</span></code></pre>
+</div>
 </section></div></div></div></div><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script><script src="/highlight/highlight.pack.js"></script><script>hljs.configure({
 languages:['scala','java','bash']
 });
