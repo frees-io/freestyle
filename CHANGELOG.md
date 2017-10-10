@@ -1,5 +1,25 @@
 # Changelog
 
+## 10/10/2017 - Version 0.4.0
+
+Release changes:
+
+* Release Process Update ([#379](https://github.com/frees-io/freestyle/pull/379))
+* create pipelined interpreters for logger ([#353](https://github.com/frees-io/freestyle/pull/353))
+* Adding support for case classy ([#378](https://github.com/frees-io/freestyle/pull/378))
+* From Guavas ListenableFuture to any M[_] : AsyncContext ([#385](https://github.com/frees-io/freestyle/pull/385))
+* Adding test to check config method for nested configurations ([#387](https://github.com/frees-io/freestyle/pull/387))
+* Improve the implicit error around "uber" handler resolution ([#389](https://github.com/frees-io/freestyle/pull/389))
+* adds commercial support statement ([#393](https://github.com/frees-io/freestyle/pull/393))
+* Move Monix tests to tests module ([#394](https://github.com/frees-io/freestyle/pull/394))
+* Rename algebra operation suffix from `OP` to `Op` ([#395](https://github.com/frees-io/freestyle/pull/395))
+* Rename modules to frees-xxx ([#396](https://github.com/frees-io/freestyle/pull/396))
+* Remove shapeless as a dependency for the published libraries ([#405](https://github.com/frees-io/freestyle/pull/405))
+* Update to Cats 1.0.0-MF ([#408](https://github.com/frees-io/freestyle/pull/408))
+* Update Scala in Travis and sbt-freestyle ([#409](https://github.com/frees-io/freestyle/pull/409))
+* Releases freestyle-core 0.4.0 ([#410](https://github.com/frees-io/freestyle/pull/410))
+
+
 ## 07/02/2017 - Version 0.3.1
 
 Release changes:
