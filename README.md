@@ -105,7 +105,7 @@ This project supports Scala 2.11 and 2.12. The project is based on [scalameta](h
 To use the project, add the following to your build.sbt:
 
 ```scala
-addCompilerPlugin("org.scalameta" % "paradise" % "3.0.0-M8" cross CrossVersion.full)
+addCompilerPlugin("org.scalameta" % "paradise" % "3.0.0-M10" cross CrossVersion.full)
 ```
 
 [comment]: # (Start Replace)
@@ -114,51 +114,51 @@ For Scala.jvm:
 
 ```scala
 // required
-libraryDependencies += "io.frees" %% "freestyle"              % "0.4.0"
+libraryDependencies += "io.frees" %% "frees-core"         % "0.4.0"
 
 // optional - effects and patterns
-libraryDependencies += "io.frees" %% "freestyle-effects"      % "0.4.0"
-libraryDependencies += "io.frees" %% "freestyle-tagless"      % "0.4.0"
-libraryDependencies += "io.frees" %% "freestyle-async"        % "0.4.0"
-libraryDependencies += "io.frees" %% "freestyle-async-fs2"    % "0.4.0"
-libraryDependencies += "io.frees" %% "freestyle-async-monix"  % "0.4.0"
-libraryDependencies += "io.frees" %% "freestyle-cache"        % "0.4.0"
-libraryDependencies += "io.frees" %% "freestyle-config"       % "0.4.0"
-libraryDependencies += "io.frees" %% "freestyle-logging"      % "0.4.0"
+libraryDependencies += "io.frees" %% "frees-effects"      % "0.4.0"
+libraryDependencies += "io.frees" %% "frees-tagless"      % "0.4.0"
+libraryDependencies += "io.frees" %% "frees-async"        % "0.4.0"
+libraryDependencies += "io.frees" %% "frees-async-fs2"    % "0.4.0"
+libraryDependencies += "io.frees" %% "frees-async-monix"  % "0.4.0"
+libraryDependencies += "io.frees" %% "frees-cache"        % "0.4.0"
+libraryDependencies += "io.frees" %% "frees-config"       % "0.4.0"
+libraryDependencies += "io.frees" %% "frees-logging"      % "0.4.0"
 
 // optional - integrations
-libraryDependencies += "io.frees" %% "freestyle-cache-redis"  % "0.4.0"
-libraryDependencies += "io.frees" %% "freestyle-doobie"       % "0.4.0"
-libraryDependencies += "io.frees" %% "freestyle-fetch"        % "0.4.0"
-libraryDependencies += "io.frees" %% "freestyle-fs2"          % "0.4.0"
-libraryDependencies += "io.frees" %% "freestyle-http-akka"    % "0.4.0"
-libraryDependencies += "io.frees" %% "freestyle-http-finch"   % "0.4.0"
-libraryDependencies += "io.frees" %% "freestyle-http-http4s"  % "0.4.0"
-libraryDependencies += "io.frees" %% "freestyle-http-play"    % "0.4.0"
-libraryDependencies += "io.frees" %% "freestyle-monix"        % "0.4.0"
-libraryDependencies += "io.frees" %% "freestyle-slick"        % "0.4.0"
-libraryDependencies += "io.frees" %% "freestyle-twitter-util" % "0.4.0"
+libraryDependencies += "io.frees" %% "frees-cache-redis"  % "0.4.0"
+libraryDependencies += "io.frees" %% "frees-doobie"       % "0.4.0"
+libraryDependencies += "io.frees" %% "frees-fetch"        % "0.4.0"
+libraryDependencies += "io.frees" %% "frees-fs2"          % "0.4.0"
+libraryDependencies += "io.frees" %% "frees-http-akka"    % "0.4.0"
+libraryDependencies += "io.frees" %% "frees-http-finch"   % "0.4.0"
+libraryDependencies += "io.frees" %% "frees-http-http4s"  % "0.4.0"
+libraryDependencies += "io.frees" %% "frees-http-play"    % "0.4.0"
+libraryDependencies += "io.frees" %% "frees-monix"        % "0.4.0"
+libraryDependencies += "io.frees" %% "frees-slick"        % "0.4.0"
+libraryDependencies += "io.frees" %% "frees-twitter-util" % "0.4.0"
 ```
 
 For Scala.js:
 
 ```scala
 // required
-libraryDependencies += "io.frees" %%% "freestyle"             % "0.4.0"
+libraryDependencies += "io.frees" %%% "frees-core"        % "0.4.0"
 
 // optional - effects and patterns
-libraryDependencies += "io.frees" %%% "freestyle-effects"     % "0.4.0"
-libraryDependencies += "io.frees" %%% "freestyle-tagless"     % "0.4.0"
-libraryDependencies += "io.frees" %%% "freestyle-async"       % "0.4.0"
-libraryDependencies += "io.frees" %%% "freestyle-async-fs2"   % "0.4.0"
-libraryDependencies += "io.frees" %%% "freestyle-async-monix" % "0.4.0"
-libraryDependencies += "io.frees" %%% "freestyle-cache"       % "0.4.0"
-libraryDependencies += "io.frees" %%% "freestyle-logging"     % "0.4.0"
+libraryDependencies += "io.frees" %%% "frees-effects"     % "0.4.0"
+libraryDependencies += "io.frees" %%% "frees-tagless"     % "0.4.0"
+libraryDependencies += "io.frees" %%% "frees-async"       % "0.4.0"
+libraryDependencies += "io.frees" %%% "frees-async-fs2"   % "0.4.0"
+libraryDependencies += "io.frees" %%% "frees-async-monix" % "0.4.0"
+libraryDependencies += "io.frees" %%% "frees-cache"       % "0.4.0"
+libraryDependencies += "io.frees" %%% "frees-logging"     % "0.4.0"
 
 // optional - integrations
-libraryDependencies += "io.frees" %%% "freestyle-fetch"       % "0.4.0"
-libraryDependencies += "io.frees" %%% "freestyle-fs2"         % "0.4.0"
-libraryDependencies += "io.frees" %%% "freestyle-monix"       % "0.4.0"
+libraryDependencies += "io.frees" %%% "frees-fetch"       % "0.4.0"
+libraryDependencies += "io.frees" %%% "frees-fs2"         % "0.4.0"
+libraryDependencies += "io.frees" %%% "frees-monix"       % "0.4.0"
 ```
 
 [comment]: # (End Replace)
