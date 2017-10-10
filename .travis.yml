@@ -17,7 +17,7 @@ matrix:
   - scala: 2.11.11
     env: FREESBUILD=docs
   # Excluding docs check for now
-  #- scala: 2.12.2
+  #- scala: 2.12.3
   #  env: FREESBUILD=docs
 
 jdk:
@@ -33,7 +33,7 @@ script:
 - ./scripts/build.sh
 
 after_success:
-- if [ "$TRAVIS_SCALA_VERSION" = "2.12.2" -a "$SCALAENV" = "jvm" ]; then
+- if [ "$TRAVIS_SCALA_VERSION" = "2.12.3" -a "$SCALAENV" = "jvm" ]; then
     bash <(curl -s https://codecov.io/bash);
   fi
 - sbt ++$TRAVIS_SCALA_VERSION orgAfterCISuccess
