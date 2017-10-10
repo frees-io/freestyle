@@ -94,9 +94,6 @@ options:
       - title: Fetch
         url: docs/integrations/fetch
 
-      - title: FS2
-        url: docs/integrations/fs2
-
       - title: Doobie
         url: docs/integrations/doobie
 
