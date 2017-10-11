@@ -341,18 +341,26 @@ lazy val docs = (project in file("docs"))
   .settings(moduleName := "frees-docs")
   .settings(micrositeSettings: _*)
   .settings(noPublishSettings: _*)
-  .settings(addCompilerPlugin("org.scalameta" % "paradise" % "3.0.0-M10" cross CrossVersion.full))
+  .settings(
+    addCompilerPlugin(%%("scalameta-paradise") cross CrossVersion.full),
+    libraryDependencies += %%("scalameta", "1.8.0"),
+    scalacOptions += "-Xplugin-require:macroparadise"
+  )
   .settings(
     resolvers ++= Seq(
       Resolver.mavenLocal,
       Resolver.bintrayRepo("kailuowang", "maven")
     ),
     libraryDependencies ++= Seq(
+      "io.frees" %% "frees-core" % "0.4.0",
       %%("doobie-h2"),
       %%("http4s-dsl"),
       %%("play"),
       %("h2") % "test"
     )
+  )
+  .settings(
+    scalacOptions in Tut ~= (_ filterNot Set("-Ywarn-unused-import", "-Xlint").contains)
   )
   .enablePlugins(MicrositesPlugin)
 
