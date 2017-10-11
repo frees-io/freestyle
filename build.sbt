@@ -323,7 +323,7 @@ lazy val jvmFreestyleDeps: Seq[ClasspathDependency] =
   jvmModules.map(ClasspathDependency(_, None))
 
 addCommandAlias("validateDocs", ";project docs;tut;project root")
-addCommandAlias("validateJVM", (toCompileTestList(jvmModules) ++ List("project root")).asCmd)
+addCommandAlias("validateJVM", (List("fixResources") ++ toCompileTestList(jvmModules) ++ List("project root")).asCmd)
 addCommandAlias("validateJS", (toCompileTestList(jsModules) ++ List("project root")).asCmd)
 addCommandAlias(
   "validate",

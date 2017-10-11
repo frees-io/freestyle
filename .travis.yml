@@ -51,14 +51,12 @@ install:
 
 script:
 - if [ "$SCALAENV" = "jvm" ]; then
-    sbt ++$TRAVIS_SCALA_VERSION fixResources;
     sbt ++$TRAVIS_SCALA_VERSION validateJVM;
   elif [ "$SCALAENV" = "js" ]; then
     sbt ++$TRAVIS_SCALA_VERSION validateJS;
   elif [ "$FREESBUILD" = "docs" ]; then
     sbt ++$TRAVIS_SCALA_VERSION docs/tut;
   elif [ "$SCALAENV" = "all" ]; then
-    sbt ++$TRAVIS_SCALA_VERSION fixResources;
     sbt ++$TRAVIS_SCALA_VERSION validate;
   else
     echo "You might not be invited to the party";

@@ -16,12 +16,12 @@
 
 package freestyle
 
-import org.scalatest.{AsyncWordSpec, Matchers}
-
+import org.scalatest.{Matchers, WordSpec}
 import freestyle.implicits._
 import freestyle.config._
 import freestyle.config.implicits._
 import java.util.concurrent.TimeUnit
+
 import scala.concurrent.{ExecutionContext, Future}
 import cats.instances.either._
 import cats.instances.future._
@@ -30,11 +30,11 @@ import cats.syntax.either._
 import classy.config._
 import com.typesafe.config.{Config => TypesafeConfig}
 
-class ConfigTests extends AsyncWordSpec with Matchers {
+class ConfigTests extends WordSpec with Matchers {
 
   import algebras._
 
-  implicit override def executionContext = ExecutionContext.Implicits.global
+  implicit val executionContext = ExecutionContext.Implicits.global
 
   "Config integration" should {
 
