@@ -114,30 +114,30 @@ For Scala.jvm:
 
 ```scala
 // required
-libraryDependencies += "io.frees" %% "frees-core"         % "0.4.0"
+libraryDependencies += "io.frees" %% "frees-core"               % "0.4.0"
 
 // optional - effects and patterns
-libraryDependencies += "io.frees" %% "frees-effects"      % "0.4.0"
-libraryDependencies += "io.frees" %% "frees-tagless"      % "0.4.0"
-libraryDependencies += "io.frees" %% "frees-async"        % "0.4.0"
-libraryDependencies += "io.frees" %% "frees-async-fs2"    % "0.4.0"
-libraryDependencies += "io.frees" %% "frees-async-monix"  % "0.4.0"
-libraryDependencies += "io.frees" %% "frees-cache"        % "0.4.0"
-libraryDependencies += "io.frees" %% "frees-config"       % "0.4.0"
-libraryDependencies += "io.frees" %% "frees-logging"      % "0.4.0"
+libraryDependencies += "io.frees" %% "frees-effects"            % "0.4.0"
+libraryDependencies += "io.frees" %% "frees-tagless"            % "0.4.0"
+libraryDependencies += "io.frees" %% "frees-async"              % "0.4.0"
+libraryDependencies += "io.frees" %% "frees-async-cats-effect"  % "0.4.0"
+libraryDependencies += "io.frees" %% "frees-async-guava"        % "0.4.0"
+libraryDependencies += "io.frees" %% "frees-cache"              % "0.4.0"
+libraryDependencies += "io.frees" %% "frees-config"             % "0.4.0"
+libraryDependencies += "io.frees" %% "frees-logging"            % "0.4.0"
 
 // optional - integrations
-libraryDependencies += "io.frees" %% "frees-cache-redis"  % "0.4.0"
-libraryDependencies += "io.frees" %% "frees-doobie"       % "0.4.0"
-libraryDependencies += "io.frees" %% "frees-fetch"        % "0.4.0"
-libraryDependencies += "io.frees" %% "frees-fs2"          % "0.4.0"
-libraryDependencies += "io.frees" %% "frees-http-akka"    % "0.4.0"
-libraryDependencies += "io.frees" %% "frees-http-finch"   % "0.4.0"
-libraryDependencies += "io.frees" %% "frees-http-http4s"  % "0.4.0"
-libraryDependencies += "io.frees" %% "frees-http-play"    % "0.4.0"
-libraryDependencies += "io.frees" %% "frees-monix"        % "0.4.0"
-libraryDependencies += "io.frees" %% "frees-slick"        % "0.4.0"
-libraryDependencies += "io.frees" %% "frees-twitter-util" % "0.4.0"
+libraryDependencies += "io.frees" %% "frees-cache-redis"        % "0.4.0"
+libraryDependencies += "io.frees" %% "frees-doobie"             % "0.4.0"
+libraryDependencies += "io.frees" %% "frees-fetch"              % "0.4.0"
+libraryDependencies += "io.frees" %% "frees-fs2"                % "0.4.0"
+libraryDependencies += "io.frees" %% "frees-http-akka"          % "0.4.0"
+libraryDependencies += "io.frees" %% "frees-http-finch"         % "0.4.0"
+libraryDependencies += "io.frees" %% "frees-http-http4s"        % "0.4.0"
+libraryDependencies += "io.frees" %% "frees-http-play"          % "0.4.0"
+libraryDependencies += "io.frees" %% "frees-monix"              % "0.4.0"
+libraryDependencies += "io.frees" %% "frees-slick"              % "0.4.0"
+libraryDependencies += "io.frees" %% "frees-twitter-util"       % "0.4.0"
 ```
 
 For Scala.js:

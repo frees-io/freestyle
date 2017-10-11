@@ -101,7 +101,7 @@ lazy val effects = module("effects")
 lazy val effectsJVM = effects.jvm
 lazy val effectsJS = effects.js
 
-lazy val async = module("async", subFolder = Some("async/async"))
+lazy val async = module("async", subFolder = Some("async"))
   .dependsOn(core)
   .jsSettings(sharedJsSettings: _*)
   .crossDepSettings(commonDeps: _*)
@@ -109,7 +109,7 @@ lazy val async = module("async", subFolder = Some("async/async"))
 lazy val asyncJVM = async.jvm
 lazy val asyncJS = async.js
 
-lazy val asyncCatsEffect = module("async-cats-effect", subFolder = Some("async/cats-effect"))
+lazy val asyncCatsEffect = module("async-cats-effect", subFolder = Some("async"))
   .dependsOn(core, async)
   .jsSettings(sharedJsSettings: _*)
   .crossDepSettings(commonDeps: _*)
@@ -118,7 +118,7 @@ lazy val asyncCatsEffect = module("async-cats-effect", subFolder = Some("async/c
 lazy val asyncCatsEffectJVM = asyncCatsEffect.jvm
 lazy val asyncCatsEffectJS = asyncCatsEffect.js
 
-lazy val asyncGuava = jvmModule("async-guava", subFolder = Some("async/guava"))
+lazy val asyncGuava = jvmModule("async-guava", subFolder = Some("async"))
   .dependsOn(coreJVM, asyncJVM)
   .settings(libraryDependencies ++= commonDeps ++ Seq(
     "com.google.guava" % "guava" % "22.0"
