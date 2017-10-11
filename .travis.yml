@@ -57,15 +57,14 @@ script:
   elif [ "$FREESBUILD" = "docs" ]; then
     sbt ++$TRAVIS_SCALA_VERSION docs/tut;
   elif [ "$SCALAENV" = "all" ]; then
-    sbt ++$TRAVIS_SCALA_VERSION orgScriptCI;
+    sbt ++$TRAVIS_SCALA_VERSION clean compile coverage test coverageReport coverageAggregate coverageOff;
   else
     echo "You might not be invited to the party";
   fi
 
 after_success:
+- bash <(curl -s https://codecov.io/bash)
 - if [ "$TRAVIS_BRANCH" = "master" -a "$TRAVIS_PULL_REQUEST" = "false" ]; then
-    bash <(curl -s https://codecov.io/bash);
-
     if grep -q "SNAPSHOT" version.sbt; then
       sbt ++$TRAVIS_SCALA_VERSION publish;
     else
