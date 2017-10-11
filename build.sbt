@@ -10,11 +10,9 @@ lazy val core = module("core")
   .jsSettings(sharedJsSettings: _*)
   .settings(libraryDependencies ++= Seq(%("scala-reflect", scalaVersion.value)))
   .settings(
-    wartremoverWarnings in(Test, compile) := Warts.unsafe,
-    wartremoverWarnings in(Test, compile) ++= Seq(
-      Wart.FinalCaseClass,
-      Wart.ExplicitImplicitTypes),
-    wartremoverWarnings in(Test, compile) -= Wart.NonUnitStatements
+    wartremoverWarnings in (Test, compile) := Warts.unsafe,
+    wartremoverWarnings in (Test, compile) ++= Seq(Wart.FinalCaseClass, Wart.ExplicitImplicitTypes),
+    wartremoverWarnings in (Test, compile) -= Wart.NonUnitStatements
   )
   .crossDepSettings(
     commonDeps ++ Seq(
@@ -27,7 +25,7 @@ lazy val core = module("core")
   )
 
 lazy val coreJVM = core.jvm
-lazy val coreJS = core.js
+lazy val coreJS  = core.js
 
 lazy val tagless = module("tagless")
   .dependsOn(core)
@@ -38,7 +36,7 @@ lazy val tagless = module("tagless")
   )
 
 lazy val taglessJVM = tagless.jvm
-lazy val taglessJS = tagless.js
+lazy val taglessJS  = tagless.js
 
 lazy val tests = jvmModule("tests")
   .dependsOn(coreJVM % "compile->compile;test->test")
@@ -46,7 +44,7 @@ lazy val tests = jvmModule("tests")
   .settings(
     libraryDependencies ++= commonDeps ++ Seq(
       %("scala-reflect", scalaVersion.value),
-      %%("pcplod") % "test",
+      %%("pcplod")     % "test",
       %%("monix-eval") % "test"
     ),
     fork in Test := true,
@@ -77,8 +75,8 @@ lazy val bench = jvmModule("bench")
   .settings(libraryDependencies ++= Seq(%%("cats-free"), %%("scalacheck")))
   .settings(inConfig(Compile)(
     sourceGenerators += Def.task {
-      val path = (sourceManaged in(Compile, compile)).value / "bench.scala"
-      (runner in(Codegen, run)).value.run(
+      val path = (sourceManaged in (Compile, compile)).value / "bench.scala"
+      (runner in (Codegen, run)).value.run(
         "freestyle.bench.BenchBoiler",
         Attributed.data((fullClasspath in Codegen).value),
         path.toString :: Nil,
@@ -92,12 +90,13 @@ lazy val Codegen = sbt.config("codegen").hide
 lazy val effects = module("effects")
   .dependsOn(core)
   .jsSettings(sharedJsSettings: _*)
-  .crossDepSettings(commonDeps ++ Seq(
-    %("cats-mtl-core")
-  ): _*)
+  .crossDepSettings(
+    commonDeps ++ Seq(
+      %("cats-mtl-core")
+    ): _*)
 
 lazy val effectsJVM = effects.jvm
-lazy val effectsJS = effects.js
+lazy val effectsJS  = effects.js
 
 lazy val async = module("async", subFolder = Some("async"))
   .dependsOn(core)
@@ -105,23 +104,25 @@ lazy val async = module("async", subFolder = Some("async"))
   .crossDepSettings(commonDeps: _*)
 
 lazy val asyncJVM = async.jvm
-lazy val asyncJS = async.js
+lazy val asyncJS  = async.js
 
 lazy val asyncCatsEffect = module("async-cats-effect", subFolder = Some("async"))
   .dependsOn(core, async)
   .jsSettings(sharedJsSettings: _*)
-  .crossDepSettings(commonDeps ++ Seq(
-    %("cats-effect")
-  ): _*)
+  .crossDepSettings(
+    commonDeps ++ Seq(
+      %("cats-effect")
+    ): _*)
 
 lazy val asyncCatsEffectJVM = asyncCatsEffect.jvm
-lazy val asyncCatsEffectJS = asyncCatsEffect.js
+lazy val asyncCatsEffectJS  = asyncCatsEffect.js
 
 lazy val asyncGuava = jvmModule("async-guava", subFolder = Some("async"))
   .dependsOn(coreJVM, asyncJVM)
-  .settings(libraryDependencies ++= commonDeps ++ Seq(
-    "com.google.guava" % "guava" % "22.0"
-  ))
+  .settings(
+    libraryDependencies ++= commonDeps ++ Seq(
+      "com.google.guava" % "guava" % "22.0"
+    ))
 
 lazy val cache = module("cache")
   .dependsOn(core)
@@ -129,14 +130,14 @@ lazy val cache = module("cache")
   .crossDepSettings(commonDeps: _*)
 
 lazy val cacheJVM = cache.jvm
-lazy val cacheJS = cache.js
+lazy val cacheJS  = cache.js
 
 lazy val config = jvmModule("config")
   .dependsOn(coreJVM)
   .settings(
     fixResources := {
-      val testConf = (resourceDirectory in Test).value / "application.conf"
-      val targetFile = (classDirectory in(coreJVM, Compile)).value / "application.conf"
+      val testConf   = (resourceDirectory in Test).value / "application.conf"
+      val targetFile = (classDirectory in (coreJVM, Compile)).value / "application.conf"
       if (testConf.exists) {
         IO.copyFile(
           testConf,
@@ -166,13 +167,11 @@ lazy val logging = module("logging")
   .crossDepSettings(commonDeps ++ Seq("com.lihaoyi" %% "sourcecode" % "0.1.3"): _*)
 
 lazy val loggingJVM = logging.jvm
-lazy val loggingJS = logging.js
-
+lazy val loggingJS  = logging.js
 
 //////////////////////
 //// INTEGRATIONS ////
 //////////////////////
-
 
 lazy val monix = module("monix", full = false, subFolder = Some("integrations"))
   .dependsOn(core)
@@ -181,7 +180,7 @@ lazy val monix = module("monix", full = false, subFolder = Some("integrations"))
     Seq(%("monix-eval")): _*)
 
 lazy val monixJVM = monix.jvm
-lazy val monixJS = monix.js
+lazy val monixJS  = monix.js
 
 lazy val cacheRedis = jvmModule("cache-redis", subFolder = Some("integrations"))
   .dependsOn(coreJVM, cacheJVM)
@@ -190,7 +189,7 @@ lazy val cacheRedis = jvmModule("cache-redis", subFolder = Some("integrations"))
     resolvers += Resolver.mavenLocal,
     libraryDependencies ++= Seq(
       %%("rediscala"),
-      %%("akka-actor") % "test",
+      %%("akka-actor")    % "test",
       %("embedded-redis") % "test"
     ) ++ commonDeps
   )
@@ -227,7 +226,7 @@ lazy val fetch = module("fetch", subFolder = Some("integrations"))
   )
 
 lazy val fetchJVM = fetch.jvm
-lazy val fetchJS = fetch.js
+lazy val fetchJS  = fetch.js
 
 // lazy val fs2 = module("fs2", subFolder = Some("integrations"))
 //  .dependsOn(core)
@@ -270,16 +269,14 @@ lazy val httpPlay = jvmModule("play", subFolder = Some("integrations/http"))
   .settings(
     concurrentRestrictions in Global := Seq(Tags.limitAll(1)),
     libraryDependencies ++= Seq(
-      %%("play") % "test",
+      %%("play")      % "test",
       %%("play-test") % "test"
     ) ++ commonDeps
   )
 
-
 /////////////////////
 //// ALL MODULES ////
 /////////////////////
-
 
 lazy val jvmModules: Seq[ProjectReference] = Seq(
   coreJVM,
