@@ -1,4 +1,6 @@
+import sbtorgpolicies.model._
 import sbtorgpolicies.runnable.syntax._
+import sbtorgpolicies.templates.badges._
 
 lazy val root = (project in file("."))
   .settings(moduleName := "root")
@@ -10,25 +12,25 @@ lazy val core = module("core")
   .jsSettings(sharedJsSettings: _*)
   .settings(libraryDependencies ++= Seq(%("scala-reflect", scalaVersion.value)))
   .settings(
-    wartremoverWarnings in (Test, compile) := Warts.unsafe,
-    wartremoverWarnings in (Test, compile) ++= Seq(
+    wartremoverWarnings in(Test, compile) := Warts.unsafe,
+    wartremoverWarnings in(Test, compile) ++= Seq(
       Wart.FinalCaseClass,
       Wart.ExplicitImplicitTypes),
-    wartremoverWarnings in (Test, compile) -= Wart.NonUnitStatements
+    wartremoverWarnings in(Test, compile) -= Wart.NonUnitStatements
   )
   .crossDepSettings(
     commonDeps ++ Seq(
       %("cats-free", "1.0.0-MF"),
       %("simulacrum", "0.11.0"),
       %("shapeless") % "test",
-      %("cats-laws", "1.0.0-MF")  % "test"
+      %("cats-laws", "1.0.0-MF") % "test"
     ): _*
   ).settings(
-    libraryDependencies += "io.frees" %%% "iota-core" % "0.3.1"
-  )
+  libraryDependencies += "io.frees" %%% "iota-core" % "0.3.1"
+)
 
 lazy val coreJVM = core.jvm
-lazy val coreJS  = core.js
+lazy val coreJS = core.js
 
 lazy val tagless = module("tagless")
   .dependsOn(core)
@@ -39,7 +41,7 @@ lazy val tagless = module("tagless")
   )
 
 lazy val taglessJVM = tagless.jvm
-lazy val taglessJS  = tagless.js
+lazy val taglessJS = tagless.js
 
 lazy val tests = jvmModule("tests")
   .dependsOn(coreJVM % "compile->compile;test->test")
@@ -78,8 +80,8 @@ lazy val bench = jvmModule("bench")
   .settings(libraryDependencies ++= Seq(%%("cats-free", "1.0.0-MF"), %%("scalacheck")))
   .settings(inConfig(Compile)(
     sourceGenerators += Def.task {
-      val path = (sourceManaged in (Compile, compile)).value / "bench.scala"
-      (runner in (Codegen, run)).value.run(
+      val path = (sourceManaged in(Compile, compile)).value / "bench.scala"
+      (runner in(Codegen, run)).value.run(
         "freestyle.bench.BenchBoiler",
         Attributed.data((fullClasspath in Codegen).value),
         path.toString :: Nil,
@@ -97,30 +99,27 @@ lazy val effects = module("effects")
   .settings(libraryDependencies += "org.typelevel" %%% "cats-mtl-core" % "0.0.2")
 
 lazy val effectsJVM = effects.jvm
-lazy val effectsJS  = effects.js
+lazy val effectsJS = effects.js
 
-lazy val async = (crossProject in file("modules/async/async"))
-  .settings(name := "frees-async")
+lazy val async = module("async", subFolder = Some("async/async"))
   .dependsOn(core)
   .jsSettings(sharedJsSettings: _*)
   .crossDepSettings(commonDeps: _*)
 
 lazy val asyncJVM = async.jvm
-lazy val asyncJS  = async.js
+lazy val asyncJS = async.js
 
-lazy val asyncCatsEffect = (crossProject in file("modules/async/cats-effect"))
+lazy val asyncCatsEffect = module("async-cats-effect", subFolder = Some("async/cats-effect"))
   .dependsOn(core, async)
-  .settings(name := "frees-async-cats-effect")
   .jsSettings(sharedJsSettings: _*)
   .crossDepSettings(commonDeps: _*)
   .settings(libraryDependencies += "org.typelevel" %%% "cats-effect" % "0.4")
 
 lazy val asyncCatsEffectJVM = asyncCatsEffect.jvm
-lazy val asyncCatsEffectJS  = asyncCatsEffect.js
+lazy val asyncCatsEffectJS = asyncCatsEffect.js
 
-lazy val asyncGuava = (project in file("modules/async/guava"))
+lazy val asyncGuava = jvmModule("async-guava", subFolder = Some("async/guava"))
   .dependsOn(coreJVM, asyncJVM)
-  .settings(name := "frees-async-guava")
   .settings(libraryDependencies ++= commonDeps ++ Seq(
     "com.google.guava" % "guava" % "22.0"
   ))
@@ -131,14 +130,14 @@ lazy val cache = module("cache")
   .crossDepSettings(commonDeps: _*)
 
 lazy val cacheJVM = cache.jvm
-lazy val cacheJS  = cache.js
+lazy val cacheJS = cache.js
 
 lazy val config = jvmModule("config")
   .dependsOn(coreJVM)
   .settings(
     fixResources := {
-      val testConf   = (resourceDirectory in Test).value / "application.conf"
-      val targetFile = (classDirectory in (coreJVM, Compile)).value / "application.conf"
+      val testConf = (resourceDirectory in Test).value / "application.conf"
+      val targetFile = (classDirectory in(coreJVM, Compile)).value / "application.conf"
       if (testConf.exists) {
         IO.copyFile(
           testConf,
@@ -168,11 +167,120 @@ lazy val logging = module("logging")
   .crossDepSettings(commonDeps ++ Seq("com.lihaoyi" %% "sourcecode" % "0.1.3"): _*)
 
 lazy val loggingJVM = logging.jvm
-lazy val loggingJS  = logging.js
+lazy val loggingJS = logging.js
 
-pgpPassphrase := Some(getEnvVar("PGP_PASSPHRASE").getOrElse("").toCharArray)
-pgpPublicRing := file(s"$gpgFolder/pubring.gpg")
-pgpSecretRing := file(s"$gpgFolder/secring.gpg")
+
+//////////////////////
+//// INTEGRATIONS ////
+//////////////////////
+
+
+lazy val monix = module("monix", full = false, subFolder = Some("integrations"))
+  .dependsOn(core)
+  .jsSettings(sharedJsSettings: _*)
+  .crossDepSettings(commonDeps ++
+    Seq(%("monix-eval", "3.0.0-M1")): _*)
+
+lazy val monixJVM = monix.jvm
+lazy val monixJS = monix.js
+
+lazy val cacheRedis = jvmModule("cache-redis", subFolder = Some("integrations"))
+  .dependsOn(coreJVM, cacheJVM)
+  .settings(
+    resolvers += "Sonatype OSS Releases" at "https://oss.sonatype.org/content/repositories/releases/",
+    resolvers += Resolver.mavenLocal,
+    libraryDependencies ++= Seq(
+      %%("rediscala"),
+      %%("akka-actor") % "test",
+      %("embedded-redis") % "test"
+    ) ++ commonDeps
+  )
+
+lazy val doobie = jvmModule("doobie", subFolder = Some("integrations"))
+  .dependsOn(coreJVM)
+  .settings(
+    libraryDependencies ++= Seq(
+      "org.tpolecat" %% "doobie-core" % "0.5.0-M8",
+      "org.tpolecat" %% "doobie-h2" % "0.5.0-M8" % "test"
+    ) ++ commonDeps
+  )
+
+lazy val slick = jvmModule("slick", subFolder = Some("integrations"))
+  .dependsOn(coreJVM, asyncJVM)
+  .settings(
+    libraryDependencies ++= Seq(
+      %%("slick"),
+      %("h2") % "test"
+    ) ++ commonDeps
+  )
+
+lazy val twitterUtil = jvmModule("twitter-util", subFolder = Some("integrations"))
+  .dependsOn(coreJVM)
+  .settings(
+    libraryDependencies ++= Seq(%%("catbird-util", "0.18.0")) ++ commonDeps
+  )
+
+lazy val fetch = module("fetch", subFolder = Some("integrations"))
+  .dependsOn(core)
+  .jsSettings(sharedJsSettings: _*)
+  .crossDepSettings(
+    commonDeps ++ Seq(%("fetch", "0.7.0")): _*
+  )
+
+lazy val fetchJVM = fetch.jvm
+lazy val fetchJS = fetch.js
+
+// lazy val fs2 = module("fs2", subFolder = Some("integrations"))
+//  .dependsOn(core)
+//   .jsSettings(sharedJsSettings: _*)
+//   .crossDepSettings(
+//     commonDeps ++ Seq(
+//       %("fs2-core", "0.10.0-M6")
+//     ): _*
+//   )
+
+// lazy val fs2JVM = fs2.jvm
+// lazy val fs2JS  = fs2.js
+
+lazy val httpHttp4s = jvmModule("http4s", subFolder = Some("integrations/http"))
+  .dependsOn(coreJVM)
+  .settings(
+    libraryDependencies ++= Seq(
+      %%("http4s-core", "0.18.0-M2"),
+      %%("http4s-dsl", "0.18.0-M2") % "test"
+    ) ++ commonDeps
+  )
+
+lazy val httpFinch = jvmModule("finch", subFolder = Some("integrations/http"))
+  .dependsOn(coreJVM)
+  .settings(
+    libraryDependencies ++= Seq(%%("finch-core", "0.16.0-M2")) ++ commonDeps
+  )
+
+lazy val httpAkka = jvmModule("akka", subFolder = Some("integrations/http"))
+  .dependsOn(coreJVM)
+  .settings(
+    libraryDependencies ++= Seq(
+      %%("akka-http"),
+      %%("akka-http-testkit") % "test"
+    ) ++ commonDeps
+  )
+
+lazy val httpPlay = jvmModule("play", subFolder = Some("integrations/http"))
+  .dependsOn(coreJVM)
+  .settings(
+    concurrentRestrictions in Global := Seq(Tags.limitAll(1)),
+    libraryDependencies ++= Seq(
+      %%("play") % "test",
+      %%("play-test") % "test"
+    ) ++ commonDeps
+  )
+
+
+/////////////////////
+//// ALL MODULES ////
+/////////////////////
+
 
 lazy val jvmModules: Seq[ProjectReference] = Seq(
   coreJVM,
@@ -183,7 +291,19 @@ lazy val jvmModules: Seq[ProjectReference] = Seq(
   asyncGuava,
   cacheJVM,
   config,
-  loggingJVM
+  loggingJVM,
+  //Integrations:
+  monixJVM,
+  cacheRedis,
+  doobie,
+  slick,
+  twitterUtil,
+  fetchJVM,
+  // fs2JVM,
+  httpHttp4s,
+  httpFinch,
+  httpAkka,
+  httpPlay
   // ,tests
 )
 
@@ -194,7 +314,11 @@ lazy val jsModules: Seq[ProjectReference] = Seq(
   asyncJS,
   asyncCatsEffectJS,
   cacheJS,
-  loggingJS
+  loggingJS,
+  //Integrations:
+  monixJS,
+  fetchJS
+  //, fs2JS
 )
 
 lazy val allModules: Seq[ProjectReference] = jvmModules ++ jsModules
@@ -207,3 +331,39 @@ addCommandAlias("validateJS", (toCompileTestList(jsModules) ++ List("project roo
 addCommandAlias(
   "validate",
   ";clean;compile;coverage;validateJVM;coverageReport;coverageAggregate;coverageOff")
+
+
+///////////////
+//// DOCS ////
+///////////////
+
+lazy val docs = (project in file("docs"))
+  .dependsOn(jvmFreestyleDeps: _*)
+  .settings(moduleName := "frees-docs")
+  .settings(micrositeSettings: _*)
+  .settings(noPublishSettings: _*)
+  .settings(
+    addCompilerPlugin(%%("scalameta-paradise") cross CrossVersion.full),
+    libraryDependencies += %%("scalameta", "1.8.0"),
+    scalacOptions += "-Xplugin-require:macroparadise"
+  )
+  .settings(
+    resolvers ++= Seq(
+      Resolver.mavenLocal,
+      Resolver.bintrayRepo("kailuowang", "maven")
+    ),
+    libraryDependencies ++= Seq(
+      "org.tpolecat" %% "doobie-h2" % "0.5.0-M8",
+      %%("http4s-dsl", "0.18.0-M2"),
+      %%("play"),
+      %("h2") % "test"
+    )
+  )
+  .settings(
+    scalacOptions in Tut ~= (_ filterNot Set("-Ywarn-unused-import", "-Xlint").contains)
+  )
+  .enablePlugins(MicrositesPlugin)
+
+pgpPassphrase := Some(getEnvVar("PGP_PASSPHRASE").getOrElse("").toCharArray)
+pgpPublicRing := file(s"$gpgFolder/pubring.gpg")
+pgpSecretRing := file(s"$gpgFolder/secring.gpg")
