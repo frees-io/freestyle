@@ -352,7 +352,6 @@ lazy val docs = (project in file("docs"))
       Resolver.bintrayRepo("kailuowang", "maven")
     ),
     libraryDependencies ++= Seq(
-      "io.frees" %% "frees-core" % "0.4.0",
       %%("doobie-h2"),
       %%("http4s-dsl"),
       %%("play"),
@@ -363,6 +362,7 @@ lazy val docs = (project in file("docs"))
     scalacOptions in Tut ~= (_ filterNot Set("-Ywarn-unused-import", "-Xlint").contains)
   )
   .enablePlugins(MicrositesPlugin)
+  .disablePlugins(ProjectPlugin)
 
 pgpPassphrase := Some(getEnvVar("PGP_PASSPHRASE").getOrElse("").toCharArray)
 pgpPublicRing := file(s"$gpgFolder/pubring.gpg")
