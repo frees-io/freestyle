@@ -38,8 +38,7 @@ object ProjectPlugin extends AutoPlugin {
   override def projectSettings: Seq[Def.Setting[_]] =
     Seq(
       orgUpdateDocFilesSetting += baseDirectory.value / "docs" / "src",
-      orgScriptTaskListSetting := List("validate".asRunnableItemFull) ++ guard(
-        scalaBinaryVersion.value == "2.12")("tut".asRunnableItem)
+      orgScriptTaskListSetting := List("validate".asRunnableItemFull)
     ) ++ scalaMetaSettings
 
 }
