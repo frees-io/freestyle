@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="96px" height="96px" viewBox="0 0 96 96" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 44.1 (41455) - http://www.bohemiancoding.com/sketch -->
+    <title>freestyle-icon-feature-modules</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <circle id="path-1" cx="48" cy="27" r="3"></circle>
+        <circle id="path-2" cx="72" cy="68" r="3"></circle>
+        <circle id="path-3" cx="24" cy="68" r="3"></circle>
+    </defs>
+    <g id="freestyle-ui" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="freestyle-icon-feature-modules">
+            <polygon id="hexagon" fill="#01C2C2" points="48 3 68.7846097 15 68.7846097 39 48 51 27.2153903 39 27.2153903 15"></polygon>
+            <polygon id="hexagon" fill="#01C2C2" points="72 44 92.7846097 56 92.7846097 80 72 92 51.2153903 80 51.2153903 56"></polygon>
+            <polygon id="hexagon" fill="#01C2C2" points="24 44 44.7846097 56 44.7846097 80 24 92 3.21539031 80 3.21539031 56"></polygon>
+            <polyline id="opacity" fill="#FFFFFF" opacity="0.3" points="72 92 51.2153903 80 51.2153903 56 72 44 72 44"></polyline>
+            <polyline id="opacity" fill="#FFFFFF" opacity="0.3" points="24 92 3.21539031 80 3.21539031 56 24 44 24 44"></polyline>
+            <polyline id="opacity" fill="#FFFFFF" opacity="0.3" points="48 51 27.2153903 39 27.2153903 15 48 3"></polyline>
+            <path d="M45.9755859,31.5634766 L26.7666016,63.5776367" id="line" stroke="#0A5F70" stroke-width="2" opacity="0.8" stroke-dasharray="3,3,3,3"></path>
+            <path d="M29.3066406,68 L66.1450195,68" id="line" stroke="#0A5F70" stroke-width="2" opacity="0.8" stroke-dasharray="3,3,3,3"></path>
+            <g id="point">
+                <use fill="#FFFFFF" fill-rule="evenodd" xlink:href="#path-1"></use>
+                <circle stroke="#077783" stroke-width="3" cx="48" cy="27" r="4.5"></circle>
+            </g>
+            <g id="point">
+                <use fill="#FFFFFF" fill-rule="evenodd" xlink:href="#path-2"></use>
+                <circle stroke="#077783" stroke-width="3" cx="72" cy="68" r="4.5"></circle>
+            </g>
+            <g id="point">
+                <use fill="#FFFFFF" fill-rule="evenodd" xlink:href="#path-3"></use>
+                <circle stroke="#077783" stroke-width="3" cx="24" cy="68" r="4.5"></circle>
+            </g>
+        </g>
+    </g>
+</svg>

@@ -1,0 +1,306 @@
+// COMPONENTS
+// -----------------------------------------------
+// -----------------------------------------------
+
+body {
+    color: $text-color;
+    font-family: $font-family-sans-serif;
+}
+// Typography
+
+#site-header,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    color: $brand-secondary;
+    font-family: $font-family-header;
+    text-transform: uppercase;
+}
+
+a {
+    transition: all $base-duration $base-timing;
+}
+// Buttons
+
+.btn {
+    padding: 12px 40px;
+    border-radius: 0;
+    transition: background-color $base-duration $base-timing;
+
+    &:hover {
+        background: #fff;
+    }
+}
+// Jumbotron
+
+.jumbotron {
+    text-align: center;
+    background: url("../img/freestyle-background-jumbotron.svg") center center no-repeat $brand-secondary;
+
+    h1 {
+        font-size: $jumbotron-heading-font-size;
+        @media (max-width: 992px) {
+            font-size: ($jumbotron-heading-font-size / 1.5);
+        }
+    }
+
+    p {
+        margin-bottom: 20px;
+    }
+
+    .jumbotron-stars {
+        font-size: 20px;
+
+        .fa {
+            margin-right: 8px;
+        }
+
+        a {
+            &:hover {
+                text-decoration: none;
+            }
+        }
+    }
+
+    svg {
+        &:hover {
+            .beta {
+                opacity: 0.1;
+            }
+        }
+    }
+}
+// Site  main
+
+#site-main {
+    padding-bottom: 80px;
+    background: $gray-lighter;
+
+    #features {
+        .feature-algebras,
+        .feature-handlers,
+        .feature-modules {
+            h2 {
+                font-size: 22px;
+            }
+
+            p {
+                margin-bottom: 0;
+            }
+            padding: 40px 24px;
+            margin-top: -50px;
+            text-align: center;
+            background: #fff;
+            box-shadow: $base-shadow;
+        }
+        @media (max-width: 992px) {
+            .feature-handlers,
+            .feature-modules {
+                margin-top: 20px;
+            }
+        }
+    }
+
+    #libraries {
+        .libraries-lines {
+            margin: 48px 0 24px;
+            text-align: center;
+            @media (max-width: 1200px) {
+                img {
+                    width: 76%;
+                    height: auto;
+                }
+            }
+            @media (max-width: 992px) {
+                display: none;
+            }
+        }
+
+        a {
+            .library-cassandra,
+            .library-effects,
+            .library-kafka,
+            .library-rpc {
+                text-align: center;
+
+                h3 {
+                    font-size: 17px;
+                }
+
+                p {
+                    font-size: 14px;
+                    color: rgba($brand-secondary, 0.7);
+                }
+
+                .cta-library {
+                    background: $brand-primary;
+                    color: #fff;
+                    padding: 2px 12px 1px;
+                    margin-bottom: 0;
+                    display: inline-block;
+                    font-family: $font-family-header;
+                    text-transform: uppercase;
+                    font-size: 12px;
+                    transition: all $base-duration $base-timing;
+                }
+                @media (max-width: 992px) {
+                    margin-top: 48px;
+                }
+            }
+
+            img {
+                transition: all $base-duration $base-timing;
+            }
+
+            &:hover {
+                text-decoration: none;
+
+                img {
+                    transform: scale(1.2);
+                }
+
+                .cta-library {
+                    background: darken($brand-primary, 7%);
+                }
+            }
+        }
+    }
+}
+
+.author {
+    img {
+        margin-right: 8px;
+    }
+    display: flex;
+    align-items: center;
+}
+// Doc
+
+body {
+    &.docs {
+        background: $gray-lighter;
+
+        .kazari-id-1 {
+            margin-bottom: 40px;
+        }
+
+        .modal-kazari {
+            margin-top: 0;
+        }
+
+        .compiler-kazari {
+            &.compiler-kazari-background {
+                background: $brand-secondary !important;
+            }
+        }
+    }
+}
+
+#sidebar-wrapper {
+    background: $brand-secondary;
+
+    .sidebar-nav {
+        > .sidebar-brand {
+            a {
+                background: none;
+                padding-top: 20px;
+                padding-bottom: 20px;
+            }
+        }
+
+        > li {
+            margin-bottom: 0;
+            border-bottom: $border-light;
+
+            > a {
+                font-family: $font-family-header;
+                padding-top: 4px;
+                padding-bottom: 4px;
+            }
+
+            .sub_section {
+                border-top: $border-light;
+                padding: 20px 0;
+
+                li {
+                    border-left: 1px solid rgba(255, 255, 255, 0.15);
+                    margin-left: 24px;
+
+                    &:before {
+                        content: "–";
+                        position: absolute;
+                        color: rgba(255, 255, 255, 0.15);
+                    }
+
+                    a {
+                        padding-left: 18px;
+
+                        &:hover {
+                            background: none;
+                            color: rgba(255, 255, 255, 0.5);
+                        }
+                    }
+                }
+            }
+        }
+
+        li {
+            a {
+                color: #fff;
+
+                &.active {
+                    color: $brand-primary;
+                    border-left: 0;
+                }
+
+                &:hover {
+                    background: $white-light;
+                }
+            }
+
+            ul {
+                li {
+                    font-size: 14px;
+                    line-height: 2.1;
+                }
+            }
+        }
+    }
+}
+
+#page-content-wrapper {
+    section {
+        background: none;
+        padding: 0;
+
+        p {
+            color: rgba($brand-secondary, 0.7);
+        }
+
+        h2 {
+            font-size: 26px;
+        }
+
+        h3 {
+            font-size: 22px;
+        }
+
+        pre {
+            margin-bottom: 0;
+            border: none;
+            font-size: 18px;
+        }
+    }
+
+    .nav {
+        box-shadow: $base-shadow;
+    }
+}
+
+code,
+pre {
+    font-family: $font-family-header;
+}

@@ -1,0 +1,12 @@
+.freestyle-logo {
+  /* 50 + 50 to the previous height */
+  height: 292px;
+  margin-top: -50px;
+  padding-top: 50px;
+  margin-bottom: -50px;
+  padding-bottom: 50px;
+}
+
+/*.freestyle-logo .polygon {
+  opacity: 0;
+}*/

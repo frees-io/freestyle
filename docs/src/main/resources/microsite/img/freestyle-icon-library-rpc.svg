@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="52px" height="52px" viewBox="0 0 52 52" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 44.1 (41455) - http://www.bohemiancoding.com/sketch -->
+    <title>freestyle-icon-library-rpc</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="freestyle-ui" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="freestyle-icon-library-rpc">
+            <polygon id="hexagon" fill="#01C2C2" points="26 2 46.7846097 14 46.7846097 38 26 50 5.21539031 38 5.21539031 14"></polygon>
+            <polyline id="opacity" fill="#FFFFFF" opacity="0.3" points="26 50 5.21539031 38 5.21539031 14 26 2 26 2"></polyline>
+            <path d="M26,8 L26,44.5" id="line" stroke="#058F97" stroke-width="2" stroke-dasharray="2,2,2,2"></path>
+            <path d="M46.0102539,13.9960938 L6.05175781,37.1054688" id="line" stroke="#058F97" stroke-width="2" stroke-dasharray="2,2,2,2"></path>
+            <path d="M46.0246582,37.0974121 L6.10644531,14.1508789" id="line" stroke="#058F97" stroke-width="2" stroke-dasharray="2,2,2,2"></path>
+            <circle id="point" stroke="#058F97" fill="#058F97" cx="26" cy="4" r="3"></circle>
+            <circle id="point" stroke="#058F97" fill="#058F97" cx="26" cy="26" r="3"></circle>
+            <circle id="point" stroke="#058F97" fill="#058F97" cx="46" cy="14" r="3"></circle>
+            <circle id="point" stroke="#058F97" fill="#058F97" cx="6" cy="14" r="3"></circle>
+            <circle id="point" stroke="#058F97" fill="#058F97" cx="46" cy="37" r="3"></circle>
+            <circle id="point" stroke="#058F97" fill="#058F97" cx="6" cy="37" r="3"></circle>
+            <circle id="point" stroke="#058F97" fill="#058F97" cx="26" cy="48" r="3"></circle>
+        </g>
+    </g>
+</svg>

@@ -1,0 +1,123 @@
+// COMPONENTS
+// -----------------------------------------------
+// -----------------------------------------------
+
+body {
+    color: $text-color;
+    font-family: $font-family-sans-serif;
+}
+// Typography
+
+#site-header,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    color: $brand-secondary;
+    font-family: $font-family-header;
+    text-transform: uppercase;
+}
+
+a {
+    transition: color $base-duration $base-timing;
+}
+// Buttons
+
+.btn {
+    padding: 12px 40px;
+    border-radius: 0;
+    transition: background-color $base-duration $base-timing;
+
+    &:hover {
+        background: #fff;
+    }
+}
+// Jumbotron
+
+.jumbotron {
+    text-align: center;
+    background: url("../img/freestyle-background-jumbotron.svg") center center no-repeat $brand-secondary;
+
+    h1 {
+        font-size: $jumbotron-heading-font-size;
+    }
+
+    p {
+        margin-bottom: 20px;
+    }
+
+    .jumbotron-stars {
+        font-size: 16px;
+
+        a {
+            &:hover {
+                text-decoration: none;
+            }
+        }
+    }
+
+    svg {
+        &:hover {
+            .beta {
+                opacity: 0.1;
+            }
+        }
+    }
+}
+// Site  main
+
+#site-main {
+    padding-bottom: 80px;
+    background: $gray-lighter;
+
+    #features {
+        .feature-algebras,
+        .feature-handlers,
+        .feature-modules {
+            h2 {
+                font-size: 22px;
+            }
+
+            p {
+                margin-bottom: 0;
+            }
+            padding: 40px 24px;
+            margin-top: -50px;
+            text-align: center;
+            background: #fff;
+            box-shadow: $base-shadow;
+        }
+    }
+
+    #libraries {
+        .libraries-lines {
+            margin: 48px 0 24px;
+            text-align: center;
+        }
+
+        .library-cassandra,
+        .library-effects,
+        .library-kafka,
+        .library-rpc {
+            text-align: center;
+
+            h3 {
+                font-size: 17px;
+            }
+
+            p {
+                font-size: 14px;
+            }
+        }
+    }
+}
+
+.author {
+    img {
+        margin-right: 8px;
+    }
+    display: flex;
+    align-items: center;
+}
