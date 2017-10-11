@@ -331,7 +331,6 @@ addCommandAlias(
   "validate",
   ";clean;compile;coverage;validateJVM;coverageReport;coverageAggregate;coverageOff")
 
-
 ///////////////
 //// DOCS ////
 ///////////////
@@ -341,11 +340,6 @@ lazy val docs = (project in file("docs"))
   .settings(moduleName := "frees-docs")
   .settings(micrositeSettings: _*)
   .settings(noPublishSettings: _*)
-  .settings(
-    addCompilerPlugin(%%("scalameta-paradise") cross CrossVersion.full),
-    libraryDependencies += %%("scalameta", "1.8.0"),
-    scalacOptions += "-Xplugin-require:macroparadise"
-  )
   .settings(
     resolvers ++= Seq(
       Resolver.mavenLocal,
