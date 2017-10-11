@@ -1,6 +1,4 @@
-import sbtorgpolicies.model._
 import sbtorgpolicies.runnable.syntax._
-import sbtorgpolicies.templates.badges._
 
 lazy val root = (project in file("."))
   .settings(moduleName := "root")
@@ -20,14 +18,13 @@ lazy val core = module("core")
   )
   .crossDepSettings(
     commonDeps ++ Seq(
-      %("cats-free", "1.0.0-MF"),
-      %("simulacrum", "0.11.0"),
+      %("cats-free"),
+      %("iota-core"),
+      %("simulacrum"),
       %("shapeless") % "test",
-      %("cats-laws", "1.0.0-MF") % "test"
+      %("cats-laws") % "test"
     ): _*
-  ).settings(
-  libraryDependencies += "io.frees" %%% "iota-core" % "0.3.1"
-)
+  )
 
 lazy val coreJVM = core.jvm
 lazy val coreJS = core.js
@@ -50,7 +47,7 @@ lazy val tests = jvmModule("tests")
     libraryDependencies ++= commonDeps ++ Seq(
       %("scala-reflect", scalaVersion.value),
       %%("pcplod") % "test",
-      %%("monix-eval", "3.0.0-M1") % "test"
+      %%("monix-eval") % "test"
     ),
     fork in Test := true,
     javaOptions in Test ++= {
@@ -77,7 +74,7 @@ lazy val bench = jvmModule("bench")
   .settings(inConfig(Codegen)(Defaults.configSettings))
   .settings(classpathConfiguration in Codegen := Compile)
   .settings(noPublishSettings)
-  .settings(libraryDependencies ++= Seq(%%("cats-free", "1.0.0-MF"), %%("scalacheck")))
+  .settings(libraryDependencies ++= Seq(%%("cats-free"), %%("scalacheck")))
   .settings(inConfig(Compile)(
     sourceGenerators += Def.task {
       val path = (sourceManaged in(Compile, compile)).value / "bench.scala"
@@ -95,8 +92,9 @@ lazy val Codegen = sbt.config("codegen").hide
 lazy val effects = module("effects")
   .dependsOn(core)
   .jsSettings(sharedJsSettings: _*)
-  .crossDepSettings(commonDeps: _*)
-  .settings(libraryDependencies += "org.typelevel" %%% "cats-mtl-core" % "0.0.2")
+  .crossDepSettings(commonDeps ++ Seq(
+    %("cats-mtl-core")
+  ): _*)
 
 lazy val effectsJVM = effects.jvm
 lazy val effectsJS = effects.js
@@ -112,8 +110,9 @@ lazy val asyncJS = async.js
 lazy val asyncCatsEffect = module("async-cats-effect", subFolder = Some("async"))
   .dependsOn(core, async)
   .jsSettings(sharedJsSettings: _*)
-  .crossDepSettings(commonDeps: _*)
-  .settings(libraryDependencies += "org.typelevel" %%% "cats-effect" % "0.4")
+  .crossDepSettings(commonDeps ++ Seq(
+    %("cats-effect")
+  ): _*)
 
 lazy val asyncCatsEffectJVM = asyncCatsEffect.jvm
 lazy val asyncCatsEffectJS = asyncCatsEffect.js
@@ -179,7 +178,7 @@ lazy val monix = module("monix", full = false, subFolder = Some("integrations"))
   .dependsOn(core)
   .jsSettings(sharedJsSettings: _*)
   .crossDepSettings(commonDeps ++
-    Seq(%("monix-eval", "3.0.0-M1")): _*)
+    Seq(%("monix-eval")): _*)
 
 lazy val monixJVM = monix.jvm
 lazy val monixJS = monix.js
@@ -200,8 +199,8 @@ lazy val doobie = jvmModule("doobie", subFolder = Some("integrations"))
   .dependsOn(coreJVM)
   .settings(
     libraryDependencies ++= Seq(
-      "org.tpolecat" %% "doobie-core" % "0.5.0-M8",
-      "org.tpolecat" %% "doobie-h2" % "0.5.0-M8" % "test"
+      %%("doobie-core"),
+      %%("doobie-h2") % "test"
     ) ++ commonDeps
   )
 
@@ -217,14 +216,14 @@ lazy val slick = jvmModule("slick", subFolder = Some("integrations"))
 lazy val twitterUtil = jvmModule("twitter-util", subFolder = Some("integrations"))
   .dependsOn(coreJVM)
   .settings(
-    libraryDependencies ++= Seq(%%("catbird-util", "0.18.0")) ++ commonDeps
+    libraryDependencies ++= Seq(%%("catbird-util")) ++ commonDeps
   )
 
 lazy val fetch = module("fetch", subFolder = Some("integrations"))
   .dependsOn(core)
   .jsSettings(sharedJsSettings: _*)
   .crossDepSettings(
-    commonDeps ++ Seq(%("fetch", "0.7.0")): _*
+    commonDeps ++ Seq(%("fetch")): _*
   )
 
 lazy val fetchJVM = fetch.jvm
@@ -235,7 +234,7 @@ lazy val fetchJS = fetch.js
 //   .jsSettings(sharedJsSettings: _*)
 //   .crossDepSettings(
 //     commonDeps ++ Seq(
-//       %("fs2-core", "0.10.0-M6")
+//       %("fs2-core")
 //     ): _*
 //   )
 
@@ -246,15 +245,15 @@ lazy val httpHttp4s = jvmModule("http4s", subFolder = Some("integrations/http"))
   .dependsOn(coreJVM)
   .settings(
     libraryDependencies ++= Seq(
-      %%("http4s-core", "0.18.0-M2"),
-      %%("http4s-dsl", "0.18.0-M2") % "test"
+      %%("http4s-core"),
+      %%("http4s-dsl") % "test"
     ) ++ commonDeps
   )
 
 lazy val httpFinch = jvmModule("finch", subFolder = Some("integrations/http"))
   .dependsOn(coreJVM)
   .settings(
-    libraryDependencies ++= Seq(%%("finch-core", "0.16.0-M2")) ++ commonDeps
+    libraryDependencies ++= Seq(%%("finch-core")) ++ commonDeps
   )
 
 lazy val httpAkka = jvmModule("akka", subFolder = Some("integrations/http"))
@@ -353,8 +352,8 @@ lazy val docs = (project in file("docs"))
       Resolver.bintrayRepo("kailuowang", "maven")
     ),
     libraryDependencies ++= Seq(
-      "org.tpolecat" %% "doobie-h2" % "0.5.0-M8",
-      %%("http4s-dsl", "0.18.0-M2"),
+      %%("doobie-h2"),
+      %%("http4s-dsl"),
       %%("play"),
       %("h2") % "test"
     )
