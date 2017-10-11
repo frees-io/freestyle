@@ -57,7 +57,7 @@ script:
   elif [ "$FREESBUILD" = "docs" ]; then
     sbt ++$TRAVIS_SCALA_VERSION docs/tut;
   elif [ "$SCALAENV" = "all" ]; then
-    sbt ++$TRAVIS_SCALA_VERSION validate;
+    sbt ++$TRAVIS_SCALA_VERSION orgScriptCI;
   else
     echo "You might not be invited to the party";
   fi
@@ -76,7 +76,6 @@ after_success:
         git checkout master;
         git pull origin master;
         sbt release;
-        sbt docs/publishMicrosite;
       fi
     fi
   fi

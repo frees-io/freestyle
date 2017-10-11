@@ -325,6 +325,7 @@ lazy val allModules: Seq[ProjectReference] = jvmModules ++ jsModules
 lazy val jvmFreestyleDeps: Seq[ClasspathDependency] =
   jvmModules.map(ClasspathDependency(_, None))
 
+addCommandAlias("validateDocs", ";project docs;tut;project root")
 addCommandAlias("validateJVM", (toCompileTestList(jvmModules) ++ List("project root")).asCmd)
 addCommandAlias("validateJS", (toCompileTestList(jsModules) ++ List("project root")).asCmd)
 addCommandAlias(
@@ -340,6 +341,7 @@ lazy val docs = (project in file("docs"))
   .settings(moduleName := "frees-docs")
   .settings(micrositeSettings: _*)
   .settings(noPublishSettings: _*)
+  .settings(addCompilerPlugin("org.scalameta" % "paradise" % "3.0.0-M10" cross CrossVersion.full))
   .settings(
     resolvers ++= Seq(
       Resolver.mavenLocal,
@@ -351,9 +353,6 @@ lazy val docs = (project in file("docs"))
       %%("play"),
       %("h2") % "test"
     )
-  )
-  .settings(
-    scalacOptions in Tut ~= (_ filterNot Set("-Ywarn-unused-import", "-Xlint").contains)
   )
   .enablePlugins(MicrositesPlugin)
 
