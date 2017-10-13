@@ -7,6 +7,9 @@
 
 <a href="http://frees.io"><img src="http://frees.io/img/poster.png" alt="A Cohesive & Pragmatic Framework of FP centric Scala libraries" width="100%"/></a>
 
+# Documentation
+Full documentation available at [http://frees.io](http://frees.io)
+
 # Build purely functional applications and libraries
 Build stack-safe purely functional applications and libraries that support parallel and sequential computations where declaration is decoupled from interpretation.
 Freestyle encourages programs built atop [Free algebras](http://frees.io/docs/core/algebras/) that are interpreted at the edge of your application ensuring effects are localized and performed in a controlled environment.
@@ -176,14 +179,6 @@ libraryDependencies += "io.frees" %%% "frees-monix"       % "0.4.0"
 + [doobie](http://frees.io/docs/integrations/doobie/) - Embedding of Doobie ConnectionIO actions in Freestyle programs.
 
 + http - Adapters and marshallers to run the Freestyle program in endpoint return types for [akka-http](http://frees.io/docs/integrations/akkahttp/), [finch](http://frees.io/docs/integrations/finch/), [http4s](http://frees.io/docs/integrations/http4s/) and [play](http://frees.io/docs/integrations/play/).
-
-## Freestyle in the wild
-
-If you wish to add your library here please consider a PR to include it in the list below.
-
-★ | ★ | ★
---- | --- | ---
-![scala-exercises](https://www.scala-exercises.org/assets/images/navbar_brand.svg) | [**scala-exercises**](https://www.scala-exercises.org/) | Scala Exercises is an Open Source project for learning different technologies based in the Scala Programming Language.
 
 ## Commercial Support
 
