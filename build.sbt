@@ -278,10 +278,11 @@ lazy val httpPlay = jvmModule("play", subFolder = Some("integrations/http"))
   )
 
 lazy val httpClient = module("http-client", subFolder = Some("integrations/http"))
+  .dependsOn(core)
   .settings(resolvers += Resolver.jcenterRepo)
   .jsSettings(sharedJsSettings: _*)
   .crossDepSettings(
-    commonDeps ++ Seq(%("hammock-core")): _*
+    commonDeps ++ Seq(%("hammock-core", "0.6.4")): _*
   )
 
 lazy val httpClientJS  = httpClient.js
