@@ -30,10 +30,10 @@ lazy val coreJS  = core.js
 lazy val tagless = module("tagless")
   .dependsOn(core)
   .jsSettings(sharedJsSettings: _*)
-  .crossDepSettings(commonDeps: _*)
-  .settings(
-    libraryDependencies += "com.kailuowang" %%% "mainecoon-core" % "0.4.0"
-  )
+  .crossDepSettings(
+    commonDeps ++ Seq(
+      %("mainecoon-core")
+    ): _*)
 
 lazy val taglessJVM = tagless.jvm
 lazy val taglessJS  = tagless.js
@@ -120,9 +120,8 @@ lazy val asyncCatsEffectJS  = asyncCatsEffect.js
 lazy val asyncGuava = jvmModule("async-guava", subFolder = Some("async"))
   .dependsOn(coreJVM, asyncJVM)
   .settings(
-    libraryDependencies ++= commonDeps ++ Seq(
-      "com.google.guava" % "guava" % "22.0"
-    ))
+    libraryDependencies ++= commonDeps ++ Seq(%%("guava"))
+  )
 
 lazy val cache = module("cache")
   .dependsOn(core)
@@ -240,6 +239,10 @@ lazy val fetchJS  = fetch.js
 // lazy val fs2JVM = fs2.jvm
 // lazy val fs2JS  = fs2.js
 
+/////////////////////////////
+//// INTEGRATIONS - HTTP ////
+/////////////////////////////
+
 lazy val httpHttp4s = jvmModule("http4s", subFolder = Some("integrations/http"))
   .dependsOn(coreJVM)
   .settings(
@@ -274,6 +277,16 @@ lazy val httpPlay = jvmModule("play", subFolder = Some("integrations/http"))
     ) ++ commonDeps
   )
 
+lazy val httpClient = module("http-client", subFolder = Some("integrations/http"))
+  .settings(resolvers += Resolver.jcenterRepo)
+  .jsSettings(sharedJsSettings: _*)
+  .crossDepSettings(
+    commonDeps ++ Seq(%("hammock-core")): _*
+  )
+
+lazy val httpClientJS  = httpClient.js
+lazy val httpClientJVM = httpClient.jvm
+
 /////////////////////
 //// ALL MODULES ////
 /////////////////////
@@ -299,7 +312,8 @@ lazy val jvmModules: Seq[ProjectReference] = Seq(
   httpHttp4s,
   httpFinch,
   httpAkka,
-  httpPlay
+  httpPlay,
+  httpClientJVM
   // ,tests
 )
 
@@ -313,7 +327,8 @@ lazy val jsModules: Seq[ProjectReference] = Seq(
   loggingJS,
   //Integrations:
   monixJS,
-  fetchJS
+  fetchJS,
+  httpClientJS
   //, fs2JS
 )
 
@@ -323,7 +338,9 @@ lazy val jvmFreestyleDeps: Seq[ClasspathDependency] =
   jvmModules.map(ClasspathDependency(_, None))
 
 addCommandAlias("validateDocs", ";project docs;tut;project root")
-addCommandAlias("validateJVM", (List("fixResources") ++ toCompileTestList(jvmModules) ++ List("project root")).asCmd)
+addCommandAlias(
+  "validateJVM",
+  (List("fixResources") ++ toCompileTestList(jvmModules) ++ List("project root")).asCmd)
 addCommandAlias("validateJS", (toCompileTestList(jsModules) ++ List("project root")).asCmd)
 addCommandAlias(
   "validate",
