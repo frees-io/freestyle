@@ -37,6 +37,7 @@ class EffectsTests extends AsyncWordSpec with Matchers {
     import freestyle.effects.option.implicits._
 
     import cats.instances.option._
+    import cats.mtl.implicits._
 
     "allow an Option to be interleaved inside a program monadic flow" in {
       def program[F[_]: OptionM] =
@@ -68,6 +69,7 @@ class EffectsTests extends AsyncWordSpec with Matchers {
       program[OptionM.Op].interpret[Option] shouldBe Some(3)
     }
   }
+
 
   "Error Freestyle integration" should {
 
@@ -222,6 +224,7 @@ class EffectsTests extends AsyncWordSpec with Matchers {
 
     import freestyle.effects._
     import cats.data.Reader
+    import cats.mtl.implicits._
 
     import rd.implicits._
 
@@ -251,6 +254,7 @@ class EffectsTests extends AsyncWordSpec with Matchers {
 
     import freestyle.effects._
     import cats.data.State
+    import cats.mtl.instances.state._
 
     import st.implicits._
 
@@ -308,6 +312,7 @@ class EffectsTests extends AsyncWordSpec with Matchers {
     import freestyle.effects._
     import cats.data.Writer
     import cats.instances.list._
+    import cats.mtl.implicits._
 
     import wr.implicits._
 
@@ -341,6 +346,7 @@ class EffectsTests extends AsyncWordSpec with Matchers {
     import cats.data.{State, StateT}
     import cats.instances.future._
     import cats.instances.list._
+    import cats.mtl.implicits._
 
     // Custom error types
 
@@ -497,22 +503,8 @@ class EffectsTests extends AsyncWordSpec with Matchers {
   }
 
   "Uber implicits import" should {
-    import freestyle.effects.option._
     import freestyle.effects.error._
     import freestyle.effects.implicits._
-
-    "import option implicits" in {
-      import cats.instances.option._
-
-      def program[F[_]: OptionM] =
-        for {
-          a <- FreeS.pure(1)
-          b <- OptionM[F].none[Int]
-          c <- FreeS.pure(1)
-        } yield a + b + c
-
-      program[OptionM.Op].interpret[Option] shouldBe None
-    }
 
     "import error implicits" in {
       import cats.instances.either._

@@ -16,9 +16,8 @@
 
 package freestyle
 
-import cats._
 import cats.arrow.FunctionK
-import cats.free.Inject
+import cats.{~>, InjectK}
 import iota._
 
 /** A generalized injection typeclass to abstract over support for
@@ -41,14 +40,14 @@ private[freestyle] sealed trait InjKInstances0 extends InjKInstances1 {
 }
 
 private[freestyle] sealed trait InjKInstances1 {
-  implicit def injKFromCatsInject[F[_], G[_]](
-    implicit ev: Inject[F, G]
+  implicit def injKFromCatsInjectK[F[_], G[_]](
+    implicit ev: InjectK[F, G]
   ): InjK[F, G] = new InjK[F, G] {
     def inj = λ[F ~> G](ev.inj(_))
     def prj = λ[G ~> λ[α => Option[F[α]]]](ev.prj(_))
   }
 
-  implicit def injKfromIotaCopKInjectL[F[_], L <: KList](
+  implicit def injKfromIotaCopKInjectL[F[_], L <: TListK](
     implicit ev: CopK.InjectL[F, L]
   ): InjK[F, CopK[L, ?]] = new InjK[F, CopK[L, ?]] {
     def inj = λ[F ~> CopK[L, ?]](ev.inj(_))

@@ -16,25 +16,25 @@
 
 package freestyle
 
-import org.scalatest.{AsyncWordSpec, Matchers}
-
+import org.scalatest.{Matchers, WordSpec}
 import freestyle.implicits._
 import freestyle.config._
 import freestyle.config.implicits._
 import java.util.concurrent.TimeUnit
+
 import scala.concurrent.{ExecutionContext, Future}
 import cats.instances.either._
 import cats.instances.future._
-import cats.syntax.cartesian._
+import cats.syntax.apply._
 import cats.syntax.either._
 import classy.config._
 import com.typesafe.config.{Config => TypesafeConfig}
 
-class ConfigTests extends AsyncWordSpec with Matchers {
+class ConfigTests extends WordSpec with Matchers {
 
   import algebras._
 
-  implicit override def executionContext = ExecutionContext.Implicits.global
+  implicit val executionContext = ExecutionContext.Implicits.global
 
   "Config integration" should {
 
@@ -61,12 +61,13 @@ class ConfigTests extends AsyncWordSpec with Matchers {
     "allow values to be read from a parsed config" in {
       val config = """{n = 1, s = "foo", b = true, xs = ["a", "b"], delay = "1000ms"}"""
       val program = app.configM.parseString(config) map { cfg =>
-        (cfg.hasPath("n") |@|
-          cfg.int("n") |@|
-          cfg.double("n") |@|
-          cfg.string("s") |@|
-          cfg.boolean("b") |@|
-          cfg.stringList("xs") |@|
+        (
+          cfg.hasPath("n"),
+          cfg.int("n"),
+          cfg.double("n"),
+          cfg.string("s"),
+          cfg.boolean("b"),
+          cfg.stringList("xs"),
           cfg.duration("delay", TimeUnit.SECONDS)).tupled
       }
       program.interpret[Future] map {
@@ -78,17 +79,9 @@ class ConfigTests extends AsyncWordSpec with Matchers {
       val config1 =
         """{n = 1, config2: {n2 = 2, s = "bar"}, s = "foo", b = true, xs = ["a", "b"], delay = "1000ms"}"""
       val program = app.configM.parseString(config1) map { cfg =>
-        (cfg.hasPath("n") |@|
-          cfg.int("n") |@|
-          cfg.config("config2").map { cfg2 =>
-            (cfg2.int("n2") |@|
-              cfg2.string("s")).tupled
-          } |@|
-          cfg.double("n") |@|
-          cfg.string("s") |@|
-          cfg.boolean("b") |@|
-          cfg.stringList("xs") |@|
-          cfg.duration("delay", TimeUnit.SECONDS)).tupled
+        (cfg.hasPath("n"), cfg.int("n"), cfg.config("config2").map { cfg2 =>
+          (cfg2.int("n2"), cfg2.string("s")).tupled
+        }, cfg.double("n"), cfg.string("s"), cfg.boolean("b"), cfg.stringList("xs"), cfg.duration("delay", TimeUnit.SECONDS)).tupled
       }
 
       program.interpret[Future] map {

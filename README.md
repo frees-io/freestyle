@@ -1,7 +1,7 @@
 
 [comment]: # (Start Badges)
 
-[![Build Status](https://travis-ci.org/frees-io/freestyle.svg?branch=master)](https://travis-ci.org/frees-io/freestyle) [![codecov.io](http://codecov.io/github/frees-io/freestyle/coverage.svg?branch=master)](http://codecov.io/github/frees-io/freestyle?branch=master) [![Maven Central](https://img.shields.io/badge/maven%20central-0.3.1-green.svg)](https://oss.sonatype.org/#nexus-search;gav~io.frees~freestyle*) [![Latest version](https://img.shields.io/badge/freestyle-0.3.1-green.svg)](https://index.scala-lang.org/frees-io/freestyle) [![License](https://img.shields.io/badge/license-Apache%202-blue.svg)](https://raw.githubusercontent.com/frees-io/freestyle/master/LICENSE) [![Join the chat at https://gitter.im/47deg/freestyle](https://badges.gitter.im/47deg/freestyle.svg)](https://gitter.im/47deg/freestyle?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge) [![GitHub Issues](https://img.shields.io/github/issues/frees-io/freestyle.svg)](https://github.com/frees-io/freestyle/issues) [![Scala.js](http://scala-js.org/assets/badges/scalajs-0.6.15.svg)](http://scala-js.org)
+[![Build Status](https://travis-ci.org/frees-io/freestyle.svg?branch=master)](https://travis-ci.org/frees-io/freestyle) [![codecov.io](http://codecov.io/github/frees-io/freestyle/coverage.svg?branch=master)](http://codecov.io/github/frees-io/freestyle?branch=master) [![Maven Central](https://img.shields.io/badge/maven%20central-0.4.0-green.svg)](https://oss.sonatype.org/#nexus-search;gav~io.frees~freestyle*) [![Latest version](https://img.shields.io/badge/freestyle-0.4.0-green.svg)](https://index.scala-lang.org/frees-io/freestyle) [![License](https://img.shields.io/badge/license-Apache%202-blue.svg)](https://raw.githubusercontent.com/frees-io/freestyle/master/LICENSE) [![Join the chat at https://gitter.im/47deg/freestyle](https://badges.gitter.im/47deg/freestyle.svg)](https://gitter.im/47deg/freestyle?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge) [![GitHub Issues](https://img.shields.io/github/issues/frees-io/freestyle.svg)](https://github.com/frees-io/freestyle/issues) [![Scala.js](http://scala-js.org/assets/badges/scalajs-0.6.20.svg)](http://scala-js.org)
 
 [comment]: # (End Badges)
 
@@ -108,7 +108,7 @@ This project supports Scala 2.11 and 2.12. The project is based on [scalameta](h
 To use the project, add the following to your build.sbt:
 
 ```scala
-addCompilerPlugin("org.scalameta" % "paradise" % "3.0.0-M8" cross CrossVersion.full)
+addCompilerPlugin("org.scalameta" % "paradise" % "3.0.0-M10" cross CrossVersion.full)
 ```
 
 [comment]: # (Start Replace)
@@ -117,54 +117,68 @@ For Scala.jvm:
 
 ```scala
 // required
-libraryDependencies += "io.frees" %% "freestyle"              % "0.3.1"
+libraryDependencies += "io.frees" %% "frees-core"               % "0.4.0"
 
 // optional - effects and patterns
-libraryDependencies += "io.frees" %% "freestyle-effects"      % "0.3.1"
-libraryDependencies += "io.frees" %% "freestyle-tagless"      % "0.3.1"
-libraryDependencies += "io.frees" %% "freestyle-async"        % "0.3.1"
-libraryDependencies += "io.frees" %% "freestyle-async-fs2"    % "0.3.1"
-libraryDependencies += "io.frees" %% "freestyle-async-monix"  % "0.3.1"
-libraryDependencies += "io.frees" %% "freestyle-cache"        % "0.3.1"
-libraryDependencies += "io.frees" %% "freestyle-config"       % "0.3.1"
-libraryDependencies += "io.frees" %% "freestyle-logging"      % "0.3.1"
+libraryDependencies += "io.frees" %% "frees-effects"            % "0.4.0"
+libraryDependencies += "io.frees" %% "frees-tagless"            % "0.4.0"
+libraryDependencies += "io.frees" %% "frees-async"              % "0.4.0"
+libraryDependencies += "io.frees" %% "frees-async-cats-effect"  % "0.4.0"
+libraryDependencies += "io.frees" %% "frees-async-guava"        % "0.4.0"
+libraryDependencies += "io.frees" %% "frees-cache"              % "0.4.0"
+libraryDependencies += "io.frees" %% "frees-config"             % "0.4.0"
+libraryDependencies += "io.frees" %% "frees-logging"            % "0.4.0"
 
 // optional - integrations
-libraryDependencies += "io.frees" %% "freestyle-cache-redis"  % "0.3.1"
-libraryDependencies += "io.frees" %% "freestyle-doobie"       % "0.3.1"
-libraryDependencies += "io.frees" %% "freestyle-fetch"        % "0.3.1"
-libraryDependencies += "io.frees" %% "freestyle-fs2"          % "0.3.1"
-libraryDependencies += "io.frees" %% "freestyle-http-akka"    % "0.3.1"
-libraryDependencies += "io.frees" %% "freestyle-http-finch"   % "0.3.1"
-libraryDependencies += "io.frees" %% "freestyle-http-http4s"  % "0.3.1"
-libraryDependencies += "io.frees" %% "freestyle-http-play"    % "0.3.1"
-libraryDependencies += "io.frees" %% "freestyle-monix"        % "0.3.1"
-libraryDependencies += "io.frees" %% "freestyle-slick"        % "0.3.1"
-libraryDependencies += "io.frees" %% "freestyle-twitter-util" % "0.3.1"
+libraryDependencies += "io.frees" %% "frees-cache-redis"        % "0.4.0"
+libraryDependencies += "io.frees" %% "frees-doobie"             % "0.4.0"
+libraryDependencies += "io.frees" %% "frees-fetch"              % "0.4.0"
+libraryDependencies += "io.frees" %% "frees-fs2"                % "0.4.0"
+libraryDependencies += "io.frees" %% "frees-http-akka"          % "0.4.0"
+libraryDependencies += "io.frees" %% "frees-http-finch"         % "0.4.0"
+libraryDependencies += "io.frees" %% "frees-http-http4s"        % "0.4.0"
+libraryDependencies += "io.frees" %% "frees-http-play"          % "0.4.0"
+libraryDependencies += "io.frees" %% "frees-monix"              % "0.4.0"
+libraryDependencies += "io.frees" %% "frees-slick"              % "0.4.0"
+libraryDependencies += "io.frees" %% "frees-twitter-util"       % "0.4.0"
 ```
 
 For Scala.js:
 
 ```scala
 // required
-libraryDependencies += "io.frees" %%% "freestyle"             % "0.3.1"
+libraryDependencies += "io.frees" %%% "frees-core"        % "0.4.0"
 
 // optional - effects and patterns
-libraryDependencies += "io.frees" %%% "freestyle-effects"     % "0.3.1"
-libraryDependencies += "io.frees" %%% "freestyle-tagless"     % "0.3.1"
-libraryDependencies += "io.frees" %%% "freestyle-async"       % "0.3.1"
-libraryDependencies += "io.frees" %%% "freestyle-async-fs2"   % "0.3.1"
-libraryDependencies += "io.frees" %%% "freestyle-async-monix" % "0.3.1"
-libraryDependencies += "io.frees" %%% "freestyle-cache"       % "0.3.1"
-libraryDependencies += "io.frees" %%% "freestyle-logging"     % "0.3.1"
+libraryDependencies += "io.frees" %%% "frees-effects"     % "0.4.0"
+libraryDependencies += "io.frees" %%% "frees-tagless"     % "0.4.0"
+libraryDependencies += "io.frees" %%% "frees-async"       % "0.4.0"
+libraryDependencies += "io.frees" %%% "frees-async-fs2"   % "0.4.0"
+libraryDependencies += "io.frees" %%% "frees-async-monix" % "0.4.0"
+libraryDependencies += "io.frees" %%% "frees-cache"       % "0.4.0"
+libraryDependencies += "io.frees" %%% "frees-logging"     % "0.4.0"
 
 // optional - integrations
-libraryDependencies += "io.frees" %%% "freestyle-fetch"       % "0.3.1"
-libraryDependencies += "io.frees" %%% "freestyle-fs2"         % "0.3.1"
-libraryDependencies += "io.frees" %%% "freestyle-monix"       % "0.3.1"
+libraryDependencies += "io.frees" %%% "frees-fetch"       % "0.4.0"
+libraryDependencies += "io.frees" %%% "frees-fs2"         % "0.4.0"
+libraryDependencies += "io.frees" %%% "frees-monix"       % "0.4.0"
 ```
 
 [comment]: # (End Replace)
+
+## Freestyle Integrations
+
++ [fetch](http://frees.io/docs/integrations/fetch/) - Integration with the Fetch library for efficient data access from heterogenous datasources.
+
++ [fs2](http://frees.io/docs/integrations/fs2/) - Integration to run fs2 Streams in Freestyle programs.
+
++ [monix](http://frees.io/docs/integrations/monix/) -  Instances and utilities to interpret to `monix.eval.Task`.
+
++ [slick](http://frees.io/docs/integrations/slick/) - Embedding of DBIO actions in Freestyle programs.
+
++ [doobie](http://frees.io/docs/integrations/doobie/) - Embedding of Doobie ConnectionIO actions in Freestyle programs.
+
++ http - Adapters and marshallers to run the Freestyle program in endpoint return types for [akka-http](http://frees.io/docs/integrations/akkahttp/), [finch](http://frees.io/docs/integrations/finch/), [http4s](http://frees.io/docs/integrations/http4s/) and [play](http://frees.io/docs/integrations/play/).
 
 ## Commercial Support
 

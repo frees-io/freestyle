@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="96px" height="96px" viewBox="0 0 96 96" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 44.1 (41455) - http://www.bohemiancoding.com/sketch -->
+    <title>freestyle-icon-feature-algebra</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <circle id="path-1" cx="48" cy="48" r="3"></circle>
+    </defs>
+    <g id="freestyle-ui" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="freestyle-icon-feature-algebra">
+            <polygon id="hexagon" fill="#01C2C2" points="48 0 89.5692194 24 89.5692194 72 48 96 6.43078062 72 6.43078062 24"></polygon>
+            <polygon id="hexagon-small" fill="#03A9AD" points="48 24 68.7846097 36 68.7846097 60 48 72 27.2153903 60 27.2153903 36"></polygon>
+            <polyline id="opacity" fill="#FFFFFF" opacity="0.3" points="48 96 6.43078062 72 6.43078062 24 48 0 48 0"></polyline>
+            <g id="point">
+                <use fill="#FFFFFF" fill-rule="evenodd" xlink:href="#path-1"></use>
+                <circle stroke="#077783" stroke-width="3" cx="48" cy="48" r="4.5"></circle>
+            </g>
+            <path d="M89.3818359,23.8945312 L51.7866211,45.7260742" id="line" stroke="#077783" stroke-width="2" stroke-dasharray="3,3,3,3"></path>
+        </g>
+    </g>
+</svg>

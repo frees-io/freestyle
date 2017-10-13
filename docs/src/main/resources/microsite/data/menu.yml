@@ -1,0 +1,121 @@
+options:
+  - title: Quick Start
+    url: docs/
+
+  - title: Core Concepts
+    url: docs/core/
+
+    nested_options:
+
+     - title: Algebras
+       url: docs/core/algebras/
+
+     - title: Modules
+       url: docs/core/modules/
+
+     - title: Handlers
+       url: docs/core/handlers/
+
+     - title: Parallelism
+       url: docs/core/parallelism/
+
+     - title: Tagless Final
+       url: docs/core/tagless/
+
+  - title: Effects
+    url: docs/effects/
+
+    nested_options:
+
+      - title: Error
+        url: docs/effects/error
+
+      - title: Either
+        url: docs/effects/either
+
+      - title: Option
+        url: docs/effects/option
+
+      - title: Reader
+        url: docs/effects/reader
+
+      - title: Writer
+        url: docs/effects/writer
+
+      - title: State
+        url: docs/effects/state
+
+      - title: Traverse
+        url: docs/effects/traverse
+
+      - title: Validation
+        url: docs/effects/validation
+
+      - title: Async Callbacks
+        url: docs/effects/async
+
+  - title: Optimizations
+    url: docs/optimizations/
+
+  - title: Example Target Stack
+    url: docs/stack/
+
+  - title: Patterns
+    url: TODO.html
+
+    nested_options:
+
+      - title: Cache
+        url: docs/effects/Cache/
+
+      - title: Dependency Injection
+        url: TODO.html
+
+      - title: Configuration
+        url: docs/patterns/config
+
+      - title: Logging
+        url: docs/patterns/logging
+
+  - title: Integrations
+    url: docs/integrations
+
+    nested_options:
+
+      - title: Cats
+        url: docs/integrations/cats
+
+      - title: Play Framework
+        url: docs/integrations/play
+
+      - title: Monix
+        url: docs/integrations/monix
+
+      - title: Fetch
+        url: docs/integrations/fetch
+
+      - title: Doobie
+        url: docs/integrations/doobie
+
+      - title: Slick
+        url: docs/integrations/slick
+
+      - title: Akka HTTP
+        url: docs/integrations/akkahttp
+
+      - title: Finch
+        url: docs/integrations/finch
+
+      - title: http4s
+        url: docs/integrations/http4s
+
+  - title: Related Work
+    url: docs/related/
+
+    nested_options:
+
+      - title: Bibliography
+        url: docs/related/#bibliography
+
+      - title: Scala Libraries
+        url: docs/related/#Scala

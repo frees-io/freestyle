@@ -27,3 +27,5 @@ project/plugins/project/
 .idea_modules/
 
 .DS_Store
+
+secring.gpg
