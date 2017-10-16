@@ -19,8 +19,8 @@ package http
 
 
 import cats.{MonadError, ~>}
-import cats.instances.try_._
-import cats.syntax.show._
+import cats.implicits._
+import cats.effect._
 import org.scalatest._
 import _root_.hammock._
 import _root_.hammock.free._
@@ -35,21 +35,23 @@ class ClientTests extends WordSpec with Matchers {
 
   import stuff._
 
-  implicit val interp = new InterpTrans {
-    def trans[F[_]](implicit ME: MonadError[F, Throwable]): HttpRequestF ~> F = new (HttpRequestF ~> F) {
-      def apply[A](req: HttpRequestF[A]): F[A] = req match {
-        case req@Options(uri, headers) => doReq(req, Method.OPTIONS)(ME)
-        case req@Get(uri, headers) => doReq(req, Method.GET)(ME)
-        case req@Head(uri, headers) => doReq(req, Method.HEAD)(ME)
-        case req@Post(uri, headers, body) => doReq(req, Method.POST)(ME)
-        case req@Put(uri, headers, body) => doReq(req, Method.PUT)(ME)
-        case req@Delete(uri, headers) => doReq(req, Method.DELETE)(ME)
-        case req@Trace(uri, headers) => doReq(req, Method.TRACE)(ME)
+  implicit val interp = new InterpTrans[IO] {
+
+    def trans(implicit S: Sync[IO]): HttpRequestF ~> IO = new (HttpRequestF ~> IO) {
+      def apply[A](req: HttpRequestF[A]): IO[A] = req match {
+        case req@Options(uri, headers) => doReq(req, Method.OPTIONS)(S)
+        case req@Get(uri, headers) => doReq(req, Method.GET)(S)
+        case req@Head(uri, headers) => doReq(req, Method.HEAD)(S)
+        case req@Post(uri, headers, body) => doReq(req, Method.POST)(S)
+        case req@Put(uri, headers, body) => doReq(req, Method.PUT)(S)
+        case req@Delete(uri, headers) => doReq(req, Method.DELETE)(S)
+        case req@Trace(uri, headers) => doReq(req, Method.TRACE)(S)
       }
     }
   }
 
-  private def doReq[F[_]](req: HttpRequestF[HttpResponse], method: Method)(implicit ME: MonadError[F, Throwable]): F[HttpResponse] = ME.catchNonFatal {
+
+  private def doReq[F[_]](req: HttpRequestF[HttpResponse], method: Method)(implicit S: Sync[F]): F[HttpResponse] = S.catchNonFatal {
     HttpResponse(Status.OK, Map(), s"got a $method request to ${req.uri.show}")
   }
 
@@ -73,7 +75,7 @@ class ClientTests extends WordSpec with Matchers {
             content <- FreeS.pure(HttpResponse.content.get(a))
           } yield content
 
-          program.interpret[util.Try] shouldEqual util.Success(s"got a ${method.toUpperCase} request to ${uri.show}")
+          program.interpret[IO].unsafeRunSync shouldEqual s"got a ${method.toUpperCase} request to ${uri.show}"
         }
     }
 
@@ -85,7 +87,7 @@ class ClientTests extends WordSpec with Matchers {
         c <- FreeS.pure(HttpResponse.content.get(b))
       } yield c
 
-      program.interpret[util.Try] shouldEqual util.Success(s"got a GET request to ${uri.show}")
+      program.interpret[IO].unsafeRunSync shouldEqual s"got a GET request to ${uri.show}"
     }
 
     "allow a HttpRequestIO program to be lifted to FreeS" in {
@@ -95,7 +97,7 @@ class ClientTests extends WordSpec with Matchers {
         c <- FreeS.pure(HttpResponse.content.get(b))
       } yield c
 
-      program.interpret[util.Try] shouldEqual util.Success(s"got a GET request to ${uri.show}")
+      program.interpret[IO].unsafeRunSync shouldEqual s"got a GET request to ${uri.show}"
     }
 
     "allow a HttpRequestIO program to be lifted to FreeS.Par" in {
@@ -105,7 +107,7 @@ class ClientTests extends WordSpec with Matchers {
         c <- FreeS.pure(HttpResponse.content.get(b))
       } yield c
 
-      program.interpret[util.Try] shouldEqual util.Success(s"got a GET request to ${uri.show}")
+      program.interpret[IO].unsafeRunSync shouldEqual s"got a GET request to ${uri.show}"
     }
 
   }
@@ -120,9 +122,9 @@ object stuff {
     def x: FS[Int]
   }
 
-  implicit def nonHammockHandler: NonHammock.Handler[util.Try] =
-    new NonHammock.Handler[util.Try] {
-      def x: util.Try[Int] = util.Success(42)
+  implicit def nonHammockHandler: NonHammock.Handler[IO] =
+    new NonHammock.Handler[IO] {
+      def x: IO[Int] = IO(42)
     }
 
   @module

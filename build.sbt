@@ -120,7 +120,7 @@ lazy val asyncCatsEffectJS  = asyncCatsEffect.js
 lazy val asyncGuava = jvmModule("async-guava", subFolder = Some("async"))
   .dependsOn(coreJVM, asyncJVM)
   .settings(
-    libraryDependencies ++= commonDeps ++ Seq(%%("guava"))
+    libraryDependencies ++= commonDeps ++ Seq(%("guava"))
   )
 
 lazy val cache = module("cache")
@@ -282,7 +282,9 @@ lazy val httpClient = module("http-client", subFolder = Some("integrations/http"
   .settings(resolvers += Resolver.jcenterRepo)
   .jsSettings(sharedJsSettings: _*)
   .crossDepSettings(
-    commonDeps ++ Seq(%("hammock-core", "0.6.4")): _*
+    commonDeps ++ Seq(
+      %("hammock-core", "0.6.5-SNAPSHOT"),
+      %("cats-effect")): _*
   )
 
 lazy val httpClientJS  = httpClient.js

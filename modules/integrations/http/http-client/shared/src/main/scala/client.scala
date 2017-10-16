@@ -21,6 +21,7 @@ import _root_.hammock._
 import _root_.hammock.free.algebra._
 import _root_.hammock.free._
 import cats.{MonadError, ~>}
+import cats.effect.Sync
 import cats.free.Free
 
 object client {
@@ -39,16 +40,16 @@ object client {
   }
 
   trait Implicits {
-    implicit def freeStyleHammockHandler[M[_] : MonadError[?[_], Throwable]](implicit interp: InterpTrans): HammockM.Handler[M] =
+    implicit def freeStyleHammockHandler[M[_] : MonadError[?[_], Throwable]](implicit I: InterpTrans[M], S: Sync[M]): HammockM.Handler[M] =
       new HammockM.Handler[M] {
-        def options(uri: Uri, headers: Map[String, String]): M[HttpResponse] = Ops.options(uri, headers) foldMap interp.trans
-        def get(uri: Uri, headers: Map[String, String]): M[HttpResponse] = Ops.get(uri, headers) foldMap interp.trans
-        def head(uri: Uri, headers: Map[String, String]): M[HttpResponse] = Ops.head(uri, headers) foldMap interp.trans
-        def post(uri: Uri, headers: Map[String, String], body: Option[String]): M[HttpResponse] = Ops.post(uri, headers, body) foldMap interp.trans
-        def put(uri: Uri, headers: Map[String, String], body: Option[String]): M[HttpResponse] = Ops.put(uri, headers, body) foldMap interp.trans
-        def delete(uri: Uri, headers: Map[String, String]): M[HttpResponse] = Ops.delete(uri, headers) foldMap interp.trans
-        def trace(uri: Uri, headers: Map[String, String]): M[HttpResponse] = Ops.trace(uri, headers) foldMap interp.trans
-        def run[A](req: HttpRequestIO[A]): M[A] = req foldMap interp.trans
+        def options(uri: Uri, headers: Map[String, String]): M[HttpResponse] = Ops.options(uri, headers) foldMap I.trans
+        def get(uri: Uri, headers: Map[String, String]): M[HttpResponse] = Ops.get(uri, headers) foldMap I.trans
+        def head(uri: Uri, headers: Map[String, String]): M[HttpResponse] = Ops.head(uri, headers) foldMap I.trans
+        def post(uri: Uri, headers: Map[String, String], body: Option[String]): M[HttpResponse] = Ops.post(uri, headers, body) foldMap I.trans
+        def put(uri: Uri, headers: Map[String, String], body: Option[String]): M[HttpResponse] = Ops.put(uri, headers, body) foldMap I.trans
+        def delete(uri: Uri, headers: Map[String, String]): M[HttpResponse] = Ops.delete(uri, headers) foldMap I.trans
+        def trace(uri: Uri, headers: Map[String, String]): M[HttpResponse] = Ops.trace(uri, headers) foldMap I.trans
+        def run[A](req: HttpRequestIO[A]): M[A] = req foldMap I.trans
       }
 
     implicit def freeSLiftHammock[F[_]: HammockM]: FreeSLift[F, HttpRequestIO] =
