@@ -85,8 +85,6 @@ def loadUser[F[_]]
 
 ## Integrations
 
-Freestyle integrations are located at https://github.com/frees-io/freestyle-integrations.
-
 + [fetch](http://frees.io/docs/integrations/fetch/) - Integration with the Fetch library for efficient data access from heterogenous datasources.
 
 + [fs2](http://frees.io/docs/integrations/fs2/) - Integration to run fs2 Streams in Freestyle programs.
@@ -166,19 +164,9 @@ libraryDependencies += "io.frees" %%% "frees-monix"       % "0.4.0"
 
 [comment]: # (End Replace)
 
-## Freestyle Integrations
+## Freestyle Examples
 
-+ [fetch](http://frees.io/docs/integrations/fetch/) - Integration with the Fetch library for efficient data access from heterogenous datasources.
-
-+ [fs2](http://frees.io/docs/integrations/fs2/) - Integration to run fs2 Streams in Freestyle programs.
-
-+ [monix](http://frees.io/docs/integrations/monix/) -  Instances and utilities to interpret to `monix.eval.Task`.
-
-+ [slick](http://frees.io/docs/integrations/slick/) - Embedding of DBIO actions in Freestyle programs.
-
-+ [doobie](http://frees.io/docs/integrations/doobie/) - Embedding of Doobie ConnectionIO actions in Freestyle programs.
-
-+ http - Adapters and marshallers to run the Freestyle program in endpoint return types for [akka-http](http://frees.io/docs/integrations/akkahttp/), [finch](http://frees.io/docs/integrations/finch/), [http4s](http://frees.io/docs/integrations/http4s/) and [play](http://frees.io/docs/integrations/play/).
+* [TodoList](./modules/examples/todolist/README.md).
 
 ## Commercial Support
 

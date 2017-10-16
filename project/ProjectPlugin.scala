@@ -4,6 +4,7 @@ import sbt._
 import sbt.Keys._
 import sbtorgpolicies.OrgPoliciesPlugin.autoImport._
 import sbtorgpolicies.runnable.syntax._
+import scoverage.ScoverageKeys._
 
 object ProjectPlugin extends AutoPlugin {
 
@@ -38,7 +39,8 @@ object ProjectPlugin extends AutoPlugin {
   override def projectSettings: Seq[Def.Setting[_]] =
     Seq(
       orgUpdateDocFilesSetting += baseDirectory.value / "docs" / "src",
-      orgScriptTaskListSetting := List("validate".asRunnableItemFull)
+      orgScriptTaskListSetting := List("validate".asRunnableItemFull),
+      coverageExcludedPackages := "<empty>;todo\\..*"
     ) ++ scalaMetaSettings
 
 }
