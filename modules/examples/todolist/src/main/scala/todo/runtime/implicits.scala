@@ -23,8 +23,10 @@ import cats._
 import cats.effect._
 import com.twitter.util._
 import com.zaxxer.hikari.{HikariConfig, HikariDataSource}
-import doobie.hikari._, doobie.hikari.implicits._
-import doobie._, doobie.implicits._
+import doobie._
+import doobie.implicits._
+import doobie.hikari._
+import doobie.hikari.implicits._
 import doobie.hikari.imports.HikariTransactor
 import todo.runtime.handlers._
 import todo.persistence._
