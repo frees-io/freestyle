@@ -30,10 +30,7 @@ lazy val coreJS  = core.js
 lazy val tagless = module("tagless")
   .dependsOn(core)
   .jsSettings(sharedJsSettings: _*)
-  .crossDepSettings(commonDeps: _*)
-  .settings(
-    libraryDependencies += "com.kailuowang" %%% "mainecoon-core" % "0.4.0"
-  )
+  .crossDepSettings(commonDeps ++ Seq(%%("mainecoon-core")): _*)
 
 lazy val taglessJVM = tagless.jvm
 lazy val taglessJS  = tagless.js
@@ -119,10 +116,7 @@ lazy val asyncCatsEffectJS  = asyncCatsEffect.js
 
 lazy val asyncGuava = jvmModule("async-guava", subFolder = Some("async"))
   .dependsOn(coreJVM, asyncJVM)
-  .settings(
-    libraryDependencies ++= commonDeps ++ Seq(
-      "com.google.guava" % "guava" % "22.0"
-    ))
+  .settings(libraryDependencies ++= commonDeps ++ Seq(%("guava")))
 
 lazy val cache = module("cache")
   .dependsOn(core)
@@ -164,7 +158,7 @@ lazy val logging = module("logging")
     libraryDependencies += %%%("slogging")
   )
   .jsSettings(sharedJsSettings: _*)
-  .crossDepSettings(commonDeps ++ Seq("com.lihaoyi" %% "sourcecode" % "0.1.3"): _*)
+  .crossDepSettings(commonDeps ++ Seq(%%("sourcecode")): _*)
 
 lazy val loggingJVM = logging.jvm
 lazy val loggingJS  = logging.js
@@ -252,7 +246,7 @@ lazy val httpHttp4s = jvmModule("http4s", subFolder = Some("integrations/http"))
 lazy val httpFinch = jvmModule("finch", subFolder = Some("integrations/http"))
   .dependsOn(coreJVM)
   .settings(
-    libraryDependencies ++= Seq(%%("finch-core", "0.16.0-M3")) ++ commonDeps
+    libraryDependencies ++= Seq(%%("finch-core")) ++ commonDeps
   )
 
 lazy val httpAkka = jvmModule("akka", subFolder = Some("integrations/http"))
@@ -288,8 +282,8 @@ lazy val todolist = jvmModule("todolist", subFolder = Some("examples"))
       %%("circe-generic"),
       %%("doobie-h2"),
       %%("doobie-hikari"),
-      "com.github.finagle" %% "finch-circe" % "0.16.0-M3",
-      "com.twitter"        %% "twitter-server" % "1.32.0",
+      %%("finch-circe"),
+      %%("twitter-server")
     ) ++ commonDeps
   )
 
