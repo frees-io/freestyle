@@ -274,6 +274,25 @@ lazy val httpPlay = jvmModule("play", subFolder = Some("integrations/http"))
     ) ++ commonDeps
   )
 
+
+//////////////////
+//// EXAMPLES ////
+//////////////////
+
+lazy val todolist = jvmModule("todolist", subFolder = Some("examples"))
+  .dependsOn(coreJVM, doobie, httpFinch, loggingJVM, effectsJVM, config)
+  .settings(noPublishSettings: _*)
+  .settings(
+    libraryDependencies ++= Seq(
+      %%("cats-effect"),
+      %%("circe-generic"),
+      %%("doobie-h2"),
+      %%("doobie-hikari"),
+      "com.github.finagle" %% "finch-circe" % "0.16.0-RC1",
+      "com.twitter"        %% "twitter-server" % "1.32.0",
+    ) ++ commonDeps
+  )
+
 /////////////////////
 //// ALL MODULES ////
 /////////////////////
@@ -299,8 +318,10 @@ lazy val jvmModules: Seq[ProjectReference] = Seq(
   httpHttp4s,
   httpFinch,
   httpAkka,
-  httpPlay
-  // ,tests
+  httpPlay,
+  //tests,
+  //Examples:
+  todolist
 )
 
 lazy val jsModules: Seq[ProjectReference] = Seq(
