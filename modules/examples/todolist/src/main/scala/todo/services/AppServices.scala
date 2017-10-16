@@ -54,8 +54,9 @@ trait AppServices {
         list.toRight(new NoSuchElementException("Could not create TodoList")))
 
       i <- todoItemServices.batchedInsert(form.items.map(_.copy(todoListId = l.id)))
-      items = i.sequence
-    } yield form.copy(list = l, tag = t, items = items getOrElse form.items)
+    } yield {
+      form.copy(list = l, tag = t, items = i.sequence getOrElse form.items)
+    }
 
   def update(form: TodoForm): FS.Seq[TodoForm] =
     for {
@@ -67,8 +68,9 @@ trait AppServices {
         list.toRight(new NoSuchElementException("Could not update TodoList")))
 
       i <- todoItemServices.batchedUpdate(form.items.map(_.copy(todoListId = l.id)))
-      items = i.sequence
-    } yield form.copy(list = l, tag = t, items = items getOrElse form.items)
+    } yield {
+      form.copy(list = l, tag = t, items = i.sequence getOrElse form.items)
+    }
 
   def destroy(form: TodoForm): FS.Seq[Int] = {
     val todoItemIds: Option[List[Int]] = form.items.map(_.id).sequence
@@ -82,8 +84,7 @@ trait AppServices {
     } yield List(a, b, c)
 
     program.map { x =>
-      x.sequenceU
-        .map(_.sum)
+      x.sequence.map(_.sum)
     } getOrElse (throw new NoSuchElementException("Could not delete"))
   }
 }
