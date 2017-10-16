@@ -30,10 +30,7 @@ lazy val coreJS  = core.js
 lazy val tagless = module("tagless")
   .dependsOn(core)
   .jsSettings(sharedJsSettings: _*)
-  .crossDepSettings(
-    commonDeps ++ Seq(
-      %("mainecoon-core")
-    ): _*)
+  .crossDepSettings(commonDeps ++ Seq(%%("mainecoon-core")): _*)
 
 lazy val taglessJVM = tagless.jvm
 lazy val taglessJS  = tagless.js
@@ -119,9 +116,7 @@ lazy val asyncCatsEffectJS  = asyncCatsEffect.js
 
 lazy val asyncGuava = jvmModule("async-guava", subFolder = Some("async"))
   .dependsOn(coreJVM, asyncJVM)
-  .settings(
-    libraryDependencies ++= commonDeps ++ Seq(%("guava"))
-  )
+  .settings(libraryDependencies ++= commonDeps ++ Seq(%("guava")))
 
 lazy val cache = module("cache")
   .dependsOn(core)
@@ -163,7 +158,7 @@ lazy val logging = module("logging")
     libraryDependencies += %%%("slogging")
   )
   .jsSettings(sharedJsSettings: _*)
-  .crossDepSettings(commonDeps ++ Seq("com.lihaoyi" %% "sourcecode" % "0.1.3"): _*)
+  .crossDepSettings(commonDeps ++ Seq(%%("sourcecode")): _*)
 
 lazy val loggingJVM = logging.jvm
 lazy val loggingJS  = logging.js
@@ -290,6 +285,25 @@ lazy val httpClient = module("http-client", subFolder = Some("integrations/http"
 lazy val httpClientJS  = httpClient.js
 lazy val httpClientJVM = httpClient.jvm
 
+
+//////////////////
+//// EXAMPLES ////
+//////////////////
+
+lazy val todolist = jvmModule("todolist", subFolder = Some("examples"))
+  .dependsOn(coreJVM, doobie, httpFinch, loggingJVM, effectsJVM, config)
+  .settings(noPublishSettings: _*)
+  .settings(
+    libraryDependencies ++= Seq(
+      %%("cats-effect"),
+      %%("circe-generic"),
+      %%("doobie-h2"),
+      %%("doobie-hikari"),
+      %%("finch-circe"),
+      %%("twitter-server")
+    ) ++ commonDeps
+  )
+
 /////////////////////
 //// ALL MODULES ////
 /////////////////////
@@ -317,7 +331,9 @@ lazy val jvmModules: Seq[ProjectReference] = Seq(
   httpAkka,
   httpPlay,
   httpClientJVM
-  // ,tests
+  //tests,
+  //Examples:
+  todolist
 )
 
 lazy val jsModules: Seq[ProjectReference] = Seq(
