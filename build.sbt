@@ -284,7 +284,7 @@ lazy val httpClient = module("http-client", subFolder = Some("integrations/http"
   .crossDepSettings(
     commonDeps ++ Seq(
       %("hammock-core", "0.6.5-SNAPSHOT"),
-      %("cats-effect")): _*
+      %("cats-effect") % "test"): _*
   )
 
 lazy val httpClientJS  = httpClient.js
