@@ -252,7 +252,7 @@ lazy val httpHttp4s = jvmModule("http4s", subFolder = Some("integrations/http"))
 lazy val httpFinch = jvmModule("finch", subFolder = Some("integrations/http"))
   .dependsOn(coreJVM)
   .settings(
-    libraryDependencies ++= Seq(%%("finch-core")) ++ commonDeps
+    libraryDependencies ++= Seq(%%("finch-core", "0.16.0-M3")) ++ commonDeps
   )
 
 lazy val httpAkka = jvmModule("akka", subFolder = Some("integrations/http"))
@@ -288,7 +288,7 @@ lazy val todolist = jvmModule("todolist", subFolder = Some("examples"))
       %%("circe-generic"),
       %%("doobie-h2"),
       %%("doobie-hikari"),
-      "com.github.finagle" %% "finch-circe" % "0.16.0-RC1",
+      "com.github.finagle" %% "finch-circe" % "0.16.0-M3",
       "com.twitter"        %% "twitter-server" % "1.32.0",
     ) ++ commonDeps
   )

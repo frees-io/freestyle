@@ -180,6 +180,10 @@ libraryDependencies += "io.frees" %%% "frees-monix"       % "0.4.0"
 
 + http - Adapters and marshallers to run the Freestyle program in endpoint return types for [akka-http](http://frees.io/docs/integrations/akkahttp/), [finch](http://frees.io/docs/integrations/finch/), [http4s](http://frees.io/docs/integrations/http4s/) and [play](http://frees.io/docs/integrations/play/).
 
+## Freestyle Examples
+
+* [TodoList](./modules/examples/todolist/README.md).
+
 ## Commercial Support
 
 47 Degrees offers commercial support for the Freestyle framework and associated technologies. To find out more, visit [47 Degrees' Open Source Support](https://www.47deg.com/services/open-source-support/).
