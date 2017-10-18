@@ -131,7 +131,6 @@ libraryDependencies += "io.frees" %% "frees-logging"            % "0.4.0"
 libraryDependencies += "io.frees" %% "frees-cache-redis"        % "0.4.0"
 libraryDependencies += "io.frees" %% "frees-doobie"             % "0.4.0"
 libraryDependencies += "io.frees" %% "frees-fetch"              % "0.4.0"
-libraryDependencies += "io.frees" %% "frees-fs2"                % "0.4.0"
 libraryDependencies += "io.frees" %% "frees-http-akka"          % "0.4.0"
 libraryDependencies += "io.frees" %% "frees-http-finch"         % "0.4.0"
 libraryDependencies += "io.frees" %% "frees-http-http4s"        % "0.4.0"
@@ -158,7 +157,6 @@ libraryDependencies += "io.frees" %%% "frees-logging"     % "0.4.0"
 
 // optional - integrations
 libraryDependencies += "io.frees" %%% "frees-fetch"       % "0.4.0"
-libraryDependencies += "io.frees" %%% "frees-fs2"         % "0.4.0"
 libraryDependencies += "io.frees" %%% "frees-monix"       % "0.4.0"
 ```
 
