@@ -234,6 +234,10 @@ lazy val fetchJS  = fetch.js
 // lazy val fs2JVM = fs2.jvm
 // lazy val fs2JS  = fs2.js
 
+/////////////////////////////
+//// INTEGRATIONS - HTTP ////
+/////////////////////////////
+
 lazy val httpHttp4s = jvmModule("http4s", subFolder = Some("integrations/http"))
   .dependsOn(coreJVM)
   .settings(
@@ -267,6 +271,19 @@ lazy val httpPlay = jvmModule("play", subFolder = Some("integrations/http"))
       %%("play-test") % "test"
     ) ++ commonDeps
   )
+
+lazy val httpClient = module("http-client", subFolder = Some("integrations/http"))
+  .dependsOn(core)
+  .settings(resolvers += Resolver.jcenterRepo)
+  .jsSettings(sharedJsSettings: _*)
+  .crossDepSettings(
+    commonDeps ++ Seq(
+      %("hammock-core", "0.7.0"),
+      %("cats-effect") % "test"): _*
+  )
+
+lazy val httpClientJS  = httpClient.js
+lazy val httpClientJVM = httpClient.jvm
 
 
 //////////////////
@@ -313,6 +330,7 @@ lazy val jvmModules: Seq[ProjectReference] = Seq(
   httpFinch,
   httpAkka,
   httpPlay,
+  httpClientJVM,
   //tests,
   //Examples:
   todolist
@@ -328,7 +346,8 @@ lazy val jsModules: Seq[ProjectReference] = Seq(
   loggingJS,
   //Integrations:
   monixJS,
-  fetchJS
+  fetchJS,
+  httpClientJS
   //, fs2JS
 )
 
@@ -338,7 +357,9 @@ lazy val jvmFreestyleDeps: Seq[ClasspathDependency] =
   jvmModules.map(ClasspathDependency(_, None))
 
 addCommandAlias("validateDocs", ";project docs;tut;project root")
-addCommandAlias("validateJVM", (List("fixResources") ++ toCompileTestList(jvmModules) ++ List("project root")).asCmd)
+addCommandAlias(
+  "validateJVM",
+  (List("fixResources") ++ toCompileTestList(jvmModules) ++ List("project root")).asCmd)
 addCommandAlias("validateJS", (toCompileTestList(jsModules) ++ List("project root")).asCmd)
 addCommandAlias(
   "validate",
