@@ -278,7 +278,7 @@ lazy val httpClient = module("http-client", subFolder = Some("integrations/http"
   .jsSettings(sharedJsSettings: _*)
   .crossDepSettings(
     commonDeps ++ Seq(
-      %("hammock-core", "0.6.5-SNAPSHOT"),
+      %("hammock-core", "0.7.0"),
       %("cats-effect") % "test"): _*
   )
 
@@ -330,7 +330,7 @@ lazy val jvmModules: Seq[ProjectReference] = Seq(
   httpFinch,
   httpAkka,
   httpPlay,
-  httpClientJVM
+  httpClientJVM,
   //tests,
   //Examples:
   todolist
