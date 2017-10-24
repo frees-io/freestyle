@@ -57,8 +57,8 @@ the target runtime interpreters.
 ```scala
 def loadUser[F[_]]
   (userId: UserId)
-  (implicit 
-    doobie: DoobieM[F], 
+  (implicit
+    doobie: DoobieM[F],
     logging: LoggingM[F]): FreeS[F, User] = {
     import doobie.implicits._
     for {
@@ -131,11 +131,12 @@ libraryDependencies += "io.frees" %% "frees-logging"            % "0.4.1"
 libraryDependencies += "io.frees" %% "frees-cache-redis"        % "0.4.1"
 libraryDependencies += "io.frees" %% "frees-doobie"             % "0.4.1"
 libraryDependencies += "io.frees" %% "frees-fetch"              % "0.4.1"
-libraryDependencies += "io.frees" %% "frees-http-akka"          % "0.4.1"
-libraryDependencies += "io.frees" %% "frees-http-finch"         % "0.4.1"
-libraryDependencies += "io.frees" %% "frees-http-http4s"        % "0.4.1"
-libraryDependencies += "io.frees" %% "frees-http-play"          % "0.4.1"
+libraryDependencies += "io.frees" %% "frees-akka"               % "0.4.1"
+libraryDependencies += "io.frees" %% "frees-finch"              % "0.4.1"
+libraryDependencies += "io.frees" %% "frees-http-client"        % "0.4.1"
+libraryDependencies += "io.frees" %% "frees-http4s"             % "0.4.1"
 libraryDependencies += "io.frees" %% "frees-monix"              % "0.4.1"
+libraryDependencies += "io.frees" %% "frees-play"               % "0.4.1"
 libraryDependencies += "io.frees" %% "frees-slick"              % "0.4.1"
 libraryDependencies += "io.frees" %% "frees-twitter-util"       % "0.4.1"
 ```
@@ -144,20 +145,22 @@ For Scala.js:
 
 ```scala
 // required
-libraryDependencies += "io.frees" %%% "frees-core"        % "0.4.1"
+libraryDependencies += "io.frees" %%% "frees-core"              % "0.4.1"
 
 // optional - effects and patterns
-libraryDependencies += "io.frees" %%% "frees-effects"     % "0.4.1"
-libraryDependencies += "io.frees" %%% "frees-tagless"     % "0.4.1"
-libraryDependencies += "io.frees" %%% "frees-async"       % "0.4.1"
-libraryDependencies += "io.frees" %%% "frees-async-fs2"   % "0.4.1"
-libraryDependencies += "io.frees" %%% "frees-async-monix" % "0.4.1"
-libraryDependencies += "io.frees" %%% "frees-cache"       % "0.4.1"
-libraryDependencies += "io.frees" %%% "frees-logging"     % "0.4.1"
+libraryDependencies += "io.frees" %%% "frees-effects"           % "0.4.1"
+libraryDependencies += "io.frees" %%% "frees-tagless"           % "0.4.1"
+libraryDependencies += "io.frees" %%% "frees-async"             % "0.4.1"
+libraryDependencies += "io.frees" %%% "frees-async-cats-effect" % "0.4.1"
+libraryDependencies += "io.frees" %%% "frees-async-fs2"         % "0.4.1"
+libraryDependencies += "io.frees" %%% "frees-async-monix"       % "0.4.1"
+libraryDependencies += "io.frees" %%% "frees-cache"             % "0.4.1"
+libraryDependencies += "io.frees" %%% "frees-http-client"       % "0.4.1"
+libraryDependencies += "io.frees" %%% "frees-logging"           % "0.4.1"
 
 // optional - integrations
-libraryDependencies += "io.frees" %%% "frees-fetch"       % "0.4.1"
-libraryDependencies += "io.frees" %%% "frees-monix"       % "0.4.1"
+libraryDependencies += "io.frees" %%% "frees-fetch"             % "0.4.1"
+libraryDependencies += "io.frees" %%% "frees-monix"             % "0.4.1"
 ```
 
 [comment]: # (End Replace)
