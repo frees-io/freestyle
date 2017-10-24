@@ -1,5 +1,18 @@
 # Changelog
 
+## 10/24/2017 - Version 0.4.1
+
+Release changes:
+
+* Moves integrations and docs back home ([#412](https://github.com/frees-io/freestyle/pull/412))
+* Receive build notifications via Atomist ([#413](https://github.com/frees-io/freestyle/pull/413))
+* README adjustments ([#397](https://github.com/frees-io/freestyle/pull/397))
+* Frees Examples in Main Repo ([#417](https://github.com/frees-io/freestyle/pull/417))
+* Removed dependency frees-fs2 from README ([#419](https://github.com/frees-io/freestyle/pull/419))
+* Releases Freestyle 0.4.1 ([#420](https://github.com/frees-io/freestyle/pull/420))
+* frees-http integrations ([#415](https://github.com/frees-io/freestyle/pull/415))
+
+
 ## 10/10/2017 - Version 0.4.0
 
 Release changes:
