@@ -14,8 +14,7 @@ matrix:
   exclude:
   - scala: 2.11.11
     env: FREESBUILD=docs
-  - scala: 2.11.11
-    env: SCALAENV=all
+  - env: SCALAENV=all
 
 jdk:
 - oraclejdk8
@@ -56,28 +55,13 @@ script:
     sbt ++$TRAVIS_SCALA_VERSION validateJS;
   elif [ "$FREESBUILD" = "docs" ]; then
     sbt ++$TRAVIS_SCALA_VERSION docs/tut;
-  elif [ "$SCALAENV" = "all" ]; then
-    sbt ++$TRAVIS_SCALA_VERSION validate;
   else
     echo "You might not be invited to the party";
   fi
 
 after_success:
 - bash <(curl -s https://codecov.io/bash)
-- if [ "$TRAVIS_BRANCH" = "master" -a "$TRAVIS_PULL_REQUEST" = "false" ]; then
-    if grep -q "SNAPSHOT" version.sbt; then
-      sbt ++$TRAVIS_SCALA_VERSION publish;
-    else
-      if [ "$SCALAENV" = "all" ]; then
-        sbt orgUpdateDocFiles;
-        git reset --hard HEAD;
-        git clean -f;
-        git checkout master;
-        git pull origin master;
-        sbt release;
-      fi
-    fi
-  fi
+
 notifications:
   webhooks:
     urls:
@@ -87,3 +71,24 @@ notifications:
     on_start: always
     on_failure: always
     on_success: always
+
+jobs:
+  include:
+    - stage: deploy
+      script:
+        - if [ "$TRAVIS_BRANCH" = "master" -a "$TRAVIS_PULL_REQUEST" = "false" ]; then
+            if grep -q "SNAPSHOT" version.sbt; then
+              sbt ++$TRAVIS_SCALA_VERSION publish;
+            else
+              if [ "$SCALAENV" = "all" ]; then
+                sbt orgUpdateDocFiles;
+                git reset --hard HEAD;
+                git clean -f;
+                git checkout master;
+                git pull origin master;
+                sbt release;
+              fi
+            fi
+          fi
+      scala: 2.12.3
+      env: SCALAENV=all
