@@ -6,9 +6,9 @@ permalink: /docs/integrations/hammock/
 
 # Hammock HTTP client
 
-[Hammock](http://pepegar.com/master) is a purely functional HTTP
-client for the cats ecosystem.  You can easily integrate it within
-your Freestyle programs.
+[Hammock](http://github.com/pepegar/hammock) is a purely functional
+HTTP client for the cats ecosystem.  If you want to read more
+documentation on Hammock, you can read [the docs](http://pepegar.com/hammock/docs).
 
 First of all, include the _frees-http-client_ as follows:
 
@@ -60,30 +60,33 @@ There are two different ways to integrate your Hammock programs in
 your Freestyle flow.  First of all, you can use the methods in the
 `HammockM` algebra that represent HTTP verbs:
 
-```tut:silent
-def f[F[_] : Example] = Example[F].hammockM.get(Uri.unsafeParse("https://jsonplaceholder.typicode.com"), Map.empty[String, String])
+```tut
+implicit val interp = Interpreter[IO]
+
+HammockM[HammockM.Op].get(Uri.unsafeParse("https://jsonplaceholder.typicode.com/posts/1"), Map.empty[String, String]).interpret[IO].unsafeRunSync
 ```
 
 Also, you can lift any arbitrary `HttpRequestIO[F]` program to
 `HammockM` with `HammockM.run(program)`.
 
-```tut:silent
-val response = Hammock.getWithOpts(Uri.unsafeParse("https://jsonplaceholder.typicode.com"), Opts.default)
+```tut
+implicit val interp = Interpreter[IO]
+val response = Hammock.getWithOpts(Uri.unsafeParse("https://jsonplaceholder.typicode.com/posts/1"), Opts.default)
   
-def f[F[_] : Example] = Example[F].hammockM.run(response)
+HammockM[HammockM.Op].run(response).interpret[IO].unsafeRunSync
 ```
 
 ## Example with modules
 
-```tut:silent
+```tut
 implicit val interp = Interpreter[IO]
 
 def example[F[_] : Example] = for {
   _ <- Example[F].consoleIO.putLine("")
   age <- Example[F].consoleIO.getLine
   emptyHeaders = Map.empty[String, String]
-  response <- Example[F].hammockM.get(Uri.unsafeParse("https://jsonplaceholder.typicode.com?age=$age"), emptyHeaders)
+  response <- Example[F].hammockM.get(Uri.unsafeParse("https://jsonplaceholder.typicode.com/posts/1?age=$age"), emptyHeaders)
 } yield response
 
-example[Example.Op].interpret[IO]
+example[Example.Op].interpret[IO].unsafeRunSync
 ```
