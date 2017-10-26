@@ -14,14 +14,27 @@
  * limitations under the License.
  */
 
-package freestyle
+package freeslick
 
-import freestyle.slick._
-import freestyle.logging._
-object modules {
-  @module
-  trait Example {
-    val slick: SlickM
-    val log: LoggingM
-  }
+import cats.implicits._
+
+import freestyle._
+import freestyle.implicits._
+import freestyle.slick.implicits._
+import freestyle.loggingJVM.implicits._
+
+import scala.concurrent.Future
+import scala.concurrent.duration._
+import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Await
+
+import services._
+import modules._
+import persistence._
+
+object Index {
+
+  def main(args: Array[String]): Unit =
+    Await.result(print[Example.Op].interpret[Future], Duration.Inf)
+
 }

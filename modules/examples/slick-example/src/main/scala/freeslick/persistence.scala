@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package freestyle
+package freeslick
 
 import _root_.slick.jdbc.PostgresProfile.api._
 

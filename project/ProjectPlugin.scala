@@ -46,7 +46,7 @@ object ProjectPlugin extends AutoPlugin {
           "org.postgresql.Driver",
           "jdbc:postgresql://localhost/postgres?currentSchema=public",
           outputDir,
-          "dao",
+          "freeslick.dao",
           "test",
           "test"
         ),
@@ -60,7 +60,7 @@ object ProjectPlugin extends AutoPlugin {
     Seq(
       orgUpdateDocFilesSetting += baseDirectory.value / "docs" / "src",
       orgScriptTaskListSetting := List("validate".asRunnableItemFull),
-      coverageExcludedPackages := "<empty>;todo\\..*"
+      coverageExcludedPackages := "<empty>;todo\\..*;freeslick\\..*"
     ) ++ scalaMetaSettings
 
 }
