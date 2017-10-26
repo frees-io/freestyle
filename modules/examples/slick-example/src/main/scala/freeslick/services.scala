@@ -14,10 +14,11 @@
  * limitations under the License.
  */
 
-package freestyle
+package freeslick
 
 import cats.implicits._
 
+import freestyle._
 import freestyle.slick._
 import freestyle.slick.implicits._
 
