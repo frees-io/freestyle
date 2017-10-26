@@ -16,3 +16,4 @@ permalink: /docs/integrations/
 * [Akka HTTP](./akkahttp/)
 * [Finch](./finch)
 * [http4s](./http4s)
+* [Hammock](./hammock)
