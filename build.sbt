@@ -277,14 +277,11 @@ lazy val httpClient = module("http-client", subFolder = Some("integrations/http"
   .settings(resolvers += Resolver.jcenterRepo)
   .jsSettings(sharedJsSettings: _*)
   .crossDepSettings(
-    commonDeps ++ Seq(
-      %("hammock-core", "0.7.0"),
-      %("cats-effect") % "test"): _*
+    commonDeps ++ Seq(%("hammock-core", "0.7.0"), %("cats-effect") % "test"): _*
   )
 
 lazy val httpClientJS  = httpClient.js
 lazy val httpClientJVM = httpClient.jvm
-
 
 //////////////////
 //// EXAMPLES ////
@@ -301,6 +298,17 @@ lazy val todolist = jvmModule("todolist", subFolder = Some("examples"))
       %%("doobie-hikari"),
       %%("finch-circe"),
       %%("twitter-server")
+    ) ++ commonDeps
+  )
+
+lazy val slickExample = jvmModule("slick-example", subFolder = Some("examples"))
+  .dependsOn(coreJVM, loggingJVM, slick)
+  .settings(noPublishSettings: _*)
+  .settings(slickGen := slickCodeGenTask.value) // register manual sbt command
+  .settings(
+    libraryDependencies ++= Seq(
+      "org.postgresql"     % "postgresql"     % "42.1.1",
+      "com.typesafe.slick" %% "slick-codegen" % "3.2.0"
     ) ++ commonDeps
   )
 
@@ -333,7 +341,8 @@ lazy val jvmModules: Seq[ProjectReference] = Seq(
   httpClientJVM,
   //tests,
   //Examples:
-  todolist
+  todolist,
+  slickExample
 )
 
 lazy val jsModules: Seq[ProjectReference] = Seq(

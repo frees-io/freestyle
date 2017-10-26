@@ -34,6 +34,26 @@ object ProjectPlugin extends AutoPlugin {
         .settings(moduleName := s"frees-$modName")
     }
 
+    lazy val slickGen = TaskKey[Seq[File]]("slick-gen")
+
+    lazy val slickCodeGenTask = Def.task {
+      val outputDir = (sourceDirectory.value / "main/scala").getPath
+      (runner in Compile).value.run(
+        "slick.codegen.SourceCodeGenerator",
+        (dependencyClasspath in Compile).value.files,
+        Array(
+          "slick.jdbc.PostgresProfile",
+          "org.postgresql.Driver",
+          "jdbc:postgresql://localhost/postgres?currentSchema=public",
+          outputDir,
+          "dao",
+          "test",
+          "test"
+        ),
+        streams.value.log
+      )
+      Seq(file(s"$outputDir/dao/Tables.scala"))
+    }
   }
 
   override def projectSettings: Seq[Def.Setting[_]] =
