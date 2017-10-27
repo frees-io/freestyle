@@ -1,5 +1,6 @@
 *.class
 *.log
+.sass-cache/
 
 # sbt specific
 .cache
