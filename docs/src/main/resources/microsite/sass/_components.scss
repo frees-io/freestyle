@@ -80,6 +80,7 @@ a {
   background: $gray-lighter;
 
   #features {
+
     .feature-algebras,
     .feature-handlers,
     .feature-modules {
@@ -96,6 +97,7 @@ a {
       text-align: center;
       background: #fff;
       box-shadow: $base-shadow;
+
     }
     @media (max-width: 992px) {
       .feature-handlers,
@@ -103,9 +105,10 @@ a {
         margin-top: 20px;
       }
     }
-
     a:hover {
       text-decoration: none;
+
+    }
   }
 
   #libraries {
@@ -113,7 +116,7 @@ a {
       margin: 48px 0 24px;
       text-align: center;
       @media (max-width: 1200px) {
-        img {
+        svg {
           width: 76%;
           height: auto;
         }
