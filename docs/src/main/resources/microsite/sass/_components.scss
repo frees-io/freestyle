@@ -6,6 +6,10 @@ body {
   color: $text-color;
   font-family: $font-family-sans-serif;
 }
+
+#fs-home {
+  background: $brand-secondary;
+}
 // Typography
 
 #site-header,
@@ -305,6 +309,10 @@ body {
   .nav {
     box-shadow: $base-shadow;
   }
+}
+
+#site-footer {
+  background: $brand-secondary;
 }
 
 code,
