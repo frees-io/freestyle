@@ -165,9 +165,9 @@
   66.6% {
     transform: skewX(-0.78125deg) skewY(-0.78125deg); }
   77.7% {
-    transform: skewX(0.39063deg) skewY(0.39063deg); }
+    transform: skewX(0.390625deg) skewY(0.390625deg); }
   88.8% {
-    transform: skewX(-0.19531deg) skewY(-0.19531deg); } }
+    transform: skewX(-0.1953125deg) skewY(-0.1953125deg); } }
 .jello {
   animation-name: jello;
   transform-origin: center; }
@@ -1015,6 +1015,9 @@ body {
   color: rgba(33, 57, 81, 0.7);
   font-family: "Source Sans Pro", sans-serif; }
 
+#fs-home {
+  background: #F6F9FA; }
+
 #site-header,
 h1,
 h2,
@@ -1036,6 +1039,48 @@ a {
   .btn:hover {
     background: #fff; }
 
+#navigation {
+  position: fixed;
+  padding: 40px 24px;
+  z-index: 2;
+  display: -webkit-box;
+  display: -moz-box;
+  display: -ms-flexbox;
+  display: -webkit-flex;
+  display: flex;
+  -webkit-justify-content: space-between;
+  -moz-justify-content: space-between;
+  -ms-justify-content: space-between;
+  justify-content: space-between;
+  -ms-flex-pack: space-between;
+  -webkit-align-items: center;
+  -moz-align-items: center;
+  -ms-align-items: center;
+  align-items: center;
+  transition: all 350ms ease;
+  width: 100%; }
+  #navigation .navigation-brand {
+    font-family: "pragmatapro", sans-serif;
+    font-size: 17px;
+    text-transform: uppercase;
+    letter-spacing: 1px; }
+  #navigation .navigation-menu {
+    margin: 0; }
+    #navigation .navigation-menu .navigation-menu-item {
+      display: inline-block;
+      line-height: 1.8; }
+      #navigation .navigation-menu .navigation-menu-item:first-child {
+        margin-right: 32px; }
+  #navigation a {
+    color: #fff; }
+    #navigation a:hover, #navigation a:focus, #navigation a:active {
+      text-decoration: none; }
+    #navigation a:hover {
+      color: rgba(255, 255, 255, 0.6); }
+  #navigation.navigation-scroll {
+    background: rgba(16, 42, 68, 0.92);
+    padding: 24px; }
+
 .jumbotron {
   text-align: center;
   background: url("../img/freestyle-background-jumbotron.svg") center center no-repeat #102A44; }
@@ -1043,11 +1088,13 @@ a {
     font-size: 40px; }
     @media (max-width: 992px) {
       .jumbotron h1 {
-        font-size: 26.66667px; } }
+        font-size: 26.6666666667px; } }
   .jumbotron p {
     margin-bottom: 20px; }
   .jumbotron .jumbotron-stars {
     font-size: 20px; }
+    .jumbotron .jumbotron-stars .fa {
+      margin-right: 8px; }
     .jumbotron .jumbotron-stars a:hover {
       text-decoration: none; }
   .jumbotron svg:hover .beta {
@@ -1071,16 +1118,19 @@ a {
     #site-main #features .feature-algebras p,
     #site-main #features .feature-handlers p,
     #site-main #features .feature-modules p {
-      margin-bottom: 0; }
+      margin-bottom: 0;
+      color: rgba(33, 57, 81, 0.7); }
   @media (max-width: 992px) {
     #site-main #features .feature-handlers,
     #site-main #features .feature-modules {
       margin-top: 20px; } }
+  #site-main #features a:hover {
+    text-decoration: none; }
   #site-main #libraries .libraries-lines {
     margin: 48px 0 24px;
     text-align: center; }
     @media (max-width: 1200px) {
-      #site-main #libraries .libraries-lines img {
+      #site-main #libraries .libraries-lines svg {
         width: 76%;
         height: auto; } }
     @media (max-width: 992px) {
@@ -1200,9 +1250,12 @@ body.docs {
 #page-content-wrapper .nav {
   box-shadow: 0 2px 0 0 rgba(16, 42, 68, 0.08); }
 
+#site-footer {
+  background: #102A44; }
+
 code,
 pre {
   font-family: "pragmatapro", sans-serif; }
-  
+
 .indirect-injection, .gitter-open-chat-button, .scroll-injection {
   opacity: 0; }
