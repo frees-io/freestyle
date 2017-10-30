@@ -8,7 +8,7 @@ body {
 }
 
 #fs-home {
-  background: $brand-secondary;
+  background: $gray-lighter;
 }
 // Typography
 
@@ -364,4 +364,8 @@ body {
 code,
 pre {
   font-family: $font-family-header;
+}
+
+.indirect-injection, .gitter-open-chat-button, .scroll-injection {
+  opacity: 0;
 }

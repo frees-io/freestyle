@@ -333,8 +333,7 @@ $(window).on("load", function() {
     var hT = $('#freestyle-lines-libraries').offset().top,
         hH = $('#freestyle-lines-libraries').outerHeight();
 
-    var scrollHandler = function() {
-
+    var animationScrollHandler = function() {
       if (!lineDrawing.began) {
         var wH = $(window).height(),
             wW = $(window).width(),
@@ -347,8 +346,11 @@ $(window).on("load", function() {
         }
       }
       else {
-        $(window).off('scroll', scrollHandler);
+        $(window).off('scroll', animationScrollHandler);
       }
+    }
+
+    var navbarScrollHandler = function() {
       if ($("#navigation").offset().top > 70) {
           $("#navigation").addClass("navigation-scroll");
       }
@@ -357,7 +359,8 @@ $(window).on("load", function() {
       }
     }
 
-    $(window).scroll(scrollHandler);
+    $(window).scroll(animationScrollHandler);
+    $(window).scroll(navbarScrollHandler);
     $(window).scroll();
 
 });
