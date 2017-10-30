@@ -2,6 +2,8 @@
 // by this way avoiding any FOUC problems. Since jQuery is on the page we
 // take advantage of it.
 $(window).on("load", function() {
+
+
     // General injection duration
     var injectionDuration = 300;
 
@@ -122,7 +124,7 @@ $(window).on("load", function() {
       });
     }
 
-    
+
     function drawPath(elements, duration) {
       anime.remove(elements);
       anime({
@@ -323,7 +325,7 @@ $(window).on("load", function() {
     libraryKafkaEl.addEventListener('mouseleave', kafkaButtonLeave, false);
 
 
-    // This function call changes these elements general opacity as it is set to 
+    // This function call changes these elements general opacity as it is set to
     // 0 on start to avoid logo/element flashing when loaded and then animated
     setOpacity('.indirect-injection, .gitter-open-chat-button');
 
@@ -351,4 +353,12 @@ $(window).on("load", function() {
     $(window).scroll(scrollHandler);
     $(window).scroll();
 
+    $(window).scroll(function() {
+          if ($("#navigation").offset().top > 70) {
+              $("#navigation").addClass("navigation-scroll");
+          }
+          else {
+              $("#navigation").removeClass("navigation-scroll");
+          }
+      });
 });

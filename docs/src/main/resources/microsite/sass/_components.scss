@@ -38,6 +38,54 @@ a {
     background: #fff;
   }
 }
+// Navigation
+
+#navigation {
+  position: fixed;
+  padding: 40px 24px;
+  z-index: 2;
+  @include flexbox;
+  @include justify-content(space-between);
+  @include align-items(center);
+  transition: all $base-duration $base-timing;
+  width: 100%;
+
+  .navigation-brand {
+    font-family: $font-family-header;
+    font-size: 17px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  .navigation-menu {
+    margin: 0;
+    .navigation-menu-item {
+      display: inline-block;
+      line-height: 1.8;
+      &:first-child {
+        margin-right: 32px;
+      }
+    }
+  }
+
+  a {
+    color: #fff;
+    &:hover,
+    &:focus,
+    &:active {
+      text-decoration: none;
+    }
+
+    &:hover {
+      color: rgba(#fff, 0.6);
+    }
+  }
+
+  &.navigation-scroll {
+        background: rgba($brand-secondary, 0.92);
+        padding: 24px;
+    }
+}
 // Jumbotron
 
 .jumbotron {
@@ -84,7 +132,6 @@ a {
   background: $gray-lighter;
 
   #features {
-
     .feature-algebras,
     .feature-handlers,
     .feature-modules {
@@ -101,7 +148,6 @@ a {
       text-align: center;
       background: #fff;
       box-shadow: $base-shadow;
-
     }
     @media (max-width: 992px) {
       .feature-handlers,
@@ -109,9 +155,9 @@ a {
         margin-top: 20px;
       }
     }
+
     a:hover {
       text-decoration: none;
-
     }
   }
 
