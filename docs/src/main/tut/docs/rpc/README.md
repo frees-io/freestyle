@@ -19,11 +19,15 @@ permalink: /docs/rpc
     - [frees-rpc](#frees-rpc)
   - [Service Methods](#service-methods)
   - [Generating a .proto file](#generating-a-proto-file)
-    - [Installation](#installation)
-    - [Settings](#settings)
-    - [Generation](#generation)
+    - [Plugin Installation](#plugin-installation)
+    - [Plugin Settings](#plugin-settings)
+    - [Generation with protoGen](#generation-with-protogen)
   - [RPC Service Implementations](#rpc-service-implementations)
     - [Server](#server)
+    - [Server Runtime](#server-runtime)
+      - [Execution Context](#execution-context)
+      - [Runtime Implicits](#runtime-implicits)
+      - [Server Bootstrap](#server-bootstrap)
 - [References](#references)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
@@ -379,9 +383,11 @@ That's all, here we have exposed a potential implementation in the server side.
 
 ### Server Runtime
 
-As you can see the generic handler above requires `F` as type parameter, which it corresponds with our target `Monad` when interpreting our program. In this section, we are going to satisfy all the runtime requirements to make our server runnable:
+As you can see, the generic handler above requires `F` as type parameter, which it corresponds with our target `Monad` when interpreting our program. In this section, we are going to satisfy all the runtime requirements, in order to make our server runnable.
 
-In `frees-rpc` programs we'll need, at least an implicit evidence related to Monix: `monix.execution.Scheduler`. 
+#### Execution Context
+
+In `frees-rpc` programs we'll need, at least an implicit evidence related to the Monix executed context: `monix.execution.Scheduler`. 
 
 > The `monix.execution.Scheduler` is inspired by `ReactiveX`, being an enhanced Scala `ExecutionContext` and also a replacement for Java’s `ScheduledExecutorService`, but also for Javascript’s `setTimeout`.
 
@@ -400,6 +406,83 @@ trait CommonRuntime {
 ```
 
 As aside note, `CommonRuntime` will be also used later on for the client program.
+
+#### Runtime Implicits
+
+Now, we need to provide implicitly two things:
+
+* A runtime interpreter of our `ServiceHandler` tied to an specific type. In our case we'll use `scala.concurrent.Future`.
+* A Natural Transformation implicit evidence of `GrpcServer.Op ~> F` where `F` would be your target monad, in our example the implicit evidence would be: `GrpcServer.Op ~> Future`. To tackle this we have to consider few things:
+	* First of all, we need to decide the rpc port where server will bootstrap.
+	* Then, we need to register the set of configurations we want to add to our gRPC server, like the fact of adding our `Greeter` service. All these configurations are aggregated in a `List[GrpcConfig]`. Later on, an internal builder will build the final server based on this list. The full available list of settings are exposed in [this file](https://github.com/frees-io/freestyle-rpc/blob/master/rpc/src/main/scala/server/GrpcConfig.scala).
+	* Finally, we need to compose:
+		* A runtime interpreter of `freestyle.rpc.server.handlers.GrpcServerHandler`, which is another handler encharged of managing the server.
+		* With another runtime interpreter of `freestyle.rpc.server.GrpcKInterpreter`, who will configure the server.
+
+In summary, this would be the result:
+
+```tut:book
+import cats.~>
+import cats.implicits._
+import freestyle.implicits._
+import freestyle.async.implicits._
+import freestyle.rpc.server._
+import freestyle.rpc.server.handlers._
+import freestyle.rpc.server.implicits._
+
+import scala.concurrent.Future
+
+object gserver {
+
+  trait Implicits extends CommonRuntime {
+
+    implicit val greeterServiceHandler: Greeter.Handler[Future] = new ServiceHandler[Future]
+
+    val grpcConfigs: List[GrpcConfig] = List(
+      AddService(Greeter.bindService[Greeter.Op, Future])
+    )
+
+    implicit val grpcServerHandler: GrpcServer.Op ~> Future =
+      new GrpcServerHandler[Future] andThen
+        new GrpcKInterpreter[Future](ServerW(8080, grpcConfigs).server)
+  }
+
+  object implicits extends Implicits
+
+}
+```
+
+Few additional notes:
+
+* Server will bootstrap on port `8080`.
+* `Greeter.bindService` is auto-derived method which will create the binding service for gRPC, behind the scenes. It expect two type parameters, `F[_]` and `M[_]`.
+	* `F[_]` would be our algebra, which matches with our Greeter service definition.
+	* `M[_]`, the target monad, in our example: `scala.concurrent.Future`.
+
+#### Server Bootstrap
+
+What else is needed? We just need to define a `main` method and:
+
+```scala
+import cats.implicits._
+import freestyle.rpc.server.GrpcServerApp
+import freestyle.rpc.server.implicits._
+import gserver.implicits._
+
+import scala.concurrent.{Await, Future}
+import scala.concurrent.duration.Duration
+
+object RPCServer {
+
+  def main(args: Array[String]): Unit =
+    Await.result(server[GrpcServerApp.Op].bootstrapM[Future], Duration.Inf)
+
+}
+```
+
+Once all the runtime requirements are in place (`import gserver.implicits._`), we only have to write the previous piece of code, which would be pretty much the same in all the cases (except if your target Monad is different from `Future`).
+
+### Client
 
 
 
