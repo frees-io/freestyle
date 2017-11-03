@@ -39,7 +39,17 @@ permalink: /docs/rpc
 
 ## What’s frees-rpc
 
-`frees-rpc` brings the ability to combine RPC protocols, services and clients in your `Freestyle` program, thanks to [gRPC](https://grpc.io/). Although it's fully integrated with gRPC, there are some differences when defining the protocols, as we’ll see later on, since `frees-rpc` follows the same philosophy that `Freestyle` core, being macro-powered.
+`frees-rpc` brings the ability to combine RPC protocols, services and clients in your `Freestyle` program, thanks to [gRPC](https://grpc.io/). Although it's fully integrated with gRPC, there are some important differences when defining the protocols, as we’ll see later on, since `frees-rpc` follows the same philosophy that `Freestyle` core, being macro-powered.
+
+## Installation
+
+Add the following dependency to your project's build file.
+
+For Scala `2.11.x` and `2.12.x`:
+
+```scala
+libraryDependencies += "io.frees" %% "frees-rpc" % "0.1.2"
+```
 
 ## About gRPC
 
@@ -92,12 +102,12 @@ You can find more information about Protocol Buffers in the [Protocol Buffers do
 
 ### frees-rpc
 
-In the previous section, we’ve seen an overview about what gRPC and ScalaPB offer for defining protocols and generating (compiling protocol buffers) code. Now, let’s see how frees-rpc offers the same in the Freestyle fashion, following the FP principles.
+In the previous section, we’ve seen an overview about what gRPC and ScalaPB offer for defining protocols and generating (compiling protocol buffers) code. Now, let’s see how `frees-rpc` offers the same but in the Freestyle fashion, following the FP principles.
 
-First things first, the main difference respect to gRPC is `frees-rpc doesn’t need `.proto` files, but it still uses protocol buffers, thanks to the [PBDirect](https://github.com/btlines/pbdirect) library, which allows to read and write Scala objects directly to Protobuf with no `.proto` file definitions. Therefore, in summary we have:
+First things first, the main difference respect to gRPC is that `frees-rpc` doesn’t need `.proto` files, but it still uses protocol buffers, thanks to the [PBDirect](https://github.com/btlines/pbdirect) library, which allows to read and write Scala objects directly to Protobuf with no `.proto` file definitions. Therefore, in summary we have:
 
 * Your protocols, both messages and services will reside in you scala files, together with your business-logic, using scala-meta annotations to set them up. We’ll see more details shortly.
-* Instead of reading `.proto` files to set up the RPC services and messages, frees-rpc offers (as an optional feature) generating them, based on your protocols defined in your Scala code. This feature is offered to keep compatibility with other languages and systems out of Scala.
+* Instead of reading `.proto` files to set up the RPC services and messages, `frees-rpc` offers (as an optional feature) generating them, based on your protocols defined in your Scala code. This feature is offered to keep compatibility with other languages and systems out of Scala.
 
 Let’s start seeing how to define the Person message that we saw previously. 
 These are the scala imports we would need:
@@ -163,8 +173,9 @@ object protocols {
 
 Naturally, the RPC services are grouped in a [@free algebra](http://frees.io/docs/core/algebras/). Hence, we are following one of the main principles of Freestyle, you only need to concentrate on the API that you want to be exposed as abstract smart constructors, without worrying how they will be implemented.
 
-In addition, we are using a couple of additional annotations:
+In addition, we are using a some of additional annotations:
 
+* `@option`: used to define the equivalent headers in `.proto` files.
 * `@service`: it tags the `@free` algebra as RPC service, in order to derive server and client code (macro expansion). **Important**: `@free` annotation should go first, followed by `@service` annotation, and not inversely.
 * `rpc`: this annotation indicates the method is an RPC service.
 
@@ -177,9 +188,9 @@ As `gRPC`, `frees-rpc` allows you to define four kinds of service method:
 * **Unary RPC**: simplest way of communication, one request/ one response.
 * **Server streaming RPC**: similar to the unary, but in this case the server will send back a stream of responses for the client request.
 * **Client streaming RPC**: in this case is the client who sends a stream of requests. The server will respond with a single response.
-* **Bidirectional streaming RPC**: it would be a mix of server and client streaming, since both side will be sending a stream of data.
+* **Bidirectional streaming RPC**: it would be a mix of server and client streaming, since both sides will be sending a stream of data.
 
-Let's complete our protocol's example with this four kinds of service methods:
+Let's complete our protocol's example with these four kinds of service methods:
 
 ```tut:book
 @option(name = "java_package", value = "quickstart", quote = true)
@@ -261,8 +272,8 @@ object service {
 
 The code might be explanatory by itself but let's review the different services one by one:
 
-* `sayHello`: unary RPC, only `@rpc` annotation would be needed in this case.
-* `lotsOfReplies `: Server streaming RPC, where `@rpc` and `@stream` annotations are needed here. However, there are three different types of streaming, that is specified by the type parameter required in the `@stream` annotation, `@stream[ResponseStreaming.type]` in this particular definition.
+* `sayHello`: unary RPC, only the `@rpc` annotation would be needed in this case.
+* `lotsOfReplies `: Server streaming RPC, where `@rpc` and `@stream` annotations are needed here. However, there are three different types of streaming (server, client and bidirectional), that is specified by the type parameter required in the `@stream` annotation, `@stream[ResponseStreaming.type]` in this particular definition.
 * `lotsOfGreetings `: Client streaming RPC, `@rpc` should be scorted by the `@stream[RequestStreaming.type]` annotation.
 * `bidiHello `: Bidirectional streaming RPC, where `@rpc` is accompanied by the `@stream[BidirectionalStreaming.type]` annotation.
 
@@ -274,7 +285,7 @@ So far so good, no much code, no business logic, just a protocol definition with
 
 Before entering in implementation details, we mentioned that `frees-rpc` ecosystem brings the ability to generate `.proto` files from the Scala definition, in order to keep compatibility with other languages and systems out of Scala.
 
-This responsibility relies on [sbt-freestyle-protogen](https://github.com/frees-io/sbt-freestyle-protogen), an Sbt plugin to generate `.proto` files from the frees-rpc service definitions.
+This responsibility relies on [sbt-freestyle-protogen](https://github.com/frees-io/sbt-freestyle-protogen), an Sbt plugin to generate `.proto` files from the `frees-rpc` service definitions.
 
 ### Plugin Installation
 
@@ -288,8 +299,8 @@ addSbtPlugin("io.frees" % "sbt-frees-protogen" % "0.0.13")
 
 There are a couple of settings key that can be configured according to the needs:
 
-* `protoGenSourceDir`: the Scala source directory, where your `frees-rpc` definitions are placed. By default: `baseDirectory.value / "src" / "main" / "scala"`.
-* `protoGenTargetDir `: The Protocol Buffers target directory, where the `protoGen` task will write the `.proto` files, based on frees-rpc service definitions. By default: `baseDirectory.value / "src" / "main" / "proto"`.
+* **`protoGenSourceDir`**: the Scala source directory, where your `frees-rpc` definitions are placed. By default: `baseDirectory.value / "src" / "main" / "scala"`.
+* **`protoGenTargetDir`**: The Protocol Buffers target directory, where the `protoGen` task will write the `.proto` files, based on frees-rpc service definitions. By default: `baseDirectory.value / "src" / "main" / "proto"`.
 
 Directories must exist, otherwise the `protoGen` task will fail.
 
@@ -301,7 +312,7 @@ At this moment, each time you want to update your `.proto` files from the scala 
 sbt protoGen
 ```
 
-Using the example above, the result would be (`/src/main/proto/service.proto`, in case the scala file is named as `service.scala`):
+Using the example above, the result would be placed at `/src/main/proto/service.proto`, in case the scala file is named as `service.scala`, and the content will be similar to:
 
 ```
 // This file has been automatically generated for use by
@@ -501,10 +512,14 @@ In our example, we are going to use the same Execution Context described for the
 
 We are going to interpret to `monix.eval.Task`, however, behind the scenes, we will use the [cats-effect](https://github.com/typelevel/cats-effect) `IO` monad as abstraction. Concretely, Freestyle has an integration with `cats-effect` that we need to add to our project if we are following the same pattern:
 
+[comment]: # (Start Replace)
+
 ```scala
 // build.sbt
 libraryDependencies += "io.frees" %% "frees-async-cats-effect" % "0.4.1"
 ```
+
+[comment]: # (End Replace)
 
 #### Runtime Implicits
 
