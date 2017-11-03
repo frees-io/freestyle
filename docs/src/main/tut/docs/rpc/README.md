@@ -27,7 +27,12 @@ permalink: /docs/rpc
     - [Server Runtime](#server-runtime)
       - [Execution Context](#execution-context)
       - [Runtime Implicits](#runtime-implicits)
-      - [Server Bootstrap](#server-bootstrap)
+    - [Server Bootstrap](#server-bootstrap)
+    - [Client](#client)
+    - [Client Runtime](#client-runtime)
+      - [Execution Context](#execution-context-1)
+      - [Runtime Implicits](#runtime-implicits-1)
+    - [Client Program](#client-program)
 - [References](#references)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
@@ -459,7 +464,7 @@ Few additional notes:
 	* `F[_]` would be our algebra, which matches with our Greeter service definition.
 	* `M[_]`, the target monad, in our example: `scala.concurrent.Future`.
 
-#### Server Bootstrap
+### Server Bootstrap
 
 What else is needed? We just need to define a `main` method and:
 
@@ -484,7 +489,115 @@ Once all the runtime requirements are in place (`import gserver.implicits._`), w
 
 ### Client
 
+`frees-rpc` derives a client automatically, based on the protocol. This is really useful because you could distribute it depending on the protocol/service definitions, if you change something in your protocol definition, you will get a new client for free without writing anything.
 
+### Client Runtime
+
+Similarly as we saw for the server case, in this section we are defining all the client runtime configurations needed for the communication with the server.
+
+#### Execution Context
+
+In our example, we are going to use the same Execution Context described for the Server. Nevertheless, for the sake of seeing a slightly different runtime configuration, our client will be interpreting to `monix.eval.Task`. Hence, in this case we only would need the `monix.execution.Scheduler` implicit evidence (the `scala.concurrent` one wouldn't be necessary).
+
+We are going to interpret to `monix.eval.Task`, however, behind the scenes, we will use the [cats-effect](https://github.com/typelevel/cats-effect) `IO` monad as abstraction. Concretely, Freestyle has an integration with `cats-effect` that we need to add to our project if we are following the same pattern:
+
+```scala
+// build.sbt
+libraryDependencies += "io.frees" %% "frees-async-cats-effect" % "0.4.1"
+```
+
+#### Runtime Implicits
+
+First of all, we need to configure how the client will reach the server, in terms of transport layer. There are two supported ways:
+
+* By Address (host/port): brings the ability to create a channel with the target's address and port number.
+* By Target: it can create a channel with a target string, which can be either a valid [NameResolver](https://grpc.io/grpc-java/javadoc/io/grpc/NameResolver.html)-compliant URI, or an authority string.
+
+Additionally, we can add more optional configurations that can be used when the connection is being done. All the options are available [here](https://github.com/frees-io/freestyle-rpc/blob/6b0e926a5a14fbe3d9282e8c78340f2d9a0421f3/rpc/src/main/scala/client/ChannelConfig.scala#L33-L46). In our example, as we will see shortly we are going to skip the negotiation (`UsePlaintext(true)`).
+
+Given the transport settings and list of optional configurations, we can create the [ManagedChannel.html](https://grpc.io/grpc-java/javadoc/io/grpc/ManagedChannel.html) object, using the `ManagedChannelInterpreter` builder.
+
+How our code looks like taking into account all we have just said?
+
+```tut:book
+import cats.implicits._
+import freestyle.implicits._
+import freestyle.config.implicits._
+import freestyle.asyncCatsEffect.implicits._
+import freestyle.rpc.client._
+import freestyle.rpc.client.implicits._
+import monix.eval.Task
+import io.grpc.ManagedChannel
+import service._
+
+import scala.concurrent.Future
+import scala.util.{Failure, Success, Try}
+
+object gclient {
+
+  trait ClientConf {
+
+    val channelFor: ManagedChannelFor =
+      ConfigForAddress[ChannelConfig.Op]("rpc.host", "rpc.port")
+        .interpret[Try] match {
+        case Success(c) => c
+        case Failure(e) =>
+          e.printStackTrace()
+          throw new RuntimeException("Unable to load the client configuration", e)
+      }
+
+    val channelConfigList: List[ManagedChannelConfig] = List(UsePlaintext(true))
+
+    val managedChannelInterpreter =
+      new ManagedChannelInterpreter[Future](channelFor, channelConfigList)
+
+    val channel: ManagedChannel = managedChannelInterpreter.build(channelFor, channelConfigList)
+
+  }
+
+  trait Implicits extends CommonRuntime with ClientConf {
+
+    implicit val serviceClient: Greeter.Client[Task] =
+      Greeter.client[Task](channel)
+  }
+
+  object implicits extends Implicits
+
+}
+```
+
+**Note**: `host` and `port` would be read from the application configuration file.
+
+### Client Program
+
+Once we have our runtime configuration defined as above, everything is easier. From now on, no more magic, we need to implement our client business logic.
+
+Following our dummy quickstart, this would be an example:
+
+```tut:book
+import service._
+import gclient.implicits._
+import monix.eval.Task
+
+import scala.concurrent.Await
+import scala.concurrent.duration._
+
+object RPCDemoApp {
+
+  def clientProgram(implicit C: Greeter.Client[Task]): Task[HelloResponse] =
+    C.sayHello(HelloRequest("foo"))
+
+  def main(args: Array[String]): Unit = {
+
+    val result: HelloResponse =
+      Await.result(clientProgram.runAsync, Duration.Inf)
+
+    println(s"Result = $result")
+
+  }
+
+}
+```
 
 # References
 
