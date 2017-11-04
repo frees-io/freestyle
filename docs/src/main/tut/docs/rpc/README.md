@@ -13,6 +13,7 @@ permalink: /docs/rpc
 **Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
 
   - [What’s frees-rpc](#whats-frees-rpc)
+  - [Installation](#installation)
   - [About gRPC](#about-grpc)
   - [Messages and Services](#messages-and-services)
     - [gRPC](#grpc)
@@ -33,6 +34,8 @@ permalink: /docs/rpc
       - [Execution Context](#execution-context-1)
       - [Runtime Implicits](#runtime-implicits-1)
     - [Client Program](#client-program)
+  - [Next Steps](#next-steps)
+  - [Comparing HTTP and RPC](#comparing-http-and-rpc)
 - [References](#references)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
@@ -479,7 +482,7 @@ Few additional notes:
 
 What else is needed? We just need to define a `main` method and:
 
-```scala
+```tut:book
 import cats.implicits._
 import freestyle.rpc.server.GrpcServerApp
 import freestyle.rpc.server.implicits._
@@ -614,6 +617,16 @@ object RPCDemoApp {
 }
 ```
 
+## Next Steps
+
+If you want to go deeper with `frees-rpc`, we have a complete example at [freestyle-rpc-examples](https://github.com/frees-io/freestyle-rpc-examples) repository, which is based on the [Route Guide Demo](https://grpc.io/docs/tutorials/basic/java.html#generating-client-and-server-code) originally shared by the [gRPC Java Project](https://github.com/grpc/grpc-java/tree/6ea2b8aacb0a193ac727e061bc228b40121460e3/examples/src/main/java/io/grpc/examples/routeguide).
+
+## Comparing HTTP and RPC
+
+This extra section is not specifically about `frees-rpc`. Very often our microservices architectures are based on `HTTP` where perhaps the it is not the best glue to connect them, and `RPC` might fit better.
+
+[Metrifier](https://github.com/47deg/metrifier) is a project where we compare, in different bounded ecosystems, `HTTP` and` RPC`. And it turns out RPC is usually faster than RPC. If you want to know more about it, we encourage you to take look at it.
+
 # References
 
 * [Freestyle](http://frees.io/)
@@ -623,3 +636,4 @@ object RPCDemoApp {
 * [PBDirect](https://github.com/btlines/pbdirect)
 * [Monix](https://monix.io)
 * [gRPC Java API](https://grpc.io/grpc-java/javadoc/)
+* [Metrifier](https://github.com/47deg/metrifier)
