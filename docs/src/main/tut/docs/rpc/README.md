@@ -8,7 +8,7 @@ permalink: /docs/rpc
 
 [RPC] atop **Freestyle** is **`frees-rpc`**.
 
-In other words [frees-rpc] is a Functional Programming wrapper of [gRPC], the Java [gRPC] implementation, `HTTP/2` based [RPC].
+In other words, [frees-rpc] is a Functional Programming wrapper of [gRPC], the Java [gRPC] implementation, `HTTP/2` based [RPC].
 
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
@@ -36,6 +36,7 @@ In other words [frees-rpc] is a Functional Programming wrapper of [gRPC], the Ja
       - [Execution Context](#execution-context-1)
       - [Runtime Implicits](#runtime-implicits-1)
     - [Client Program](#client-program)
+  - [frees-rpc annotations](#frees-rpc-annotations)
   - [Next Steps](#next-steps)
   - [Comparing HTTP and RPC](#comparing-http-and-rpc)
 - [References](#references)
@@ -68,7 +69,7 @@ Now, in the incoming sections let's see how we would implement RPC protocols (Me
 
 ### gRPC
 
-As you might know, [gRPC] uses protocol buffers (*protobuf* from now on) by default:
+As you might know, [gRPC] uses protocol buffers (a.k.a. *protobuf*) by default:
 
 * As the Interface Definition Language (IDL) for describing both the service interface and the structure of the payload messages. It is possible to use other alternatives if desired. 
 * For serializing/deserializing structure data, similarly as you do with [JSON] data, defining files `.json` extension, with protobuf you have to define proto files with `.proto` as extension.
@@ -180,7 +181,7 @@ object protocols {
 }
 ```
 
-Naturally, the [RPC] services are grouped in a [@free algebra](http://frees.io/docs/core/algebras/). Hence, we are following one of the main principles of Freestyle, you only need to concentrate on the API that you want to expose as abstract smart constructors, without worrying how they will be implemented.
+Naturally, the [RPC] services are grouped in a [@free algebra]. Hence, we are following one of the main principles of Freestyle, you only need to concentrate on the API that you want to expose as abstract smart constructors, without worrying how they will be implemented.
 
 In addition, we are using some of additional annotations:
 
@@ -619,6 +620,18 @@ object RPCDemoApp {
 }
 ```
 
+## frees-rpc annotations
+
+Below a summary all the current annotations that [frees-rpc] provides:
+
+Annotation | Scope | Arguments | Description
+--- | --- | --- | --- 
+@service | [@free algebra] | - | Tags the `@free` algebra as [RPC] service, in order to derive server and client code (macro expansion). **Important**: `@free` annotation should go first, followed by `@service` annotation, and not inversely.
+@rpc | `Method` | - | Indicates the method is an RPC service.
+@stream | `Method` | [`S <: StreamingType`] | There are three different types of streaming: server, client and bidirectional. Hence, `S` type parameter can be either `ResponseStreaming`, `RequestStreaming`, `BidirectionalStreaming`, respectively.
+@message | `Case Class` | - | Tags a case class a protobuf message.
+@option | `Object` | [name: String, value: String, quote: Boolean] | used to define the equivalent headers in `.proto` files
+
 ## Next Steps
 
 If you want to go deeper with [frees-rpc], we have a complete example at [freestyle-rpc-examples] repository, which is based on the [Route Guide Demo](https://grpc.io/docs/tutorials/basic/java.html#generating-client-and-server-code) originally shared by the [gRPC Java Project](https://github.com/grpc/grpc-java/tree/6ea2b8aacb0a193ac727e061bc228b40121460e3/examples/src/main/java/io/grpc/examples/routeguide).
@@ -648,6 +661,7 @@ This extra section is not specifically about [frees-rpc]. Very often our microse
 [Java gRPC]: https://github.com/grpc/grpc-java
 [JSON]: https://en.wikipedia.org/wiki/JSON
 [gRPC guide]: https://grpc.io/docs/guides/
+[@free algebra]: http://frees.io/docs/core/algebras/
 [ScalaPB]: https://scalapb.github.io/
 [PBDirect]: https://github.com/btlines/pbdirect
 [scalameta]: https://github.com/scalameta/scalameta
