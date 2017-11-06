@@ -8,7 +8,7 @@ permalink: /docs/rpc
 
 [RPC] atop **Freestyle** is **`frees-rpc`**.
 
-In other words, [frees-rpc] is a Functional Programming wrapper of [gRPC], the Java [gRPC] implementation, `HTTP/2` based [RPC].
+Freestyle RPC is a purely functional library for building RPC endpoint based services with support for [RPC] and [HTTP/2].
 
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
@@ -84,7 +84,7 @@ message Person {
 }
 ```
 
-Then, once you’ve specified your data structures, you can use the protobuf compiler `protoc` to generate data access classes in your preferred language(s) from your proto definition. In the Scala ecosystem, the most widely used is [ScalaPB].
+Then, once you’ve specified your data structures, you can use the protobuf compiler `protoc` to generate data access classes in your preferred language(s) from your proto definition.
 
 Likewise you can define [gRPC] services in your proto files, with RPC method parameters and return types specified as protocol buffer messages:
 
@@ -106,13 +106,13 @@ message HelloReply {
 }
 ```
 
-Correspondingly, [gRPC] also uses protoc with a special [gRPC] plugin to generate code from your proto file for this `Greeter` RPC service. See [this ScalaPB section](https://scalapb.github.io/grpc.html) for a deeper explanation.
+Correspondingly, [gRPC] also uses protoc with a special [gRPC] plugin to generate code from your proto file for this `Greeter` RPC service.
 
 You can find more information about Protocol Buffers in the [Protocol Buffers documentation](https://developers.google.com/protocol-buffers/docs/overview).
 
 ### frees-rpc
 
-In the previous section, we’ve seen an overview about what [gRPC] and [ScalaPB] offer for defining protocols and generating code (compiling protocol buffers). Now, let’s see how [frees-rpc] offers the same but in the **Freestyle** fashion, following the FP principles.
+In the previous section, we’ve seen an overview about what [gRPC] offers for defining protocols and generating code (compiling protocol buffers). Now, let’s see how [frees-rpc] offers the same but in the **Freestyle** fashion, following the FP principles.
 
 First things first, the main difference respect to [gRPC] is that [frees-rpc] doesn’t need `.proto` files, but it still uses protobuf, thanks to the [PBDirect] library, which allows to read and write Scala objects directly to protobuf with no `.proto` file definitions. Therefore, in summary we have:
 
@@ -650,19 +650,20 @@ This extra section is not specifically about [frees-rpc]. Very often our microse
 * [Protocol Buffers Docs](https://developers.google.com/protocol-buffers/docs/overview)
 * [scalameta](https://github.com/scalameta/scalameta)
 * [PBDirect](https://github.com/btlines/pbdirect)
+* [ScalaPB](https://scalapb.github.io/)
 * [Monix](https://monix.io)
 * [gRPC Java API](https://grpc.io/grpc-java/javadoc/)
 * [Metrifier](https://github.com/47deg/metrifier)
 
 
 [RPC]: https://en.wikipedia.org/wiki/Remote_procedure_call
+[HTTP/2]: https://http2.github.io/
 [gRPC]: https://grpc.io/
 [frees-rpc]: https://github.com/frees-io/freestyle-rpc
 [Java gRPC]: https://github.com/grpc/grpc-java
 [JSON]: https://en.wikipedia.org/wiki/JSON
 [gRPC guide]: https://grpc.io/docs/guides/
 [@free algebra]: http://frees.io/docs/core/algebras/
-[ScalaPB]: https://scalapb.github.io/
 [PBDirect]: https://github.com/btlines/pbdirect
 [scalameta]: https://github.com/scalameta/scalameta
 [Monix]: https://monix.io/
