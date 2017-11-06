@@ -6,7 +6,9 @@ permalink: /docs/rpc
 
 # Freestyle-RPC
 
-[RPC](https://en.wikipedia.org/wiki/Remote_procedure_call) atop **Freestyle** is `frees-rpc`, in other words `frees-rpc` is a Functional Programming wrapper of [gRPC](https://grpc.io/).
+[RPC] atop **Freestyle** is **`frees-rpc`**.
+
+In other words [frees-rpc] is a Functional Programming wrapper of [gRPC], the Java [gRPC] implementation, `HTTP/2` based [RPC].
 
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
@@ -42,7 +44,7 @@ permalink: /docs/rpc
 
 ## What’s frees-rpc
 
-`frees-rpc` brings the ability to combine RPC protocols, services and clients in your `Freestyle` program, thanks to [gRPC](https://grpc.io/). Although it's fully integrated with gRPC, there are some important differences when defining the protocols, as we’ll see later on, since `frees-rpc` follows the same philosophy that `Freestyle` core, being macro-powered.
+[frees-rpc] brings the ability to combine [RPC] protocols, services and clients in your `Freestyle` program, thanks to [gRPC]. Although it's fully integrated with [gRPC], there are some important differences when defining the protocols, as we’ll see later on, since [frees-rpc] follows the same philosophy that `Freestyle` core, being macro-powered.
 
 ## Installation
 
@@ -57,17 +59,21 @@ libraryDependencies += "io.frees" %% "frees-rpc" % "0.1.2"
 ## About gRPC
 
 > [gRPC](https://grpc.io/about/) is a modern open source high performance RPC framework that can run in any environment. It can efficiently connect services in and across data centers with pluggable support for load balancing, tracing, health checking and authentication. It is also applicable in last mile of distributed computing to connect devices, mobile applications and browsers to backend services.
+ 
+In this project, we are focused in the [Java gRPC] implementation.
+
+Now, in the incoming sections let's see how we would implement RPC protocols (Messages and Services) in both *gRPC* and *frees-rpc*.
 
 ## Messages and Services
 
 ### gRPC
 
-`gRPC` uses protocol buffers (protobuf from now on):
+As you might know, [gRPC] uses protocol buffers (*protobuf* from now on) by default:
 
 * As the Interface Definition Language (IDL) for describing both the service interface and the structure of the payload messages. It is possible to use other alternatives if desired. 
-* For serializing/deserializing structure data, similarly as you do with [JSON](https://en.wikipedia.org/wiki/JSON) data, defining files `.json` extension, with protocol buffers you have to define proto files with `.proto` as extension.
+* For serializing/deserializing structure data, similarly as you do with [JSON] data, defining files `.json` extension, with protobuf you have to define proto files with `.proto` as extension.
 
-In the example given in the [gRPC guide](https://grpc.io/docs/guides/), you might have a proto file like this:
+In the example given in the [gRPC guide], you might have a proto file like this:
 
 ```
 message Person {
@@ -77,9 +83,9 @@ message Person {
 }
 ```
 
-Then, once you’ve specified your data structures, you can use the protocol buffer compiler `protoc` to generate data access classes in your preferred language(s) from your proto definition. In the Scala ecosystem, the most widely used is [ScalaPB](https://scalapb.github.io/).
+Then, once you’ve specified your data structures, you can use the protobuf compiler `protoc` to generate data access classes in your preferred language(s) from your proto definition. In the Scala ecosystem, the most widely used is [ScalaPB].
 
-Likewise you can define gRPC services in your proto files, with RPC method parameters and return types specified as protocol buffer messages:
+Likewise you can define [gRPC] services in your proto files, with RPC method parameters and return types specified as protocol buffer messages:
 
 ```
 // The greeter service definition.
@@ -99,28 +105,28 @@ message HelloReply {
 }
 ```
 
-Correspondingly, gRPC also uses protoc with a special gRPC plugin to generate code from your proto file for this Greeter RPC service. See [this ScalaPB section](https://scalapb.github.io/grpc.html) for a deeper explanation.
+Correspondingly, [gRPC] also uses protoc with a special [gRPC] plugin to generate code from your proto file for this `Greeter` RPC service. See [this ScalaPB section](https://scalapb.github.io/grpc.html) for a deeper explanation.
 
 You can find more information about Protocol Buffers in the [Protocol Buffers documentation](https://developers.google.com/protocol-buffers/docs/overview).
 
 ### frees-rpc
 
-In the previous section, we’ve seen an overview about what gRPC and ScalaPB offer for defining protocols and generating (compiling protocol buffers) code. Now, let’s see how `frees-rpc` offers the same but in the Freestyle fashion, following the FP principles.
+In the previous section, we’ve seen an overview about what [gRPC] and [ScalaPB] offer for defining protocols and generating code (compiling protocol buffers). Now, let’s see how [frees-rpc] offers the same but in the **Freestyle** fashion, following the FP principles.
 
-First things first, the main difference respect to gRPC is that `frees-rpc` doesn’t need `.proto` files, but it still uses protocol buffers, thanks to the [PBDirect](https://github.com/btlines/pbdirect) library, which allows to read and write Scala objects directly to Protobuf with no `.proto` file definitions. Therefore, in summary we have:
+First things first, the main difference respect to [gRPC] is that [frees-rpc] doesn’t need `.proto` files, but it still uses protobuf, thanks to the [PBDirect] library, which allows to read and write Scala objects directly to protobuf with no `.proto` file definitions. Therefore, in summary we have:
 
-* Your protocols, both messages and services will reside in you scala files, together with your business-logic, using scala-meta annotations to set them up. We’ll see more details shortly.
-* Instead of reading `.proto` files to set up the RPC services and messages, `frees-rpc` offers (as an optional feature) generating them, based on your protocols defined in your Scala code. This feature is offered to keep compatibility with other languages and systems out of Scala.
+* Your protocols, both messages and services will reside in you scala files, together with your business-logic, using [scalameta] annotations to set them up. We’ll see more details shortly.
+* Instead of reading `.proto` files to set up the [RPC] messages and services, [frees-rpc] offers (as an optional feature) generating them, based on your protocols defined in your Scala code. This feature is offered to keep compatibility with other languages and systems out of Scala. We'll checkout out more about this feature in [this section](#generating-a-proto-file).
 
-Let’s start seeing how to define the Person message that we saw previously. 
-These are the scala imports we would need:
+Let’s start seeing how to define the `Person` message that we saw previously.
+Before starting, these are the scala imports we would need:
 
 ```tut:silent
 import freestyle._
 import freestyle.rpc.protocol._
 ``` 
 
-Person definition would be defined as follows:
+`Person` definition would be defined as follows:
 
 ```tut:book
 /**
@@ -136,7 +142,7 @@ case class Person(name: String, id: Int, has_ponycopter: Boolean)
 
 As we can see, it’s quite simple since it’s just a Scala case class preceded by the `@message` annotation:
 
-By the same token, let’s see now how the `Greeter` service would be translated to `frees-rpc` style (in your `.scala` file):
+By the same token, let’s see now how the `Greeter` service would be translated to [frees-rpc] style (in your `.scala` file):
 
 ```tut:book
 @option(name = "java_package", value = "quickstart", quote = true)
@@ -174,22 +180,22 @@ object protocols {
 }
 ```
 
-Naturally, the RPC services are grouped in a [@free algebra](http://frees.io/docs/core/algebras/). Hence, we are following one of the main principles of Freestyle, you only need to concentrate on the API that you want to be exposed as abstract smart constructors, without worrying how they will be implemented.
+Naturally, the [RPC] services are grouped in a [@free algebra](http://frees.io/docs/core/algebras/). Hence, we are following one of the main principles of Freestyle, you only need to concentrate on the API that you want to expose as abstract smart constructors, without worrying how they will be implemented.
 
-In addition, we are using a some of additional annotations:
+In addition, we are using some of additional annotations:
 
 * `@option`: used to define the equivalent headers in `.proto` files.
-* `@service`: it tags the `@free` algebra as RPC service, in order to derive server and client code (macro expansion). **Important**: `@free` annotation should go first, followed by `@service` annotation, and not inversely.
-* `rpc`: this annotation indicates the method is an RPC service.
+* `@service`: it tags the `@free` algebra as [RPC] service, in order to derive server and client code (macro expansion). **Important**: `@free` annotation should go first, followed by `@service` annotation, and not inversely.
+* `@rpc`: this annotation indicates the method is an RPC service.
 
 We'll see more details about these and other annotations in the following sections.
 
 ## Service Methods
 
-As `gRPC`, `frees-rpc` allows you to define four kinds of service method:
+As [gRPC], [frees-rpc] allows you to define four kinds of service method:
 
-* **Unary RPC**: simplest way of communication, one request/ one response.
-* **Server streaming RPC**: similar to the unary, but in this case the server will send back a stream of responses for the client request.
+* **Unary RPC**: simplest way of communication, one client request and one server response.
+* **Server streaming RPC**: similar to the unary, but in this case the server will send back a stream of responses for a client request.
 * **Client streaming RPC**: in this case is the client who sends a stream of requests. The server will respond with a single response.
 * **Bidirectional streaming RPC**: it would be a mix of server and client streaming, since both sides will be sending a stream of data.
 
@@ -280,15 +286,13 @@ The code might be explanatory by itself but let's review the different services 
 * `lotsOfGreetings `: Client streaming RPC, `@rpc` should be scorted by the `@stream[RequestStreaming.type]` annotation.
 * `bidiHello `: Bidirectional streaming RPC, where `@rpc` is accompanied by the `@stream[BidirectionalStreaming.type]` annotation.
 
-**Note**: in `frees-rpc`, the streaming features have been implemented with `monix.reactive.Observable`, see [Monix Docs](https://monix.io/docs/2x/reactive/observable.html) for a wide explanation. These monix extensions have implemented atop the [gRPC Java API](https://grpc.io/grpc-java/javadoc/) and the `StreamObserver` interface.
-
-So far so good, no much code, no business logic, just a protocol definition with Scala annotations.
+**Note**: in [frees-rpc], the streaming features have been implemented with `monix.reactive.Observable`, see [Monix Docs](https://monix.io/docs/2x/reactive/observable.html) for a wide explanation. These monix extensions have implemented atop the [gRPC Java API](https://grpc.io/grpc-java/javadoc/) and the `StreamObserver` interface.
 
 ## Generating a .proto file
 
-Before entering in implementation details, we mentioned that `frees-rpc` ecosystem brings the ability to generate `.proto` files from the Scala definition, in order to keep compatibility with other languages and systems out of Scala.
+Before entering in implementation details, we mentioned that [frees-rpc] ecosystem brings the ability to generate `.proto` files from the Scala definition, in order to keep compatibility with other languages and systems out of Scala.
 
-This responsibility relies on [sbt-freestyle-protogen](https://github.com/frees-io/sbt-freestyle-protogen), an Sbt plugin to generate `.proto` files from the `frees-rpc` service definitions.
+This responsibility relies on [sbt-freestyle-protogen](https://github.com/frees-io/sbt-freestyle-protogen), an Sbt plugin to generate `.proto` files from the [frees-rpc] service definitions.
 
 ### Plugin Installation
 
@@ -302,8 +306,8 @@ addSbtPlugin("io.frees" % "sbt-frees-protogen" % "0.0.13")
 
 There are a couple of settings key that can be configured according to the needs:
 
-* **`protoGenSourceDir`**: the Scala source directory, where your `frees-rpc` definitions are placed. By default: `baseDirectory.value / "src" / "main" / "scala"`.
-* **`protoGenTargetDir`**: The Protocol Buffers target directory, where the `protoGen` task will write the `.proto` files, based on frees-rpc service definitions. By default: `baseDirectory.value / "src" / "main" / "proto"`.
+* **`protoGenSourceDir`**: the Scala source directory, where your [frees-rpc] definitions are placed. By default: `baseDirectory.value / "src" / "main" / "scala"`.
+* **`protoGenTargetDir`**: The protobuf target directory, where the `protoGen` task will write the `.proto` files, based on [frees-rpc] service definitions. By default: `baseDirectory.value / "src" / "main" / "proto"`.
 
 Directories must exist, otherwise the `protoGen` task will fail.
 
@@ -315,7 +319,7 @@ At this moment, each time you want to update your `.proto` files from the scala 
 sbt protoGen
 ```
 
-Using the example above, the result would be placed at `/src/main/proto/service.proto`, in case the scala file is named as `service.scala`, and the content will be similar to:
+Using the example above, the result would be placed at `/src/main/proto/service.proto`, in the case the scala file is named as `service.scala`. The content should be similar to:
 
 ```
 // This file has been automatically generated for use by
@@ -345,13 +349,13 @@ service Greeter {
 
 ## RPC Service Implementations
 
-In this section we are going to see how to complete our quickstart example. We'll se both sides, server and client.
+So far so good, no much code, no business logic, just a protocol definition with Scala annotations. Conversely, in this section we are going to see how to complete our quickstart example. We'll se both sides, server and client.
 
 ### Server
 
 Predictably, generating the server code it's just implement a service [Handler](http://frees.io/docs/core/interpreters/).
 
-Next, our dummy Greeter server implementation:
+Next, our dummy `Greeter` server implementation:
 
 ```tut:book
 import cats.~>
@@ -406,11 +410,11 @@ As you can see, the generic handler above requires `F` as type parameter, which 
 
 #### Execution Context
 
-In `frees-rpc` programs we'll need, at least an implicit evidence related to the Monix executed context: `monix.execution.Scheduler`. 
+In [frees-rpc] programs we'll need at least, an implicit evidence related to the [Monix] Execution Context: `monix.execution.Scheduler`. 
 
 > The `monix.execution.Scheduler` is inspired by `ReactiveX`, being an enhanced Scala `ExecutionContext` and also a replacement for Java’s `ScheduledExecutorService`, but also for Javascript’s `setTimeout`.
 
-In this case, for our example, we need to provide a `scala.concurrent.ExecutionContext` implicit evidence, because we'll interpret our program to `scala.concurrent.Future`:
+Here, for our example, we also need to provide a `scala.concurrent.ExecutionContext` implicit evidence, because we'll interpret our program to `scala.concurrent.Future`:
 
 ```tut:book
 import scala.concurrent.ExecutionContext
@@ -433,9 +437,9 @@ Now, we need to provide implicitly two things:
 * A runtime interpreter of our `ServiceHandler` tied to an specific type. In our case we'll use `scala.concurrent.Future`.
 * A Natural Transformation implicit evidence of `GrpcServer.Op ~> F` where `F` would be your target monad, in our example the implicit evidence would be: `GrpcServer.Op ~> Future`. To tackle this we have to consider few things:
 	* First of all, we need to decide the rpc port where server will bootstrap.
-	* Then, we need to register the set of configurations we want to add to our gRPC server, like the fact of adding our `Greeter` service. All these configurations are aggregated in a `List[GrpcConfig]`. Later on, an internal builder will build the final server based on this list. The full available list of settings are exposed in [this file](https://github.com/frees-io/freestyle-rpc/blob/master/rpc/src/main/scala/server/GrpcConfig.scala).
+	* Then, we need to register the set of configurations we want to add to our [gRPC] server, like the fact of adding our `Greeter` service. All these configurations are aggregated in a `List[GrpcConfig]`. Later on, an internal builder will build the final server based on this list. The full available list of settings are exposed in [this file](https://github.com/frees-io/freestyle-rpc/blob/master/rpc/src/main/scala/server/GrpcConfig.scala).
 	* Finally, we need to compose:
-		* A runtime interpreter of `freestyle.rpc.server.handlers.GrpcServerHandler`, which is another handler encharged of managing the server.
+		* A runtime interpreter of `freestyle.rpc.server.handlers.GrpcServerHandler`, which it's another handler encharged of managing the server.
 		* With another runtime interpreter of `freestyle.rpc.server.GrpcKInterpreter`, who will configure the server.
 
 In summary, this would be the result:
@@ -471,16 +475,16 @@ object gserver {
 }
 ```
 
-Few additional notes:
+A few additional notes related to the previous snippet of code:
 
 * Server will bootstrap on port `8080`.
-* `Greeter.bindService` is auto-derived method which will create the binding service for gRPC, behind the scenes. It expect two type parameters, `F[_]` and `M[_]`.
-	* `F[_]` would be our algebra, which matches with our Greeter service definition.
+* `Greeter.bindService` is an auto-derived method which will create, behind the scenes, the binding service for [gRPC]. It expect two type parameters, `F[_]` and `M[_]`.
+	* `F[_]` would be our algebra, which matches with our `Greeter` service definition.
 	* `M[_]`, the target monad, in our example: `scala.concurrent.Future`.
 
 ### Server Bootstrap
 
-What else is needed? We just need to define a `main` method and:
+What else is needed? We just need to define a `main` method:
 
 ```tut:book
 import cats.implicits._
@@ -499,11 +503,11 @@ object RPCServer {
 }
 ```
 
-Once all the runtime requirements are in place (`import gserver.implicits._`), we only have to write the previous piece of code, which would be pretty much the same in all the cases (except if your target Monad is different from `Future`).
+Fortunately, once all the runtime requirements are in place (**`import gserver.implicits._`**), we only have to write the previous piece of code, which would be pretty much the same in all the cases (except if your target Monad is different from `scala.concurrent.Future`).
 
 ### Client
 
-`frees-rpc` derives a client automatically, based on the protocol. This is really useful because you could distribute it depending on the protocol/service definitions, if you change something in your protocol definition, you will get a new client for free without writing anything.
+[frees-rpc] derives a client automatically, based on the protocol. This is really useful because you could distribute it depending on the protocol/service definitions, if you change something in your protocol definition, you will get a new client for free without writing anything.
 
 ### Client Runtime
 
@@ -513,7 +517,7 @@ Similarly as we saw for the server case, in this section we are defining all the
 
 In our example, we are going to use the same Execution Context described for the Server. Nevertheless, for the sake of seeing a slightly different runtime configuration, our client will be interpreting to `monix.eval.Task`. Hence, in this case we only would need the `monix.execution.Scheduler` implicit evidence (the `scala.concurrent` one wouldn't be necessary).
 
-We are going to interpret to `monix.eval.Task`, however, behind the scenes, we will use the [cats-effect](https://github.com/typelevel/cats-effect) `IO` monad as abstraction. Concretely, Freestyle has an integration with `cats-effect` that we need to add to our project if we are following the same pattern:
+We are going to interpret to `monix.eval.Task`, however, behind the scenes, we will use the [cats-effect] `IO` monad as abstraction. Concretely, Freestyle has an integration with `cats-effect` that we need to add to our project if we are following the same pattern:
 
 [comment]: # (Start Replace)
 
@@ -588,9 +592,7 @@ object gclient {
 
 ### Client Program
 
-Once we have our runtime configuration defined as above, everything is easier. From now on, no more magic, we need to implement our client business logic.
-
-Following our dummy quickstart, this would be an example:
+Once we have our runtime configuration defined as above, everything is easier. Following our dummy quickstart, this would be an example of a client application:
 
 ```tut:book
 import service._
@@ -619,13 +621,13 @@ object RPCDemoApp {
 
 ## Next Steps
 
-If you want to go deeper with `frees-rpc`, we have a complete example at [freestyle-rpc-examples](https://github.com/frees-io/freestyle-rpc-examples) repository, which is based on the [Route Guide Demo](https://grpc.io/docs/tutorials/basic/java.html#generating-client-and-server-code) originally shared by the [gRPC Java Project](https://github.com/grpc/grpc-java/tree/6ea2b8aacb0a193ac727e061bc228b40121460e3/examples/src/main/java/io/grpc/examples/routeguide).
+If you want to go deeper with [frees-rpc], we have a complete example at [freestyle-rpc-examples] repository, which is based on the [Route Guide Demo](https://grpc.io/docs/tutorials/basic/java.html#generating-client-and-server-code) originally shared by the [gRPC Java Project](https://github.com/grpc/grpc-java/tree/6ea2b8aacb0a193ac727e061bc228b40121460e3/examples/src/main/java/io/grpc/examples/routeguide).
 
 ## Comparing HTTP and RPC
 
-This extra section is not specifically about `frees-rpc`. Very often our microservices architectures are based on `HTTP` where perhaps the it is not the best glue to connect them, and `RPC` might fit better.
+This extra section is not specifically about [frees-rpc]. Very often our microservices architectures are based on `HTTP` where perhaps the it is not the best glue to connect them, and [RPC] services might fit better.
 
-[Metrifier](https://github.com/47deg/metrifier) is a project where we compare, in different bounded ecosystems, `HTTP` and` RPC`. And it turns out RPC is usually faster than RPC. If you want to know more about it, we encourage you to take look at it.
+[Metrifier] is a project where we compare, in different bounded ecosystems, `HTTP` and` RPC`. And it turns out RPC is usually faster than RPC. If you want to know more about it, we encourage you to take look at it.
 
 # References
 
@@ -633,7 +635,23 @@ This extra section is not specifically about `frees-rpc`. Very often our microse
 * [RPC](https://en.wikipedia.org/wiki/Remote_procedure_call)
 * [gRPC](https://grpc.io/)
 * [Protocol Buffers Docs](https://developers.google.com/protocol-buffers/docs/overview)
+* [scalameta](https://github.com/scalameta/scalameta)
 * [PBDirect](https://github.com/btlines/pbdirect)
 * [Monix](https://monix.io)
 * [gRPC Java API](https://grpc.io/grpc-java/javadoc/)
 * [Metrifier](https://github.com/47deg/metrifier)
+
+
+[RPC]: https://en.wikipedia.org/wiki/Remote_procedure_call
+[gRPC]: https://grpc.io/
+[frees-rpc]: https://github.com/frees-io/freestyle-rpc
+[Java gRPC]: https://github.com/grpc/grpc-java
+[JSON]: https://en.wikipedia.org/wiki/JSON
+[gRPC guide]: https://grpc.io/docs/guides/
+[ScalaPB]: https://scalapb.github.io/
+[PBDirect]: https://github.com/btlines/pbdirect
+[scalameta]: https://github.com/scalameta/scalameta
+[Monix]: https://monix.io/
+[cats-effect]: https://github.com/typelevel/cats-effect
+[freestyle-rpc-examples]: https://github.com/frees-io/freestyle-rpc-examples
+[Metrifier]: https://github.com/47deg/metrifier
