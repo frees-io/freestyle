@@ -46,6 +46,8 @@ class AsyncGuavaTests extends WordSpec with Matchers {
     })
 
   val handler: ListenableFuture ~> Future = implicits.listenableFuture2Async[Future]
+  val conv: ListenableFuture[Void] => ListenableFuture[Unit] =
+    implicits.listenableVoidToListenableUnit
 
   val foo = "Bar"
 
@@ -56,9 +58,15 @@ class AsyncGuavaTests extends WordSpec with Matchers {
     }
 
     "recover from failed guava ListenableFutures wrapping them into scala.concurrent.Future" in {
-      Await.result(handler(failedFuture[String]) recover {
-        case _ => foo
-      }, Duration.Inf) shouldBe foo
+      Await.result(handler(failedFuture[String]).failed, Duration.Inf) shouldBe exception
+    }
+
+    "transform guava ListenableFuture[Void] into scala.concurrent.Future successfully through an implicit conversion" in {
+      Await.result(handler(conv(successfulFuture[Void](None.orNull))), Duration.Inf) shouldBe ((): Unit)
+    }
+
+    "recover from failed guava ListenableFuture[Void] wrapping them into scala.concurrent.Future through an implicit conversion" in {
+      Await.result(handler(conv(failedFuture[Void])).failed, Duration.Inf) shouldBe exception
     }
 
   }
