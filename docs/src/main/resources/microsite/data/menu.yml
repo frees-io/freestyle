@@ -109,6 +109,23 @@ options:
       - title: http4s
         url: docs/integrations/http4s
 
+  - title: Libraries
+    url: docs/rpc
+
+    nested_options:
+
+      - title: Microservices
+        url: docs/rpc
+
+      - title: Effects
+        url: docs/effects
+
+      - title: Cassandra
+        url: docs/cassandra
+
+      - title: Kafka
+        url: docs/kafka
+
   - title: Related Work
     url: docs/related/
 
