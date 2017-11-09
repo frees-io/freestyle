@@ -66,7 +66,7 @@ You need to import it separately, by adding the following dependency:
 [comment]: # (Start Replace)
 
 ```scala
-libraryDependencies += "io.frees" %% "frees-akka" % "0.4.1"
+libraryDependencies += "io.frees" %% "frees-akka" % "0.4.2"
 ```
 
 [comment]: # (End Replace)
