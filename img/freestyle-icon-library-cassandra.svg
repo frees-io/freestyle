@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="52px" height="52px" viewBox="0 0 52 52" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 44.1 (41455) - http://www.bohemiancoding.com/sketch -->
+    <title>freestyle-icon-library-cassandra</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="freestyle-ui" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="freestyle-icon-library-cassandra">
+            <polygon id="hexagon" fill="#01C2C2" points="26 2 46.7846097 14 46.7846097 38 26 50 5.21539031 38 5.21539031 14"></polygon>
+            <polyline id="opacity" fill="#FFFFFF" opacity="0.3" points="26 50 5.21539031 38 5.21539031 14 26 2 26 2"></polyline>
+            <path d="M10,26.5000019 C12.2286514,19.8183654 18.5499532,15 26,15 C33.4500468,15 39.7713486,19.8183654 42,26.5000019 C39.7713474,33.1816355 33.4500461,38 26,38 C18.5499539,38 12.2286526,33.1816355 10.0000006,26.5 Z" id="path" fill="#03A9AD"></path>
+            <polygon id="star" fill="#0A5F70" opacity="0.7" points="26 29.8264576 23.5689255 33 23.7155372 28.9821543 19.8443033 29.8264576 22.5 26.8443033 19 24.9643087 22.9221517 24.4132288 21.4310745 20.6886066 24.7844628 22.8264576 26 19 27.2155372 22.8264576 30.5689255 20.6886066 29.0778483 24.4132288 33 24.9643087 29.5 26.8443033 32.1556967 29.8264576 28.2844628 28.9821543 28.4310745 33"></polygon>
+        </g>
+    </g>
+</svg>

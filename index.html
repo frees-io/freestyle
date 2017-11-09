@@ -1,196 +1,441 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <title>Freestyle</title>
 
     <meta charset="utf-8">
     <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-     
+
     <meta name="twitter:title" content="Freestyle">
     <meta name="description" content="A Cohesive & Pragmatic Framework of FP centric Scala libraries">
-      
-    <meta property="og:image" content="http://frees.io/poster.png"/>
-    <meta name="twitter:image" content="http://frees.io/img/poster.png"/>
-    <meta property="og:title" content="Freestyle"/>
-    <meta property="og:site_name" content="Freestyle"/>
-    <meta property="og:url" content="http://frees.io/"/>
-    <meta property="og:type" content="website"/>
-    <meta property="og:description" content="A Cohesive & Pragmatic Framework of FP centric Scala libraries"/>
-  
-    <meta name="twitter:text:description" content="A Cohesive & Pragmatic Framework of FP centric Scala libraries"/>
-    <meta name="twitter:card" content="summary_large_image">
+    <meta name="keywords" content="functional-programming, scala, monads, redis, kafka, spark, cassandra, architectural-patterns, rpc, tagless-final, free-monads, freestyle">
+
+    <meta property="og:image" content="http://frees.io/img/poster.png" />
+    <meta name="twitter:image" content="http://frees.io/img/poster.png" />
+    <meta property="og:title" content="Freestyle" />
+    <meta property="og:site_name" content="Freestyle" />
+    <meta property="og:url" content="http://frees.io/" />
+    <meta property="og:type" content="website" />
+    <meta property="og:description" content="A Cohesive & Pragmatic Framework of FP centric Scala libraries" />
+    <meta property="og:keywords" content="functional-programming, scala, monads, redis, kafka, spark, cassandra, architectural-patterns, rpc, tagless-final, free-monads, freestyle" />
+
+    <meta name="twitter:text:description" content="A Cohesive & Pragmatic Framework of FP centric Scala libraries" />
+    <meta name="twitter:card" content="http://frees.io/img/twitter-card.png">
     <meta name="twitter:site" content="@47deg">
     <meta name="twitter:creator" content="@47deg">
-    <link href="http://frees.io/img/favicon.png" rel="icon" type="image/png">
-    
+    <link href="./img/favicon.png" rel="icon" type="image/png">
+
     <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.7.0/styles/color-brewer.min.css" rel="stylesheet">
-    <link href="./highlight/styles/dracula.css" rel="stylesheet">
+    <!-- <link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.7.0/styles/color-brewer.min.css" rel="stylesheet"> -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.5.2/animate.min.css">
     <link href="./css/style.css" rel="stylesheet">
     <link href="./css/palette.css" rel="stylesheet">
     <link href="./css/custom.css" rel="stylesheet">
-	
+    <link href="./css/theme-code.css" rel="stylesheet">
+
 </head>
-<body>
-<header id="site-header">
+
+<body id="fs-home">
+    <nav id="navigation" class="indirect-injection">
+  <div class="navigation-brand">
+    <a href="https://github.com/frees-io/freestyle">
+        Freestyle
+      </a>
+  </div>
+  <ul class="navigation-menu">
+    <li class="navigation-menu-item">
+      <a href="/docs">Documentation</a>
+    </li>
+    <li class="navigation-menu-item">
+      <a href="https://github.com/frees-io/freestyle">Github</a>
+    </li>
+  </ul>
+</nav>
+
+    <header id="site-header">
     <div class="jumbotron">
-        <div class="container">
-            <img src="./img/jumbotron_brand2x.png" alt="">
-            <h1 class="text-center">A Cohesive & Pragmatic Framework of FP centric Scala libraries</h1>
+        <div class="container indirect-injection">
+            <svg class="freestyle-logo" width="100%" height="192px" viewBox="0 0 192 192" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+                <g id="freestyle-logo-header" fill="#01C2C2">
+                    <polygon class="piece-top" id="pathOne" points="96.1384 0.0003 13.0004 48.0013 40.7124 64.0013 123.8494 16.0023"></polygon>
+                    <polygon class="piece-top" id="pathTwo" opacity="0.6" points="13 144.0012 40.712 160.0002 40.712 64.0012 13 48.0012"></polygon>
+                    <polygon class="piece-center" id="pathThree" points="68.4247 80.0013 68.4247 112.0003 179.2767 48.0013 151.5647 32.0023"></polygon>
+                    <polygon class="piece-bottom" id="pathFour" points="151.5649 128.0005 96.1379 160.0005 68.4249 144.0015 123.8499 111.9995"></polygon>
+                    <polygon class="piece-bottom" id="pathFive" opacity="0.6" points="123.8505 80.0015 123.8495 111.9995 151.5645 128.0005 151.5625 64.0015"></polygon>
+                    <polygon class="piece-bottom" id="pathSix" opacity="0.6" points="68.4247 176.0016 96.1387 191.9986 96.1387 160.0006 68.4247 144.0016"></polygon>
+                    <polygon class="piece-bottom" id="pathSeven" opacity="0.35" points="151.5631 64.0011 151.5651 128.0001 96.1381 160.0001 96.1381 191.9991 179.2771 144.0001 179.2771 48.0011"></polygon>
+                </g>
+            </svg>
+            <div id="freestyle-tag" class="row">
+                <div class="col-md-10 col-md-offset-1">
+                    <h1 class="text-center" id="content" data-github-owner="frees-io" data-github-repo="freestyle">A cohesive & pragmatic framework of FP Scala libraries</h1>
+                </div>
+            </div>
             <p class="text-center">
-                <a href="https://github.com/47deg/freestyle" class="btn btn-outline-inverse">View on GitHub</a>
                 <a href="/docs" class="btn btn-outline-inverse">Quick start</a>
             </p>
-            <ul class="GitHub-link">
-                <li><a href="https://github.com/47deg/freestyle/stargazers"><i class="fa fa-star"></i><span id="stars"></span></a></li>
-                <li><a href="https://github.com/47deg/freestyle/watchers"><i class="fa fa-eye"></i><span id="eyes"></span></a></li>
-            </ul>
+            <div class="jumbotron-stars">
+                <a href="https://github.com/frees-io/freestyle/stargazers"><i class="fa fa-star"></i><span id="stars"></span></a>
+            </div>
         </div>
     </div>
 </header>
-<main id="site-main">
-    <section class="use">
 
-        <div id="content" data-github-owner="frees-io" data-github-repo="freestyle">
-            <section class="home-code">
-  <div class="container">
-    <div class="row">
-      <div class="col-md-6">
-        <h1 id="build-purely-functional-applications-and-libraries">Build purely functional applications and libraries</h1>
-        <p>Build stack-safe purely functional applications and libraries that support parallel and sequential computations where declaration is decoupled from interpretation.
-Freestyle encourages programs built atop <a href="./docs/core/algebras">Free algebras</a> that are interpreted at the edge of your application ensuring effects are localized and performed in a controlled environment.
-Applications built with Freestyle can be interpreted to any runtime semantics supported by the interpreter target type.</p>
-      </div>
-      <div class="col-md-6">
-        <div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">freestyle._</span>
-
-<span class="nd">@free</span> <span class="k">trait</span> <span class="nc">Database</span> <span class="o">{</span>
-  <span class="k">def</span> <span class="n">get</span><span class="o">(</span><span class="n">id</span><span class="k">:</span> <span class="kt">UserId</span><span class="o">)</span><span class="k">:</span> <span class="kt">FS</span><span class="o">[</span><span class="kt">User</span><span class="o">]</span>
-<span class="o">}</span>
-
-<span class="nd">@free</span> <span class="k">trait</span> <span class="nc">Cache</span> <span class="o">{</span>
-  <span class="k">def</span> <span class="n">get</span><span class="o">(</span><span class="n">id</span><span class="k">:</span> <span class="kt">UserId</span><span class="o">)</span><span class="k">:</span> <span class="kt">FS</span><span class="o">[</span><span class="kt">User</span><span class="o">]</span>
-<span class="o">}</span>
-
-<span class="nd">@module</span> <span class="k">trait</span> <span class="nc">Persistence</span> <span class="o">{</span>
-  <span class="k">val</span> <span class="n">database</span><span class="k">:</span> <span class="kt">Database</span>
-  <span class="k">val</span> <span class="n">cache</span><span class="k">:</span> <span class="kt">Cache</span>
-<span class="o">}</span>
-</code></pre>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-<section class="home-code">
-  <div class="container">
-    <div class="row">
-      <div class="col-md-6 col-md-push-6">
-        <h1 id="automatic-dependency-injection">Automatic Dependency Injection</h1>
-        <p>Freestyle includes all the implicit machinery necessary to achieve seamless dependency injection of <a href="./docs/core/algebras"><code class="highlighter-rouge">@free</code></a> and <a href="./docs/core/modules"><code class="highlighter-rouge">@module</code></a> Algebras.
-Simply require any of your <code class="highlighter-rouge">@free</code> or <code class="highlighter-rouge">@module</code> trait as implicits where needed.</p>
-      </div>
-      <div class="col-md-6 col-md-pull-6">
-        <div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">def</span> <span class="n">storedUsers</span><span class="o">[</span><span class="kt">F</span><span class="o">[</span><span class="k">_</span><span class="o">]]</span>
-    <span class="o">(</span><span class="n">userId</span><span class="k">:</span> <span class="kt">UserId</span><span class="o">)</span>
-    <span class="o">(</span><span class="k">implicit</span> <span class="n">persistence</span><span class="k">:</span> <span class="kt">Persistence</span><span class="o">[</span><span class="kt">F</span><span class="o">])</span><span class="k">:</span> <span class="kt">FreeS</span><span class="o">[</span><span class="kt">F</span>, <span class="o">(</span><span class="kt">User</span>, <span class="kt">User</span><span class="o">)]</span> <span class="k">=</span> <span class="o">{</span>
-  <span class="k">import</span> <span class="nn">persistence._</span>
-  <span class="k">for</span> <span class="o">{</span>
-    <span class="n">cachedUser</span> <span class="k">&lt;-</span> <span class="n">cache</span><span class="o">.</span><span class="n">get</span><span class="o">(</span><span class="n">userId</span><span class="o">)</span>
-    <span class="n">persistentUser</span> <span class="k">&lt;-</span> <span class="n">database</span><span class="o">.</span><span class="n">get</span><span class="o">(</span><span class="n">userId</span><span class="o">)</span>
-  <span class="o">}</span> <span class="k">yield</span> <span class="o">(</span><span class="n">cachedUser</span><span class="o">,</span> <span class="n">persistentUser</span><span class="o">)</span>
-<span class="o">}</span>
-</code></pre>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-<section class="home-code">
-  <div class="container">
-    <div class="row">
-      <div class="col-md-6">
-        <h1 id="ready-to-use-integrations">Ready to use integrations</h1>
-        <p>Freestyle ships with <a href="./docs/integrations">ready to use algebras and convenient syntax extensions</a> covering most of the application concerns such as persistence, configuration, logging, etc.
-In addition, Freestyle includes commonly used FP <a href="./docs/effects">effects</a> stack such as <code class="highlighter-rouge">option</code>, <code class="highlighter-rouge">error</code>, <code class="highlighter-rouge">reader</code>, <code class="highlighter-rouge">writer</code>, <code class="highlighter-rouge">state</code> based on the capabilities of
-the target runtime interpreters.</p>
-
-      </div>
-      <div class="col-md-6">
-        <div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">def</span> <span class="n">loadUser</span><span class="o">[</span><span class="kt">F</span><span class="o">[</span><span class="k">_</span><span class="o">]]</span>
-  <span class="o">(</span><span class="n">userId</span><span class="k">:</span> <span class="kt">UserId</span><span class="o">)</span>
-  <span class="o">(</span><span class="k">implicit</span> 
-    <span class="n">doobie</span><span class="k">:</span> <span class="kt">DoobieM</span><span class="o">[</span><span class="kt">F</span><span class="o">],</span> 
-    <span class="n">logging</span><span class="k">:</span> <span class="kt">LoggingM</span><span class="o">[</span><span class="kt">F</span><span class="o">])</span><span class="k">:</span> <span class="kt">FreeS</span><span class="o">[</span><span class="kt">F</span>, <span class="kt">User</span><span class="o">]</span> <span class="k">=</span> <span class="o">{</span>
-    <span class="k">import</span> <span class="nn">doobie.implicits._</span>
-    <span class="k">for</span> <span class="o">{</span>
-      <span class="n">user</span> <span class="k">&lt;-</span> <span class="o">(</span><span class="n">sql</span><span class="s">"SELECT * FROM User WHERE userId = $userId"</span>
-                <span class="o">.</span><span class="n">query</span><span class="o">[</span><span class="kt">User</span><span class="o">]</span>
-                <span class="o">.</span><span class="n">unique</span>
-                <span class="o">.</span><span class="n">liftFS</span><span class="o">[</span><span class="kt">F</span><span class="o">])</span>
-      <span class="o">-</span> <span class="k">&lt;-</span> <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="o">(</span><span class="n">s</span><span class="s">"Loaded User: ${user.userId}"</span><span class="o">)</span>
-    <span class="o">}</span> <span class="k">yield</span> <span class="n">user</span>
-<span class="o">}</span>
-</code></pre>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-        </div>
-
-    </section>
-    <section class="technologies">
-        <div class="container">
-            <div class="row">
-                
-            </div>
-        </div>
-    </section>
-</main>
-<footer id="site-footer">
+    <main id="site-main" class="indirect-injection">
+        <section id="features" class="animated fadeIn">
     <div class="container">
         <div class="row">
+            <div class="col-md-4">
+                <a href="/docs/core/algebras">
+                    <div class="feature-algebras">
+                        <svg width="96px" height="96px" viewBox="0 0 96 96" version="1.1"
+                             xmlns="http://www.w3.org/2000/svg"
+                             xmlns:xlink="http://www.w3.org/1999/xlink">
+                            <defs>
+                                <circle id="path-1-1" cx="48" cy="48" r="3"></circle>
+                            </defs>
+                            <g id="freestyle-ui" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+                                <g id="freestyle-icon-feature-algebra">
+                                    <polygon id="hexagon" fill="#01C2C2"
+                                             points="48 0 89.5692194 24 89.5692194 72 48 96 6.43078062 72 6.43078062 24"></polygon>
+                                    <polygon id="hexagon-small" fill="#03A9AD"
+                                             points="48 24 68.7846097 36 68.7846097 60 48 72 27.2153903 60 27.2153903 36"
+                                             style="transform-origin:48px 48px 0px"></polygon>
+                                    <polyline id="opacity" fill="#FFFFFF" opacity="0.3"
+                                              points="48 96 6.43078062 72 6.43078062 24 48 0 48 0"></polyline>
+                                    <g id="point">
+                                        <use fill="#FFFFFF" fill-rule="evenodd" xlink:href="#path-1-1"></use>
+                                        <circle stroke="#077783" stroke-width="3" cx="48" cy="48" r="4.5"></circle>
+                                    </g>
+                                    <path d="M89.3818359,23.8945312 L51.7866211,45.7260742" id="line" stroke="#077783"
+                                          stroke-width="2" stroke-dasharray="3,3,3,3"></path>
+                                </g>
+                            </g>
+                        </svg>
+                        <h2>Algebras</h2>
+                        <p>Build stack-safe purely functional applications and libraries</p>
+                    </div>
+                </a>
+            </div>
+            <div class="col-md-4">
+                <a href="/docs/core/modules">
+                    <div class="feature-modules">
+                        <svg width="96px" height="96px" viewBox="0 0 96 96" version="1.1"
+                             xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+                            <defs>
+                                <circle id="path-2-1" cx="48" cy="27" r="3"></circle>
+                                <circle id="path-2-2" cx="72" cy="68" r="3"></circle>
+                                <circle id="path-2-3" cx="24" cy="68" r="3"></circle>
+                            </defs>
+                            <g id="freestyle-ui" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+                                <g id="freestyle-icon-feature-modules">
+                                    <polygon id="hexagon" fill="#01C2C2"
+                                             points="48 3 68.7846097 15 68.7846097 39 48 51 27.2153903 39 27.2153903 15"></polygon>
+                                    <polygon id="hexagon" fill="#01C2C2"
+                                             points="72 44 92.7846097 56 92.7846097 80 72 92 51.2153903 80 51.2153903 56"></polygon>
+                                    <polygon id="hexagon" fill="#01C2C2"
+                                             points="24 44 44.7846097 56 44.7846097 80 24 92 3.21539031 80 3.21539031 56"></polygon>
+                                    <polyline id="opacity" fill="#FFFFFF" opacity="0.3"
+                                              points="72 92 51.2153903 80 51.2153903 56 72 44 72 44"></polyline>
+                                    <polyline id="opacity" fill="#FFFFFF" opacity="0.3"
+                                              points="24 92 3.21539031 80 3.21539031 56 24 44 24 44"></polyline>
+                                    <polyline id="opacity" fill="#FFFFFF" opacity="0.3"
+                                              points="48 51 27.2153903 39 27.2153903 15 48 3"></polyline>
+                                    <path d="M45.9755859,31.5634766 L26.7666016,63.5776367" id="line" stroke="#0A5F70"
+                                          stroke-width="2" opacity="0.8" stroke-dasharray="3,3,3,3"></path>
+                                    <path d="M29.3066406,68 L66.1450195,68" id="line" stroke="#0A5F70" stroke-width="2"
+                                          opacity="0.8" stroke-dasharray="3,3,3,3"></path>
+                                    <g id="point">
+                                        <use fill="#FFFFFF" fill-rule="evenodd" xlink:href="#path-2-1"></use>
+                                        <circle stroke="#077783" stroke-width="3" cx="48" cy="27" r="4.5"></circle>
+                                    </g>
+                                    <g id="point">
+                                        <use fill="#FFFFFF" fill-rule="evenodd" xlink:href="#path-2-2"></use>
+                                        <circle stroke="#077783" stroke-width="3" cx="72" cy="68" r="4.5"></circle>
+                                    </g>
+                                    <g id="point">
+                                        <use fill="#FFFFFF" fill-rule="evenodd" xlink:href="#path-2-3"></use>
+                                        <circle stroke="#077783" stroke-width="3" cx="24" cy="68" r="4.5"></circle>
+                                    </g>
+                                </g>
+                            </g>
+                        </svg>
+                        <h2>Modules</h2>
+                        <p>Combine algebras in modules to describe compositional layers of logic</p>
+                    </div>
+                </a>
+            </div>
+            <div class="col-md-4">
+                <a href="/docs/core/handlers">
+                    <div class="feature-handlers">
+                        <!-- <img src="img/freestyle-icon-feature-handlers.svg" alt=""> -->
+                        <svg width="96px" height="96px" viewBox="0 0 96 96" version="1.1"
+                             xmlns="http://www.w3.org/2000/svg"
+                             xmlns:xlink="http://www.w3.org/1999/xlink">
+                            <defs>
+                                <circle id="path-3-1" cx="37" cy="27" r="3"></circle>
+                                <circle id="path-3-2" cx="61" cy="69" r="3"></circle>
+                                <linearGradient x1="0%" y1="0%" x2="100%" y2="100%" id="linearGradient-3">
+                                    <stop stop-color="#077783" stop-opacity="0" offset="0%"></stop>
+                                    <stop stop-color="#077783" offset="100%"></stop>
+                                </linearGradient>
+                                <linearGradient x1="0%" y1="6.24143346%" x2="34.0731132%" y2="100%"
+                                                id="linearGradient-4">
+                                    <stop stop-color="#167B86" offset="0%"></stop>
+                                    <stop stop-color="#077783" stop-opacity="0" offset="100%"></stop>
+                                </linearGradient>
+                            </defs>
+                            <g id="freestyle-ui" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+                                <g id="freestyle-icon-feature-handlers">
+                                    <path d="M90.6363633,49.7193787 C90.6664118,49.083349 90.6816056,48.4434315 90.6816056,47.7999652 C90.6816056,28.8472741 77.5003263,12.9732358 59.8050341,8.84511646"
+                                          id="line" stroke="url(#linearGradient-3)" stroke-width="2"
+                                          stroke-dasharray="3,3,3,3" style="transform-origin:49px 48px 0px;"></path>
+                                    <polygon id="arrow" fill="#177B86"
+                                             transform="translate(90.383579, 53.746898) translate(-90.383579, -53.746898) "
+                                             points="90.3835788 56.4611836 86.5835788 51.0326122 94.1835787 51.0326122"
+                                             style="transform-origin:49px 47px 0px;"></polygon>
+                                    <path d="M7.31168627,39.3926097 C6.87837481,41.7512772 6.65196326,44.1823376 6.65196326,46.6662792 C6.65196326,64.9908422 18.9740155,80.4374356 35.784358,85.1722977"
+                                          id="line" stroke="url(#linearGradient-4)" stroke-width="2"
+                                          stroke-dasharray="3,3,3,3" style="transform-origin:49px 47px 0px;"></path>
+                                    <polygon id="arrow" fill="#177B86"
+                                             transform="translate(7.755793, 38.199869) translate(-7.755793, -38.199869) "
+                                             points="7.25579327 36.9146489 3.5551018 42.8850897 10.7564847 42.8850897"
+                                             style="transform-origin:49px 47px 0px"></polygon>
+                                    <polygon id="hexagon" fill="#01C2C2"
+                                             points="37 3 57.7846097 15 57.7846097 39 37 51 16.2153903 39 16.2153903 15"></polygon>
+                                    <polygon id="hexagon" fill="#01C2C2"
+                                             points="61 45 81.7846097 57 81.7846097 81 61 93 40.2153903 81 40.2153903 57"></polygon>
+                                    <polyline id="opacity" fill="#FFFFFF" opacity="0.3"
+                                              points="61 93 40.2153903 81 40.2153903 57 61 45 61 45"></polyline>
+                                    <polyline id="opacity" fill="#FFFFFF" opacity="0.3"
+                                              points="37 51 16.2153903 39 16.2153903 15 37 3 37 3"></polyline>
+                                    <g id="point">
+                                        <use fill="#FFFFFF" fill-rule="evenodd" xlink:href="#path-3-1"></use>
+                                        <circle stroke="#077783" stroke-width="3" cx="37" cy="27" r="4.5"></circle>
+                                    </g>
+                                    <g id="point">
+                                        <use fill="#FFFFFF" fill-rule="evenodd" xlink:href="#path-3-2"></use>
+                                        <circle stroke="#077783" stroke-width="3" cx="61" cy="69" r="4.5"></circle>
+                                    </g>
+                                </g>
+                            </g>
+                        </svg>
+                        <h2>Handlers</h2>
+                        <p>Decouple implementations details entirely from program declarations</p>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+
+        <section id="libraries" class="animated fadeIn">
+  <div class="container">
+    <div class="row">
+      <div class="libraries-lines">
+        <!-- <img src="img/freestyle-lines-libraries.svg" alt=""> -->
+        <svg width="815px" height="129px" viewBox="0 0 815 129" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+            <g id="freestyle-ui" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+                <g id="freestyle-lines-libraries">
+                    <path d="M407.5,10.5 L407.5,69.5338886" id="line-vertical-0" stroke="#99A6B1" stroke-linecap="square" stroke-dasharray="129" stroke-dashoffset="130"></path>
+                    <path d="M407.7,70.5 L5,70.5" id="line-horizontal-1" stroke="#99A6B1" stroke-linecap="square" stroke-dasharray="815" stroke-dashoffset="816"></path>
+                    <path d="M407.7,70.5 L808.583426,70.5" id="line-horizontal-2" stroke="#99A6B1" stroke-linecap="square" stroke-dasharray="815" stroke-dashoffset="816"></path>
+                    <polygon id="arrow-1" style="opacity:0" fill="#99A6B1" fill-rule="nonzero" points="5.5 129 1 123 10 123"></polygon>
+                    <polygon id="arrow-2" style="opacity:0" fill="#99A6B1" fill-rule="nonzero" points="272.5 129 268 123 277 123"></polygon>
+                    <polygon id="arrow-3" style="opacity:0" fill="#99A6B1" fill-rule="nonzero" points="540.5 129 536 123 545 123"></polygon>
+                    <polygon id="arrow-4" style="opacity:0" fill="#99A6B1" fill-rule="nonzero" points="809.5 129 805 123 814 123"></polygon>
+                    <path d="M5.5,126.535703 L5.5,70.5" class="line-vertical" id="line-vertical-1" stroke="#99A6B1" stroke-linecap="square" stroke-dashoffset="60" stroke-dasharray="60"></path>
+                    <path d="M272.5,126.535703 L272.5,70.5" class="line-vertical" id="line-vertical-2" stroke="#99A6B1" stroke-linecap="square" stroke-dashoffset="60" stroke-dasharray="60"></path>
+                    <path d="M540.5,126.535703 L540.5,70.5" class="line-vertical" id="line-vertical-3" stroke="#99A6B1" stroke-linecap="square" stroke-dashoffset="60" stroke-dasharray="60"></path>
+                    <path d="M809.5,126.535703 L809.5,70.5" class="line-vertical" id="line-vertical-4" stroke="#99A6B1" stroke-linecap="square" stroke-dashoffset="60" stroke-dasharray="60"></path>
+                    <circle id="point" class="point-0" fill="#99A6B1" fill-rule="nonzero" opacity="0.35" cx="407.5" cy="9.5" r="9.5" style="transform-origin:407.5px 9.5px 0px;"></circle>
+                    <circle id="point" class="point-0" fill="#99A6B1" fill-rule="nonzero" cx="407.5" cy="9.5" r="4.31818182" style="transform-origin:407.5px 9.5px 0px;"></circle>
+                    <circle id="point" class="point-1" fill="#99A6B1" fill-rule="nonzero" opacity="0.35" cx="5.5" cy="70.5" r="5.5" style="transform-origin:5.5px 70.5px 0px;"></circle>
+                    <circle id="point" class="point-1" fill="#99A6B1" fill-rule="nonzero" cx="5.5" cy="70.5" r="2.5" style="transform-origin:5.5px 70.5px 0px;"></circle>
+                    <circle id="point" class="point-2" fill="#99A6B1" fill-rule="nonzero" opacity="0.35" cx="272.5" cy="70.5" r="5.5" style="transform-origin:272.5px 70.5px 0px;"></circle>
+                    <circle id="point" class="point-2" fill="#99A6B1" fill-rule="nonzero" cx="272.5" cy="70.5" r="2.5" style="transform-origin:272.5px 70.5px 0px;"></circle>
+                    <circle id="point" class="point-3" fill="#99A6B1" fill-rule="nonzero" opacity="0.35" cx="540.5" cy="70.5" r="5.5" style="transform-origin:540.5px 70.5px 0px;"></circle>
+                    <circle id="point" class="point-4" fill="#99A6B1" fill-rule="nonzero" cx="540.5" cy="70.5" r="2.5" style="transform-origin:540.5px 70.5px 0px;"></circle>
+                    <circle id="point" class="point-4" fill="#99A6B1" fill-rule="nonzero" opacity="0.35" cx="809.5" cy="70.5" r="5.5" style="transform-origin:809.5px 70.5px 0px;"></circle>
+                    <circle id="point" class="point-4" fill="#99A6B1" fill-rule="nonzero" cx="809.5" cy="70.5" r="2.5" style="transform-origin:809.5px 70.5px 0px;"></circle>
+                </g>
+            </g>
+          </svg>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-xs-6 col-md-3">
+        <a href="/docs/effects">
+          <div class="library-effects scroll-injection">
+            <!-- <img src="img/freestyle-icon-library-effects.svg" alt=""> -->
+            <svg width="52px" height="52px" viewBox="0 0 52 52" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+                <defs></defs>
+                <g id="freestyle-ui" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+                    <g id="freestyle-icon-library-effects">
+                        <polygon id="hexagon" fill="#01C2C2" points="26 2 46.7846097 14 46.7846097 38 26 50 5.21539031 38 5.21539031 14"></polygon>
+                        <polyline id="opacity" fill="#FFFFFF" opacity="0.3" points="26 50 5.21539031 38 5.21539031 14 26 2 26 2"></polyline>
+                        <path d="M20,26 L14,26" id="line" class="effects-line" stroke="#058F97" stroke-width="2" style="transform-origin:26px 26px 0px;"></path>
+                        <path d="M38,26 L32,26" id="line" class="effects-line" stroke="#058F97" stroke-width="2" style="transform-origin:26px 26px 0px;"></path>
+                        <path d="M37.0216064,20 L15,32.0616455" id="line" class="effects-line"  stroke="#058F97" stroke-width="2" style="transform-origin:26px 26px 0px;"></path>
+                        <path d="M15.1721191,19.9729004 L36.9821777,31.9604492" id="line" class="effects-line" stroke="#058F97" stroke-width="2" style="transform-origin:26px 26px 0px;"></path>
+                        <path d="M26,14.5 L26,37.5" id="line" class="effects-line" stroke="#058F97" stroke-width="2" stroke-linecap="square" style="transform-origin:26px 26px 0px;"></path>
+                        <path d="M29.5,20.5 L32.5,15.5" id="line" stroke="#058F97" stroke-width="2"></path>
+                        <path d="M29.5,36.5 L32.5,31.5" id="line" stroke="#058F97" stroke-width="2" transform="translate(31.000000, 34.000000) scale(1, -1) translate(-31.000000, -34.000000) "></path>
+                        <path d="M19.5,20.5 L22.5,15.5" id="line" stroke="#058F97" stroke-width="2" transform="translate(21.000000, 18.000000) scale(-1, 1) translate(-21.000000, -18.000000) "></path>
+                        <path d="M19.5,36.5 L22.5,31.5" id="line" stroke="#058F97" stroke-width="2" transform="translate(21.000000, 34.000000) scale(-1, -1) translate(-21.000000, -34.000000) "></path>
+                        <circle id="point" stroke="#058F97" stroke-width="2" fill="#FFFFFF" cx="26" cy="26" r="3"></circle>
+                    </g>
+                </g>
+            </svg>
+            <h3>Effects</h3>
+            <p>A batteries included effects library</p>
+            <p class="cta-library">View library</p>
+          </div>
+        </a>
+      </div>
+      <div class="col-xs-6 col-md-3">
+        <a href="/docs/cassandra">
+          <div class="library-cassandra scroll-injection">
+            <!-- <img src="img/freestyle-icon-library-cassandra.svg" alt=""> -->
+            <svg width="52px" height="52px" viewBox="0 0 52 52" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+                <defs></defs>
+                <g id="freestyle-ui" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+                    <g id="freestyle-icon-library-cassandra">
+                        <polygon id="hexagon" fill="#01C2C2" points="26 2 46.7846097 14 46.7846097 38 26 50 5.21539031 38 5.21539031 14"></polygon>
+                        <polyline id="opacity" fill="#FFFFFF" opacity="0.3" points="26 50 5.21539031 38 5.21539031 14 26 2 26 2"></polyline>
+                        <path d="M10,26.5000019 C12.2286514,19.8183654 18.5499532,15 26,15 C33.4500468,15 39.7713486,19.8183654 42,26.5000019 C39.7713474,33.1816355 33.4500461,38 26,38 C18.5499539,38 12.2286526,33.1816355 10.0000006,26.5 Z" id="path" class="cassandra-eye" fill="#03A9AD" style="transform-origin:26px 26px 0px;"></path>
+                        <polygon id="star" class="cassandra-eye" fill="#0A5F70" opacity="0.7" points="26 29.8264576 23.5689255 33 23.7155372 28.9821543 19.8443033 29.8264576 22.5 26.8443033 19 24.9643087 22.9221517 24.4132288 21.4310745 20.6886066 24.7844628 22.8264576 26 19 27.2155372 22.8264576 30.5689255 20.6886066 29.0778483 24.4132288 33 24.9643087 29.5 26.8443033 32.1556967 29.8264576 28.2844628 28.9821543 28.4310745 33" style="transform-origin:26px 26px 0px;"></polygon>
+                    </g>
+                </g>
+            </svg>
+            <h3>Cassandra</h3>
+            <p>Apache Cassandra functional driver</p>
+            <p class="cta-library">View library</p>
+          </div>
+        </a>
+      </div>
+      <div class="col-xs-6 col-md-3">
+        <a href="/docs/rpc">
+          <div class="library-rpc scroll-injection">
+            <!-- <img src="img/freestyle-icon-library-rpc.svg" alt=""> -->
+            <svg width="52px" height="52px" viewBox="0 0 52 52" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+                <defs></defs>
+                <g id="freestyle-ui" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+                    <g id="freestyle-icon-library-rpc">
+                        <polygon id="hexagon" fill="#01C2C2" points="26 2 46.7846097 14 46.7846097 38 26 50 5.21539031 38 5.21539031 14"></polygon>
+                        <polyline id="opacity" fill="#FFFFFF" opacity="0.3" points="26 50 5.21539031 38 5.21539031 14 26 2 26 2"></polyline>
+                        <path d="M26,8 L26,44.5" id="line" stroke="#058F97" stroke-width="2" stroke-dasharray="2,2,2,2"></path>
+                        <path d="M46.0102539,13.9960938 L6.05175781,37.1054688" id="line" stroke="#058F97" stroke-width="2" stroke-dasharray="3"></path>
+                        <path d="M46.0246582,37.0974121 L6.10644531,14.1508789" id="line" stroke="#058F97" stroke-width="2" stroke-dasharray="3"></path>
+                        <circle id="point" stroke="#058F97" fill="#058F97" cx="26" cy="4" r="3"></circle>
+                        <circle id="point" stroke="#058F97" fill="#058F97" cx="26" cy="26" r="3"></circle>
+                        <circle id="point" stroke="#058F97" fill="#058F97" cx="46" cy="14" r="3"></circle>
+                        <circle id="point" stroke="#058F97" fill="#058F97" cx="6" cy="14" r="3"></circle>
+                        <circle id="point" stroke="#058F97" fill="#058F97" cx="46" cy="37" r="3"></circle>
+                        <circle id="point" stroke="#058F97" fill="#058F97" cx="6" cy="37" r="3"></circle>
+                        <circle id="point" stroke="#058F97" fill="#058F97" cx="26" cy="48" r="3"></circle>
+                    </g>
+                </g>
+            </svg>
+            <h3>Microservices</h3>
+            <p>Next-generation distributed services</p>
+            <p class="cta-library">View library</p>
+          </div>
+        </a>
+      </div>
+      <a href="/docs/kafka">
+        <div class="col-xs-6 col-md-3">
+          <div class="library-kafka scroll-injection">
+            <!-- <img src="img/freestyle-icon-library-kafka.svg" alt=""> -->
+            <svg width="52px" height="52px" viewBox="0 0 52 52" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+                <defs>
+                    <polygon id="path-1" points="26 2 46.7846097 14 46.7846097 38 26 50 5.21539031 38 5.21539031 14"></polygon>
+                </defs>
+                <g id="freestyle-ui" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+                    <g id="freestyle-icon-library-kafka">
+                        <g id="hexagon">
+                            <use fill="#01C2C2" fill-rule="evenodd" xlink:href="#path-1"></use>
+                            <path stroke="#058F97" stroke-width="2" d="M26,3.15470054 L6.21539031,14.5773503 L6.21539031,37.4226497 L26,48.8452995 L45.7846097,37.4226497 L45.7846097,14.5773503 L26,3.15470054 Z"></path>
+                        </g>
+                        <polyline id="hexagon" fill="#01C2C2" points="26 50 5.21539031 38 5.21539031 14 26 2 26 2"></polyline>
+                        <polyline id="opacity" fill="#FFFFFF" opacity="0.3" points="26 50 5.21539031 38 5.21539031 14 26 2 26 2"></polyline>
+                        <path d="M26,8 L26,44.5" id="line" stroke="#058F97" stroke-width="2" stroke-linecap="square"></path>
+                        <path d="M46.0102539,13.9960938 L26.0769043,25.9626465" id="line" stroke="#058F97" stroke-width="2" stroke-linecap="square"></path>
+                        <path d="M46.0246582,37.0974121 L26,26" id="line" stroke="#058F97" stroke-width="2" stroke-linecap="square"></path>
+                        <circle id="point" stroke="#058F97" stroke-width="2" fill="#FFFFFF" cx="26" cy="4" r="3"></circle>
+                        <circle id="point" stroke="#058F97" stroke-width="2" fill="#FFFFFF" cx="26" cy="26" r="3"></circle>
+                        <circle id="point" stroke="#058F97" stroke-width="2" fill="#FFFFFF" cx="46" cy="14" r="3"></circle>
+                        <circle id="point" stroke="#058F97" stroke-width="2" fill="#FFFFFF" cx="46" cy="37" r="3"></circle>
+                        <circle id="point" stroke="#058F97" stroke-width="2" fill="#FFFFFF" cx="26" cy="48" r="3"></circle>
+                    </g>
+                </g>
+            </svg>
+            <h3>Kafka</h3>
+            <p>Apache Kafka functional client</p>
+            <p class="cta-library">View library</p>
+          </div>
+        </div>
+      </a>
+    </div>
+  </div>
+</section>
+
+    </main>
+    <footer id="site-footer">
+    <div class="container indirect-injection">
+        <div class="row">
             <div class="col-xs-6">
-                <p>Freestyle is designed and developed by <a href="https://github.com/47deg"
-                                                                   target="_blank">47 Degrees</a>
-                </p>
+                <div class="author">
+                    <img src="img/freestyle-logo-footer.svg" alt="">
+                    <p>Freestyle is designed and developed by <a href="https://www.47deg.com" target="_blank">47 Degrees</a></p>
+                </div>
             </div>
             <div class="col-xs-6">
-                <p class="text-right"><a href="https://github.com/47deg/freestyle"><span class="fa fa-github"></span>View on
-                    Github</a></p>
+                <p class="text-right"><a href="https://github.com/frees-io/freestyle"><span class="fa fa-github"></span>View on
+                Github</a></p>
             </div>
         </div>
     </div>
 </footer>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.11.3/jquery.min.js">
-</script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js">
-</script>
-<script src="./highlight/highlight.pack.js">
-</script>
-<script src="./js/main.js"></script>
-<script>
-   hljs.configure({
-	languages:['scala','java','bash']
-	});
-   hljs.initHighlighting();
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.11.3/jquery.min.js">
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js">
+    </script>
+    <script src="./highlight/highlight.pack.js">
+    </script>
+    <script src="./js/main.js"></script>
+    <script>
+        hljs.configure({
+            languages: ['scala', 'java', 'bash']
+        });
+        hljs.initHighlighting();
 
 
-  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+        (function(i, s, o, g, r, a, m) {
+            i['GoogleAnalyticsObject'] = r;
+            i[r] = i[r] || function() {
+                (i[r].q = i[r].q || []).push(arguments)
+            }, i[r].l = 1 * new Date();
+            a = s.createElement(o),
+                m = s.getElementsByTagName(o)[0];
+            a.async = 1;
+            a.src = g;
+            m.parentNode.insertBefore(a, m)
+        })(window, document, 'script', 'https://www.google-analytics.com/analytics.js', 'ga');
 
-  ga('create', 'UA-18433785-14', 'auto');
-  ga('send', 'pageview');
+        ga('create', 'UA-18433785-14', 'auto');
+        ga('send', 'pageview');
 
-    ((window.gitter = {}).chat = {}).options = {
-        room: '47deg/freestyle'
-    };
-</script>
-<script src="https://sidecar.gitter.im/dist/sidecar.v1.js" async defer></script>
+        ((window.gitter = {}).chat = {}).options = {
+            room: '47deg/freestyle'
+        };
+    </script>
+    <script src="https://sidecar.gitter.im/dist/sidecar.v1.js" async defer></script>
+    <script src="js/anime.min.js"></script>
+    <script src="js/animations.js"></script>
 </body>
+
 </html>

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 44.1 (41455) - http://www.bohemiancoding.com/sketch -->
+    <title>freestyle-logo-footer</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="freestyle-ui" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" opacity="0.4">
+        <g id="freestyle-logo-footer" fill="#FFFFFF">
+            <g id="logo" transform="translate(2.000000, 0.000000)">
+                <polygon id="path" points="10.4545293 3.75e-05 5.02994012e-05 6.0001625 3.48479281 8.0001625 13.9391461 2.0002875"></polygon>
+                <polygon id="path" opacity="0.6" points="0 18.00015 3.48474251 20.000025 3.48474251 8.00015 0 6.00015"></polygon>
+                <polygon id="path" points="6.96957305 10.0001625 6.96957305 14.0000375 20.9090461 6.0001625 17.4243036 4.0002875"></polygon>
+                <polygon id="path" points="17.4243287 16.0000625 10.4544665 20.0000625 6.9695982 18.0001875 13.939209 13.9999375"></polygon>
+                <polygon id="path" opacity="0.6" points="13.9392844 10.0001875 13.9391587 13.9999375 17.4242784 16.0000625 17.4240269 8.0001875"></polygon>
+                <polygon id="path" opacity="0.6" points="6.96957305 22.0002 10.4545671 23.999825 10.4545671 20.000075 6.96957305 18.0002"></polygon>
+                <polygon id="path" opacity="0.35" points="17.4241024 8.0001375 17.4243539 16.0000125 10.4544916 20.0000125 10.4544916 23.9998875 20.9090964 18.0000125 20.9090964 6.0001375"></polygon>
+            </g>
+        </g>
+    </g>
+</svg>
