@@ -395,6 +395,7 @@ lazy val docs = (project in file("docs"))
     ),
     libraryDependencies ++= Seq(
       %%("frees-rpc", "0.2.0"),
+      %%("monix"),
       %%("doobie-h2"),
       %%("http4s-dsl"),
       %%("play"),
