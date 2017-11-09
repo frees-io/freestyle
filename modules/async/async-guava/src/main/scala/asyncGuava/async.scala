@@ -49,4 +49,17 @@ object implicits {
       E: ExecutionContext): ListenableFuture ~> F =
     new ListenableFuture2AsyncM[F]
 
+  implicit def listenableVoidToListenableUnit(future: ListenableFuture[Void])(
+      implicit E: ExecutionContext): ListenableFuture[Unit] =
+    Futures.transformAsync(
+      future,
+      new AsyncFunction[Void, Unit] {
+        override def apply(input: Void): ListenableFuture[Unit] =
+          Futures.immediateFuture((): Unit)
+      },
+      new JavaExecutor {
+        override def execute(command: Runnable): Unit = E.execute(command)
+      }
+    )
+
 }
