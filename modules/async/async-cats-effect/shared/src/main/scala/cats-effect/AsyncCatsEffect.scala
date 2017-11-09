@@ -19,9 +19,11 @@ package freestyle.asyncCatsEffect
 import freestyle.async._
 import cats.effect.Effect
 
-object implicits {
+trait AsyncCatsEffectImplicits {
   implicit def catsEffectAsyncContext[F[_]](implicit F: Effect[F]): AsyncContext[F] =
     new AsyncContext[F] {
       def runAsync[A](fa: Proc[A]): F[A] = F.async(fa)
     }
 }
+
+object implicits extends AsyncCatsEffectImplicits

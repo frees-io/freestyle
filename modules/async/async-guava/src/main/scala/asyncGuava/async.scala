@@ -24,7 +24,7 @@ import java.util.concurrent.{Executor => JavaExecutor}
 
 import scala.concurrent.ExecutionContext
 
-object implicits {
+trait AsyncGuavaImplicits {
 
   class ListenableFuture2AsyncM[F[_]](implicit AC: AsyncContext[F], E: ExecutionContext)
       extends FSHandler[ListenableFuture, F] {
@@ -63,3 +63,5 @@ object implicits {
     )
 
 }
+
+object implicits extends AsyncGuavaImplicits
