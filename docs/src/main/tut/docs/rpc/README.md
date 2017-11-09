@@ -524,7 +524,7 @@ We are going to interpret to `monix.eval.Task`, however, behind the scenes, we w
 
 ```scala
 // build.sbt
-libraryDependencies += "io.frees" %% "frees-async-cats-effect" % "0.4.1"
+libraryDependencies += "io.frees" %% "frees-async-cats-effect" % "0.4.2"
 ```
 
 [comment]: # (End Replace)
