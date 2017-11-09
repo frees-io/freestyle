@@ -54,7 +54,7 @@ Add the following dependency to your project's build file.
 For Scala `2.11.x` and `2.12.x`:
 
 ```scala
-libraryDependencies += "io.frees" %% "frees-rpc" % "0.1.2"
+libraryDependencies += "io.frees" %% "frees-rpc" % "0.2.0"
 ```
 
 ## About gRPC

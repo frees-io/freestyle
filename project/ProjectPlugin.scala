@@ -5,6 +5,8 @@ import sbt.Keys._
 import sbtorgpolicies.OrgPoliciesPlugin.autoImport._
 import sbtorgpolicies.runnable.syntax._
 import scoverage.ScoverageKeys._
+import sbtrelease.ReleasePlugin.autoImport.ReleaseTransformations._
+import sbtrelease.ReleasePlugin.autoImport._
 
 object ProjectPlugin extends AutoPlugin {
 
@@ -56,11 +58,31 @@ object ProjectPlugin extends AutoPlugin {
     }
   }
 
+  /**
+   * Custom release process, since tests are being
+   * executed in a previous stage (see Travis pipeline).
+   */
+  lazy val sharedReleaseProcess = Seq(
+    releaseProcess := Seq[ReleaseStep](
+      orgInitialVcsChecks,
+      checkSnapshotDependencies,
+      orgInquireVersions,
+      runClean,
+      orgTagRelease,
+      orgUpdateChangeLog,
+      if (sbtPlugin.value) releaseStepCommandAndRemaining("^ publishSigned") else publishArtifacts,
+      setNextVersion,
+      orgCommitNextVersion,
+      ReleaseStep(action = "sonatypeReleaseAll" :: _),
+      orgPostRelease
+    )
+  )
+
   override def projectSettings: Seq[Def.Setting[_]] =
     Seq(
       orgUpdateDocFilesSetting += baseDirectory.value / "docs" / "src",
       orgScriptTaskListSetting := List("validate".asRunnableItemFull),
       coverageExcludedPackages := "<empty>;todo\\..*;freeslick\\..*"
-    ) ++ scalaMetaSettings
+    ) ++ scalaMetaSettings ++ sharedReleaseProcess
 
 }
