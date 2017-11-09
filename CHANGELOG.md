@@ -1,5 +1,24 @@
 # Changelog
 
+## 11/09/2017 - Version 0.4.2
+
+Release changes:
+
+* Updates Artifacts Section ([#423](https://github.com/frees-io/freestyle/pull/423))
+* Adds a custom deploy job stage for releasing ([#422](https://github.com/frees-io/freestyle/pull/422))
+* Fixes Artifact Names in docs ([#424](https://github.com/frees-io/freestyle/pull/424))
+* Import freestyle slick example ([#425](https://github.com/frees-io/freestyle/pull/425))
+* Add hammock docs ([#426](https://github.com/frees-io/freestyle/pull/426))
+* Excludes slick example from test coverage ([#427](https://github.com/frees-io/freestyle/pull/427))
+* Changes home frees.io ([#429](https://github.com/frees-io/freestyle/pull/429))
+* Meta tags social ([#434](https://github.com/frees-io/freestyle/pull/434))
+* Adds an implicit conversion for ListenableFuture[Void] ([#435](https://github.com/frees-io/freestyle/pull/435))
+* Adds the implicits through a trait for easy composition ([#437](https://github.com/frees-io/freestyle/pull/437))
+* Releases 0.4.2 version ([#438](https://github.com/frees-io/freestyle/pull/438))
+* frees-rpc Documentation ([#432](https://github.com/frees-io/freestyle/pull/432))
+* Disables tests in deploy stage ([#439](https://github.com/frees-io/freestyle/pull/439))
+
+
 ## 10/24/2017 - Version 0.4.1
 
 Release changes:
