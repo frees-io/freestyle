@@ -87,6 +87,7 @@ jobs:
                 git checkout master;
                 git pull origin master;
                 sbt release;
+                sbt docs/publishMicrosite;
               fi
             fi
           fi
