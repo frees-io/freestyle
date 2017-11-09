@@ -129,7 +129,7 @@ import freestyle.rpc.protocol._
 
 `Person` definition would be defined as follows:
 
-```tut:book
+```tut:silent
 /**
   * Message Example.
   *
@@ -145,7 +145,7 @@ As we can see, it’s quite simple since it’s just a Scala case class preceded
 
 By the same token, let’s see now how the `Greeter` service would be translated to the [frees-rpc] style (in your `.scala` file):
 
-```tut:book
+```tut:silent
 @option(name = "java_package", value = "quickstart", quote = true)
 @option(name = "java_multiple_files", value = "true", quote = false)
 @option(name = "java_outer_classname", value = "Quickstart", quote = true)
@@ -202,7 +202,7 @@ As [gRPC], [frees-rpc] allows you to define four kinds of service methods:
 
 Let's complete our protocol's example with these four kinds of service methods:
 
-```tut:book
+```tut:silent
 @option(name = "java_package", value = "quickstart", quote = true)
 @option(name = "java_multiple_files", value = "true", quote = false)
 @option(name = "java_outer_classname", value = "Quickstart", quote = true)
@@ -358,7 +358,7 @@ Predictably, generating the server code is just implementing a service [Handler]
 
 Next, our dummy `Greeter` server implementation:
 
-```tut:book
+```tut:silent
 import cats.~>
 import freestyle.Capture
 import monix.eval.Task
@@ -417,7 +417,7 @@ In [frees-rpc] programs, we'll at least need an implicit evidence related to the
 
 Here, for our example, we also need to provide a `scala.concurrent.ExecutionContext` implicit evidence, because we'll interpret our program to `scala.concurrent.Future`:
 
-```tut:book
+```tut:silent
 import scala.concurrent.ExecutionContext
 import monix.execution.Scheduler
 
@@ -445,7 +445,7 @@ Now, we need to implicitly provide two things:
 
 In summary, the result would be as follows:
 
-```tut:book
+```tut:silent
 import cats.~>
 import cats.implicits._
 import freestyle.implicits._
@@ -487,7 +487,7 @@ Here are a few additional notes related to the previous snippet of code:
 
 What else is needed? We just need to define a `main` method:
 
-```tut:book
+```tut:silent
 import cats.implicits._
 import freestyle.rpc.server.GrpcServerApp
 import freestyle.rpc.server.implicits._
@@ -542,7 +542,7 @@ Given the transport settings and a list of optional configurations, we can creat
 
 So, taking into account all we have just said, how would our code look?
 
-```tut:book
+```tut:silent
 import cats.implicits._
 import freestyle.implicits._
 import freestyle.config.implicits._
@@ -595,7 +595,7 @@ object gclient {
 
 Once we have our runtime configuration defined as above, everything gets easier. This is an example of a client application, following our dummy quickstart:
 
-```tut:book
+```tut:silent
 import service._
 import gclient.implicits._
 import monix.eval.Task
