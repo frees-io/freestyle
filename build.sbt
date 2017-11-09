@@ -98,25 +98,17 @@ lazy val effectsJS  = effects.js
 lazy val async = module("async", subFolder = Some("async"))
   .dependsOn(core)
   .jsSettings(sharedJsSettings: _*)
-  .crossDepSettings(commonDeps: _*)
-
-lazy val asyncJVM = async.jvm
-lazy val asyncJS  = async.js
-
-lazy val asyncCatsEffect = module("async-cats-effect", subFolder = Some("async"))
-  .dependsOn(core, async)
-  .jsSettings(sharedJsSettings: _*)
   .crossDepSettings(
     commonDeps ++ Seq(
       %("cats-effect")
     ): _*)
 
-lazy val asyncCatsEffectJVM = asyncCatsEffect.jvm
-lazy val asyncCatsEffectJS  = asyncCatsEffect.js
+lazy val asyncJVM = async.jvm
+lazy val asyncJS  = async.js
 
 lazy val asyncGuava = jvmModule("async-guava", subFolder = Some("async"))
   .dependsOn(coreJVM, asyncJVM)
-  .settings(libraryDependencies ++= commonDeps ++ Seq(%("guava")))
+  .settings(libraryDependencies ++= commonDeps ++ Seq(%("guava"), %%("cats-effect")))
 
 lazy val cache = module("cache")
   .dependsOn(core)
@@ -321,7 +313,6 @@ lazy val jvmModules: Seq[ProjectReference] = Seq(
   taglessJVM,
   effectsJVM,
   asyncJVM,
-  asyncCatsEffectJVM,
   asyncGuava,
   cacheJVM,
   config,
@@ -350,7 +341,6 @@ lazy val jsModules: Seq[ProjectReference] = Seq(
   taglessJS,
   effectsJS,
   asyncJS,
-  asyncCatsEffectJS,
   cacheJS,
   loggingJS,
   //Integrations:

@@ -16,6 +16,7 @@
 
 package freestyle
 
+import cats.effect.Async
 import scala.concurrent._
 
 object async {
@@ -23,37 +24,50 @@ object async {
   /** An asynchronous computation that might fail. **/
   type Proc[A] = (Either[Throwable, A] => Unit) => Unit
 
-  /** The context required to run an asynchronous computation. **/
-  trait AsyncContext[M[_]] {
-    def runAsync[A](fa: Proc[A]): M[A]
-  }
-
   /** Async computation algebra. **/
   @free sealed trait AsyncM {
     def async[A](fa: Proc[A]): FS[A]
   }
 
   trait Implicits {
-    implicit def futureAsyncContext(
-        implicit ec: ExecutionContext
-    ) = new AsyncContext[Future] {
-      def runAsync[A](fa: Proc[A]): Future[A] = {
-        val p = Promise[A]()
+    implicit def futureAsync(implicit ec: ExecutionContext): Async[Future] =
+      new Async[Future] {
+        def async[A](fa: Proc[A]): Future[A] = {
+          val p = Promise[A]()
 
-        ec.execute(new Runnable {
-          def run() = fa(_.fold(p.tryFailure, p.trySuccess))
-        })
+          ec.execute(new Runnable {
+            def run(): Unit = fa(_.fold(p.tryFailure, p.trySuccess))
+          })
 
-        p.future
+          p.future
+        }
+
+        override def suspend[A](thunk: => Future[A]): Future[A] =
+          Future().flatMap(_ => thunk)
+
+        override def raiseError[A](e: Throwable): Future[A] = Future.failed(e)
+
+        override def handleErrorWith[A](fa: Future[A])(f: Throwable => Future[A]): Future[A] =
+          fa.recoverWith {
+            case t: Throwable => f(t)
+          }
+
+        override def pure[A](x: A): Future[A] = Future.successful(x)
+
+        override def flatMap[A, B](fa: Future[A])(f: A => Future[B]): Future[B] =
+          fa.flatMap(f)
+
+        override def tailRecM[A, B](a: A)(f: A => Future[Either[A, B]]): Future[B] =
+          f(a).flatMap {
+            case Left(e)  => tailRecM(e)(f)
+            case Right(c) => pure(c)
+          }
       }
-    }
 
-    implicit def freeStyleAsyncMHandler[M[_]](
-        implicit MA: AsyncContext[M]
-    ): AsyncM.Handler[M] =
+    implicit def freeStyleAsyncMHandler[M[_]](implicit A: Async[M]): AsyncM.Handler[M] =
       new AsyncM.Handler[M] {
         def async[A](fa: Proc[A]): M[A] =
-          MA.runAsync(fa)
+          A.async(fa)
       }
   }
 

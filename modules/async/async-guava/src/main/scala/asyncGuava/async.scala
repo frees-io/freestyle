@@ -17,19 +17,19 @@
 package freestyle.asyncGuava
 
 import cats.~>
+import cats.effect.Async
 import com.google.common.util.concurrent._
 import freestyle._
-import freestyle.async.AsyncContext
 import java.util.concurrent.{Executor => JavaExecutor}
 
 import scala.concurrent.ExecutionContext
 
 trait AsyncGuavaImplicits {
 
-  class ListenableFuture2AsyncM[F[_]](implicit AC: AsyncContext[F], E: ExecutionContext)
+  class ListenableFuture2AsyncM[F[_]](implicit A: Async[F], E: ExecutionContext)
       extends FSHandler[ListenableFuture, F] {
     override def apply[A](listenableFuture: ListenableFuture[A]): F[A] =
-      AC.runAsync { cb =>
+      A.async { cb =>
         Futures.addCallback(
           listenableFuture,
           new FutureCallback[A] {
@@ -45,7 +45,7 @@ trait AsyncGuavaImplicits {
   }
 
   implicit def listenableFuture2Async[F[_]](
-      implicit AC: AsyncContext[F],
+      implicit A: Async[F],
       E: ExecutionContext): ListenableFuture ~> F =
     new ListenableFuture2AsyncM[F]
 

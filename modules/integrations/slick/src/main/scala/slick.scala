@@ -16,12 +16,12 @@
 
 package freestyle
 
-import _root_.slick.dbio.{DBIO, DBIOAction}
+import _root_.slick.dbio.DBIO
 import _root_.slick.jdbc.JdbcBackend
+import cats.effect.Async
 import freestyle.async._
 
 import scala.util.{Failure, Success}
-
 import scala.concurrent.{ExecutionContext, Future}
 
 object slick {
@@ -32,11 +32,11 @@ object slick {
 
   trait Implicits {
     implicit def freeStyleSlickHandler[M[_]](
-        implicit asyncContext: AsyncContext[M],
+        implicit asyncContext: Async[M],
         db: JdbcBackend#DatabaseDef,
         ec: ExecutionContext): SlickM.Handler[M] =
       new SlickM.Handler[M] {
-        def run[A](fa: DBIO[A]): M[A] = asyncContext.runAsync { cb =>
+        def run[A](fa: DBIO[A]): M[A] = asyncContext.async { cb =>
           db.run(fa).onComplete {
             case Success(x) => cb(Right(x))
             case Failure(e) => cb(Left(e))

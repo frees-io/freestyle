@@ -18,8 +18,6 @@ package freestyle
 
 import org.scalatest._
 
-import cats.instances.future._
-
 import freestyle._
 import freestyle.implicits._
 import freestyle.async._
