@@ -109,6 +109,9 @@ options:
       - title: http4s
         url: docs/integrations/http4s
 
+      - title: Hammock
+        url: docs/integrations/hammock
+
   - title: Libraries
     url: docs/rpc
 
