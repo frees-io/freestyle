@@ -257,7 +257,13 @@ private[internal] class Request(reqDef: Decl.Def, indexValue: Int) {
           else {
             // Wildcard types are not working for function params like this f: (B, A) => B
             // val us: Type = Type.Placeholder(Type.Bounds(None, None) )
-            Type.Apply(req, tparams.map(_ => t"_root_.scala.Any"))
+            val typeParams = tparams.map { p =>
+              p.tbounds.hi match {
+                case Some(t) => t"_ <: $t"
+                case _       => t"_root_.scala.Any"
+              }
+            }
+            Type.Apply(req, typeParams)
           }
 
         val alias = Term.fresh()

@@ -67,6 +67,18 @@ class freeTests extends WordSpec with Matchers {
       "@free trait X { def f: FS[Int] }" should compile
     }
 
+    "a trait with type parameters in the method" in {
+      "@free trait X { def ix[A](a: A) : FS[A] }" should compile
+    }
+
+    "a trait with high bounded type parameters in the method" in {
+      "@free trait X { def ix[A <: Int](a: A) : FS[A] }" should compile
+    }
+
+    "a trait with lower bounded type parameters in the method" in {
+      "@free trait X { def ix[A >: Int](a: A) : FS[A] }" should compile
+    }
+
   }
 
   "the @free macro annotation should be rejected, and the compilation fail, if it is applied to" when {
@@ -126,7 +138,7 @@ class freeTests extends WordSpec with Matchers {
     }
 
     "allow implicit summoning" in {
-      "implicitly[SCtors1[SCtors1.Op]]" should compile 
+      "implicitly[SCtors1[SCtors1.Op]]" should compile
     }
 
     "provide automatic implementations for smart constructors" in {
