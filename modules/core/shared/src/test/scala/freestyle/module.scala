@@ -203,4 +203,53 @@ class moduleTests extends WordSpec with Matchers {
     }
 
   }
+
+  "@module @free and @debug work together when explicitly defining carrier F[_]" when {
+
+    "a trait with @module allows carrier F[_] in itself" in {
+      """
+        |@free @debug trait X {
+        |  def x: FS[Int]
+        |}
+        |object P {
+        |  @module @debug trait Y {
+        |    val repo: X
+        |  }
+        |}
+        |@module @debug trait FBoundModule1[F[_]] {
+        |  val a: P.Y
+        |}""".stripMargin should compile
+    }
+
+    "a trait with @module allows carrier F[_] in its aggregated algebras" in {
+      """
+        |@free @debug trait X[F[_]] {
+        |  def x: FS[Int]
+        |}
+        |object P {
+        |  @module @debug trait Y[F[_]] {
+        |    val repo: X
+        |  }
+        |}
+        |@module @debug trait FBoundModule2[F[_]] {
+        |  val a: P.Y
+        |}""".stripMargin should compile
+    }
+
+    "a trait with @module allows carrier F[_] in its aggregated algebras val decls" in {
+      """
+        |@free @debug trait X[F[_]] {
+        |  def x: FS[Int]
+        |}
+        |object P {
+        |  @module @debug trait Y[F[_]] {
+        |    val repo: X[F]
+        |  }
+        |}
+        |@module @debug trait FBoundModule3[F[_]] {
+        |  val a: P.Y[F]
+        |}""".stripMargin should compile
+    }
+
+  }
 }
