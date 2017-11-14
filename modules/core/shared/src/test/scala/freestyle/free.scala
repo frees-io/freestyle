@@ -359,7 +359,7 @@ class freeTests extends WordSpec with Matchers {
         def y: Int = 5
         val z: Int = 6
       }
-      val v = WithExtra[WithExtra.Op]
+      val v = WithExtra.instance
       v.y shouldBe 5
       v.z shouldBe 6
 

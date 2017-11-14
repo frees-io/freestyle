@@ -130,7 +130,7 @@ private[internal] case class Algebra(
     """
   }
 
-  def lifterStats: (Class, Defn.Def, Defn.Def) = {
+  def lifterStats: (Class, Defn.Def, Defn.Def, Defn.Def) = {
     val gg: Type.Name               = Type.fresh("LL$") // LL is the target of the Lifter's Injection
     val injTParams: Seq[Type.Param] = tyParamK(gg) +: tparams
     val injTArgs: Seq[Type]         = gg +: tparams.map(toType)
@@ -157,7 +157,10 @@ private[internal] case class Algebra(
       q"def apply[..$injTParams](implicit $ev: $name[..$injTArgs]): $name[..$injTArgs] = $ev"
     }
 
-    (toClass, toDef, applyDef)
+    val applyDefConcreteOp: Defn.Def =
+      q"def instance(implicit ev: $name[$OP]): $name[$OP] = ev"
+
+    (toClass, toDef, applyDef, applyDefConcreteOp)
   }
 
   def mkCompanion: Object = {
@@ -167,7 +170,7 @@ private[internal] case class Algebra(
     }
     val opTypes                    = q"type OpTypes = _root_.iota.TConsK[$OP, _root_.iota.TNilK]"
     val adt: Seq[Stat]             = opTrait +: requests.map(_.reqClass(OP, tparams, indexName))
-    val (toClass, toDef, applyDef) = lifterStats
+    val (toClass, toDef, applyDef, applyDefConcrete) = lifterStats
     val prot                       = q"""@_root_.java.lang.SuppressWarnings(_root_.scala.Array(
                                            "org.wartremover.warts.Any",
                                            "org.wartremover.warts.AsInstanceOf",
@@ -178,7 +181,7 @@ private[internal] case class Algebra(
     prot.copy(
       name = Term.Name(name.value),
       templ = prot.templ.copy(
-        stats = Some(adt ++ Seq(opTypes, handlerTrait, toClass, toDef, applyDef))
+        stats = Some(adt ++ Seq(opTypes, handlerTrait, toClass, toDef, applyDef, applyDefConcrete))
       ))
   }
 
