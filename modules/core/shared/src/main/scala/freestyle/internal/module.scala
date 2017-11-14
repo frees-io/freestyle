@@ -82,8 +82,6 @@ private[internal] case class FreeSModule(
 
   /* The effects are Val Declarations (no value definition) */
   def makeClass: Defn = {
-  //  val ff: Type.Name = Type.fresh("FF$")
-//    val pat           = q"trait Foo[${tyParamK(ff)}] extends _root_.freestyle.internal.EffectLike[$ff]"
 
     val (ff, pat)           = tparams.toList match {
       case List(f @ tparam"..$mods $name[$tparam]") =>
