@@ -109,7 +109,7 @@ private[internal] case class Algebra(
       requests.map {
         _.tparams
           .map(_.tbounds.hi)
-          .map(_.map(t => q"type ${Type.fresh()} <: $t"))
+          .map(_.map(t => q"type ${Type.fresh("PP$")} <: $t"))
       }
 
     val mm = Type.fresh("MM$")
