@@ -30,16 +30,18 @@ Freestyle Cassandra is a purely functional library for interacting with Cassandr
 ## What’s frees-cassandra
 
 [frees-cassandra] is a library to interact with cassandra built atop Free and following the
-[Freestyle] philosophy, being macro-powered. We use Troy under the scenes to directly interact with
-Cassandra, building two main features on top of it.
+[Freestyle] philosophy, being macro-powered. We use Troy under the scenes for modeling purposes 
+and query schema validation, as well as Datastax Cassandra Driver for connecting to a Cassandra 
+Cluster.
 
 ## Installation
 
-Add the following dependency to your project's build file.
+Add the following resolver and library dependency to your project's build file. 
 
 For Scala `2.11.x` and `2.12.x`:
 
 ```scala
+Resolver.bintrayRepo("tabdulradi", "maven")
 libraryDependencies += "io.frees" %% "frees-cassandra" % "0.0.4" 
 ```
 
@@ -260,6 +262,7 @@ Full String Interpolator example is availiable at [Github Frees-Cassandra-Exampl
 * [Freestyle](http://frees.io/)
 * [Troy](https://github.com/schemasafe/troy)
 * [Contextual](https://github.com/propensive/contextual)
+* [Datastax Driver](http://docs.datastax.com/en/developer/driver-matrix/doc/common/driverMatrix.html)
 
 [freestyle-cassandra-examples]: https://github.com/frees-io/freestyle-cassandra-example
 [Metrifier]: https://github.com/47deg/metrifier
