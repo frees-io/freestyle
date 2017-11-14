@@ -89,7 +89,7 @@ private[internal] case class FreeSModule(
   // The effects of a module are those variables declaration (not defined)
   // that are singular, i.e., not a tuple "val (x,y) = (1,2)"
 
-  def lifterStats: (Class, Defn.Def, Defn.Def) = {
+  def lifterStats: (Class, Defn.Def, Defn.Def, Defn.Def) = {
     val gg: Type.Name              = Type.fresh("GG$")
     val toTParams: Seq[Type.Param] = tyParamK(gg) +: tparams
     val toTArgs: Seq[Type]         = gg +: tparams.map(toType)
@@ -108,11 +108,15 @@ private[internal] case class FreeSModule(
     }
     val applyDef: Defn.Def =
       q"def apply[..$toTParams](implicit ev: $name[..$toTArgs]): $name[..$toTArgs] = ev"
-    (toClass, toDef, applyDef)
+
+    val applyDefConcreteOp: Defn.Def =
+      q"def instance(implicit ev: $name[Op]): $name[Op] = ev"
+
+    (toClass, toDef, applyDef, applyDefConcreteOp)
   }
 
   def makeObject: Object = {
-    val (toClass, toDef, applyDef) = lifterStats
+    val (toClass, toDef, applyDef, applyDefConcreteOp) = lifterStats
     val opType: Defn.Type = {
       val aa: Type.Name = Type.fresh("AA$")
       q"type Op[${tyParam(aa)}] = _root_.iota.CopK[OpTypes, $aa]"
@@ -123,7 +127,7 @@ private[internal] case class FreeSModule(
     prot.copy(
       name = Term.Name(name.value),
       templ = prot.templ.copy(
-        stats = Some(Seq(opTypes, opType, toClass, toDef, applyDef))
+        stats = Some(Seq(opTypes, opType, toClass, toDef, applyDef, applyDefConcreteOp))
       ))
   }
 

@@ -124,8 +124,8 @@ class moduleTests extends WordSpec with Matchers {
       program.interpret[List] shouldBe List(4)
     }
 
-    "[onion] reuse program interpretation in diferent runtimes" in {
-      val o1 = O1[O1.Op]
+    "[onion] reuse program interpretation in different runtimes" in {
+      val o1 = O1.instance
       val program = for {
         a <- o1.m1.sctors1.x(1)
         b <- o1.m1.sctors1.y(1)
