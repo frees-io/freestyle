@@ -179,7 +179,7 @@ private[internal] case class ModEffect(effVal: Decl.Val) {
   def typeToObject(ty: Type): Term.Ref = ty match {
     case Type.Name(n)                 => Term.Name(n)
     case Type.Select(q, Type.Name(n)) => Term.Select(q, Term.Name(n))
-    case Type.Apply(t, Seq(_)) => typeToObject(t)
+    case Type.Apply(t, Seq(_))        => typeToObject(t)
     case _                            => abort(s"found: $ty unmatched. What is the case here")
   }
 
