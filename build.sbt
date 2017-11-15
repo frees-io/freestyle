@@ -399,7 +399,9 @@ lazy val docs = (project in file("docs"))
       %%("doobie-h2"),
       %%("http4s-dsl"),
       %%("play"),
-      %("h2") % "test"
+      %("h2") % "test",
+      "io.github.cassandra-scala" %% "troy-schema" % "0.5.0",
+      "io.frees" %% "frees-cassandra-core"    % "0.0.4"
     )
   )
   .settings(

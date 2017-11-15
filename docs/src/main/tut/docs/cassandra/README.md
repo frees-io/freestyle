@@ -20,8 +20,13 @@ Freestyle Cassandra is a purely functional library for interacting with Cassandr
   - [What’s frees-cassandra](#whats-frees-cassandra)
   - [Installation](#installation)
   - [About Freestyle Cassandra](#about-freestyle-cassandra)
-  - [Freatures](#freatures)
-    - [Low level API](#low-level-api)
+  - [Public APIs](#public-apis)
+    - [ClusterAPI](#clusterapi)
+    - [SessionAPI](#sessionapi)
+    - [StatementAPI](#statementapi)
+    - [ResultSetAPI](#resultsetapi)
+  - [Features](#features)
+    - [Low level Queries](#low-level-queries)
     - [String Interpolator](#string-interpolator)
 - [References](#references)
 
@@ -58,14 +63,18 @@ at compile time against a previously defined schema.
 In the upcoming sections, we'll take a look at both features and how we can take advantage of them.
 
 ## Public APIs
-*Frees-Cassandra* provides a set of algebras to interact with the different pieces of a Cassandra 
+*Frees-Cassandra* provides a set of [algebras](http://frees.io/docs/core/algebras/) to interact with the different pieces of a Cassandra 
 Service. Each of those algebras represent a public API.   
 
 ### ClusterAPI
 It provides methods to open/close connections to a Cassandra instance, load specific keyspaces, or 
 Cassandra configuration.
 
-```
+```tut:silent
+
+import com.datastax.driver.core.{Configuration, Metadata, Metrics, Session}
+import freestyle.free
+
 @free
 trait ClusterAPI {
 
@@ -82,6 +91,7 @@ trait ClusterAPI {
   def metrics: FS[Metrics]
 
 }
+
 ``` 
 
 ### SessionAPI
@@ -89,7 +99,12 @@ Provides a way to interact with a proper query. We can both define a query as a 
 placeholders for real values - or a raw query string. Bear in mind that running a raw query using the 
 SessionAPI directly is unsafe and does not check query correctness at compile time. 
 
-```
+```tut:silent
+
+import freestyle.free
+import com.datastax.driver.core._
+import freestyle.cassandra.query.model.SerializableValueBy
+
 @free
 trait SessionAPI {
 
@@ -115,13 +130,22 @@ trait SessionAPI {
       consistencyLevel: Option[ConsistencyLevel] = None): FS[ResultSet]
 
 }
+
 ```
 
 ### StatementAPI
 Provides methods to bind real query values to an already existing PreparedStatement, returning a 
 BoundStatement, which can now be ran in a safe way.
 
-```
+```tut:silent
+
+import com.datastax.driver.core._
+import freestyle.free
+import freestyle.cassandra.codecs.ByteBufferCodec
+import freestyle.cassandra.query.model.SerializableValueBy
+
+import java.nio.ByteBuffer
+
 @free
 trait StatementAPI {
 
@@ -164,7 +188,12 @@ Provides methods to interact directly with a Cassandra ResultSet, so we can get 
 representation, a list of them, or describe that that ResultSet could not have been found in the 
 current Cassandra instance.
 
-```
+```tut:book
+
+import com.datastax.driver.core.ResultSet
+import freestyle.free
+import freestyle.cassandra.query.mapper.FromReader
+
 @free
 trait ResultSetAPI {
 
@@ -177,13 +206,13 @@ trait ResultSetAPI {
 }
 ```
 
-## Freatures
+## Features
 
 ### Low level Queries
 The Low-Level API allows us to define queries with placeholders for query constraints, which can be 
 later bound to the final values, running the query in a safe mode, preventing CQL injection. 
 Frees-Cassandra checks the generated query is a valid one at compile time, throwing errors in case 
-any input value doesn't match with the expected data type. 
+any requested value, table or keyspace names does not exist at the schema definition. 
 
 Let's see how we can use it:
 
@@ -226,13 +255,14 @@ cassandra keyspaces & tables schemas.
 
 Example
 
-```  @SchemaFileInterpolator("/schema.cql")
+```
+@SchemaFileInterpolator("/schema.cql")
      trait DummySchemaInterpolator
 ```
 
 This annotation will be expanded via macros to implement a companion object defining a 
 schemaValidator as well as a cql string interpolator method. Now we can import this 
-DummySchemaInterpolator and take advantage of this macro generated utilities [1](#1).  
+DummySchemaInterpolator and take advantage of this macro generated utilities [1].  
 
 ```
   import DummySchemaInterpolator._
@@ -255,7 +285,7 @@ for {
 
 Full String Interpolator example is availiable at [Github Frees-Cassandra-Example](https://github.com/frees-io/freestyle-cassandra-example)
 
-##### 1 Note that we need to define this trait in a different compilation unit (e.g.: a different SBT module) since we are using Contextual Macro Interpolator, so a new macro is defined by our macro.
+[1] Note that we need to define this trait in a different compilation unit (e.g.: a different SBT module) since we are using Contextual Macro Interpolator, so a new macro is defined by our macro.
 
 # References
 
@@ -265,4 +295,3 @@ Full String Interpolator example is availiable at [Github Frees-Cassandra-Exampl
 * [Datastax Driver](http://docs.datastax.com/en/developer/driver-matrix/doc/common/driverMatrix.html)
 
 [freestyle-cassandra-examples]: https://github.com/frees-io/freestyle-cassandra-example
-[Metrifier]: https://github.com/47deg/metrifier
