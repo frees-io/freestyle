@@ -261,21 +261,6 @@ for {
 
 ```
 
-Note that we are using a bind function, which is defined as follows:
-
-```
-def bindValues(st: PreparedStatement)(
-    implicit c1: ByteBufferCodec[UUID],
-    c2: ByteBufferCodec[String]): FreeS[F, BoundStatement] =
-  List(
-    statementAPI.setValueByName(_: BoundStatement, "id", newUser.id, c1),
-    statementAPI.setValueByName(_: BoundStatement, "name", newUser.name, c2))
-    .foldLeft[FreeS[F, BoundStatement]](statementAPI.bind(st)) { (freeS, func) =>
-      freeS.flatMap(boundSt => func(boundSt))
-    }
-```
-
-
 ### String Interpolator
 Frees-Cassandra Query Interpolator allows us to write a raw query and validate it against a 
 previously defined schema. 
