@@ -27,6 +27,9 @@ Freestyle Cassandra is Scala Purely Functional driver for Cassandra based on the
     - [Low level Queries](#low-level-queries)
     - [String Interpolator](#string-interpolator)
 - [References](#references)
+- [freestyle-cassandra-examples](#freestyle-cassandra-examples)
+  - [LowLevelApi](#lowlevelapi)
+  - [StringQueryInterpolator](#stringqueryinterpolator)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -181,7 +184,7 @@ Provides methods to interact directly with a Cassandra ResultSet, so we can get 
 representation, a list of them, or describe that that ResultSet could not have been found in the 
 current Cassandra instance.
 
-```tut:book
+```tut:silent
 
 import com.datastax.driver.core.ResultSet
 import freestyle.free
@@ -209,7 +212,38 @@ any requested value, table or keyspace names does not exist at the schema defini
 
 Let's see how we can use it:
 
-```
+```tut:silent
+import java.util.UUID
+
+import com.datastax.driver.core._
+import freestyle._
+import freestyle.implicits._
+import freestyle.cassandra.implicits._
+import freestyle.cassandra.api.QueryModule
+import freestyle.cassandra.codecs._
+
+final case class User(id: java.util.UUID, name: String)
+
+def program[F[_]](implicit app: QueryModule[F]): FreeS[F, User] = {
+
+import app._
+
+implicit val stringTypeCodec: TypeCodec[String] = TypeCodec.varchar()
+implicit val uuidTypeCodec: TypeCodec[UUID] = TypeCodec.uuid()
+implicit val protocolVersion: ProtocolVersion = ProtocolVersion.V4
+
+val newUser = User(UUID.randomUUID(), "Username")
+
+def bindValues(st: PreparedStatement)(
+  implicit c1: ByteBufferCodec[UUID],
+  c2: ByteBufferCodec[String]): FreeS[F, BoundStatement] =
+  List(
+    statementAPI.setValueByName(_: BoundStatement, "id", newUser.id, c1),
+    statementAPI.setValueByName(_: BoundStatement, "name", newUser.name, c2))
+    .foldLeft[FreeS[F, BoundStatement]](statementAPI.bind(st)) { (freeS, func) =>
+    freeS.flatMap(boundSt => func(boundSt))
+  }
+
 for {
   preparedStatement <- sessionAPI.prepare("INSERT INTO users (id, name) VALUES (?, ?)")
   boundStatement    <- bindValues(preparedStatement)
@@ -220,7 +254,10 @@ for {
     val row = rs.one()
     User(row.getUUID(0), row.getString(1))
   }
+  _ <- sessionAPI.close
 } yield user
+
+}
 
 ```
 
@@ -276,8 +313,6 @@ for {
     } yield userResultSet
 ```
 
-Full String Interpolator example is availiable at [Github Frees-Cassandra-Example](https://github.com/frees-io/freestyle-cassandra-example)
-
 [1] Note that we need to define this trait in a different compilation unit (e.g.: a different SBT 
 module) since we are using Contextual Macro Interpolator, so a new macro is defined by our macro.
 
@@ -288,4 +323,9 @@ module) since we are using Contextual Macro Interpolator, so a new macro is defi
 * [Contextual](https://github.com/propensive/contextual)
 * [Datastax Driver](http://docs.datastax.com/en/developer/driver-matrix/doc/common/driverMatrix.html)
 
-[freestyle-cassandra-examples]: https://github.com/frees-io/freestyle-cassandra-example
+# freestyle-cassandra-examples
+
+All code examples are available in [Github](https://github.com/frees-io/freestyle-cassandra-example).
+
+## [LowLevelApi](https://github.com/frees-io/freestyle-cassandra-example/blob/master/basic/examples/src/main/scala/freestyle/cassandra/sample/LowLevelApi.scala)
+## [StringQueryInterpolator](https://github.com/frees-io/freestyle-cassandra-example/blob/master/basic/examples/src/main/scala/freestyle/cassandra/sample/StringInterpolator.scala)
