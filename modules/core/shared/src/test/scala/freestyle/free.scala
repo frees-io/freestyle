@@ -83,6 +83,17 @@ class freeTests extends WordSpec with Matchers {
       "@free trait X { def ix[A >: Int](a: A) : FS[A] }" should compile
     }
 
+    "a trait with different type parameters in the method" in {
+      "@free trait X { def ix[A <: Int, B, C >: Int](a: A, b: B, c: C) : FS[A] }" should compile
+    }
+
+    "a trait with high bounded type parameters and implicits in the method" in {
+      """
+        trait X[A]
+        @free trait Y { def ix[A <: Int : X](a: A) : FS[A] }
+      """ should compile
+    }
+
   }
 
   "the @free macro annotation should be rejected, and the compilation fail, if it is applied to" when {
@@ -385,6 +396,20 @@ class freeTests extends WordSpec with Matchers {
           override def x(a: Int): Int = 4
         }
       v.y(5).interpret[Id] shouldBe(true)
+    }
+
+    "generate interpreters or Handlers when mix higher bound params and implicits" in {
+      trait X[A]
+      @free trait Algebra {
+        def x[A <: String : X](a: A): FS[Int]
+      }
+      val v = Algebra[Algebra.Op]
+      implicit val interpreter: Algebra.Handler[Id] =
+        new Algebra.Handler[Id]{
+          override def x[A <: String](a: A, x: X[A]): Int = 4
+        }
+      implicit def x[A]: X[A] = new X[A] {}
+      v.x("").interpret[Id] shouldBe 4
     }
 
   }

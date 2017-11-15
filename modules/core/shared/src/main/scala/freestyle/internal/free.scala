@@ -17,9 +17,11 @@
 package freestyle.internal
 
 import freestyle.FreeS
+
 import scala.collection.immutable.Seq
 import scala.meta._
 import scala.meta.Defn.{Class, Object, Trait}
+import scala.meta.Type.Param
 
 trait EffectLike[F[_]] {
   final type FS[A] = FreeS.Par[F, A]
@@ -112,6 +114,14 @@ private[internal] case class Algebra(
   val indexName: Term.Name = Term.fresh("FSAlgebraIndex")
 
   def handlerTrait: Trait = {
+
+    val requestParams: Seq[Seq[Option[Decl.Type]]] =
+      requests.map {
+        _.tparams
+          .map(_.tbounds.hi)
+          .map(_.map(t => q"type ${Type.fresh("PP$")} <: $t"))
+      }
+
     val mm = Type.fresh("MM$")
 
     val applyDef: Defn.Def = {
@@ -126,15 +136,20 @@ private[internal] case class Algebra(
       val fa = Term.fresh("fa$")
       val matchE: Term.Match = Term.Match(
         q"$fa.$indexName : @_root_.scala.annotation.switch",
-        requests.map(_.handlerCase(fa)) :+ errorCase
+        requests.zip(requestParams).map {
+          case (request, params) => request.handlerCase(fa, params)
+        } :+ errorCase
       )
 
       q"override def apply[${tyParam(aa)}]($fa: $OP[$aa]): $mm[$aa] = ($matchE).asInstanceOf[$mm[$aa]]"
     }
 
+    val highBoundTypeDecl: Seq[Decl.Type] = requestParams.flatMap(_.flatten)
+
     q"""
       trait Handler[${tyParamK(mm)}, ..$cleanedTParams] extends _root_.freestyle.FSHandler[$OP, $mm] {
         ..${requests.map(_.handlerDef(mm))}
+        ..$highBoundTypeDecl
         $applyDef
       }
     """
@@ -201,7 +216,7 @@ private[internal] class Request(reqDef: Decl.Def, indexValue: Int) {
   // Name of the Request ADT Class
   private[this] val reqName: String = reqDef.name.value
   private[this] val req: Type.Name  = Type.Name(reqName.capitalize + "Op")
-  private[this] val cboundPrefix = "__$cbound"
+  private[this] val cboundPrefix    = "__$cbound"
 
   private[this] val res: Type = reqDef.decltpe match {
     case Type.Apply(_, args) => args.last
@@ -211,14 +226,19 @@ private[internal] class Request(reqDef: Decl.Def, indexValue: Int) {
   private[this] val reqC    = Term.Name(req.value)
   private[this] val reqImpl = Term.Name(reqName)
 
-  val cbtparams = for {
-    tps <- reqDef.tparams.filter(_.cbounds.nonEmpty)
+  val cbtparams: Seq[Term.Param] = for {
+    tps    <- reqDef.tparams.filter(_.cbounds.nonEmpty)
     cbound <- tps.cbounds
-  } yield Term.Param(Nil, Term.fresh(cboundPrefix), Some(Type.Apply(cbound, Seq(Type.Name(tps.name.value)))), None)
+  } yield
+    Term.Param(
+      Nil,
+      Term.fresh(cboundPrefix),
+      Some(Type.Apply(cbound, Seq(Type.Name(tps.name.value)))),
+      None)
 
-  val tparams = reqDef.tparams.map {
+  val tparams: Seq[Param] = reqDef.tparams.map {
     case p if p.cbounds.nonEmpty => p.copy(cbounds = Nil)
-    case p => p
+    case p                       => p
   }
 
   val params: Seq[Term.Param] = reqDef.paramss.flatten.map {
@@ -238,7 +258,7 @@ private[internal] class Request(reqDef: Decl.Def, indexValue: Int) {
     """
   }
 
-  private[this] def nameOrImplicitly(param : Term.Param): Term.Name = param match {
+  private[this] def nameOrImplicitly(param: Term.Param): Term.Name = param match {
     case Term.Param(_, paramname, Some(atpeopt), _) if paramname.value.startsWith(cboundPrefix) =>
       val targ"${tpe: Type}" = atpeopt
       Term.Name(s"_root_.scala.Predef.implicitly[$tpe]")
@@ -256,7 +276,7 @@ private[internal] class Request(reqDef: Decl.Def, indexValue: Int) {
     addBody(reqDef, q"$inj($body)").copy(mods = Seq(Mod.Override()))
   }
 
-  def handlerCase(fa: Term.Name): Case = {
+  def handlerCase(fa: Term.Name, requestParams: Seq[Option[Decl.Type]]): Case = {
 
     val mexp: Term =
       if (params.isEmpty)
@@ -267,11 +287,9 @@ private[internal] class Request(reqDef: Decl.Def, indexValue: Int) {
           else {
             // Wildcard types are not working for function params like this f: (B, A) => B
             // val us: Type = Type.Placeholder(Type.Bounds(None, None) )
-            val typeParams = tparams.map { p =>
-              p.tbounds.hi match {
-                case Some(t) => t"_ <: $t"
-                case _       => t"_root_.scala.Any"
-              }
+            val typeParams = requestParams.map {
+              case Some(tName) => t"${tName.name}"
+              case None        => t"_root_.scala.Any"
             }
             Type.Apply(req, typeParams)
           }
