@@ -394,7 +394,7 @@ lazy val docs = (project in file("docs"))
       Resolver.bintrayRepo("kailuowang", "maven")
     ),
     libraryDependencies ++= Seq(
-      %%("frees-rpc", "0.2.0"),
+      %%("frees-rpc", "0.3.0"),
       %%("monix"),
       %%("doobie-h2"),
       %%("http4s-dsl"),
