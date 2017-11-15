@@ -36,19 +36,25 @@ class TaglessTests extends WordSpec with Matchers {
 
   "Tagless final algebras" should {
 
+    "Allow a trait with an F[_] bound type param" in {
+      "@tagless trait X[F[_]] { def bar(x:Int): FS[Int] }" should compile
+    }
+
     "combine with other tagless algebras" in {
 
-      def program[F[_] : Monad : TG1 : TG2] = {
+      def program[F[_] : Monad : TG1 : TG2: TG3] = {
         val a1 = TG1[F]
         val a2 = TG2[F]
+        val a3 = TG3[F]
         for {
           a <- a1.x(1)
           b <- a1.y(1)
           c <- a2.x2(1)
           d <- a2.y2(1)
-        } yield a + b + c + d
+          e <- a3.y3(1)
+        } yield a + b + c + d + e
       }
-      program[Option] shouldBe Option(4)
+      program[Option] shouldBe Option(5)
     }
 
     "combine with FreeS monadic comprehensions" in {
@@ -109,6 +115,13 @@ object algebras {
     def y2(a: Int): FS[Int]
   }
 
+  @tagless
+  trait TG3[F[_]] {
+    def x3(a: Int): FS[Int]
+
+    def y3(a: Int): FS[Int]
+  }
+
   @free
   trait F1 {
     def a(a: Int): FS[Int]
@@ -132,6 +145,12 @@ object handlers  {
     def x2(a: Int): Option[Int] = Some(a)
 
     def y2(a: Int): Option[Int] = Some(a)
+  }
+
+  implicit val optionHandler3: TG3.Handler[Option] = new TG3.Handler[Option] {
+    def x3(a: Int): Option[Int] = Some(a)
+
+    def y3(a: Int): Option[Int] = Some(a)
   }
 
   implicit val f1OptionHandler1: F1.Handler[Option] = new F1.Handler[Option] {

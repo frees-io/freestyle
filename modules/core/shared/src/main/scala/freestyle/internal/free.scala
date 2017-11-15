@@ -78,11 +78,21 @@ private[internal] case class Algebra(
   def toTrait: Trait = Trait(mods, name, tparams, ctor, templ)
   def toClass: Class = Class(mods, name, tparams, ctor, templ)
 
+  val cleanedTParams: Seq[Type.Param] = tparams.toList match {
+    case List(f@tparam"..$mods $name[$tparam]") => Nil
+    case _ => tparams
+  }
+
   /* The enrich method adds a kind-1 type parameter `$ff[_]` to the algebra type,
    * and adds `EffectLike[$ff]` to the parents */
   def enrich: Algebra = {
-    val ff: Type.Name = Type.fresh("FF$")
-    val pat           = q"trait Foo[${tyParamK(ff)}] extends _root_.freestyle.internal.EffectLike[$ff]"
+    val pat           = tparams.toList match {
+      case List(f @ tparam"..$mods $name[$tparam]") =>
+        q"trait Foo[$f] extends _root_.freestyle.internal.EffectLike[${toType(f)}]"
+      case _ =>
+        val ff: Type.Name = Type.fresh("FF$")
+        q"trait Foo[${tyParamK(ff)}] extends _root_.freestyle.internal.EffectLike[$ff]"
+    }
     Algebra(mods, name, pat.tparams, ctor, templ.copy(parents = pat.templ.parents))
   }
 
@@ -123,7 +133,7 @@ private[internal] case class Algebra(
     }
 
     q"""
-      trait Handler[${tyParamK(mm)}, ..$tparams] extends _root_.freestyle.FSHandler[$OP, $mm] {
+      trait Handler[${tyParamK(mm)}, ..$cleanedTParams] extends _root_.freestyle.FSHandler[$OP, $mm] {
         ..${requests.map(_.handlerDef(mm))}
         $applyDef
       }
@@ -132,8 +142,8 @@ private[internal] case class Algebra(
 
   def lifterStats: (Class, Defn.Def, Defn.Def) = {
     val gg: Type.Name               = Type.fresh("LL$") // LL is the target of the Lifter's Injection
-    val injTParams: Seq[Type.Param] = tyParamK(gg) +: tparams
-    val injTArgs: Seq[Type]         = gg +: tparams.map(toType)
+    val injTParams: Seq[Type.Param] = tyParamK(gg) +: cleanedTParams
+    val injTArgs: Seq[Type]         = gg +: cleanedTParams.map(toType)
     val ii                          = Term.fresh("ii$")
 
     val toClass: Class = {
@@ -166,7 +176,7 @@ private[internal] case class Algebra(
       q"sealed trait $OP[_] extends _root_.scala.Product with _root_.java.io.Serializable { $index }"
     }
     val opTypes                    = q"type OpTypes = _root_.iota.TConsK[$OP, _root_.iota.TNilK]"
-    val adt: Seq[Stat]             = opTrait +: requests.map(_.reqClass(OP, tparams, indexName))
+    val adt: Seq[Stat]             = opTrait +: requests.map(_.reqClass(OP, cleanedTParams, indexName))
     val (toClass, toDef, applyDef) = lifterStats
     val prot                       = q"""@_root_.java.lang.SuppressWarnings(_root_.scala.Array(
                                            "org.wartremover.warts.Any",
