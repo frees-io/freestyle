@@ -54,7 +54,7 @@ Add the following dependency to your project's build file.
 For Scala `2.11.x` and `2.12.x`:
 
 ```scala
-libraryDependencies += "io.frees" %% "frees-rpc" % "0.2.0"
+libraryDependencies += "io.frees" %% "frees-rpc" % "0.3.0"
 ```
 
 ## About gRPC
@@ -175,7 +175,7 @@ object protocols {
      * @param request Say Hello Request.
      * @return HelloReply.
      */
-    @rpc def sayHello(request: HelloRequest): FS[HelloReply]
+    @rpc(Protobuf) def sayHello(request: HelloRequest): FS[HelloReply]
 
   }
 }
@@ -187,7 +187,7 @@ We are also using some additional annotations:
 
 * `@option`: used to define the equivalent headers in `.proto` files.
 * `@service`: it tags the `@free` algebra as an [RPC] service, in order to derive server and client code (macro expansion). **Important**: `@free` annotation should go first, followed by `@service` annotation, and not inversely.
-* `@rpc`: this annotation indicates that the method is an RPC service.
+* `@rpc(Protobuf)`: this annotation indicates that the method is an RPC service. It receives as argument the type of serialization that will be used to encode/decode data, `Protocol Buffers` in the example. `Avro` is also supported as the another type of serialization.
 
 We'll see more details about these and other annotations in the following sections.
 
@@ -229,7 +229,7 @@ object service {
      * @param request Client Request.
      * @return Server Response.
      */
-    @rpc
+    @rpc(Protobuf)
     def sayHello(request: HelloRequest): FS[HelloResponse]
 
     /**
@@ -241,7 +241,7 @@ object service {
      * @param request Client Request.
      * @return Stream of server responses.
      */
-    @rpc
+    @rpc(Protobuf)
     @stream[ResponseStreaming.type]
     def lotsOfReplies(request: HelloRequest): FS[Observable[HelloResponse]]
 
@@ -255,7 +255,7 @@ object service {
      * @param request Stream of requests.
      * @return Single Server Response.
      */
-    @rpc
+    @rpc(Protobuf)
     @stream[RequestStreaming.type]
     def lotsOfGreetings(request: Observable[HelloRequest]): FS[HelloResponse]
 
@@ -271,7 +271,7 @@ object service {
      * @param request Stream of requests.
      * @return Stream of server responses.
      */
-    @rpc
+    @rpc(Protobuf)
     @stream[BidirectionalStreaming.type]
     def bidiHello(request: Observable[HelloRequest]): FS[Observable[HelloResponse]]
 
@@ -300,7 +300,7 @@ This responsibility relies on [sbt-freestyle-protogen](https://github.com/frees-
 Add the following line to _project/plugins.sbt_:
 
 ```scala
-addSbtPlugin("io.frees" % "sbt-frees-protogen" % "0.0.13")
+addSbtPlugin("io.frees" % "sbt-frees-protogen" % "0.0.14")
 ```
 
 ### Plugin Settings
@@ -448,8 +448,6 @@ In summary, the result would be as follows:
 ```tut:silent
 import cats.~>
 import cats.implicits._
-import freestyle.implicits._
-import freestyle.async.implicits._
 import freestyle.rpc.server._
 import freestyle.rpc.server.handlers._
 import freestyle.rpc.server.implicits._
@@ -544,7 +542,6 @@ So, taking into account all we have just said, how would our code look?
 
 ```tut:silent
 import cats.implicits._
-import freestyle.implicits._
 import freestyle.config.implicits._
 import freestyle.asyncCatsEffect.implicits._
 import freestyle.rpc.client._
@@ -627,7 +624,7 @@ Provided below is a summary of all the current annotations that [frees-rpc] prov
 Annotation | Scope | Arguments | Description
 --- | --- | --- | --- 
 @service | [@free algebra] | - | Tags the `@free` algebra as [RPC] service, in order to derive server and client code (macro expansion). **Important**: `@free` annotation should go first, followed by the `@service` annotation, and not inversely.
-@rpc | `Method` | - | Indicates the method is an RPC service.
+@rpc | `Method` | (`SerializationType`) | Indicates the method is an RPC service. As `SerializationType` parameter value, `Protobuf` and `Avro` are the current supported serialization methods.
 @stream | `Method` | [`S <: StreamingType`] | There are three different types of streaming: server, client, and bidirectional. Hence, the `S` type parameter can be `ResponseStreaming`, `RequestStreaming`, or `BidirectionalStreaming`, respectively.
 @message | `Case Class` | - | Tags a case class a protobuf message.
 @option | `Object` | [name: String, value: String, quote: Boolean] | used to define the equivalent headers in `.proto` files
