@@ -61,21 +61,35 @@ private[internal] case class FreeSModule(
   import ModuleUtil._
   import ScalametaUtil._
 
+  val cleanedTParams: Seq[Type.Param] = tparams.toList match {
+    case List(f@tparam"..$mods $name[$tparam]") => Nil
+    case _ => tparams
+  }
+
   val effects: Seq[ModEffect] =
     templ.stats.getOrElse(Nil).collect {
+      case vdec @ Decl.Val(_, Seq(Pat.Var.Term(_)), Type.Apply(tname @ _, Seq(Type.Name(_)))) => ModEffect(vdec)
       case vdec @ Decl.Val(_, Seq(Pat.Var.Term(_)), _) => ModEffect(vdec)
     }
 
   def enrichStat(tt: Type.Name, st: Stat): Stat = st match {
-    case vdec @ Decl.Val(mods, Seq(Pat.Var.Term(tname)), ty) =>
+    case vdec @ Decl.Val(_, Seq(Pat.Var.Term(tname)), Type.Apply(_, Seq(_))) =>
+      vdec
+    case vdec @ Decl.Val(_, Seq(Pat.Var.Term(tname)), ty) =>
       vdec.copy(decltpe = Type.Apply(ty, Seq(tt)))
     case x => x
   }
 
   /* The effects are Val Declarations (no value definition) */
   def makeClass: Defn = {
-    val ff: Type.Name = Type.fresh("FF$")
-    val pat           = q"trait Foo[${tyParamK(ff)}] extends _root_.freestyle.internal.EffectLike[$ff]"
+
+    val (ff, pat)           = tparams.toList match {
+      case List(f @ tparam"..$mods $name[$tparam]") =>
+        (Type.Name(f.name.value), q"trait Foo[$f] extends _root_.freestyle.internal.EffectLike[${toType(f)}]")
+      case _ =>
+        val ff: Type.Name = Type.fresh("FF$")
+        (ff, q"trait Foo[${tyParamK(ff)}] extends _root_.freestyle.internal.EffectLike[$ff]")
+    }
 
     val nstats = templ.stats.map(_.map(stat => enrichStat(ff, stat)))
     val ntempl = templ.copy(parents = pat.templ.parents, stats = nstats)
@@ -91,8 +105,8 @@ private[internal] case class FreeSModule(
 
   def lifterStats: (Class, Defn.Def, Defn.Def, Defn.Def) = {
     val gg: Type.Name              = Type.fresh("GG$")
-    val toTParams: Seq[Type.Param] = tyParamK(gg) +: tparams
-    val toTArgs: Seq[Type]         = gg +: tparams.map(toType)
+    val toTParams: Seq[Type.Param] = tyParamK(gg) +: cleanedTParams
+    val toTArgs: Seq[Type]         = gg +: cleanedTParams.map(toType)
 
     val sup: Term.ApplyType = Term.ApplyType(Ctor.Ref.Name(name.value), toTArgs)
     val toClass: Class = {
@@ -145,7 +159,10 @@ private[internal] case class ModEffect(effVal: Decl.Val) {
   def buildDefParam(gg: Type.Name): Term.Param =
     q"def foo(implicit x: Int)".paramss.head.head.copy(
       name = effVal.pats.head.name,
-      decltpe = Some(Type.Apply(effVal.decltpe, Seq(gg)))
+      decltpe = Some(effVal.decltpe match {
+        case Type.Apply(t @ _, _) => Type.Apply(t, Seq(gg))
+        case _ => Type.Apply(effVal.decltpe, Seq(gg))
+      })
     )
 
   // buildParam(x, t) = q"class Foo(implicit val $x: $t[$gg])"
@@ -153,7 +170,10 @@ private[internal] case class ModEffect(effVal: Decl.Val) {
     q"def foo(implicit x: Int)".paramss.head.head.copy(
       mods = Seq(Mod.Implicit(), Mod.ValParam()),
       name = effVal.pats.head.name,
-      decltpe = Some(Type.Apply(effVal.decltpe, Seq(gg)))
+      decltpe = Some(effVal.decltpe match {
+        case Type.Apply(t @ _, _) => Type.Apply(t, Seq(gg))
+        case _ => Type.Apply(effVal.decltpe, Seq(gg))
+      })
     )
 
   // x => q"x.OpTypes"
@@ -163,7 +183,8 @@ private[internal] case class ModEffect(effVal: Decl.Val) {
   def typeToObject(ty: Type): Term.Ref = ty match {
     case Type.Name(n)                 => Term.Name(n)
     case Type.Select(q, Type.Name(n)) => Term.Select(q, Term.Name(n))
-    case _                            => abort("What is the case here")
+    case Type.Apply(t, Seq(_))        => typeToObject(t)
+    case _                            => abort(s"found: $ty unmatched. What is the case here")
   }
 
 }

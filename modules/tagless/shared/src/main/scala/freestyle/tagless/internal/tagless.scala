@@ -61,6 +61,11 @@ case class Algebra(
   def toTrait: Trait = Trait(mods, name, tparams, ctor, templ)
   def toClass: Class = Class(mods, name, tparams, ctor, templ)
 
+  val cleanedTParams: Seq[Type.Param] = tparams.toList match {
+    case List(f@tparam"..$mods $name[$tparam]") => Nil
+    case _ => tparams
+  }
+
   val requestDecls: Seq[Decl.Def] = templ.stats.get.collect {
     case dd: Decl.Def =>
       dd.decltpe match {
@@ -73,8 +78,13 @@ case class Algebra(
   // making that trait extends from AnyRef.
   def enrich: Algebra = {
     val ff: Type.Name = Type.fresh("FF$")
-    val pat: Trait =
-      q"trait Foo[${tyParamK(ff)}] extends _root_.freestyle.tagless.internal.TaglessEffectLike[$ff]"
+    val pat           = tparams.toList match {
+      case List(f @ tparam"..$mods $name[$tparam]") =>
+        q"trait Foo[$f] extends _root_.freestyle.tagless.internal.TaglessEffectLike[${toType(f)}]"
+      case _ =>
+        val ff: Type.Name = Type.fresh("FF$")
+        q"trait Foo[${tyParamK(ff)}] extends _root_.freestyle.tagless.internal.TaglessEffectLike[$ff]"
+    }
     Algebra(mods, name, pat.tparams, ctor, templ.copy(parents = pat.templ.parents))
   }
 
@@ -88,8 +98,8 @@ case class Algebra(
     val stackSafeHandler = Term.fresh("stackSafeHandler$")
     val functorK         = Pat.Var.Term.apply(Term.fresh("functorKInstance$"))
 
-    val runTParams: Seq[Type.Param] = tyParamK(mm) +: tparams
-    val runTArgs: Seq[Type]         = mm +: tparams.map(toType)
+    val runTParams: Seq[Type.Param] = tyParamK(mm) +: cleanedTParams
+    val runTArgs: Seq[Type]         = mm +: cleanedTParams.map(toType)
 
     val sup: Term.ApplyType = Term.ApplyType(Ctor.Ref.Name(name.value), runTArgs)
 
@@ -117,8 +127,8 @@ case class Algebra(
     }
 
     val deriveDef: Defn.Def = {
-      val deriveTTs = tyParamK(mm) +: tyParamK(nn) +: tparams
-      val nnTTs     = nn +: tparams.map(toType)
+      val deriveTTs = tyParamK(mm) +: tyParamK(nn) +: cleanedTParams
+      val nnTTs     = nn +: cleanedTParams.map(toType)
       q"""
         implicit def derive[..$deriveTTs](
           implicit h: $name[..$runTArgs],
@@ -134,8 +144,8 @@ case class Algebra(
     }
 
     val functorKDef: Defn.Val = {
-      val mapKTTs        = tyParamK(mm) +: tyParamK(nn) +: tparams
-      val tParamsAsTypes = tparams.map(toType)
+      val mapKTTs        = tyParamK(mm) +: tyParamK(nn) +: cleanedTParams
+      val tParamsAsTypes = cleanedTParams.map(toType)
       val nnTTs          = nn +: tParamsAsTypes
       val ctor           = Ctor.Ref.Name(name.value)
 

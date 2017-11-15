@@ -31,6 +31,10 @@ class freeTests extends WordSpec with Matchers {
       "@free trait X { def bar(x:Int): FS[Int] }" should compile
     }
 
+    "a trait with an F[_] bound type param" in {
+      "@free @debug trait FBound[F[_]] { def bar(x:Int): FS[Int] }" should compile
+    }
+
     "an abstract class with at least one request" in {
       "@free abstract class X { def bar(x:Int): FS[Int] }" should compile
     }
