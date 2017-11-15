@@ -400,7 +400,6 @@ lazy val docs = (project in file("docs"))
       %%("http4s-dsl"),
       %%("play"),
       %("h2") % "test",
-      "io.github.cassandra-scala" %% "troy-schema" % "0.5.0",
       "io.frees" %% "frees-cassandra-core"    % "0.0.4"
     )
   )
