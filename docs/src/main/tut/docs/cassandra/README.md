@@ -8,9 +8,7 @@ permalink: /docs/cassandra
 # Freestyle-Cassandra
 
 [Cassandra] atop **Freestyle** is **`frees-cassandra`**.
-
-Freestyle Cassandra is a purely functional library for interacting with Cassandra supporting both,
-[LowQueryAPI] and [StringQueryInterpolation].
+Freestyle Cassandra is Scala Purely Functional driver for Cassandra based on the datastax Java Driver.
 
 
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
@@ -34,10 +32,9 @@ Freestyle Cassandra is a purely functional library for interacting with Cassandr
 
 ## What’s frees-cassandra
 
-[frees-cassandra] is a library to interact with cassandra built atop Free and following the
-[Freestyle] philosophy, being macro-powered. We use Troy under the scenes for modeling purposes 
-and query schema validation, as well as Datastax Cassandra Driver for connecting to a Cassandra 
-Cluster.
+[frees-cassandra] is a library to interact with cassandra built atop Free and using the Datastax 
+Cassandra Driver for connecting to a Cassandra instance. It follows the [Freestyle] philosophy, 
+being macro-powered. 
 
 ## Installation
 
@@ -52,19 +49,15 @@ libraryDependencies += "io.frees" %% "frees-cassandra" % "0.0.4"
 
 ## About Freestyle Cassandra
 
-> [Troy](https://github.com/schemasafe/troy) is a type-safe & compile-time-checked wrapper around 
-> the Cassandra driver that allows you to write raw CQL queries, validating them against your 
-> schema, and showing errors at compile-time. 
- 
-Freestyle-Cassandra provides 2 different APIS, a low level one, letting you define a query and bind 
-values to it, and a String Interpolator one, which allows us to write raw queries and validate them 
-at compile time against a previously defined schema.
+Freestyle-Cassandra provides 2 different ways of use, a low level one, letting you define a query 
+and bind values to it, and a String Interpolator one, which allows us to write raw queries and 
+validate them at compile time against a previously defined schema.
 
 In the upcoming sections, we'll take a look at both features and how we can take advantage of them.
 
 ## Public APIs
-*Frees-Cassandra* provides a set of [algebras](http://frees.io/docs/core/algebras/) to interact with the different pieces of a Cassandra 
-Service. Each of those algebras represent a public API.   
+*Frees-Cassandra* provides a set of [algebras](http://frees.io/docs/core/algebras/) to interact with 
+the different pieces of a Cassandra Service. Each of those algebras represent a public API.   
 
 ### ClusterAPI
 It provides methods to open/close connections to a Cassandra instance, load specific keyspaces, or 
@@ -273,8 +266,8 @@ DummySchemaInterpolator and take advantage of this macro generated utilities [1]
     cql"SELECT id, name FROM demodb.users WHERE id = $uuid".asResultSet[F]()
 ```
 
-At the end, what we are getting with `FreeS[F, ResultSet]` is a `Free[FreeApplicative[F, ?], A]` 
-which can be monadically composed as follows:
+At the end, what we are getting is a `FreeS[F, ResultSet]` which can be monadically composed as 
+follows:
 
 ```
 for {
@@ -285,7 +278,8 @@ for {
 
 Full String Interpolator example is availiable at [Github Frees-Cassandra-Example](https://github.com/frees-io/freestyle-cassandra-example)
 
-[1] Note that we need to define this trait in a different compilation unit (e.g.: a different SBT module) since we are using Contextual Macro Interpolator, so a new macro is defined by our macro.
+[1] Note that we need to define this trait in a different compilation unit (e.g.: a different SBT 
+module) since we are using Contextual Macro Interpolator, so a new macro is defined by our macro.
 
 # References
 
