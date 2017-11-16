@@ -270,32 +270,124 @@ cassandra keyspaces & tables schemas.
 
 Example
 
-```
-@SchemaFileInterpolator("/schema.cql")
-     trait DummySchemaInterpolator
-```
+```tut:silent
 
-This annotation will be expanded via macros to implement a companion object defining a 
-schemaValidator as well as a cql string interpolator method. Now we can import this 
-DummySchemaInterpolator and take advantage of this macro generated utilities [1].  
+import freestyle.cassandra.query.interpolator.MacroInterpolator.SchemaFileInterpolator
 
-```
-  import DummySchemaInterpolator._
-
-  val insertUserTask: FreeS[F, ResultSet] =
-    cql"INSERT INTO demodb.users (id, name) VALUES ($uuid, 'Username');".asResultSet[F]()
-  val getUserTask: FreeS[F, ResultSet] =
-    cql"SELECT id, name FROM demodb.users WHERE id = $uuid".asResultSet[F]()
+object Model {
+    @SchemaFileInterpolator("/schema.cql")
+    trait SchemaInterpolator
+}
 ```
 
-At the end, what we are getting is a `FreeS[F, ResultSet]` which can be monadically composed as 
-follows:
+This annotation will be expanded via macros defining a cql string interpolator method, which
+will allow us validate our queries against the real schema defined in a CQL script. 
+Now we can import this SchemaInterpolator and take advantage of this macro generated utilities[1].  
+
+Let's see an example. We can define an algebra to represent operations over an user, and a 
+module to interact with other algebras:
+
+```tut:silent
+import java.util.UUID
+
+import com.datastax.driver.core.ResultSet
+import freestyle.{free, module}
+import freestyle.cassandra.api._
+import freestyle.logging._
+
+@free
+trait UserAPI {
+
+  def insert(userId: UUID): FS[ResultSet]
+
+  def get(userId: UUID): FS[ResultSet]
+}
+
+@module trait StringInterpolatorApp {
+  val queryModule: QueryModule
+  val log: LoggingM
+  val userApi: UserAPI
+}
 
 ```
-for {
-      _             <- insertUserTask
-      userResultSet <- getUserTask
-    } yield userResultSet
+
+Then, we need to define a handler for that algebra:
+
+```
+import java.util.UUID
+
+import cats.MonadError
+import com.datastax.driver.core.{ResultSet, Session}
+import freestyle.async.AsyncContext
+import freestyle.cassandra.query.interpolator._
+import freestyle.cassandra.api._
+import Model.SchemaInterpolator
+
+import scala.concurrent.ExecutionContext
+
+object implicits {
+
+  implicit val stringTypeCodec: TypeCodec[String] = TypeCodec.varchar()
+  implicit val uuidTypeCodec: TypeCodec[UUID] = TypeCodec.uuid()
+  implicit val protocolVersion: ProtocolVersion = ProtocolVersion.V4
+
+  implicit def userApiHandler[F[_]](implicit API: SessionAPI[SessionAPI.Op],
+    S: Session,
+    AC: AsyncContext[F],
+    E: ExecutionContext,
+    ME: MonadError[F, Throwable]): UserAPI.Handler[F] = new UserAPI.Handler[F] {
+
+    import SchemaInterpolator._
+
+    override protected[this] def insert(userId: UUID): F[ResultSet] =
+      cql"INSERT INTO demodb.users (id, name) VALUES ($userId, 'Username');".attemptResultSet[F]()
+
+    override protected[this] def get(userId: UUID): F[ResultSet] =
+      cql"SELECT id, name FROM demodb.users WHERE id = $userId".attemptResultSet[F]()
+  }
+
+}
+```
+
+So, now we can compose those algebras ops easily:
+
+```tut:silent
+
+import java.util.UUID
+
+import com.datastax.driver.core._
+import freestyle._
+import freestyle.implicits._
+import freestyle.cassandra.api._
+import freestyle.cassandra.implicits._
+import freestyle.cassandra.query.interpolator._
+
+object Example extends App {
+
+  final case class User(id: java.util.UUID, name: String)
+
+  val uuid = UUID.randomUUID()
+
+  def program[F[_]](implicit app: StringInterpolatorApp[F]): FreeS[F, User] = {
+  
+      implicit val s = app.queryModule.sessionAPI
+  
+      for {
+        _             <- app.log.debug(s"# Executing insert query with id $uuid")
+        _             <- app.userApi.insert(uuid)
+        _             <- app.log.debug("# Selecting previous inserted item")
+        userResultSet <- app.userApi.get(uuid)
+        user = {
+          val userRow = userResultSet.one()
+          User(userRow.getUUID(0), userRow.getString(1))
+        }
+        _             <- app.log.debug(s"# Fetched item: $user")
+        _             <- app.log.debug(s"# Closing connection")
+        _             <- app.queryModule.sessionAPI.close
+      } yield user
+    }
+
+}
 ```
 
 [1] Note that we need to define this trait in a different compilation unit (e.g.: a different SBT 
@@ -304,9 +396,16 @@ module) since we are using Contextual Macro Interpolator, so a new macro is defi
 # References
 
 * [Freestyle](http://frees.io/)
+  Frestyle Cassandra is part of the ecosystem built around Freestyle, and makes an intensive use of it.
+  
 * [Troy](https://github.com/schemasafe/troy)
+  We are currently using Troy for inferring the schema from a CQL script file.
+
 * [Contextual](https://github.com/propensive/contextual)
+  It helps us to create string interpolators.
+  
 * [Datastax Driver](http://docs.datastax.com/en/developer/driver-matrix/doc/common/driverMatrix.html)
+  Interactions with Cassandra clusters are done through the Java Datastax Cassandra Driver.
 
 # freestyle-cassandra-examples
 
