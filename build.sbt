@@ -391,7 +391,8 @@ lazy val docs = (project in file("docs"))
   .settings(
     resolvers ++= Seq(
       Resolver.mavenLocal,
-      Resolver.bintrayRepo("kailuowang", "maven")
+      Resolver.bintrayRepo("kailuowang", "maven"),
+      Resolver.bintrayRepo("tabdulradi", "maven")
     ),
     libraryDependencies ++= Seq(
       %%("frees-rpc", "0.3.0"),
@@ -399,7 +400,8 @@ lazy val docs = (project in file("docs"))
       %%("doobie-h2"),
       %%("http4s-dsl"),
       %%("play"),
-      %("h2") % "test"
+      %("h2") % "test",
+      "io.frees" %% "frees-cassandra-core"    % "0.0.4"
     )
   )
   .settings(
