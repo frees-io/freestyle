@@ -81,14 +81,14 @@ private[internal] case class Algebra(
   def toClass: Class = Class(mods, name, tparams, ctor, templ)
 
   val cleanedTParams: Seq[Type.Param] = tparams.toList match {
-    case List(f@tparam"..$mods $name[$tparam]") => Nil
-    case _ => tparams
+    case List(f @ tparam"..$mods $name[$tparam]") => Nil
+    case _                                        => tparams
   }
 
   /* The enrich method adds a kind-1 type parameter `$ff[_]` to the algebra type,
    * and adds `EffectLike[$ff]` to the parents */
   def enrich: Algebra = {
-    val pat           = tparams.toList match {
+    val pat = tparams.toList match {
       case List(f @ tparam"..$mods $name[$tparam]") =>
         q"trait Foo[$f] extends _root_.freestyle.internal.EffectLike[${toType(f)}]"
       case _ =>
@@ -115,12 +115,10 @@ private[internal] case class Algebra(
 
   def handlerTrait: Trait = {
 
-    val requestParams: Seq[Seq[Option[Decl.Type]]] =
-      requests.map {
-        _.tparams
-          .map(_.tbounds.hi)
-          .map(_.map(t => q"type ${Type.fresh("PP$")} <: $t"))
-      }
+    def toDeclType(tp: Type.Param): Decl.Type =
+      Decl.Type(tp.mods, Type.fresh("PP$"), tp.tparams, tp.tbounds)
+
+    val requestParams: Seq[Seq[Decl.Type]] = requests map (_.tparams map toDeclType)
 
     val mm = Type.fresh("MM$")
 
@@ -144,7 +142,7 @@ private[internal] case class Algebra(
       q"override def apply[${tyParam(aa)}]($fa: $OP[$aa]): $mm[$aa] = ($matchE).asInstanceOf[$mm[$aa]]"
     }
 
-    val highBoundTypeDecl: Seq[Decl.Type] = requestParams.flatMap(_.flatten)
+    val highBoundTypeDecl: Seq[Decl.Type] = requestParams.flatten
 
     q"""
       trait Handler[${tyParamK(mm)}, ..$cleanedTParams] extends _root_.freestyle.FSHandler[$OP, $mm] {
@@ -276,7 +274,7 @@ private[internal] class Request(reqDef: Decl.Def, indexValue: Int) {
     addBody(reqDef, q"$inj($body)").copy(mods = Seq(Mod.Override()))
   }
 
-  def handlerCase(fa: Term.Name, requestParams: Seq[Option[Decl.Type]]): Case = {
+  def handlerCase(fa: Term.Name, requestParams: Seq[Decl.Type]): Case = {
 
     val mexp: Term =
       if (params.isEmpty)
@@ -287,11 +285,7 @@ private[internal] class Request(reqDef: Decl.Def, indexValue: Int) {
           else {
             // Wildcard types are not working for function params like this f: (B, A) => B
             // val us: Type = Type.Placeholder(Type.Bounds(None, None) )
-            val typeParams = requestParams.map {
-              case Some(tName) => t"${tName.name}"
-              case None        => t"_root_.scala.Any"
-            }
-            Type.Apply(req, typeParams)
+            Type.Apply(req, requestParams.map(declType => t"${declType.name}"))
           }
 
         val alias = Term.fresh()
