@@ -28,10 +28,10 @@ To use the _frees-async_ module, you need to include one of the following depend
 [comment]: # (Start Replace)
 
 ```scala
-libraryDependencies += "io.frees" %% "frees-async" % "0.4.2"
+libraryDependencies += "io.frees" %% "frees-async" % "0.4.3"
 
 // and if you want to use cats.effect.IO or Monix' Task:
-libraryDependencies += "io.frees" %% "frees-async-cats-effect" % "0.4.2"
+libraryDependencies += "io.frees" %% "frees-async-cats-effect" % "0.4.3"
 ```
 
 [comment]: # (End Replace)
