@@ -1,5 +1,20 @@
 # Changelog
 
+## 11/20/2017 - Version 0.4.3
+
+Release changes:
+
+* RPC Docs Tut Output ([#440](https://github.com/frees-io/freestyle/pull/440))
+* Allows higher typed params in algrebra methods ([#442](https://github.com/frees-io/freestyle/pull/442))
+* Upgrades RPC docs to frees-rpc 0.3.0 ([#448](https://github.com/frees-io/freestyle/pull/448))
+* Support for explicit [F[_]] carrier types in `@module`, `@free` & `@tagless` ([#446](https://github.com/frees-io/freestyle/pull/446))
+* Adds a Type Delcaration for casting in the handler match case ([#444](https://github.com/frees-io/freestyle/pull/444))
+* Adds initial Freestyle Cassandra docs. ([#445](https://github.com/frees-io/freestyle/pull/445))
+* Declares all parameter types for the algebra methods ([#451](https://github.com/frees-io/freestyle/pull/451))
+* Make Algebras and Modules concrete with `.instance` ([#447](https://github.com/frees-io/freestyle/pull/447))
+* Releases 0.4.3 ([#456](https://github.com/frees-io/freestyle/pull/456))
+
+
 ## 11/09/2017 - Version 0.4.2
 
 Release changes:
