@@ -21,11 +21,9 @@ import org.hablapps.puretest._
 import cats.~>
 import cats.instances.either._
 
-class TaglessTestsFreeS extends TaglessTests.ScalaTest[TaglessTestsFreeS.P](
-  TaglessTestsFreeS.a1,
-  TaglessTestsFreeS.a2,
-  TaglessTestsFreeS.a3
-)(implicitly, ???, ???, ???)
+import TaglessTestsFreeS._
+
+class TaglessTestsFreeS extends TaglessTests.ScalaTest[P](a1,a2,a3)(implicitly, HE,RE,T)
 
 object TaglessTestsFreeS{
 
@@ -67,30 +65,26 @@ object TaglessTestsFreeS{
 
   /** Handle Error */
 
-  val HE = new HandleError[P,String]{
+  implicit val HE = new HandleError[P,String]{
     // No need to handle errors in this particular case
     def handleError[T](p: P[T])(f: String => P[T]) = p
   }
 
   /** Raise Error */
 
-  val RE = new RaiseError[P,PuretestError[String]]{
+  implicit val RE = new RaiseError[P,PuretestError[String]]{
     def raiseError[A](err: PuretestError[String]) =
       e.EitherM.to[App.Op].error[A](err)
   }
 
   /** Tester */
-import handlers._
-
-implicit val fk: Option ~> Either[PuretestError[String],?] =
-    λ[Option ~> Either[PuretestError[String],?]](_.toRight(ApplicationError("error")))
-
-  implicitly[TG1.Handler[Either[PuretestError[String],?]]]
-  // implicit val a1pte: TG1.Handler[Either[PuretestError[String],?]] =
-  //   new TG1.Handler[Either[PuretestError[String],?]] {
-  //     def x(a: Int) = Right(a)
-  //     def y(a: Int) = Right(a)
-  //   }
+  
+  // Couldn't get TG1.Handler[Either[...]] from TG1[Either[...]]
+  implicit val a1pte: TG1.Handler[Either[PuretestError[String],?]] =
+    new TG1.Handler[Either[PuretestError[String],?]] {
+      def x(a: Int) = Right(a)
+      def y(a: Int) = Right(a)
+    }
 
   implicit val a2pte: TG2.Handler[Either[PuretestError[String],?]] =
     new TG2.Handler[Either[PuretestError[String],?]] {
@@ -104,7 +98,7 @@ implicit val fk: Option ~> Either[PuretestError[String],?] =
       def y3(a: Int): FS[Int] = Right(a)
     }
 
-  val T = new Tester[P,PuretestError[String]]{
+  implicit val T = new Tester[P,PuretestError[String]]{
     def apply[T](p: P[T]): Either[PuretestError[String],T] = 
       p.interpret[Either[PuretestError[String],?]]
   }
