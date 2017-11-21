@@ -279,7 +279,7 @@ lazy val httpClient = module("http-client", subFolder = Some("integrations/http"
   .settings(resolvers += Resolver.jcenterRepo)
   .jsSettings(sharedJsSettings: _*)
   .crossDepSettings(
-    commonDeps ++ Seq(%("hammock-core", "0.7.0"), %("cats-effect") % "test"): _*
+    commonDeps ++ Seq(%("hammock-core", "0.7.1"), %("cats-effect") % "test"): _*
   )
 
 lazy val httpClientJS  = httpClient.js
