@@ -17,6 +17,7 @@
 package freestyle
 
 import scala.concurrent._
+import scala.util.{Failure, Left, Right, Success}
 
 object async {
 
@@ -31,6 +32,19 @@ object async {
   /** Async computation algebra. **/
   @free sealed trait AsyncM {
     def async[A](fa: Proc[A]): FS[A]
+  }
+
+  class Future2AsyncM[F[_]](implicit AC: AsyncContext[F], E: ExecutionContext)
+    extends FSHandler[Future, F] {
+    override def apply[A](future: Future[A]): F[A] =
+      AC.runAsync { cb =>
+        E.execute(new Runnable {
+          def run(): Unit = future.onComplete {
+            case Failure(e) => cb(Left(e))
+            case Success(r) => cb(Right(r))
+          }
+        })
+      }
   }
 
   trait Implicits {
@@ -57,5 +71,18 @@ object async {
       }
   }
 
-  object implicits extends Implicits
+  trait Syntax {
+
+    implicit def futureOps[A](f: Future[A]): FutureOps[A] = new FutureOps(f)
+
+    final class FutureOps[A](f: Future[A]) {
+
+      def to[F[_]](implicit AC: AsyncContext[F], E: ExecutionContext): F[A] =
+        new Future2AsyncM[F].apply(f)
+
+    }
+
+  }
+
+  object implicits extends Implicits with Syntax
 }
