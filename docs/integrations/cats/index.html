@@ -56,7 +56,7 @@ ga('send', 'pageview');
   <span class="k">def</span> <span class="n">sum</span><span class="o">(</span><span class="n">a</span><span class="k">:</span> <span class="kt">Int</span><span class="o">,</span> <span class="n">b</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span> <span class="k">=</span> <span class="n">a</span> <span class="o">+</span> <span class="n">b</span>
   <span class="k">def</span> <span class="n">product</span><span class="o">(</span><span class="n">a</span><span class="k">:</span> <span class="kt">Int</span><span class="o">,</span> <span class="n">b</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span> <span class="k">=</span> <span class="n">a</span> <span class="o">*</span> <span class="n">b</span>
 <span class="o">}</span>
-<span class="c1">// idHandler: Calc.Handler[cats.Id] = $anon$1@7a064d52
+<span class="c1">// idHandler: Calc.Handler[cats.Id] = $anon$1@58d8e413
 </span></code></pre>
 </div>
 
@@ -74,7 +74,7 @@ ga('send', 'pageview');
   <span class="k">def</span> <span class="n">product</span><span class="o">(</span><span class="n">a</span><span class="k">:</span> <span class="kt">Int</span><span class="o">,</span> <span class="n">b</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span> <span class="k">=</span>
     <span class="nc">Future</span> <span class="o">{</span> <span class="nc">Thread</span><span class="o">.</span><span class="n">sleep</span><span class="o">(</span><span class="n">a</span> <span class="o">*</span> <span class="mi">100L</span><span class="o">);</span> <span class="n">a</span> <span class="o">*</span> <span class="n">b</span> <span class="o">}</span>
 <span class="o">}</span>
-<span class="c1">// futureHandler: Calc.Handler[scala.concurrent.Future] = $anon$1@6a13cfdb
+<span class="c1">// futureHandler: Calc.Handler[scala.concurrent.Future] = $anon$1@3b26a6e4
 </span></code></pre>
 </div>
 
@@ -84,11 +84,11 @@ ga('send', 'pageview');
 
 <div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">val</span> <span class="n">incrPar</span><span class="k">:</span> <span class="kt">Int</span> <span class="o">=&gt;</span> <span class="nc">FreeS</span><span class="o">.</span><span class="nc">Par</span><span class="o">[</span><span class="kt">Calc.Op</span>, <span class="kt">Int</span><span class="o">]</span> <span class="k">=</span>
   <span class="nc">Calc</span><span class="o">[</span><span class="kt">Calc.Op</span><span class="o">].</span><span class="n">sum</span><span class="o">(</span><span class="k">_</span><span class="o">,</span> <span class="mi">1</span><span class="o">)</span>
-<span class="c1">// incrPar: Int =&gt; freestyle.FreeS.Par[Calc.Op,Int] = $$Lambda$15271/1816449573@75778a39
+<span class="c1">// incrPar: Int =&gt; freestyle.FreeS.Par[Calc.Op,Int] = $$Lambda$19811/1100782351@6b1aa29f
 </span>
 <span class="k">val</span> <span class="n">incrSeq</span><span class="k">:</span> <span class="kt">Int</span> <span class="o">=&gt;</span> <span class="nc">FreeS</span><span class="o">[</span><span class="kt">Calc.Op</span>, <span class="kt">Int</span><span class="o">]</span> <span class="k">=</span>
   <span class="n">incrPar</span><span class="o">.</span><span class="n">andThen</span><span class="o">(</span><span class="k">_</span><span class="o">.</span><span class="n">freeS</span><span class="o">)</span>
-<span class="c1">// incrSeq: Int =&gt; freestyle.FreeS[Calc.Op,Int] = scala.Function1$$Lambda$3902/2043465353@64936b97
+<span class="c1">// incrSeq: Int =&gt; freestyle.FreeS[Calc.Op,Int] = scala.Function1$$Lambda$4783/955134689@1ccf0b4f
 </span></code></pre>
 </div>
 
@@ -151,14 +151,14 @@ ga('send', 'pageview');
 <span class="c1">// futPar: scala.concurrent.Future[List[Int]] = Future(&lt;not completed&gt;)
 </span>
 <span class="n">simpleTime</span><span class="o">(</span><span class="nc">Await</span><span class="o">.</span><span class="n">result</span><span class="o">(</span><span class="n">futPar</span><span class="o">,</span> <span class="nc">Duration</span><span class="o">.</span><span class="nc">Inf</span><span class="o">))</span>
-<span class="c1">// time: 1337
+<span class="c1">// time: 1338
 // res3: List[Int] = List(2, 3, 4, 5, 6, 7, 8, 9, 10)
 </span>
 <span class="k">val</span> <span class="n">futSeq</span> <span class="k">=</span> <span class="n">traversingSeq</span><span class="o">.</span><span class="n">interpret</span><span class="o">[</span><span class="kt">Future</span><span class="o">]</span>
 <span class="c1">// futSeq: scala.concurrent.Future[List[Int]] = Future(&lt;not completed&gt;)
 </span>
 <span class="n">simpleTime</span><span class="o">(</span><span class="nc">Await</span><span class="o">.</span><span class="n">result</span><span class="o">(</span><span class="n">futSeq</span><span class="o">,</span> <span class="nc">Duration</span><span class="o">.</span><span class="nc">Inf</span><span class="o">))</span>
-<span class="c1">// time: 4331
+<span class="c1">// time: 4363
 // res4: List[Int] = List(2, 3, 4, 5, 6, 7, 8, 9, 10)
 </span></code></pre>
 </div>
@@ -202,14 +202,14 @@ ga('send', 'pageview');
 <span class="c1">// futSeq2: scala.concurrent.Future[Int] = Future(&lt;not completed&gt;)
 </span>
 <span class="n">simpleTime</span><span class="o">(</span><span class="nc">Await</span><span class="o">.</span><span class="n">result</span><span class="o">(</span><span class="n">futSeq2</span><span class="o">,</span> <span class="nc">Duration</span><span class="o">.</span><span class="nc">Inf</span><span class="o">))</span>
-<span class="c1">// time: 353
+<span class="c1">// time: 373
 // res6: Int = 5
 </span>
 <span class="k">val</span> <span class="n">futPar2</span> <span class="k">=</span> <span class="n">incrParSum</span><span class="o">.</span><span class="n">interpret</span><span class="o">[</span><span class="kt">Future</span><span class="o">]</span>
 <span class="c1">// futPar2: scala.concurrent.Future[Int] = Future(&lt;not completed&gt;)
 </span>
 <span class="n">simpleTime</span><span class="o">(</span><span class="nc">Await</span><span class="o">.</span><span class="n">result</span><span class="o">(</span><span class="n">futPar2</span><span class="o">,</span> <span class="nc">Duration</span><span class="o">.</span><span class="nc">Inf</span><span class="o">))</span>
-<span class="c1">// time: 275
+<span class="c1">// time: 266
 // res7: Int = 5
 </span></code></pre>
 </div>
@@ -242,17 +242,17 @@ ga('send', 'pageview');
     <span class="k">def</span> <span class="n">product</span><span class="o">(</span><span class="n">a</span><span class="k">:</span> <span class="kt">Int</span><span class="o">,</span> <span class="n">b</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span> <span class="k">=</span>
       <span class="nc">Reader</span> <span class="o">{</span> <span class="n">cfg</span> <span class="k">=&gt;</span> <span class="n">cfg</span><span class="o">.</span><span class="n">n</span> <span class="o">+</span> <span class="n">a</span> <span class="o">*</span> <span class="n">b</span> <span class="o">}</span>
   <span class="o">}</span>
-<span class="c1">// readerHandler: Calc.Handler[WithConfig] = $anon$1@57dc13be
+<span class="c1">// readerHandler: Calc.Handler[WithConfig] = $anon$1@d411d09
 </span></code></pre>
 </div>
 
 <p>With this <code class="highlighter-rouge">Reader</code> handler in place, we can translate some of the previous programs and supply the configuration to get the end result with <code class="highlighter-rouge">Kleisli#run</code>:</p>
 
 <div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">val</span> <span class="n">configTraversing</span> <span class="k">=</span> <span class="n">traversingSeq</span><span class="o">.</span><span class="n">interpret</span><span class="o">[</span><span class="kt">WithConfig</span><span class="o">]</span>
-<span class="c1">// configTraversing: WithConfig[List[Int]] = Kleisli(cats.data.KleisliFlatMap$$Lambda$11985/209448122@577132c7)
+<span class="c1">// configTraversing: WithConfig[List[Int]] = Kleisli(cats.data.KleisliFlatMap$$Lambda$16527/179116236@33561923)
 </span>
 <span class="k">val</span> <span class="n">configIncrSum</span>    <span class="k">=</span> <span class="n">incrParSum</span><span class="o">.</span><span class="n">interpret</span><span class="o">[</span><span class="kt">WithConfig</span><span class="o">]</span>
-<span class="c1">// configIncrSum: WithConfig[Int] = Kleisli(cats.data.KleisliFlatMap$$Lambda$11985/209448122@668c17ce)
+<span class="c1">// configIncrSum: WithConfig[Int] = Kleisli(cats.data.KleisliFlatMap$$Lambda$16527/179116236@2f5e41b4)
 </span>
 <span class="k">val</span> <span class="n">cfg</span> <span class="k">=</span> <span class="nc">Config</span><span class="o">(</span><span class="mi">1000</span><span class="o">)</span>
 <span class="c1">// cfg: Config = Config(1000)

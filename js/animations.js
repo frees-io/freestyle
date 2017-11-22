@@ -169,6 +169,9 @@ $(window).on("load", function() {
     // This timeline draws and shows the libraries section
     var lineDrawing = anime.timeline({
       autoplay: false,
+      begin: function () {
+        sessionStorage.setItem('lineDrawingStarted', true);
+      }
     })
       .add({
         targets: librariesLinesClass + ' .point-0',
@@ -340,8 +343,10 @@ $(window).on("load", function() {
             wS = $(this).scrollTop();
 
         if ((wS >= (hT + hH - wH) && (hT >= wS) && (wS + wH >= hT + hH))) {
-          // When in mobile there's no lines, only libraries buttons
-          if (wW <= 992) lineDrawing.seek(2899);
+          // When mobile there's no lines, only libraries buttons.
+          // Also when once played per session, we just present the content
+          if ((wW <= 992) || (sessionStorage.getItem('lineDrawingStarted')))
+            lineDrawing.seek(3710);
           lineDrawing.play();
         }
       }
@@ -351,11 +356,11 @@ $(window).on("load", function() {
     }
 
     var navbarScrollHandler = function() {
-      if ($("#navigation").offset().top > 70) {
-          $("#navigation").addClass("navigation-scroll");
+      if ($('#navigation').offset().top > 70) {
+          $('#navigation').addClass('navigation-scroll');
       }
       else {
-          $("#navigation").removeClass("navigation-scroll");
+          $('#navigation').removeClass('navigation-scroll');
       }
     }
 
