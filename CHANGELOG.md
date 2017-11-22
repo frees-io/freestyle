@@ -1,5 +1,13 @@
 # Changelog
 
+## 11/22/2017 - Version 0.4.4
+
+Release changes:
+
+* Disable animation when seen once ([#452](https://github.com/frees-io/freestyle/pull/452))
+* Provides async instances to stdlib Future ([#458](https://github.com/frees-io/freestyle/pull/458))
+
+
 ## 11/20/2017 - Version 0.4.3
 
 Release changes:
