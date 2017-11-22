@@ -17,14 +17,19 @@
 package freestyle
 
 import freestyle.async.implicits._
-import freestyle.async.Future2AsyncM
+import freestyle.async.{AsyncContext, Future2AsyncM, Proc}
 import org.scalatest._
+import cats.effect.{Effect, IO}
 
-import scala.concurrent.duration._
-import scala.concurrent.{Await, Future}
+import scala.concurrent.Future
 import scala.concurrent.ExecutionContext.Implicits.global
 
 class Future2AsyncMTests extends WordSpec with Matchers {
+
+  implicit def catsEffectAsyncContext[F[_]](implicit F: Effect[F]): AsyncContext[F] =
+    new AsyncContext[F] {
+      def runAsync[A](fa: Proc[A]): F[A] = F.async(fa)
+    }
 
   val exception: Throwable = new RuntimeException("Future2AsyncMTest exception")
 
@@ -32,18 +37,18 @@ class Future2AsyncMTests extends WordSpec with Matchers {
 
   def successfulFuture[T](value: T): Future[T] = Future.successful(value)
 
-  val F2F: Future2AsyncM[Future] = new Future2AsyncM[Future]
+  val F2F: Future2AsyncM[IO] = new Future2AsyncM[IO]
 
   val foo = "bar"
 
   "Future2Async Handler" should {
 
-    "transform Future to Future successfully" in {
-      Await.result(F2F.apply(successfulFuture(foo)), 5.seconds) shouldBe foo
+    "transform scala.concurrent.Future to cats.effect.IO successfully" in {
+      F2F.apply(successfulFuture(foo)).map(_ shouldBe foo)
     }
 
     "recover from failed Futures and throw them accordingly" in {
-      an[Throwable] shouldBe thrownBy(Await.result(F2F.apply(failedFuture[String]), 5.seconds))
+      F2F.apply(failedFuture[String]).attempt.map(_ shouldBe Left(exception))
     }
 
   }

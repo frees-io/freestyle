@@ -16,8 +16,8 @@
 
 package freestyle
 
+import cats.syntax.either._
 import scala.concurrent._
-import scala.util.{Failure, Left, Right, Success}
 
 object async {
 
@@ -39,10 +39,7 @@ object async {
     override def apply[A](future: Future[A]): F[A] =
       AC.runAsync { cb =>
         E.execute(new Runnable {
-          def run(): Unit = future.onComplete {
-            case Failure(e) => cb(Left(e))
-            case Success(r) => cb(Right(r))
-          }
+          def run(): Unit = future.onComplete(_.toEither)
         })
       }
   }

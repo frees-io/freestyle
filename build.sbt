@@ -98,7 +98,9 @@ lazy val effectsJS  = effects.js
 lazy val async = module("async", subFolder = Some("async"))
   .dependsOn(core)
   .jsSettings(sharedJsSettings: _*)
-  .crossDepSettings(commonDeps: _*)
+  .crossDepSettings(commonDeps ++ Seq(
+    %("cats-effect") % Test
+  ): _*)
 
 lazy val asyncJVM = async.jvm
 lazy val asyncJS  = async.js
