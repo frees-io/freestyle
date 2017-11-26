@@ -117,7 +117,6 @@ object algebras {
 
   @tagless
   trait TG3[F[_]] {
-    
     def x3(a: Int): FS[Int]
 
     def y3(a: Int): FS[Int]
