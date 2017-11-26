@@ -1,5 +1,8 @@
 import sbtorgpolicies.runnable.syntax._
 
+resolvers ++= Seq(
+  "Habla repo - releases" at "http://repo.hablapps.com/releases")
+
 lazy val root = (project in file("."))
   .settings(moduleName := "root")
   .settings(name := "freestyle")
@@ -28,8 +31,9 @@ lazy val coreJVM = core.jvm
 lazy val coreJS  = core.js
 
 lazy val tagless = module("tagless")
-  .dependsOn(core)
+  .dependsOn(core,effects)
   .jsSettings(sharedJsSettings: _*)
+  .jvmSettings(libraryDependencies += "org.hablapps" %% "puretest-cats" % "0.3.1")
   .crossDepSettings(commonDeps ++ Seq(%%("mainecoon-core")): _*)
 
 lazy val taglessJVM = tagless.jvm
@@ -87,6 +91,9 @@ lazy val Codegen = sbt.config("codegen").hide
 lazy val effects = module("effects")
   .dependsOn(core)
   .jsSettings(sharedJsSettings: _*)
+  .jvmSettings(
+    libraryDependencies += "org.hablapps" %% "puretest-cats" % "0.3.1"
+  )
   .crossDepSettings(
     commonDeps ++ Seq(
       %("cats-mtl-core")
