@@ -35,7 +35,7 @@ object TaglessTestsEither{
 
   import algebras._
   import handlers._
-implicitly[TG1[Either[PuretestError[String],?]]]
+
   val a1 = TG1[P]
   val a2 = TG2[P]
   val a3 = TG3[P]
