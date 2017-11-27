@@ -16,14 +16,16 @@
 
 package freestyle
 
-import cats.{ Applicative, Monad }
-import cats.free.{Free, FreeApplicative }
-
+import cats.{Applicative, Monad, ~>}
+import cats.free.{Free, FreeApplicative}
 import iota._
 
 trait Interpreters {
   implicit def interpretIotaCopK[F[a] <: CopK[_, a], G[_]]: FSHandler[F, G] =
     macro _root_.iota.internal.CopKFunctionKMacros.summon[F, G]
+
+  implicit def programInterpretation[F[_], M[_]: Monad](implicit FM: FSHandler[F, M]): FreeS[F, ?] ~> M =
+    λ[FreeS[F, ?] ~> M](_.interpret[M])
 }
 
 trait FreeSInstances {
