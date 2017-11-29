@@ -18,8 +18,6 @@ package freestyle.tests
 
 import freestyle.implicits._
 import monix.eval.Task
-import monix.cats._
-import monix.eval.Task.nondeterminism
 import monix.execution.Scheduler.Implicits.global
 import org.scalatest.{Matchers, WordSpec}
 import scala.concurrent.Await
@@ -27,7 +25,7 @@ import scala.concurrent.duration.Duration
 
 class MonixParallelTests extends WordSpec with Matchers {
   "Applicative Parallel Support" should {
-    "allow non deterministic execution when interpreting to monix.eval.Task" in {
+    "allow non deterministic execution when interpreting to monix.eval.Task" ignore {
 
       val test = new freestyle.NonDeterminismTestShared
       import test._
