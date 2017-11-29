@@ -12,7 +12,7 @@ env:
 
 matrix:
   exclude:
-  - scala: 2.11.11
+  - scala: 2.11.12
     env: FREESBUILD=docs
   - env: SCALAENV=all
 
@@ -91,5 +91,5 @@ jobs:
               fi
             fi
           fi
-      scala: 2.12.3
+      scala: 2.12.4
       env: SCALAENV=all

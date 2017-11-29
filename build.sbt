@@ -211,7 +211,7 @@ lazy val slick = jvmModule("slick", subFolder = Some("integrations"))
 lazy val twitterUtil = jvmModule("twitter-util", subFolder = Some("integrations"))
   .dependsOn(coreJVM)
   .settings(
-    libraryDependencies ++= Seq(%%("catbird-util")) ++ commonDeps
+    libraryDependencies ++= Seq(%%("catbird-util", "0.21.0")) ++ commonDeps
   )
 
 lazy val fetch = module("fetch", subFolder = Some("integrations"))
@@ -252,7 +252,7 @@ lazy val httpHttp4s = jvmModule("http4s", subFolder = Some("integrations/http"))
 lazy val httpFinch = jvmModule("finch", subFolder = Some("integrations/http"))
   .dependsOn(coreJVM)
   .settings(
-    libraryDependencies ++= Seq(%%("finch-core")) ++ commonDeps
+    libraryDependencies ++= Seq(%%("finch-core", "0.16.0-M5")) ++ commonDeps
   )
 
 lazy val httpAkka = jvmModule("akka", subFolder = Some("integrations/http"))
