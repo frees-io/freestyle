@@ -20,7 +20,7 @@ ga('send', 'pageview');
 
 <p><code class="highlighter-rouge">get</code> retrieves the current state:</p>
 
-<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">freestyle._</span>
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">freestyle._</span>
 <span class="c1">// import freestyle._
 </span>
 <span class="k">import</span> <span class="nn">freestyle.implicits._</span>
@@ -39,7 +39,7 @@ ga('send', 'pageview');
 <span class="c1">// import cats.mtl.implicits._
 </span>
 <span class="k">val</span> <span class="n">st</span> <span class="k">=</span> <span class="n">state</span><span class="o">[</span><span class="kt">Int</span><span class="o">]</span>
-<span class="c1">// st: freestyle.effects.state.StateSeedProvider[Int] = freestyle.effects.state$StateSeedProvider@71793a04
+<span class="c1">// st: freestyle.effects.state.StateSeedProvider[Int] = freestyle.effects.state$StateSeedProvider@78789248
 </span>
 <span class="k">type</span> <span class="kt">TargetState</span><span class="o">[</span><span class="kt">A</span><span class="o">]</span> <span class="k">=</span> <span class="nc">State</span><span class="o">[</span><span class="kt">Int</span>, <span class="kt">A</span><span class="o">]</span>
 <span class="c1">// defined type alias TargetState
@@ -64,7 +64,7 @@ ga('send', 'pageview');
 
 <p><code class="highlighter-rouge">set</code> replaces the current state:</p>
 
-<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">def</span> <span class="n">programSet</span><span class="o">[</span><span class="kt">F</span><span class="o">[</span><span class="k">_</span><span class="o">]</span><span class="kt">:</span> <span class="kt">st.StateM</span><span class="o">]</span> <span class="k">=</span>
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="k">def</span> <span class="n">programSet</span><span class="o">[</span><span class="kt">F</span><span class="o">[</span><span class="k">_</span><span class="o">]</span><span class="kt">:</span> <span class="kt">st.StateM</span><span class="o">]</span> <span class="k">=</span>
   <span class="k">for</span> <span class="o">{</span>
     <span class="k">_</span> <span class="k">&lt;-</span> <span class="n">st</span><span class="o">.</span><span class="nc">StateM</span><span class="o">[</span><span class="kt">F</span><span class="o">].</span><span class="n">set</span><span class="o">(</span><span class="mi">1</span><span class="o">)</span>
     <span class="n">a</span> <span class="k">&lt;-</span> <span class="n">st</span><span class="o">.</span><span class="nc">StateM</span><span class="o">[</span><span class="kt">F</span><span class="o">].</span><span class="n">get</span>
@@ -80,7 +80,7 @@ ga('send', 'pageview');
 
 <p><code class="highlighter-rouge">modify</code> modifies the current state:</p>
 
-<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">def</span> <span class="n">programModify</span><span class="o">[</span><span class="kt">F</span><span class="o">[</span><span class="k">_</span><span class="o">]</span><span class="kt">:</span> <span class="kt">st.StateM</span><span class="o">]</span> <span class="k">=</span>
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="k">def</span> <span class="n">programModify</span><span class="o">[</span><span class="kt">F</span><span class="o">[</span><span class="k">_</span><span class="o">]</span><span class="kt">:</span> <span class="kt">st.StateM</span><span class="o">]</span> <span class="k">=</span>
   <span class="k">for</span> <span class="o">{</span>
     <span class="n">a</span> <span class="k">&lt;-</span> <span class="n">st</span><span class="o">.</span><span class="nc">StateM</span><span class="o">[</span><span class="kt">F</span><span class="o">].</span><span class="n">get</span>
     <span class="k">_</span> <span class="k">&lt;-</span> <span class="n">st</span><span class="o">.</span><span class="nc">StateM</span><span class="o">[</span><span class="kt">F</span><span class="o">].</span><span class="n">modify</span><span class="o">(</span><span class="k">_</span> <span class="o">+</span> <span class="n">a</span><span class="o">)</span>
@@ -97,7 +97,7 @@ ga('send', 'pageview');
 
 <p><code class="highlighter-rouge">inspect</code> runs a function over the current state and returns the resulting value:</p>
 
-<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">def</span> <span class="n">programInspect</span><span class="o">[</span><span class="kt">F</span><span class="o">[</span><span class="k">_</span><span class="o">]</span><span class="kt">:</span> <span class="kt">st.StateM</span><span class="o">]</span> <span class="k">=</span>
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="k">def</span> <span class="n">programInspect</span><span class="o">[</span><span class="kt">F</span><span class="o">[</span><span class="k">_</span><span class="o">]</span><span class="kt">:</span> <span class="kt">st.StateM</span><span class="o">]</span> <span class="k">=</span>
   <span class="k">for</span> <span class="o">{</span>
     <span class="n">a</span> <span class="k">&lt;-</span> <span class="n">st</span><span class="o">.</span><span class="nc">StateM</span><span class="o">[</span><span class="kt">F</span><span class="o">].</span><span class="n">get</span>
     <span class="n">b</span> <span class="k">&lt;-</span> <span class="n">st</span><span class="o">.</span><span class="nc">StateM</span><span class="o">[</span><span class="kt">F</span><span class="o">].</span><span class="n">inspect</span><span class="o">(</span><span class="k">_</span> <span class="o">+</span> <span class="n">a</span><span class="o">)</span>

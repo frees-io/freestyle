@@ -12,14 +12,14 @@ ga('send', 'pageview');
 
 <p>We start by importing Freestyle’s core:</p>
 
-<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">freestyle._</span>
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">freestyle._</span>
 <span class="k">import</span> <span class="nn">freestyle.implicits._</span>
 </code></pre>
 </div>
 
 <p>Now we can create data types for a customer and an order together with a <code class="highlighter-rouge">Config</code> data type which holds a set of all the apple varieties the company sells.</p>
 
-<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">java.util.UUID</span>
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">java.util.UUID</span>
 
 <span class="k">type</span> <span class="kt">CustomerId</span> <span class="o">=</span> <span class="nc">UUID</span>
 
@@ -34,7 +34,7 @@ ga('send', 'pageview');
 
 <p>We will represent these capabilities using two algebras: <code class="highlighter-rouge">CustomerPersistence</code> and <code class="highlighter-rouge">StockPersistence</code>.</p>
 
-<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">object</span> <span class="nc">algebras</span> <span class="o">{</span>
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="k">object</span> <span class="nc">algebras</span> <span class="o">{</span>
   <span class="nd">@free</span> <span class="k">trait</span> <span class="nc">CustomerPersistence</span> <span class="o">{</span>
     <span class="k">def</span> <span class="n">getCustomer</span><span class="o">(</span><span class="n">id</span><span class="k">:</span> <span class="kt">CustomerId</span><span class="o">)</span><span class="k">:</span> <span class="kt">FS</span><span class="o">[</span><span class="kt">Option</span><span class="o">[</span><span class="kt">Customer</span><span class="o">]]</span>
   <span class="o">}</span>
@@ -51,7 +51,7 @@ ga('send', 'pageview');
 <p>These two algebras will be combined together in a <code class="highlighter-rouge">Persistence</code> module, that in turn will be part of our <code class="highlighter-rouge">App</code> module, that additionally includes the
 capabilities to fail, to read from our <code class="highlighter-rouge">Config</code> configuration, and to cache <code class="highlighter-rouge">Customer</code>s using respectively <code class="highlighter-rouge">error</code> and <code class="highlighter-rouge">reader</code> from the <em>freestyle-effects</em> module and <code class="highlighter-rouge">cache</code> from the <em>freestyle-cache</em> module.</p>
 
-<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">freestyle.effects.error._</span>
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">freestyle.effects.error._</span>
 <span class="c1">// import freestyle.effects.error._
 </span>
 <span class="k">import</span> <span class="nn">freestyle.effects.reader</span>
@@ -89,7 +89,7 @@ capabilities to fail, to read from our <code class="highlighter-rouge">Config</c
 
 <p>The <code class="highlighter-rouge">|+|</code> syntax used below is provided by Cats (because <code class="highlighter-rouge">Validated</code> has a <a href="http://typelevel.org/cats/typeclasses/semigroup.html"><code class="highlighter-rouge">Semigroup</code></a> instance) which makes it possible to combine the error messages of the two checks:</p>
 
-<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">modules._</span>
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">modules._</span>
 <span class="c1">// import modules._
 </span>
 <span class="k">import</span> <span class="nn">cats.data.</span><span class="o">{</span><span class="nc">NonEmptyList</span><span class="o">,</span> <span class="nc">ValidatedNel</span><span class="o">}</span>
@@ -118,7 +118,7 @@ capabilities to fail, to read from our <code class="highlighter-rouge">Config</c
 
 <p>We are using the <a href="http://typelevel.org/cats/datatypes/optiont.html"><code class="highlighter-rouge">OptionT</code></a> monad transformer here. With Freestyle, you generally don’t have to deal with monad transformers in your actual domain code. They are only used in the handlers and when executing your program on the edge. In this case though, Freestyle and the <code class="highlighter-rouge">OptionT</code> monad transformer work flawlessly together. <code class="highlighter-rouge">OptionT</code> is used as a convenient wrapper over a <code class="highlighter-rouge">FreeS[F, Option[A]]</code> value and the <code class="highlighter-rouge">OptionT#orElseF</code> method makes it is easy to specify what needs to happen if the inner <code class="highlighter-rouge">Option</code> is <code class="highlighter-rouge">None</code>.</p>
 
-<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">cats.data.OptionT</span>
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">cats.data.OptionT</span>
 <span class="c1">// import cats.data.OptionT
 </span>
 <span class="k">def</span> <span class="n">getCustomer</span><span class="o">[</span><span class="kt">F</span><span class="o">[</span><span class="k">_</span><span class="o">]](</span><span class="n">id</span><span class="k">:</span> <span class="kt">CustomerId</span><span class="o">)(</span><span class="k">implicit</span> <span class="n">app</span><span class="k">:</span> <span class="kt">App</span><span class="o">[</span><span class="kt">F</span><span class="o">])</span><span class="k">:</span> <span class="kt">FreeS</span><span class="o">[</span><span class="kt">F</span>, <span class="kt">Option</span><span class="o">[</span><span class="kt">Customer</span><span class="o">]]</span> <span class="k">=</span>
@@ -139,7 +139,7 @@ capabilities to fail, to read from our <code class="highlighter-rouge">Config</c
 
 <p>Next we will create a couple of domain specific exception case classes:</p>
 
-<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">sealed</span> <span class="k">abstract</span> <span class="k">class</span> <span class="nc">AppleException</span><span class="o">(</span><span class="k">val</span> <span class="n">message</span><span class="k">:</span> <span class="kt">String</span><span class="o">)</span> <span class="k">extends</span> <span class="nc">Exception</span><span class="o">(</span><span class="n">message</span><span class="o">)</span>
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="k">sealed</span> <span class="k">abstract</span> <span class="k">class</span> <span class="nc">AppleException</span><span class="o">(</span><span class="k">val</span> <span class="n">message</span><span class="k">:</span> <span class="kt">String</span><span class="o">)</span> <span class="k">extends</span> <span class="nc">Exception</span><span class="o">(</span><span class="n">message</span><span class="o">)</span>
 <span class="k">case</span> <span class="k">class</span> <span class="nc">CustomerNotFound</span><span class="o">(</span><span class="n">id</span><span class="k">:</span> <span class="kt">CustomerId</span><span class="o">)</span>               <span class="k">extends</span> <span class="nc">AppleException</span><span class="o">(</span><span class="n">s</span><span class="s">"Customer $id can not be found"</span><span class="o">)</span>
 <span class="k">case</span> <span class="k">class</span> <span class="nc">QuantityNotAvailable</span><span class="o">(</span><span class="n">error</span><span class="k">:</span> <span class="kt">String</span><span class="o">)</span>            <span class="k">extends</span> <span class="nc">AppleException</span><span class="o">(</span><span class="n">error</span><span class="o">)</span>
 <span class="k">case</span> <span class="k">class</span> <span class="nc">ValidationFailed</span><span class="o">(</span><span class="n">errors</span><span class="k">:</span> <span class="kt">NonEmptyList</span><span class="o">[</span><span class="kt">String</span><span class="o">])</span> <span class="k">extends</span> <span class="nc">AppleException</span><span class="o">(</span><span class="n">errors</span><span class="o">.</span><span class="n">intercalate</span><span class="o">(</span><span class="s">"\n"</span><span class="o">))</span>
@@ -148,7 +148,7 @@ capabilities to fail, to read from our <code class="highlighter-rouge">Config</c
 
 <p>We can use the <code class="highlighter-rouge">validateOrder</code> and <code class="highlighter-rouge">getCustomer</code> methods in combination with our persistence algebras and the <code class="highlighter-rouge">error</code> effect algebra, to create the <code class="highlighter-rouge">processOrder</code> method tying everything together:</p>
 
-<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">def</span> <span class="n">processOrder</span><span class="o">[</span><span class="kt">F</span><span class="o">[</span><span class="k">_</span><span class="o">]](</span><span class="n">order</span><span class="k">:</span> <span class="kt">Order</span><span class="o">)(</span><span class="k">implicit</span> <span class="n">app</span><span class="k">:</span> <span class="kt">App</span><span class="o">[</span><span class="kt">F</span><span class="o">])</span><span class="k">:</span> <span class="kt">FreeS</span><span class="o">[</span><span class="kt">F</span>, <span class="kt">String</span><span class="o">]</span> <span class="k">=</span> <span class="o">{</span>
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="k">def</span> <span class="n">processOrder</span><span class="o">[</span><span class="kt">F</span><span class="o">[</span><span class="k">_</span><span class="o">]](</span><span class="n">order</span><span class="k">:</span> <span class="kt">Order</span><span class="o">)(</span><span class="k">implicit</span> <span class="n">app</span><span class="k">:</span> <span class="kt">App</span><span class="o">[</span><span class="kt">F</span><span class="o">])</span><span class="k">:</span> <span class="kt">FreeS</span><span class="o">[</span><span class="kt">F</span>, <span class="kt">String</span><span class="o">]</span> <span class="k">=</span> <span class="o">{</span>
   <span class="k">import</span> <span class="nn">app.persistence._</span><span class="o">,</span> <span class="n">app</span><span class="o">.</span><span class="n">errorM</span><span class="o">.</span><span class="k">_</span>
   <span class="k">for</span> <span class="o">{</span>
     <span class="n">customerOpt</span> <span class="k">&lt;-</span> <span class="n">getCustomer</span><span class="o">[</span><span class="kt">F</span><span class="o">](</span><span class="n">order</span><span class="o">.</span><span class="n">customerId</span><span class="o">)</span>
@@ -181,7 +181,7 @@ capabilities to fail, to read from our <code class="highlighter-rouge">Config</c
 
 <p>We use <code class="highlighter-rouge">Kleisli</code> to fulfil the <code class="highlighter-rouge">ReaderM</code> constraint and <code class="highlighter-rouge">IO</code> the <code class="highlighter-rouge">ErrorM</code> constraint:</p>
 
-<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">cats.data.Kleisli</span>
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">cats.data.Kleisli</span>
 <span class="c1">// import cats.data.Kleisli
 </span>
 <span class="k">import</span> <span class="nn">cats.effect.IO</span>
@@ -194,7 +194,7 @@ capabilities to fail, to read from our <code class="highlighter-rouge">Config</c
 
 <p>Now we create the interpreters or handlers for algebras of our <code class="highlighter-rouge">Persistence</code> module by implementing their specific <code class="highlighter-rouge">Handler</code> traits as <code class="highlighter-rouge">x.Handler[Stack]</code>:</p>
 
-<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">algebras._</span>
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">algebras._</span>
 <span class="c1">// import algebras._
 </span>
 <span class="k">val</span> <span class="n">customerId1</span> <span class="k">=</span> <span class="nc">UUID</span><span class="o">.</span><span class="n">fromString</span><span class="o">(</span><span class="s">"00000000-0000-0000-0000-000000000000"</span><span class="o">)</span>
@@ -207,7 +207,7 @@ capabilities to fail, to read from our <code class="highlighter-rouge">Config</c
     <span class="k">def</span> <span class="n">getCustomer</span><span class="o">(</span><span class="n">id</span><span class="k">:</span> <span class="kt">CustomerId</span><span class="o">)</span><span class="k">:</span> <span class="kt">Stack</span><span class="o">[</span><span class="kt">Option</span><span class="o">[</span><span class="kt">Customer</span><span class="o">]]</span> <span class="k">=</span>
       <span class="nc">Kleisli</span><span class="o">(</span><span class="k">_</span> <span class="k">=&gt;</span> <span class="nc">IO</span><span class="o">.</span><span class="n">pure</span><span class="o">(</span><span class="n">customers</span><span class="o">.</span><span class="n">get</span><span class="o">(</span><span class="n">id</span><span class="o">)))</span>
   <span class="o">}</span>
-<span class="c1">// customerPersistencteHandler: algebras.CustomerPersistence.Handler[Stack] = $anon$1@2c0c59c8
+<span class="c1">// customerPersistencteHandler: algebras.CustomerPersistence.Handler[Stack] = $anon$1@6382fd24
 </span>
 <span class="k">implicit</span> <span class="k">val</span> <span class="n">stockPersistencteHandler</span><span class="k">:</span> <span class="kt">StockPersistence.Handler</span><span class="o">[</span><span class="kt">Stack</span><span class="o">]</span> <span class="k">=</span>
   <span class="k">new</span> <span class="nc">StockPersistence</span><span class="o">.</span><span class="nc">Handler</span><span class="o">[</span><span class="kt">Stack</span><span class="o">]</span> <span class="o">{</span>
@@ -223,13 +223,13 @@ capabilities to fail, to read from our <code class="highlighter-rouge">Config</c
     <span class="k">def</span> <span class="n">registerOrder</span><span class="o">(</span><span class="n">order</span><span class="k">:</span> <span class="kt">Order</span><span class="o">)</span><span class="k">:</span> <span class="kt">Stack</span><span class="o">[</span><span class="kt">Unit</span><span class="o">]</span> <span class="k">=</span>
       <span class="nc">Kleisli</span><span class="o">(</span><span class="k">_</span> <span class="k">=&gt;</span> <span class="nc">IO</span><span class="o">(</span><span class="n">println</span><span class="o">(</span><span class="n">s</span><span class="s">"Register $order"</span><span class="o">)))</span>
   <span class="o">}</span>
-<span class="c1">// stockPersistencteHandler: algebras.StockPersistence.Handler[Stack] = $anon$1@195d7751
+<span class="c1">// stockPersistencteHandler: algebras.StockPersistence.Handler[Stack] = $anon$1@4c4afafb
 </span></code></pre>
 </div>
 
 <p>A handler that can cache <code class="highlighter-rouge">Customer</code>s can be created with a <code class="highlighter-rouge">ConcurrentHashMapWrapper</code> and a natural transformation to our <code class="highlighter-rouge">Stack</code> type:</p>
 
-<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">cats.</span><span class="o">{~&gt;,</span> <span class="nc">Id</span><span class="o">}</span>
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">cats.</span><span class="o">{~&gt;,</span> <span class="nc">Id</span><span class="o">}</span>
 <span class="c1">// import cats.{$tilde$greater, Id}
 </span>
 <span class="k">import</span> <span class="nn">freestyle.cache.hashmap._</span>
@@ -240,7 +240,7 @@ capabilities to fail, to read from our <code class="highlighter-rouge">Config</c
 </span>
 <span class="k">implicit</span> <span class="k">val</span> <span class="n">freestyleHasherCustomerId</span><span class="k">:</span> <span class="kt">Hasher</span><span class="o">[</span><span class="kt">CustomerId</span><span class="o">]</span> <span class="k">=</span>
   <span class="nc">Hasher</span><span class="o">[</span><span class="kt">CustomerId</span><span class="o">](</span><span class="k">_</span><span class="o">.</span><span class="n">hashCode</span><span class="o">)</span>
-<span class="c1">// freestyleHasherCustomerId: freestyle.cache.hashmap.Hasher[CustomerId] = freestyle.cache.hashmap.Hasher$$anon$1@24e6ad9
+<span class="c1">// freestyleHasherCustomerId: freestyle.cache.hashmap.Hasher[CustomerId] = freestyle.cache.hashmap.Hasher$$anon$1@34fd6241
 </span>
 <span class="k">implicit</span> <span class="k">val</span> <span class="n">cacheHandler</span><span class="k">:</span> <span class="kt">cacheP.CacheM.Handler</span><span class="o">[</span><span class="kt">Stack</span><span class="o">]</span> <span class="k">=</span> <span class="o">{</span>
   <span class="k">val</span> <span class="n">rawMap</span><span class="k">:</span> <span class="kt">KeyValueMap</span><span class="o">[</span><span class="kt">Id</span>, <span class="kt">CustomerId</span>, <span class="kt">Customer</span><span class="o">]</span> <span class="k">=</span>
@@ -253,13 +253,13 @@ capabilities to fail, to read from our <code class="highlighter-rouge">Config</c
 
   <span class="n">cacheP</span><span class="o">.</span><span class="n">implicits</span><span class="o">.</span><span class="n">cacheHandler</span><span class="o">(</span><span class="n">rawMap</span><span class="o">,</span> <span class="n">cacheIdToStack</span><span class="o">)</span>
 <span class="o">}</span>
-<span class="c1">// cacheHandler: modules.cacheP.CacheM.Handler[Stack] = freestyle.cache.KeyValueProvider$Implicits$CacheHandler@43c7bc67
+<span class="c1">// cacheHandler: modules.cacheP.CacheM.Handler[Stack] = freestyle.cache.KeyValueProvider$Implicits$CacheHandler@3c1399a3
 </span></code></pre>
 </div>
 
 <p>We can now create a Freestyle program by specifying the type in <code class="highlighter-rouge">processOrder</code> as <code class="highlighter-rouge">App.Op</code>:</p>
 
-<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">val</span> <span class="n">program</span><span class="k">:</span> <span class="kt">FreeS</span><span class="o">[</span><span class="kt">App.Op</span>, <span class="kt">String</span><span class="o">]</span> <span class="k">=</span>
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="k">val</span> <span class="n">program</span><span class="k">:</span> <span class="kt">FreeS</span><span class="o">[</span><span class="kt">App.Op</span>, <span class="kt">String</span><span class="o">]</span> <span class="k">=</span>
   <span class="n">processOrder</span><span class="o">[</span><span class="kt">App.Op</span><span class="o">](</span><span class="nc">Order</span><span class="o">(</span><span class="mi">50</span><span class="o">,</span> <span class="s">"granny smith"</span><span class="o">,</span> <span class="n">customerId1</span><span class="o">))</span>
 <span class="c1">// program: freestyle.FreeS[modules.App.Op,String] = Free(...)
 </span></code></pre>
@@ -267,7 +267,7 @@ capabilities to fail, to read from our <code class="highlighter-rouge">Config</c
 
 <p>With the persistence algebras, interpreters, and the <code class="highlighter-rouge">Customer</code> cache interpreter in place and with the right imports for the <code class="highlighter-rouge">reader</code> and <code class="highlighter-rouge">error</code> effect, we can execute a program resulting in <code class="highlighter-rouge">Stack[String]</code>:</p>
 
-<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">freestyle.effects.error.implicits._</span>
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">freestyle.effects.error.implicits._</span>
 <span class="c1">// import freestyle.effects.error.implicits._
 </span>
 <span class="k">import</span> <span class="nn">rd.implicits._</span>
@@ -283,7 +283,7 @@ capabilities to fail, to read from our <code class="highlighter-rouge">Config</c
 <span class="c1">// config: Config = Config(Set(granny smith, jonagold, boskoop))
 </span>
 <span class="k">val</span> <span class="n">result</span><span class="k">:</span> <span class="kt">Stack</span><span class="o">[</span><span class="kt">String</span><span class="o">]</span> <span class="k">=</span> <span class="n">program</span><span class="o">.</span><span class="n">interpret</span><span class="o">[</span><span class="kt">Stack</span><span class="o">]</span>
-<span class="c1">// result: Stack[String] = Kleisli(cats.data.KleisliFlatMap$$Lambda$16527/179116236@45ee23d7)
+<span class="c1">// result: Stack[String] = Kleisli(cats.data.KleisliFlatMap$$Lambda$10548/635226197@32880d0b)
 </span></code></pre>
 </div>
 
@@ -292,8 +292,8 @@ capabilities to fail, to read from our <code class="highlighter-rouge">Config</c
 <p>By supplying a <code class="highlighter-rouge">Config</code> value we can run our <code class="highlighter-rouge">Stack</code> which results in a <code class="highlighter-rouge">IO[String]</code>.
 When we want to actually execute the program, we can run the <code class="highlighter-rouge">IO</code> by using one of the methods on <code class="highlighter-rouge">IO</code>:</p>
 
-<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">val</span> <span class="n">ioString</span><span class="k">:</span> <span class="kt">IO</span><span class="o">[</span><span class="kt">String</span><span class="o">]</span> <span class="k">=</span> <span class="n">result</span><span class="o">.</span><span class="n">run</span><span class="o">(</span><span class="n">config</span><span class="o">)</span>
-<span class="c1">// ioString: cats.effect.IO[String] = IO$1433277168
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="k">val</span> <span class="n">ioString</span><span class="k">:</span> <span class="kt">IO</span><span class="o">[</span><span class="kt">String</span><span class="o">]</span> <span class="k">=</span> <span class="n">result</span><span class="o">.</span><span class="n">run</span><span class="o">(</span><span class="n">config</span><span class="o">)</span>
+<span class="c1">// ioString: cats.effect.IO[String] = IO$163008848
 </span>
 <span class="n">println</span><span class="o">(</span><span class="n">ioString</span><span class="o">.</span><span class="n">unsafeRunSync</span><span class="o">)</span>
 <span class="c1">// Register Order(50,granny smith,00000000-0000-0000-0000-000000000000)

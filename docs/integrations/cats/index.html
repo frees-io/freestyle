@@ -10,7 +10,7 @@ ga('send', 'pageview');
 
 <p>Freestyle is built on top of Cats’ <a href="http://typelevel.org/cats/datatypes/freemonad.html"><code class="highlighter-rouge">Free</code></a> and <a href="http://typelevel.org/cats/datatypes/freeapplicative.html"><code class="highlighter-rouge">FreeApplicative</code></a> and <code class="highlighter-rouge">FreeS</code> and <code class="highlighter-rouge">FreeS.Par</code> are just type aliases:</p>
 
-<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">cats.free.</span><span class="o">{</span> <span class="nc">Free</span><span class="o">,</span> <span class="nc">FreeApplicative</span> <span class="o">}</span>
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">cats.free.</span><span class="o">{</span> <span class="nc">Free</span><span class="o">,</span> <span class="nc">FreeApplicative</span> <span class="o">}</span>
 
 <span class="k">object</span> <span class="nc">aliases</span> <span class="o">{</span>
   <span class="k">type</span> <span class="kt">FreeS</span><span class="o">[</span><span class="kt">F</span><span class="o">[</span><span class="k">_</span><span class="o">]</span>, <span class="kt">A</span><span class="o">]</span> <span class="k">=</span> <span class="nc">Free</span><span class="o">[</span><span class="kt">FreeApplicative</span><span class="o">[</span><span class="kt">F</span>, <span class="kt">?</span><span class="o">]</span>, <span class="kt">A</span><span class="o">]</span>
@@ -35,7 +35,7 @@ ga('send', 'pageview');
 
 <p>To see how we can use <code class="highlighter-rouge">FreeS</code> and <code class="highlighter-rouge">FreeS.Par</code> in combination with existing Cats functions, we will create a simple algebra with a sum and a product operation:</p>
 
-<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">freestyle._</span>
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">freestyle._</span>
 <span class="c1">// import freestyle._
 </span>
 <span class="nd">@free</span> <span class="k">trait</span> <span class="nc">Calc</span> <span class="o">{</span>
@@ -49,20 +49,20 @@ ga('send', 'pageview');
 
 <p>A simple <code class="highlighter-rouge">Id</code> handler:</p>
 
-<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">cats.Id</span>
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">cats.Id</span>
 <span class="c1">// import cats.Id
 </span>
 <span class="k">implicit</span> <span class="k">val</span> <span class="n">idHandler</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">Calc</span><span class="o">.</span><span class="nc">Handler</span><span class="o">[</span><span class="kt">Id</span><span class="o">]</span> <span class="o">{</span>
   <span class="k">def</span> <span class="n">sum</span><span class="o">(</span><span class="n">a</span><span class="k">:</span> <span class="kt">Int</span><span class="o">,</span> <span class="n">b</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span> <span class="k">=</span> <span class="n">a</span> <span class="o">+</span> <span class="n">b</span>
   <span class="k">def</span> <span class="n">product</span><span class="o">(</span><span class="n">a</span><span class="k">:</span> <span class="kt">Int</span><span class="o">,</span> <span class="n">b</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span> <span class="k">=</span> <span class="n">a</span> <span class="o">*</span> <span class="n">b</span>
 <span class="o">}</span>
-<span class="c1">// idHandler: Calc.Handler[cats.Id] = $anon$1@58d8e413
+<span class="c1">// idHandler: Calc.Handler[cats.Id] = $anon$1@685204e1
 </span></code></pre>
 </div>
 
 <p>A handler translating the <code class="highlighter-rouge">Calc</code> algebra to <code class="highlighter-rouge">Future</code>, which introduces a little bit of artificial latency:</p>
 
-<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">scala.concurrent.Future</span>
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">scala.concurrent.Future</span>
 <span class="c1">// import scala.concurrent.Future
 </span>
 <span class="k">import</span> <span class="nn">scala.concurrent.ExecutionContext.Implicits.global</span>
@@ -74,7 +74,7 @@ ga('send', 'pageview');
   <span class="k">def</span> <span class="n">product</span><span class="o">(</span><span class="n">a</span><span class="k">:</span> <span class="kt">Int</span><span class="o">,</span> <span class="n">b</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span> <span class="k">=</span>
     <span class="nc">Future</span> <span class="o">{</span> <span class="nc">Thread</span><span class="o">.</span><span class="n">sleep</span><span class="o">(</span><span class="n">a</span> <span class="o">*</span> <span class="mi">100L</span><span class="o">);</span> <span class="n">a</span> <span class="o">*</span> <span class="n">b</span> <span class="o">}</span>
 <span class="o">}</span>
-<span class="c1">// futureHandler: Calc.Handler[scala.concurrent.Future] = $anon$1@3b26a6e4
+<span class="c1">// futureHandler: Calc.Handler[scala.concurrent.Future] = $anon$1@73d4d4dd
 </span></code></pre>
 </div>
 
@@ -82,13 +82,13 @@ ga('send', 'pageview');
 
 <p>We have <code class="highlighter-rouge">incrPar</code> and <code class="highlighter-rouge">incrSeq</code>, where multiple <code class="highlighter-rouge">incrPar</code> calls could potentially be executed in parallel:</p>
 
-<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">val</span> <span class="n">incrPar</span><span class="k">:</span> <span class="kt">Int</span> <span class="o">=&gt;</span> <span class="nc">FreeS</span><span class="o">.</span><span class="nc">Par</span><span class="o">[</span><span class="kt">Calc.Op</span>, <span class="kt">Int</span><span class="o">]</span> <span class="k">=</span>
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="k">val</span> <span class="n">incrPar</span><span class="k">:</span> <span class="kt">Int</span> <span class="o">=&gt;</span> <span class="nc">FreeS</span><span class="o">.</span><span class="nc">Par</span><span class="o">[</span><span class="kt">Calc.Op</span>, <span class="kt">Int</span><span class="o">]</span> <span class="k">=</span>
   <span class="nc">Calc</span><span class="o">[</span><span class="kt">Calc.Op</span><span class="o">].</span><span class="n">sum</span><span class="o">(</span><span class="k">_</span><span class="o">,</span> <span class="mi">1</span><span class="o">)</span>
-<span class="c1">// incrPar: Int =&gt; freestyle.FreeS.Par[Calc.Op,Int] = $$Lambda$19811/1100782351@6b1aa29f
+<span class="c1">// incrPar: Int =&gt; freestyle.FreeS.Par[Calc.Op,Int] = $$Lambda$13942/1348399618@594f427e
 </span>
 <span class="k">val</span> <span class="n">incrSeq</span><span class="k">:</span> <span class="kt">Int</span> <span class="o">=&gt;</span> <span class="nc">FreeS</span><span class="o">[</span><span class="kt">Calc.Op</span>, <span class="kt">Int</span><span class="o">]</span> <span class="k">=</span>
   <span class="n">incrPar</span><span class="o">.</span><span class="n">andThen</span><span class="o">(</span><span class="k">_</span><span class="o">.</span><span class="n">freeS</span><span class="o">)</span>
-<span class="c1">// incrSeq: Int =&gt; freestyle.FreeS[Calc.Op,Int] = scala.Function1$$Lambda$4783/955134689@1ccf0b4f
+<span class="c1">// incrSeq: Int =&gt; freestyle.FreeS[Calc.Op,Int] = scala.Function1$$Lambda$3385/260133967@6c850207
 </span></code></pre>
 </div>
 
@@ -96,7 +96,7 @@ ga('send', 'pageview');
 
 <p>We will use <code class="highlighter-rouge">traverse</code> (provided by Cats’ <a href="http://typelevel.org/cats/typeclasses/traverse.html"><code class="highlighter-rouge">Traverse</code></a>) to increment a list of integers with <code class="highlighter-rouge">incrPar</code> and <code class="highlighter-rouge">incrSeq</code>:</p>
 
-<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">cats.implicits._</span>
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">cats.implicits._</span>
 <span class="c1">// import cats.implicits._
 </span>
 <span class="k">import</span> <span class="nn">freestyle.implicits._</span>
@@ -115,7 +115,7 @@ ga('send', 'pageview');
 
 <p>Executing these with our <code class="highlighter-rouge">Id</code> handler:</p>
 
-<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="n">traversingPar</span><span class="o">.</span><span class="n">interpret</span><span class="o">[</span><span class="kt">Id</span><span class="o">]</span>
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="n">traversingPar</span><span class="o">.</span><span class="n">interpret</span><span class="o">[</span><span class="kt">Id</span><span class="o">]</span>
 <span class="c1">// res1: cats.Id[List[Int]] = List(2, 3, 4, 5, 6, 7, 8, 9, 10)
 </span>
 <span class="n">traversingSeq</span><span class="o">.</span><span class="n">interpret</span><span class="o">[</span><span class="kt">Id</span><span class="o">]</span>
@@ -125,7 +125,7 @@ ga('send', 'pageview');
 
 <p>A simple timer method giving a rough estimate of the execution time of a piece of code:</p>
 
-<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">def</span> <span class="n">simpleTime</span><span class="o">[</span><span class="kt">A</span><span class="o">](</span><span class="n">th</span><span class="k">:</span> <span class="o">=&gt;</span> <span class="n">A</span><span class="o">)</span><span class="k">:</span> <span class="kt">A</span> <span class="o">=</span> <span class="o">{</span>
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="k">def</span> <span class="n">simpleTime</span><span class="o">[</span><span class="kt">A</span><span class="o">](</span><span class="n">th</span><span class="k">:</span> <span class="o">=&gt;</span> <span class="n">A</span><span class="o">)</span><span class="k">:</span> <span class="kt">A</span> <span class="o">=</span> <span class="o">{</span>
   <span class="k">val</span> <span class="n">start</span> <span class="k">=</span> <span class="nc">System</span><span class="o">.</span><span class="n">currentTimeMillis</span>
   <span class="k">val</span> <span class="n">result</span> <span class="k">=</span> <span class="n">th</span>
   <span class="k">val</span> <span class="n">end</span> <span class="k">=</span> <span class="nc">System</span><span class="o">.</span><span class="n">currentTimeMillis</span>
@@ -138,7 +138,7 @@ ga('send', 'pageview');
 
 <p>When we execute the increment traversals again using <code class="highlighter-rouge">Future</code>, we can observe that the parallel execution is now quicker than the sequential.</p>
 
-<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">freestyle.nondeterminism._</span>
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">freestyle.nondeterminism._</span>
 <span class="c1">// import freestyle.nondeterminism._
 </span>
 <span class="k">import</span> <span class="nn">scala.concurrent.Await</span>
@@ -151,14 +151,14 @@ ga('send', 'pageview');
 <span class="c1">// futPar: scala.concurrent.Future[List[Int]] = Future(&lt;not completed&gt;)
 </span>
 <span class="n">simpleTime</span><span class="o">(</span><span class="nc">Await</span><span class="o">.</span><span class="n">result</span><span class="o">(</span><span class="n">futPar</span><span class="o">,</span> <span class="nc">Duration</span><span class="o">.</span><span class="nc">Inf</span><span class="o">))</span>
-<span class="c1">// time: 1338
+<span class="c1">// time: 1360
 // res3: List[Int] = List(2, 3, 4, 5, 6, 7, 8, 9, 10)
 </span>
 <span class="k">val</span> <span class="n">futSeq</span> <span class="k">=</span> <span class="n">traversingSeq</span><span class="o">.</span><span class="n">interpret</span><span class="o">[</span><span class="kt">Future</span><span class="o">]</span>
 <span class="c1">// futSeq: scala.concurrent.Future[List[Int]] = Future(&lt;not completed&gt;)
 </span>
 <span class="n">simpleTime</span><span class="o">(</span><span class="nc">Await</span><span class="o">.</span><span class="n">result</span><span class="o">(</span><span class="n">futSeq</span><span class="o">,</span> <span class="nc">Duration</span><span class="o">.</span><span class="nc">Inf</span><span class="o">))</span>
-<span class="c1">// time: 4363
+<span class="c1">// time: 4399
 // res4: List[Int] = List(2, 3, 4, 5, 6, 7, 8, 9, 10)
 </span></code></pre>
 </div>
@@ -167,7 +167,7 @@ ga('send', 'pageview');
 
 <p>We can combine applicative and monadic steps by using the tuple <code class="highlighter-rouge">Apply</code> syntax inside a for comprehension:</p>
 
-<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">val</span> <span class="n">incrAndMultiply</span> <span class="k">=</span>
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="k">val</span> <span class="n">incrAndMultiply</span> <span class="k">=</span>
   <span class="k">for</span> <span class="o">{</span>
     <span class="n">ab</span> <span class="k">&lt;-</span> <span class="o">(</span><span class="n">incrPar</span><span class="o">(</span><span class="mi">5</span><span class="o">),</span> <span class="n">incrPar</span><span class="o">(</span><span class="mi">6</span><span class="o">)).</span><span class="n">tupled</span>
     <span class="o">(</span><span class="n">a</span><span class="o">,</span> <span class="n">b</span><span class="o">)</span> <span class="k">=</span> <span class="n">ab</span>
@@ -185,7 +185,7 @@ ga('send', 'pageview');
 
 <p>To see the effect of replacing multiple independent monadic steps with one applicative step, we can again execute two similar programs using <code class="highlighter-rouge">Future</code>:</p>
 
-<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">val</span> <span class="n">incrSeqSum</span> <span class="k">=</span> <span class="k">for</span> <span class="o">{</span>
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="k">val</span> <span class="n">incrSeqSum</span> <span class="k">=</span> <span class="k">for</span> <span class="o">{</span>
   <span class="n">a</span> <span class="k">&lt;-</span> <span class="n">incrSeq</span><span class="o">(</span><span class="mi">1</span><span class="o">)</span>
   <span class="n">b</span> <span class="k">&lt;-</span> <span class="n">incrSeq</span><span class="o">(</span><span class="mi">2</span><span class="o">)</span>
   <span class="n">c</span> <span class="k">&lt;-</span> <span class="nc">Calc</span><span class="o">[</span><span class="kt">Calc.Op</span><span class="o">].</span><span class="n">sum</span><span class="o">(</span><span class="n">a</span><span class="o">,</span> <span class="n">b</span><span class="o">)</span>
@@ -202,14 +202,14 @@ ga('send', 'pageview');
 <span class="c1">// futSeq2: scala.concurrent.Future[Int] = Future(&lt;not completed&gt;)
 </span>
 <span class="n">simpleTime</span><span class="o">(</span><span class="nc">Await</span><span class="o">.</span><span class="n">result</span><span class="o">(</span><span class="n">futSeq2</span><span class="o">,</span> <span class="nc">Duration</span><span class="o">.</span><span class="nc">Inf</span><span class="o">))</span>
-<span class="c1">// time: 373
+<span class="c1">// time: 376
 // res6: Int = 5
 </span>
 <span class="k">val</span> <span class="n">futPar2</span> <span class="k">=</span> <span class="n">incrParSum</span><span class="o">.</span><span class="n">interpret</span><span class="o">[</span><span class="kt">Future</span><span class="o">]</span>
 <span class="c1">// futPar2: scala.concurrent.Future[Int] = Future(&lt;not completed&gt;)
 </span>
 <span class="n">simpleTime</span><span class="o">(</span><span class="nc">Await</span><span class="o">.</span><span class="n">result</span><span class="o">(</span><span class="n">futPar2</span><span class="o">,</span> <span class="nc">Duration</span><span class="o">.</span><span class="nc">Inf</span><span class="o">))</span>
-<span class="c1">// time: 266
+<span class="c1">// time: 253
 // res7: Int = 5
 </span></code></pre>
 </div>
@@ -222,14 +222,14 @@ ga('send', 'pageview');
 
 <p>Our demo configuration will only contain a number that we will add to every computation, but in a more realistic case, it could contain an API key, a URI, etc.</p>
 
-<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">case</span> <span class="k">class</span> <span class="nc">Config</span><span class="o">(</span><span class="n">n</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span>
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="k">case</span> <span class="k">class</span> <span class="nc">Config</span><span class="o">(</span><span class="n">n</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span>
 <span class="c1">// defined class Config
 </span></code></pre>
 </div>
 
 <p>We will use <code class="highlighter-rouge">Reader[Config, ?]</code>, which is a type alias for <code class="highlighter-rouge">ReaderT[Id, Config, ?]</code>, as target here:</p>
 
-<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">cats.data.Reader</span>
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">cats.data.Reader</span>
 <span class="c1">// import cats.data.Reader
 </span>
 <span class="k">type</span> <span class="kt">WithConfig</span><span class="o">[</span><span class="kt">A</span><span class="o">]</span> <span class="k">=</span> <span class="nc">Reader</span><span class="o">[</span><span class="kt">Config</span>, <span class="kt">A</span><span class="o">]</span>
@@ -242,17 +242,17 @@ ga('send', 'pageview');
     <span class="k">def</span> <span class="n">product</span><span class="o">(</span><span class="n">a</span><span class="k">:</span> <span class="kt">Int</span><span class="o">,</span> <span class="n">b</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span> <span class="k">=</span>
       <span class="nc">Reader</span> <span class="o">{</span> <span class="n">cfg</span> <span class="k">=&gt;</span> <span class="n">cfg</span><span class="o">.</span><span class="n">n</span> <span class="o">+</span> <span class="n">a</span> <span class="o">*</span> <span class="n">b</span> <span class="o">}</span>
   <span class="o">}</span>
-<span class="c1">// readerHandler: Calc.Handler[WithConfig] = $anon$1@d411d09
+<span class="c1">// readerHandler: Calc.Handler[WithConfig] = $anon$1@47df2e74
 </span></code></pre>
 </div>
 
 <p>With this <code class="highlighter-rouge">Reader</code> handler in place, we can translate some of the previous programs and supply the configuration to get the end result with <code class="highlighter-rouge">Kleisli#run</code>:</p>
 
-<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">val</span> <span class="n">configTraversing</span> <span class="k">=</span> <span class="n">traversingSeq</span><span class="o">.</span><span class="n">interpret</span><span class="o">[</span><span class="kt">WithConfig</span><span class="o">]</span>
-<span class="c1">// configTraversing: WithConfig[List[Int]] = Kleisli(cats.data.KleisliFlatMap$$Lambda$16527/179116236@33561923)
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="k">val</span> <span class="n">configTraversing</span> <span class="k">=</span> <span class="n">traversingSeq</span><span class="o">.</span><span class="n">interpret</span><span class="o">[</span><span class="kt">WithConfig</span><span class="o">]</span>
+<span class="c1">// configTraversing: WithConfig[List[Int]] = Kleisli(cats.data.KleisliFlatMap$$Lambda$10548/635226197@6b5e7ee9)
 </span>
 <span class="k">val</span> <span class="n">configIncrSum</span>    <span class="k">=</span> <span class="n">incrParSum</span><span class="o">.</span><span class="n">interpret</span><span class="o">[</span><span class="kt">WithConfig</span><span class="o">]</span>
-<span class="c1">// configIncrSum: WithConfig[Int] = Kleisli(cats.data.KleisliFlatMap$$Lambda$16527/179116236@2f5e41b4)
+<span class="c1">// configIncrSum: WithConfig[Int] = Kleisli(cats.data.KleisliFlatMap$$Lambda$10548/635226197@76a70e96)
 </span>
 <span class="k">val</span> <span class="n">cfg</span> <span class="k">=</span> <span class="nc">Config</span><span class="o">(</span><span class="mi">1000</span><span class="o">)</span>
 <span class="c1">// cfg: Config = Config(1000)

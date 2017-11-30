@@ -18,19 +18,19 @@ ga('send', 'pageview');
 
 <p>To use the project, add the following to your build.sbt:</p>
 
-<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="n">addCompilerPlugin</span><span class="o">(</span><span class="s">"org.scalameta"</span> <span class="o">%</span> <span class="s">"paradise"</span> <span class="o">%</span> <span class="s">"3.0.0-M10"</span> <span class="n">cross</span> <span class="nc">CrossVersion</span><span class="o">.</span><span class="n">full</span><span class="o">)</span>
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="n">addCompilerPlugin</span><span class="o">(</span><span class="s">"org.scalameta"</span> <span class="o">%</span> <span class="s">"paradise"</span> <span class="o">%</span> <span class="s">"3.0.0-M10"</span> <span class="n">cross</span> <span class="nc">CrossVersion</span><span class="o">.</span><span class="n">full</span><span class="o">)</span>
 </code></pre>
 </div>
 
 <p>For Scala.jvm:</p>
 
-<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="n">libraryDependencies</span> <span class="o">+=</span> <span class="s">"io.frees"</span> <span class="o">%%</span> <span class="s">"frees-core"</span> <span class="o">%</span> <span class="s">"0.4.4"</span>
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="n">libraryDependencies</span> <span class="o">+=</span> <span class="s">"io.frees"</span> <span class="o">%%</span> <span class="s">"frees-core"</span> <span class="o">%</span> <span class="s">"0.4.4"</span>
 </code></pre>
 </div>
 
 <p>For Scala.js:</p>
 
-<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="n">libraryDependencies</span> <span class="o">+=</span> <span class="s">"io.frees"</span> <span class="o">%%%</span> <span class="s">"frees-core"</span> <span class="o">%</span> <span class="s">"0.4.4"</span>
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="n">libraryDependencies</span> <span class="o">+=</span> <span class="s">"io.frees"</span> <span class="o">%%%</span> <span class="s">"frees-core"</span> <span class="o">%</span> <span class="s">"0.4.4"</span>
 </code></pre>
 </div>
 
@@ -40,7 +40,7 @@ ga('send', 'pageview');
 
 <p>In the example below, we will define two algebras with intermixed sequential and parallel computations.</p>
 
-<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">freestyle._</span>
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">freestyle._</span>
 <span class="c1">// import freestyle._
 </span>
 <span class="k">import</span> <span class="nn">freestyle.implicits._</span>
@@ -68,7 +68,7 @@ ga('send', 'pageview');
 
 <p>Freestyle algebras can be combined into <code class="highlighter-rouge">@module</code> definitions which provide aggregation and unification over the parameterization of Free programs.</p>
 
-<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="nd">@module</span> <span class="k">trait</span> <span class="nc">Application</span> <span class="o">{</span>
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="nd">@module</span> <span class="k">trait</span> <span class="nc">Application</span> <span class="o">{</span>
   <span class="k">val</span> <span class="n">validation</span><span class="k">:</span> <span class="kt">Validation</span>
   <span class="k">val</span> <span class="n">interaction</span><span class="k">:</span> <span class="kt">Interaction</span>
 <span class="o">}</span>
@@ -89,7 +89,7 @@ ga('send', 'pageview');
 
 <p>The example below combines both algebras to produce a more complex program:</p>
 
-<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">def</span> <span class="n">program</span><span class="o">[</span><span class="kt">F</span><span class="o">[</span><span class="k">_</span><span class="o">]](</span><span class="k">implicit</span> <span class="n">A</span><span class="k">:</span> <span class="kt">Application</span><span class="o">[</span><span class="kt">F</span><span class="o">])</span> <span class="k">=</span> <span class="o">{</span>
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="k">def</span> <span class="n">program</span><span class="o">[</span><span class="kt">F</span><span class="o">[</span><span class="k">_</span><span class="o">]](</span><span class="k">implicit</span> <span class="n">A</span><span class="k">:</span> <span class="kt">Application</span><span class="o">[</span><span class="kt">F</span><span class="o">])</span> <span class="k">=</span> <span class="o">{</span>
   <span class="k">import</span> <span class="nn">A._</span>
   <span class="k">import</span> <span class="nn">cats.implicits._</span>
 
@@ -102,7 +102,7 @@ ga('send', 'pageview');
             <span class="n">interaction</span><span class="o">.</span><span class="n">tell</span><span class="o">(</span><span class="n">s</span><span class="s">"$userInput is not valid"</span><span class="o">)</span>
   <span class="o">}</span> <span class="k">yield</span> <span class="o">()</span>
 <span class="o">}</span>
-<span class="c1">// &lt;console&gt;:26: warning: method |@| in class CartesianOps is deprecated (since 1.0.0-MF): Replaced by an apply syntax, e.g. instead of (a |@| b).map(...) use (a, b).mapN(...)
+<span class="c1">// &lt;console&gt;:26: warning: method |@| in class SemigroupalOps is deprecated (since 1.0.0-MF): Replaced by an apply syntax, e.g. instead of (a |@| b).map(...) use (a, b).mapN(...)
 //            valid &lt;- (validation.minSize(userInput, 3) |@| validation.hasNumber(userInput)).map(_ &amp;&amp; _).freeS
 //                                                       ^
 // program: [F[_]](implicit A: Application[F])cats.free.Free[[β$0$]cats.free.FreeApplicative[F,β$0$],Unit]
@@ -113,7 +113,7 @@ ga('send', 'pageview');
 
 <p>In order to run programs, we need interpreters. We define interpreters providing implementations for the operations defined in our algebras:</p>
 
-<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">scala.concurrent.ExecutionContext.Implicits.global</span>
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">scala.concurrent.ExecutionContext.Implicits.global</span>
 <span class="c1">// import scala.concurrent.ExecutionContext.Implicits.global
 </span>
 <span class="k">import</span> <span class="nn">scala.concurrent.Future</span>
@@ -123,13 +123,13 @@ ga('send', 'pageview');
   <span class="k">override</span> <span class="k">def</span> <span class="n">minSize</span><span class="o">(</span><span class="n">s</span><span class="k">:</span> <span class="kt">String</span><span class="o">,</span> <span class="n">n</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span><span class="k">:</span> <span class="kt">Future</span><span class="o">[</span><span class="kt">Boolean</span><span class="o">]</span> <span class="k">=</span> <span class="nc">Future</span><span class="o">(</span><span class="n">s</span><span class="o">.</span><span class="n">size</span> <span class="o">&gt;=</span> <span class="n">n</span><span class="o">)</span>
   <span class="k">override</span> <span class="k">def</span> <span class="n">hasNumber</span><span class="o">(</span><span class="n">s</span><span class="k">:</span> <span class="kt">String</span><span class="o">)</span><span class="k">:</span> <span class="kt">Future</span><span class="o">[</span><span class="kt">Boolean</span><span class="o">]</span> <span class="k">=</span> <span class="nc">Future</span><span class="o">(</span><span class="n">s</span><span class="o">.</span><span class="n">exists</span><span class="o">(</span><span class="n">c</span> <span class="k">=&gt;</span> <span class="s">"0123456789"</span><span class="o">.</span><span class="n">contains</span><span class="o">(</span><span class="n">c</span><span class="o">)))</span>
 <span class="o">}</span>
-<span class="c1">// validationHandler: Validation.Handler[scala.concurrent.Future] = $anon$1@74d86561
+<span class="c1">// validationHandler: Validation.Handler[scala.concurrent.Future] = $anon$1@49c665
 </span>
 <span class="k">implicit</span> <span class="k">val</span> <span class="n">interactionHandler</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">Interaction</span><span class="o">.</span><span class="nc">Handler</span><span class="o">[</span><span class="kt">Future</span><span class="o">]</span> <span class="o">{</span>
   <span class="k">override</span> <span class="k">def</span> <span class="n">tell</span><span class="o">(</span><span class="n">s</span><span class="k">:</span> <span class="kt">String</span><span class="o">)</span><span class="k">:</span> <span class="kt">Future</span><span class="o">[</span><span class="kt">Unit</span><span class="o">]</span> <span class="k">=</span> <span class="nc">Future</span><span class="o">.</span><span class="n">successful</span><span class="o">(</span><span class="n">println</span><span class="o">(</span><span class="n">s</span><span class="o">))</span>
   <span class="k">override</span> <span class="k">def</span> <span class="n">ask</span><span class="o">(</span><span class="n">s</span><span class="k">:</span> <span class="kt">String</span><span class="o">)</span><span class="k">:</span> <span class="kt">Future</span><span class="o">[</span><span class="kt">String</span><span class="o">]</span> <span class="k">=</span> <span class="nc">Future</span><span class="o">.</span><span class="n">successful</span> <span class="o">{</span> <span class="n">println</span><span class="o">(</span><span class="n">s</span><span class="o">);</span> <span class="s">"This could have been user input 1"</span> <span class="o">}</span>
 <span class="o">}</span>
-<span class="c1">// interactionHandler: Interaction.Handler[scala.concurrent.Future] = $anon$1@4621865a
+<span class="c1">// interactionHandler: Interaction.Handler[scala.concurrent.Future] = $anon$1@78f58355
 </span></code></pre>
 </div>
 
@@ -137,7 +137,7 @@ ga('send', 'pageview');
 
 <p>At this point, we can run our pure programs at the edge of the world:</p>
 
-<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">cats.implicits._</span>
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">cats.implicits._</span>
 <span class="c1">// import cats.implicits._
 </span>
 <span class="k">import</span> <span class="nn">scala.concurrent.duration.Duration</span>

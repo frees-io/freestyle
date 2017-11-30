@@ -21,7 +21,7 @@ member in your algebras companion.</p>
 
 <p>Consider the following algebra adapted to Freestyle from the <a href="http://typelevel.org/cats/datatypes/freemonad.html">Typelevel Cats Free monads examples</a>:</p>
 
-<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">freestyle._</span>
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">freestyle._</span>
 <span class="c1">// import freestyle._
 </span>
 <span class="k">import</span> <span class="nn">cats.implicits._</span>
@@ -44,7 +44,7 @@ member in your algebras companion.</p>
 
 <p>To define a runtime interpreter for this, we simply extend <code class="highlighter-rouge">KVStore.Handler[M[_]]</code> and implement its abstract members:</p>
 
-<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">cats.data.State</span>
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">cats.data.State</span>
 <span class="c1">// import cats.data.State
 </span>
 <span class="k">type</span> <span class="kt">KVStoreState</span><span class="o">[</span><span class="kt">A</span><span class="o">]</span> <span class="k">=</span> <span class="nc">State</span><span class="o">[</span><span class="kt">Map</span><span class="o">[</span><span class="kt">String</span>, <span class="kt">Any</span><span class="o">]</span>, <span class="kt">A</span><span class="o">]</span>
@@ -58,7 +58,7 @@ member in your algebras companion.</p>
   <span class="k">def</span> <span class="n">delete</span><span class="o">(</span><span class="n">key</span><span class="k">:</span> <span class="kt">String</span><span class="o">)</span><span class="k">:</span> <span class="kt">KVStoreState</span><span class="o">[</span><span class="kt">Unit</span><span class="o">]</span> <span class="k">=</span>
     <span class="nc">State</span><span class="o">.</span><span class="n">modify</span><span class="o">(</span><span class="k">_</span> <span class="o">-</span> <span class="n">key</span><span class="o">)</span>
 <span class="o">}</span>
-<span class="c1">// kvStoreHandler: KVStore.Handler[KVStoreState] = $anon$1@6b95823f
+<span class="c1">// kvStoreHandler: KVStore.Handler[KVStoreState] = $anon$1@1093d0e8
 </span></code></pre>
 </div>
 
@@ -70,7 +70,7 @@ member in your algebras companion.</p>
 <p>Alternatively, if you would rather implement a natural transformation by hand, you can still do that by choosing not to implement
 <code class="highlighter-rouge">KVStore.Handler[M[_]]</code> and providing one like so:</p>
 
-<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">cats.</span><span class="o">~&gt;</span>
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">cats.</span><span class="o">~&gt;</span>
 <span class="c1">// import cats.$tilde$greater
 </span>
 <span class="k">implicit</span> <span class="k">def</span> <span class="n">manualKvStoreHandler</span><span class="k">:</span> <span class="kt">KVStore.Op</span> <span class="kt">~&gt;</span> <span class="kt">KVStoreState</span> <span class="o">=</span> 
@@ -95,7 +95,7 @@ member in your algebras companion.</p>
 by the evidence of it’s algebras’ interpreters.
 To illustrate interpreter composition, let’s define a new algebra <code class="highlighter-rouge">Log</code> which we will compose with our <code class="highlighter-rouge">KVStore</code> operations:</p>
 
-<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="nd">@free</span> <span class="k">trait</span> <span class="nc">Log</span> <span class="o">{</span>
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="nd">@free</span> <span class="k">trait</span> <span class="nc">Log</span> <span class="o">{</span>
   <span class="k">def</span> <span class="n">info</span><span class="o">(</span><span class="n">msg</span><span class="k">:</span> <span class="kt">String</span><span class="o">)</span><span class="k">:</span> <span class="kt">FS</span><span class="o">[</span><span class="kt">Unit</span><span class="o">]</span>
   <span class="k">def</span> <span class="n">warn</span><span class="o">(</span><span class="n">msg</span><span class="k">:</span> <span class="kt">String</span><span class="o">)</span><span class="k">:</span> <span class="kt">FS</span><span class="o">[</span><span class="kt">Unit</span><span class="o">]</span>
 <span class="o">}</span>
@@ -106,7 +106,7 @@ To illustrate interpreter composition, let’s define a new algebra <code class=
 
 <p>Once our algebra is defined we can easily write an interpreter for it:</p>
 
-<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">cats.implicits._</span>
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">cats.implicits._</span>
 <span class="c1">// import cats.implicits._
 </span>
 <span class="k">implicit</span> <span class="k">def</span> <span class="n">logHandler</span><span class="k">:</span> <span class="kt">Log.Handler</span><span class="o">[</span><span class="kt">KVStoreState</span><span class="o">]</span> <span class="k">=</span> 
@@ -120,7 +120,7 @@ To illustrate interpreter composition, let’s define a new algebra <code class=
 
 <p>Before we create a program combining all operations, let’s consider both <code class="highlighter-rouge">KVStore</code> and <code class="highlighter-rouge">Log</code> as part of a module in our application:</p>
 
-<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="nd">@module</span> <span class="k">trait</span> <span class="nc">Backend</span> <span class="o">{</span>
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="nd">@module</span> <span class="k">trait</span> <span class="nc">Backend</span> <span class="o">{</span>
   <span class="k">val</span> <span class="n">store</span><span class="k">:</span> <span class="kt">KVStore</span>
   <span class="k">val</span> <span class="n">log</span><span class="k">:</span> <span class="kt">Log</span>
 <span class="o">}</span>
@@ -132,7 +132,7 @@ To illustrate interpreter composition, let’s define a new algebra <code class=
 <p>When <code class="highlighter-rouge">@module</code> is materialized, it will automatically create the <code class="highlighter-rouge">Coproduct</code> that matches the interpreters necessary to run the <code class="highlighter-rouge">Free</code> structure
 below:</p>
 
-<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">def</span> <span class="n">program</span><span class="o">[</span><span class="kt">F</span><span class="o">[</span><span class="k">_</span><span class="o">]](</span><span class="k">implicit</span> <span class="n">B</span><span class="k">:</span> <span class="kt">Backend</span><span class="o">[</span><span class="kt">F</span><span class="o">])</span><span class="k">:</span> <span class="kt">FreeS</span><span class="o">[</span><span class="kt">F</span>, <span class="kt">Option</span><span class="o">[</span><span class="kt">Int</span><span class="o">]]</span> <span class="k">=</span> <span class="o">{</span>
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="k">def</span> <span class="n">program</span><span class="o">[</span><span class="kt">F</span><span class="o">[</span><span class="k">_</span><span class="o">]](</span><span class="k">implicit</span> <span class="n">B</span><span class="k">:</span> <span class="kt">Backend</span><span class="o">[</span><span class="kt">F</span><span class="o">])</span><span class="k">:</span> <span class="kt">FreeS</span><span class="o">[</span><span class="kt">F</span>, <span class="kt">Option</span><span class="o">[</span><span class="kt">Int</span><span class="o">]]</span> <span class="k">=</span> <span class="o">{</span>
   <span class="k">import</span> <span class="nn">B.store._</span><span class="o">,</span> <span class="n">B</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="k">_</span>
   <span class="k">for</span> <span class="o">{</span>
     <span class="k">_</span> <span class="k">&lt;-</span> <span class="n">put</span><span class="o">(</span><span class="s">"wild-cats"</span><span class="o">,</span> <span class="mi">2</span><span class="o">)</span>
@@ -151,11 +151,11 @@ below:</p>
 
 <p>Once we have combined our algebras, we can evaluate them by providing implicit evidence of the Coproduct interpreters. <code class="highlighter-rouge">import freestyle.implicits._</code> brings into scope, among others, the necessary implicit definitions to derive a unified interpreter given implicit evidence of each one of the individual algebra’s interpreters:</p>
 
-<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">freestyle.implicits._</span>
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">freestyle.implicits._</span>
 <span class="c1">// import freestyle.implicits._
 </span>
 <span class="n">program</span><span class="o">[</span><span class="kt">Backend.Op</span><span class="o">].</span><span class="n">interpret</span><span class="o">[</span><span class="kt">KVStoreState</span><span class="o">]</span>
-<span class="c1">// res0: KVStoreState[Option[Int]] = cats.data.StateT@68e0d526
+<span class="c1">// res0: KVStoreState[Option[Int]] = cats.data.IndexedStateT@4c6f2a19
 </span></code></pre>
 </div>
 

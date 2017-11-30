@@ -17,7 +17,7 @@ The target runtime <code class="highlighter-rouge">M[_]</code> requires a <code 
 
 <p><code class="highlighter-rouge">fromTraversable</code> allows the lifting of any <code class="highlighter-rouge">G[_]: Foldable</code> into the context of <code class="highlighter-rouge">FreeS</code>:</p>
 
-<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">freestyle._</span>
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">freestyle._</span>
 <span class="c1">// import freestyle._
 </span>
 <span class="k">import</span> <span class="nn">freestyle.implicits._</span>
@@ -30,7 +30,7 @@ The target runtime <code class="highlighter-rouge">M[_]</code> requires a <code 
 <span class="c1">// import cats.implicits._
 </span>
 <span class="k">val</span> <span class="n">list</span> <span class="k">=</span> <span class="n">traverse</span><span class="o">[</span><span class="kt">List</span><span class="o">]</span>
-<span class="c1">// list: freestyle.effects.traverse.TraverseProvider[List] = freestyle.effects.traverse$TraverseProvider@5b2c7393
+<span class="c1">// list: freestyle.effects.traverse.TraverseProvider[List] = freestyle.effects.traverse$TraverseProvider@521bc7d1
 </span>
 <span class="k">import</span> <span class="nn">list._</span><span class="o">,</span> <span class="n">list</span><span class="o">.</span><span class="n">implicits</span><span class="o">.</span><span class="k">_</span>
 <span class="c1">// import list._
@@ -54,7 +54,7 @@ The target runtime <code class="highlighter-rouge">M[_]</code> requires a <code 
 In the same way as <code class="highlighter-rouge">OptionM#none</code>, the empty value is determined by how the <code class="highlighter-rouge">MonadCombine</code> instance for the final <code class="highlighter-rouge">M[_]</code>
 is implemented.</p>
 
-<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">def</span> <span class="n">programEmpty</span><span class="o">[</span><span class="kt">F</span><span class="o">[</span><span class="k">_</span><span class="o">]</span><span class="kt">:</span> <span class="kt">TraverseM</span><span class="o">]</span> <span class="k">=</span>
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="k">def</span> <span class="n">programEmpty</span><span class="o">[</span><span class="kt">F</span><span class="o">[</span><span class="k">_</span><span class="o">]</span><span class="kt">:</span> <span class="kt">TraverseM</span><span class="o">]</span> <span class="k">=</span>
   <span class="k">for</span> <span class="o">{</span>
     <span class="k">_</span> <span class="k">&lt;-</span> <span class="nc">TraverseM</span><span class="o">[</span><span class="kt">F</span><span class="o">].</span><span class="n">empty</span><span class="o">[</span><span class="kt">Int</span><span class="o">]</span>
     <span class="n">a</span> <span class="k">&lt;-</span> <span class="nc">TraverseM</span><span class="o">[</span><span class="kt">F</span><span class="o">].</span><span class="n">fromTraversable</span><span class="o">(</span><span class="mi">1</span> <span class="o">::</span> <span class="mi">2</span> <span class="o">::</span> <span class="mi">3</span> <span class="o">::</span> <span class="nc">Nil</span><span class="o">)</span>

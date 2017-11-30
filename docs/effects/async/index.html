@@ -14,7 +14,7 @@ ga('send', 'pageview');
 
 <p>Let’s imagine an API that allows us to find books written by a certain author. We need to supply a callback function handling both a successful case where the books have been found, and a case where something went wrong.</p>
 
-<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">case</span> <span class="k">class</span> <span class="nc">Author</span><span class="o">(</span><span class="n">name</span><span class="k">:</span> <span class="kt">String</span><span class="o">)</span> <span class="k">extends</span> <span class="nc">AnyVal</span>
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="k">case</span> <span class="k">class</span> <span class="nc">Author</span><span class="o">(</span><span class="n">name</span><span class="k">:</span> <span class="kt">String</span><span class="o">)</span> <span class="k">extends</span> <span class="nc">AnyVal</span>
 <span class="c1">// defined class Author
 </span>
 <span class="k">case</span> <span class="k">class</span> <span class="nc">Book</span><span class="o">(</span><span class="n">title</span><span class="k">:</span> <span class="kt">String</span><span class="o">,</span> <span class="n">year</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span>
@@ -31,7 +31,7 @@ ga('send', 'pageview');
 
 <p>To use the <em>frees-async</em> module, you need to include one of the following dependencies:</p>
 
-<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="n">libraryDependencies</span> <span class="o">+=</span> <span class="s">"io.frees"</span> <span class="o">%%</span> <span class="s">"frees-async"</span> <span class="o">%</span> <span class="s">"0.4.4"</span>
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="n">libraryDependencies</span> <span class="o">+=</span> <span class="s">"io.frees"</span> <span class="o">%%</span> <span class="s">"frees-async"</span> <span class="o">%</span> <span class="s">"0.4.4"</span>
 
 <span class="c1">// and if you want to use cats.effect.IO or Monix' Task:
 </span><span class="n">libraryDependencies</span> <span class="o">+=</span> <span class="s">"io.frees"</span> <span class="o">%%</span> <span class="s">"frees-async-cats-effect"</span> <span class="o">%</span> <span class="s">"0.4.4"</span>
@@ -40,21 +40,21 @@ ga('send', 'pageview');
 
 <p>The standard freestyle imports:</p>
 
-<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">freestyle._</span>
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">freestyle._</span>
 <span class="k">import</span> <span class="nn">freestyle.implicits._</span>
 </code></pre>
 </div>
 
 <p>The imports for the <em>frees-async</em> module:</p>
 
-<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">freestyle.async._</span>
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">freestyle.async._</span>
 <span class="k">import</span> <span class="nn">freestyle.async.implicits._</span>
 </code></pre>
 </div>
 
 <p>Now if we want to create a freestyle program which uses the <code class="highlighter-rouge">findBooks</code> function and returns all the books sorted by the year they were written, we can use the <code class="highlighter-rouge">AsyncM</code> effect:</p>
 
-<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">def</span> <span class="n">sortedBooks</span><span class="o">[</span><span class="kt">F</span><span class="o">[</span><span class="k">_</span><span class="o">]</span><span class="kt">:</span> <span class="kt">AsyncM</span><span class="o">](</span><span class="n">lib</span><span class="k">:</span> <span class="kt">LibraryAPI</span><span class="o">)(</span><span class="n">author</span><span class="k">:</span> <span class="kt">Author</span><span class="o">)</span><span class="k">:</span> <span class="kt">FreeS</span><span class="o">[</span><span class="kt">F</span>, <span class="kt">List</span><span class="o">[</span><span class="kt">Book</span><span class="o">]]</span> <span class="k">=</span>
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="k">def</span> <span class="n">sortedBooks</span><span class="o">[</span><span class="kt">F</span><span class="o">[</span><span class="k">_</span><span class="o">]</span><span class="kt">:</span> <span class="kt">AsyncM</span><span class="o">](</span><span class="n">lib</span><span class="k">:</span> <span class="kt">LibraryAPI</span><span class="o">)(</span><span class="n">author</span><span class="k">:</span> <span class="kt">Author</span><span class="o">)</span><span class="k">:</span> <span class="kt">FreeS</span><span class="o">[</span><span class="kt">F</span>, <span class="kt">List</span><span class="o">[</span><span class="kt">Book</span><span class="o">]]</span> <span class="k">=</span>
   <span class="nc">AsyncM</span><span class="o">[</span><span class="kt">F</span><span class="o">].</span><span class="n">async</span><span class="o">[</span><span class="kt">List</span><span class="o">[</span><span class="kt">Book</span><span class="o">]]</span> <span class="o">{</span> <span class="n">cb</span> <span class="k">=&gt;</span>
     <span class="n">lib</span><span class="o">.</span><span class="n">findBooks</span><span class="o">(</span><span class="n">author</span><span class="o">)({</span> <span class="n">books</span> <span class="k">=&gt;</span> <span class="n">cb</span><span class="o">(</span><span class="nc">Right</span><span class="o">(</span><span class="n">books</span><span class="o">))</span> <span class="o">},</span> <span class="o">{</span> <span class="n">error</span> <span class="k">=&gt;</span> <span class="n">cb</span><span class="o">(</span><span class="nc">Left</span><span class="o">(</span><span class="n">error</span><span class="o">))</span> <span class="o">})</span>
   <span class="o">}</span>
@@ -64,7 +64,7 @@ ga('send', 'pageview');
 
 <p>A simple demo implementation for the <code class="highlighter-rouge">LibararyAPI</code>:</p>
 
-<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">case</span> <span class="k">class</span> <span class="nc">NoBooksFound</span><span class="o">(</span><span class="n">author</span><span class="k">:</span> <span class="kt">Author</span><span class="o">)</span> <span class="k">extends</span> <span class="nc">Exception</span><span class="o">(</span><span class="n">s</span><span class="s">"No books found from ${author.name}"</span><span class="o">)</span>
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="k">case</span> <span class="k">class</span> <span class="nc">NoBooksFound</span><span class="o">(</span><span class="n">author</span><span class="k">:</span> <span class="kt">Author</span><span class="o">)</span> <span class="k">extends</span> <span class="nc">Exception</span><span class="o">(</span><span class="n">s</span><span class="s">"No books found from ${author.name}"</span><span class="o">)</span>
 <span class="c1">// defined class NoBooksFound
 </span>
 <span class="k">object</span> <span class="nc">Library</span> <span class="k">extends</span> <span class="nc">LibraryAPI</span> <span class="o">{</span>
@@ -78,9 +78,9 @@ ga('send', 'pageview');
 
 <p>Now we can create simple programs requesting the books for certain authors:</p>
 
-<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">val</span> <span class="n">getSorted</span><span class="k">:</span> <span class="kt">Author</span> <span class="o">=&gt;</span> <span class="nc">FreeS</span><span class="o">[</span><span class="kt">AsyncM.Op</span>, <span class="kt">List</span><span class="o">[</span><span class="kt">Book</span><span class="o">]]</span> <span class="k">=</span>
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="k">val</span> <span class="n">getSorted</span><span class="k">:</span> <span class="kt">Author</span> <span class="o">=&gt;</span> <span class="nc">FreeS</span><span class="o">[</span><span class="kt">AsyncM.Op</span>, <span class="kt">List</span><span class="o">[</span><span class="kt">Book</span><span class="o">]]</span> <span class="k">=</span>
   <span class="n">sortedBooks</span><span class="o">[</span><span class="kt">AsyncM.Op</span><span class="o">](</span><span class="nc">Library</span><span class="o">)</span> <span class="k">_</span>
-<span class="c1">// getSorted: Author =&gt; freestyle.FreeS[freestyle.async.AsyncM.Op,List[Book]] = $$Lambda$15897/28579921@4c958edc
+<span class="c1">// getSorted: Author =&gt; freestyle.FreeS[freestyle.async.AsyncM.Op,List[Book]] = $$Lambda$9859/1374319785@543b4b0e
 </span>
 <span class="k">val</span> <span class="n">dickensBooks</span> <span class="k">=</span> <span class="n">getSorted</span><span class="o">(</span><span class="nc">Author</span><span class="o">(</span><span class="s">"Dickens"</span><span class="o">))</span>
 <span class="c1">// dickensBooks: freestyle.FreeS[freestyle.async.AsyncM.Op,List[Book]] = Free(...)
@@ -96,7 +96,7 @@ ga('send', 'pageview');
   <li>Cats’ <code class="highlighter-rouge">IO</code> as target effect type:</li>
 </ul>
 
-<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">freestyle.asyncCatsEffect.implicits._</span>
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">freestyle.asyncCatsEffect.implicits._</span>
 <span class="c1">// import freestyle.asyncCatsEffect.implicits._
 </span>
 <span class="k">import</span> <span class="nn">scala.concurrent.</span><span class="o">{</span><span class="nc">Await</span><span class="o">,</span> <span class="nc">ExecutionContext</span><span class="o">}</span>
@@ -109,27 +109,29 @@ ga('send', 'pageview');
 <span class="c1">// import cats.effect.IO
 </span>
 <span class="k">val</span> <span class="n">io1</span> <span class="k">=</span> <span class="n">dickensBooks</span><span class="o">.</span><span class="n">interpret</span><span class="o">[</span><span class="kt">IO</span><span class="o">]</span>
-<span class="c1">// io1: cats.effect.IO[List[Book]] = IO$1884656956
+<span class="c1">// io1: cats.effect.IO[List[Book]] = IO$82437109
 </span>
 <span class="k">val</span> <span class="n">io2</span> <span class="k">=</span> <span class="n">otherBooks</span><span class="o">.</span><span class="n">interpret</span><span class="o">[</span><span class="kt">IO</span><span class="o">]</span>
-<span class="c1">// io2: cats.effect.IO[List[Book]] = IO$802659351
+<span class="c1">// io2: cats.effect.IO[List[Book]] = IO$928607089
 </span></code></pre>
 </div>
 
-<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="nc">Await</span><span class="o">.</span><span class="n">result</span><span class="o">(</span><span class="n">io1</span><span class="o">.</span><span class="n">unsafeToFuture</span><span class="o">,</span> <span class="nc">Duration</span><span class="o">.</span><span class="nc">Inf</span><span class="o">)</span>
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="nc">Await</span><span class="o">.</span><span class="n">result</span><span class="o">(</span><span class="n">io1</span><span class="o">.</span><span class="n">unsafeToFuture</span><span class="o">,</span> <span class="nc">Duration</span><span class="o">.</span><span class="nc">Inf</span><span class="o">)</span>
 <span class="c1">// NoBooksFound: No books found from Dickens
 //   at Library$.findBooks(&lt;console&gt;:33)
 //   at .$anonfun$sortedBooks$1(&lt;console&gt;:31)
 //   at .$anonfun$sortedBooks$1$adapted(&lt;console&gt;:30)
+//   at $$Lambda$9860/2048400312.apply(Unknown Source)
 //   at cats.effect.IO$.$anonfun$async$1(IO.scala:449)
 //   at cats.effect.IO$.$anonfun$async$1$adapted(IO.scala:447)
+//   at cats.effect.IO$$$Lambda$9869/1447977011.apply(Unknown Source)
 //   at cats.effect.IO.unsafeRunAsync(IO.scala:222)
 //   at cats.effect.IO.unsafeToFuture(IO.scala:286)
-//   ... 296 elided
+//   ... 48 elided
 </span></code></pre>
 </div>
 
-<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="nc">Await</span><span class="o">.</span><span class="n">result</span><span class="o">(</span><span class="n">io2</span><span class="o">.</span><span class="n">unsafeToFuture</span><span class="o">,</span> <span class="nc">Duration</span><span class="o">.</span><span class="nc">Inf</span><span class="o">)</span>
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="nc">Await</span><span class="o">.</span><span class="n">result</span><span class="o">(</span><span class="n">io2</span><span class="o">.</span><span class="n">unsafeToFuture</span><span class="o">,</span> <span class="nc">Duration</span><span class="o">.</span><span class="nc">Inf</span><span class="o">)</span>
 <span class="c1">// res1: List[Book] = List(Book(The Old Man and the Sea,1951), Book(1984,1948), Book(On the Road,1957))
 </span></code></pre>
 </div>
@@ -138,30 +140,32 @@ ga('send', 'pageview');
   <li>Monix’ <code class="highlighter-rouge">Task</code> as target (we need to have an <code class="highlighter-rouge">ExecutionContext</code> in implicit scope):</li>
 </ul>
 
-<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">monix.eval.Task</span>
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">monix.eval.Task</span>
 <span class="c1">// import monix.eval.Task
 </span>
 <span class="k">import</span> <span class="nn">monix.execution.Scheduler</span>
 <span class="c1">// import monix.execution.Scheduler
 </span>
 <span class="k">implicit</span> <span class="k">val</span> <span class="n">executionContext</span> <span class="k">=</span> <span class="nc">Scheduler</span><span class="o">.</span><span class="nc">Implicits</span><span class="o">.</span><span class="n">global</span>
-<span class="c1">// executionContext: monix.execution.Scheduler = monix.execution.schedulers.AsyncScheduler@2316ac65
+<span class="c1">// executionContext: monix.execution.Scheduler = monix.execution.schedulers.AsyncScheduler@36ff0bc3
 </span>
 <span class="k">val</span> <span class="n">monixTask1</span> <span class="k">=</span> <span class="n">dickensBooks</span><span class="o">.</span><span class="n">interpret</span><span class="o">[</span><span class="kt">Task</span><span class="o">]</span>
-<span class="c1">// monixTask1: monix.eval.Task[List[Book]] = Task.FlatMap(Task@672750379, monix.eval.Task$$$Lambda$15952/1731537259@e0789eb)
+<span class="c1">// monixTask1: monix.eval.Task[List[Book]] = Task.FlatMap(Task@857013666, monix.eval.Task$$$Lambda$9923/681374162@6ac19d41)
 </span>
 <span class="k">val</span> <span class="n">monixTask2</span> <span class="k">=</span> <span class="n">otherBooks</span><span class="o">.</span><span class="n">interpret</span><span class="o">[</span><span class="kt">Task</span><span class="o">]</span>
-<span class="c1">// monixTask2: monix.eval.Task[List[Book]] = Task.FlatMap(Task@1710456600, monix.eval.Task$$$Lambda$15952/1731537259@dc3075b)
+<span class="c1">// monixTask2: monix.eval.Task[List[Book]] = Task.FlatMap(Task@1473700246, monix.eval.Task$$$Lambda$9923/681374162@4534c6a2)
 </span></code></pre>
 </div>
 
-<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="nc">Await</span><span class="o">.</span><span class="n">result</span><span class="o">(</span><span class="n">monixTask1</span><span class="o">.</span><span class="n">runAsync</span><span class="o">,</span> <span class="nc">Duration</span><span class="o">.</span><span class="nc">Inf</span><span class="o">)</span>
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="nc">Await</span><span class="o">.</span><span class="n">result</span><span class="o">(</span><span class="n">monixTask1</span><span class="o">.</span><span class="n">runAsync</span><span class="o">,</span> <span class="nc">Duration</span><span class="o">.</span><span class="nc">Inf</span><span class="o">)</span>
 <span class="c1">// NoBooksFound: No books found from Dickens
 //   at Library$.findBooks(&lt;console&gt;:33)
 //   at .$anonfun$sortedBooks$1(&lt;console&gt;:31)
 //   at .$anonfun$sortedBooks$1$adapted(&lt;console&gt;:30)
-//   at monix.eval.instances.CatsAsyncInstances$ForTask.$anonfun$async$1(CatsAsyncInstances.scala:71)
-//   at monix.eval.instances.CatsAsyncInstances$ForTask.$anonfun$async$1$adapted(CatsAsyncInstances.scala:71)
+//   at $$Lambda$9860/2048400312.apply(Unknown Source)
+//   at monix.eval.instances.CatsAsyncForTask.$anonfun$async$1(CatsAsyncForTask.scala:38)
+//   at monix.eval.instances.CatsAsyncForTask.$anonfun$async$1$adapted(CatsAsyncForTask.scala:38)
+//   at monix.eval.instances.CatsAsyncForTask$$Lambda$9931/1534732480.apply(Unknown Source)
 //   at monix.eval.internal.TaskRunLoop$.executeOnFinish$1(TaskRunLoop.scala:166)
 //   at monix.eval.internal.TaskRunLoop$.monix$eval$internal$TaskRunLoop$$loop$1(TaskRunLoop.scala:243)
 //   at monix.eval.internal.TaskRunLoop$.startWithCallback(TaskRunLoop.scala:268)
@@ -169,11 +173,11 @@ ga('send', 'pageview');
 //   at monix.eval.internal.TaskRunLoop$.loop$3(TaskRunLoop.scala:491)
 //   at monix.eval.internal.TaskRunLoop$.startAsFuture(TaskRunLoop.scala:508)
 //   at monix.eval.Task.runAsync(Task.scala:315)
-//   ... 336 elided
+//   ... 48 elided
 </span></code></pre>
 </div>
 
-<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="nc">Await</span><span class="o">.</span><span class="n">result</span><span class="o">(</span><span class="n">monixTask2</span><span class="o">.</span><span class="n">runAsync</span><span class="o">,</span> <span class="nc">Duration</span><span class="o">.</span><span class="nc">Inf</span><span class="o">)</span>
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="nc">Await</span><span class="o">.</span><span class="n">result</span><span class="o">(</span><span class="n">monixTask2</span><span class="o">.</span><span class="n">runAsync</span><span class="o">,</span> <span class="nc">Duration</span><span class="o">.</span><span class="nc">Inf</span><span class="o">)</span>
 <span class="c1">// res3: List[Book] = List(Book(The Old Man and the Sea,1951), Book(1984,1948), Book(On the Road,1957))
 </span></code></pre>
 </div>
@@ -182,7 +186,7 @@ ga('send', 'pageview');
   <li><code class="highlighter-rouge">Future</code> as target (we need to have an <code class="highlighter-rouge">ExecutionContext</code> in implicit scope):</li>
 </ul>
 
-<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">scala.concurrent.Future</span>
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">scala.concurrent.Future</span>
 <span class="c1">// import scala.concurrent.Future
 </span>
 <span class="c1">// import scala.concurrent.ExecutionContext.Implicits.global
@@ -198,21 +202,22 @@ ga('send', 'pageview');
 </span></code></pre>
 </div>
 
-<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="nc">Await</span><span class="o">.</span><span class="n">result</span><span class="o">(</span><span class="n">fut1</span><span class="o">,</span> <span class="nc">Duration</span><span class="o">.</span><span class="nc">Inf</span><span class="o">)</span>
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="nc">Await</span><span class="o">.</span><span class="n">result</span><span class="o">(</span><span class="n">fut1</span><span class="o">,</span> <span class="nc">Duration</span><span class="o">.</span><span class="nc">Inf</span><span class="o">)</span>
 <span class="c1">// NoBooksFound: No books found from Dickens
 //   at Library$.findBooks(&lt;console&gt;:33)
 //   at .$anonfun$sortedBooks$1(&lt;console&gt;:31)
 //   at .$anonfun$sortedBooks$1$adapted(&lt;console&gt;:30)
+//   at $$Lambda$9860/2048400312.apply(Unknown Source)
 //   at freestyle.async$Implicits$$anon$3$$anon$4.run(async.scala:58)
 //   at scala.concurrent.impl.ExecutionContextImpl$AdaptedForkJoinTask.exec(ExecutionContextImpl.scala:140)
 //   at java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:289)
 //   at java.util.concurrent.ForkJoinPool$WorkQueue.runTask(ForkJoinPool.java:1056)
-//   at java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:1692)
+//   at java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:1689)
 //   at java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:157)
 </span></code></pre>
 </div>
 
-<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="nc">Await</span><span class="o">.</span><span class="n">result</span><span class="o">(</span><span class="n">fut2</span><span class="o">,</span> <span class="nc">Duration</span><span class="o">.</span><span class="nc">Inf</span><span class="o">)</span>
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="nc">Await</span><span class="o">.</span><span class="n">result</span><span class="o">(</span><span class="n">fut2</span><span class="o">,</span> <span class="nc">Duration</span><span class="o">.</span><span class="nc">Inf</span><span class="o">)</span>
 <span class="c1">// res7: List[Book] = List(Book(The Old Man and the Sea,1951), Book(1984,1948), Book(On the Road,1957))
 </span></code></pre>
 </div>

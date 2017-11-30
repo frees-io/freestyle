@@ -14,7 +14,7 @@ help organize algebras in groups that can be arbitrarily nested.</p>
 
 <p>Let’s first define a few algebras to illustrate how Modules work. We will start with some basic low-level style ops related to persistence, presentation and validation. In our Persistence related algebras, we have a few ops that can go against a DB and others to a Cache service or system. On the presentation side, an application can display or perform input validation.</p>
 
-<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">freestyle._</span>
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">freestyle._</span>
 <span class="c1">// import freestyle._
 </span>
 <span class="k">object</span> <span class="nc">algebras</span> <span class="o">{</span>
@@ -38,7 +38,7 @@ help organize algebras in groups that can be arbitrarily nested.</p>
 <p>At this point, we can group these different application concerns in modules.
 Modules can be further nested so they become part of the tree that conforms an application or library:</p>
 
-<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">algebras._</span>
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">algebras._</span>
 <span class="c1">// import algebras._
 </span>
 <span class="k">object</span> <span class="nc">modules</span> <span class="o">{</span>
@@ -61,7 +61,7 @@ Modules can be further nested so they become part of the tree that conforms an a
 
 <p>This enables one to build programs that are properly typed and parameterized in a modular and composable way:</p>
 
-<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">modules._</span>
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">modules._</span>
 <span class="c1">// import modules._
 </span>
 <span class="k">def</span> <span class="n">program</span><span class="o">[</span><span class="kt">F</span><span class="o">[</span><span class="k">_</span><span class="o">]](</span>
@@ -99,7 +99,7 @@ Module instances in an easy way. As in <code class="highlighter-rouge">@free</co
 using the implicits scoping rules, to place different implementations where appropriate.
 This also solves all Dependency Injection problems automatically for all modules in applications that model their layers on modules with the <code class="highlighter-rouge">@module</code> annotation.</p>
 
-<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">def</span> <span class="n">doWithApp</span><span class="o">[</span><span class="kt">F</span><span class="o">[</span><span class="k">_</span><span class="o">]](</span><span class="k">implicit</span> <span class="n">app</span><span class="k">:</span> <span class="kt">App</span><span class="o">[</span><span class="kt">F</span><span class="o">])</span> <span class="k">=</span> <span class="o">???</span>
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="k">def</span> <span class="n">doWithApp</span><span class="o">[</span><span class="kt">F</span><span class="o">[</span><span class="k">_</span><span class="o">]](</span><span class="k">implicit</span> <span class="n">app</span><span class="k">:</span> <span class="kt">App</span><span class="o">[</span><span class="kt">F</span><span class="o">])</span> <span class="k">=</span> <span class="o">???</span>
 <span class="c1">// doWithApp: [F[_]](implicit app: modules.App[F])Nothing
 </span></code></pre>
 </div>
@@ -112,7 +112,7 @@ for all it’s contained algebras. This allows contained algebras to be composed
 
 <p>If you were to create this by hand, in the case of the example above, it will look like this:</p>
 
-<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">iota._</span>
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">iota._</span>
 <span class="c1">// import iota._
 </span>
 <span class="k">import</span> <span class="nn">TListK.</span><span class="o">:::</span>
@@ -128,7 +128,7 @@ for all it’s contained algebras. This allows contained algebras to be composed
 Fortunately, Freestyle automatically aligns all those for you and gives you an already aligned <code class="highlighter-rouge">Coproduct</code> of all algebras
 contained by a Module, whether directly referenced or transitively through its modules dependencies.</p>
 
-<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="n">implicitly</span><span class="o">[</span><span class="kt">App.Op</span><span class="o">[</span><span class="k">_</span><span class="o">]</span> <span class="kt">=:=</span> <span class="kt">ManualAppCoproduct</span><span class="o">[</span><span class="k">_</span><span class="o">]]</span>
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="n">implicitly</span><span class="o">[</span><span class="kt">App.Op</span><span class="o">[</span><span class="k">_</span><span class="o">]</span> <span class="kt">=:=</span> <span class="kt">ManualAppCoproduct</span><span class="o">[</span><span class="k">_</span><span class="o">]]</span>
 </code></pre>
 </div>
 

@@ -72,7 +72,7 @@ ga('send', 'pageview');
 
 <p>For Scala <code class="highlighter-rouge">2.11.x</code> and <code class="highlighter-rouge">2.12.x</code>:</p>
 
-<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="n">libraryDependencies</span> <span class="o">+=</span> <span class="s">"io.frees"</span> <span class="o">%%</span> <span class="s">"frees-rpc"</span> <span class="o">%</span> <span class="s">"0.3.0"</span>
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="n">libraryDependencies</span> <span class="o">+=</span> <span class="s">"io.frees"</span> <span class="o">%%</span> <span class="s">"frees-rpc"</span> <span class="o">%</span> <span class="s">"0.3.0"</span>
 </code></pre>
 </div>
 
@@ -147,14 +147,14 @@ message HelloReply {
 <p>Let’s start looking at how to define the <code class="highlighter-rouge">Person</code> message that we saw previously.
 Before starting, these are the Scala imports we need:</p>
 
-<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">freestyle._</span>
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">freestyle._</span>
 <span class="k">import</span> <span class="nn">freestyle.rpc.protocol._</span>
 </code></pre>
 </div>
 
 <p><code class="highlighter-rouge">Person</code> definition would be defined as follows:</p>
 
-<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="cm">/**
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="cm">/**
   * Message Example.
   *
   * @param name Person name.
@@ -170,7 +170,7 @@ Before starting, these are the Scala imports we need:</p>
 
 <p>By the same token, let’s see now how the <code class="highlighter-rouge">Greeter</code> service would be translated to the <a href="https://github.com/frees-io/freestyle-rpc">frees-rpc</a> style (in your <code class="highlighter-rouge">.scala</code> file):</p>
 
-<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="nd">@option</span><span class="o">(</span><span class="n">name</span> <span class="k">=</span> <span class="s">"java_package"</span><span class="o">,</span> <span class="n">value</span> <span class="k">=</span> <span class="s">"quickstart"</span><span class="o">,</span> <span class="n">quote</span> <span class="k">=</span> <span class="kc">true</span><span class="o">)</span>
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="nd">@option</span><span class="o">(</span><span class="n">name</span> <span class="k">=</span> <span class="s">"java_package"</span><span class="o">,</span> <span class="n">value</span> <span class="k">=</span> <span class="s">"quickstart"</span><span class="o">,</span> <span class="n">quote</span> <span class="k">=</span> <span class="kc">true</span><span class="o">)</span>
 <span class="nd">@option</span><span class="o">(</span><span class="n">name</span> <span class="k">=</span> <span class="s">"java_multiple_files"</span><span class="o">,</span> <span class="n">value</span> <span class="k">=</span> <span class="s">"true"</span><span class="o">,</span> <span class="n">quote</span> <span class="k">=</span> <span class="kc">false</span><span class="o">)</span>
 <span class="nd">@option</span><span class="o">(</span><span class="n">name</span> <span class="k">=</span> <span class="s">"java_outer_classname"</span><span class="o">,</span> <span class="n">value</span> <span class="k">=</span> <span class="s">"Quickstart"</span><span class="o">,</span> <span class="n">quote</span> <span class="k">=</span> <span class="kc">true</span><span class="o">)</span>
 <span class="k">object</span> <span class="nc">protocols</span> <span class="o">{</span>
@@ -231,7 +231,7 @@ Before starting, these are the Scala imports we need:</p>
 
 <p>Let’s complete our protocol’s example with these four kinds of service methods:</p>
 
-<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="nd">@option</span><span class="o">(</span><span class="n">name</span> <span class="k">=</span> <span class="s">"java_package"</span><span class="o">,</span> <span class="n">value</span> <span class="k">=</span> <span class="s">"quickstart"</span><span class="o">,</span> <span class="n">quote</span> <span class="k">=</span> <span class="kc">true</span><span class="o">)</span>
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="nd">@option</span><span class="o">(</span><span class="n">name</span> <span class="k">=</span> <span class="s">"java_package"</span><span class="o">,</span> <span class="n">value</span> <span class="k">=</span> <span class="s">"quickstart"</span><span class="o">,</span> <span class="n">quote</span> <span class="k">=</span> <span class="kc">true</span><span class="o">)</span>
 <span class="nd">@option</span><span class="o">(</span><span class="n">name</span> <span class="k">=</span> <span class="s">"java_multiple_files"</span><span class="o">,</span> <span class="n">value</span> <span class="k">=</span> <span class="s">"true"</span><span class="o">,</span> <span class="n">quote</span> <span class="k">=</span> <span class="kc">false</span><span class="o">)</span>
 <span class="nd">@option</span><span class="o">(</span><span class="n">name</span> <span class="k">=</span> <span class="s">"java_outer_classname"</span><span class="o">,</span> <span class="n">value</span> <span class="k">=</span> <span class="s">"Quickstart"</span><span class="o">,</span> <span class="n">quote</span> <span class="k">=</span> <span class="kc">true</span><span class="o">)</span>
 <span class="k">object</span> <span class="nc">service</span> <span class="o">{</span>
@@ -330,7 +330,7 @@ Before starting, these are the Scala imports we need:</p>
 
 <p>Add the following line to <em>project/plugins.sbt</em>:</p>
 
-<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="n">addSbtPlugin</span><span class="o">(</span><span class="s">"io.frees"</span> <span class="o">%</span> <span class="s">"sbt-frees-protogen"</span> <span class="o">%</span> <span class="s">"0.0.14"</span><span class="o">)</span>
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="n">addSbtPlugin</span><span class="o">(</span><span class="s">"io.frees"</span> <span class="o">%</span> <span class="s">"sbt-frees-protogen"</span> <span class="o">%</span> <span class="s">"0.0.14"</span><span class="o">)</span>
 </code></pre>
 </div>
 
@@ -349,7 +349,7 @@ Before starting, these are the Scala imports we need:</p>
 
 <p>At this point, each time you want to update your <code class="highlighter-rouge">.proto</code> files from the scala definition, you have to run the following sbt task:</p>
 
-<div class="language-bash highlighter-rouge"><pre class="highlight"><code>sbt protoGen
+<div class="highlighter-rouge"><pre class="highlight"><code>sbt protoGen
 </code></pre>
 </div>
 
@@ -391,7 +391,7 @@ service Greeter {
 
 <p>Next, our dummy <code class="highlighter-rouge">Greeter</code> server implementation:</p>
 
-<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">cats.</span><span class="o">~&gt;</span>
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">cats.</span><span class="o">~&gt;</span>
 <span class="k">import</span> <span class="nn">freestyle.Capture</span>
 <span class="k">import</span> <span class="nn">monix.eval.Task</span>
 <span class="k">import</span> <span class="nn">monix.reactive.Observable</span>
@@ -452,7 +452,7 @@ service Greeter {
 
 <p>Here, for our example, we also need to provide a <code class="highlighter-rouge">scala.concurrent.ExecutionContext</code> implicit evidence, because we’ll interpret our program to <code class="highlighter-rouge">scala.concurrent.Future</code>:</p>
 
-<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">scala.concurrent.ExecutionContext</span>
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">scala.concurrent.ExecutionContext</span>
 <span class="k">import</span> <span class="nn">monix.execution.Scheduler</span>
 
 <span class="k">trait</span> <span class="nc">CommonRuntime</span> <span class="o">{</span>
@@ -488,7 +488,7 @@ service Greeter {
 
 <p>In summary, the result would be as follows:</p>
 
-<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">cats.</span><span class="o">~&gt;</span>
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">cats.</span><span class="o">~&gt;</span>
 <span class="k">import</span> <span class="nn">cats.implicits._</span>
 <span class="k">import</span> <span class="nn">freestyle.rpc.server._</span>
 <span class="k">import</span> <span class="nn">freestyle.rpc.server.handlers._</span>
@@ -533,7 +533,7 @@ service Greeter {
 
 <p>What else is needed? We just need to define a <code class="highlighter-rouge">main</code> method:</p>
 
-<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">cats.implicits._</span>
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">cats.implicits._</span>
 <span class="k">import</span> <span class="nn">freestyle.rpc.server.GrpcServerApp</span>
 <span class="k">import</span> <span class="nn">freestyle.rpc.server.implicits._</span>
 <span class="k">import</span> <span class="nn">gserver.implicits._</span>
@@ -566,7 +566,7 @@ service Greeter {
 
 <p>We are going to interpret to <code class="highlighter-rouge">monix.eval.Task</code>, however, behind the scenes, we will use the <a href="https://github.com/typelevel/cats-effect">cats-effect</a> <code class="highlighter-rouge">IO</code> monad as an abstraction. Concretely, Freestyle has an integration with <code class="highlighter-rouge">cats-effect</code> that we need to add to our project if we are following the same pattern:</p>
 
-<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="c1">// build.sbt
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="c1">// build.sbt
 </span><span class="n">libraryDependencies</span> <span class="o">+=</span> <span class="s">"io.frees"</span> <span class="o">%%</span> <span class="s">"frees-async-cats-effect"</span> <span class="o">%</span> <span class="s">"0.4.4"</span>
 </code></pre>
 </div>
@@ -586,7 +586,7 @@ service Greeter {
 
 <p>So, taking into account all we have just said, how would our code look?</p>
 
-<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">cats.implicits._</span>
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">cats.implicits._</span>
 <span class="k">import</span> <span class="nn">freestyle.config.implicits._</span>
 <span class="k">import</span> <span class="nn">freestyle.asyncCatsEffect.implicits._</span>
 <span class="k">import</span> <span class="nn">freestyle.rpc.client._</span>
@@ -638,7 +638,7 @@ service Greeter {
 
 <p>Once we have our runtime configuration defined as above, everything gets easier. This is an example of a client application, following our dummy quickstart:</p>
 
-<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">service._</span>
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">service._</span>
 <span class="k">import</span> <span class="nn">gclient.implicits._</span>
 <span class="k">import</span> <span class="nn">monix.eval.Task</span>
 

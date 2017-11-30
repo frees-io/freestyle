@@ -12,7 +12,7 @@ ga('send', 'pageview');
 
 <p>Familiarity with fetch is assumed, take a look at the <a href="http://47deg.github.io/fetch/">Fetch documentation</a> if you haven’t before. We’ll use a trivial data source for the examples:</p>
 
-<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">_root_.fetch._</span>
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">_root_.fetch._</span>
 <span class="c1">// import _root_.fetch._
 </span>
 <span class="k">import</span> <span class="nn">_root_.fetch.implicits._</span>
@@ -38,7 +38,7 @@ ga('send', 'pageview');
 
 <p>Let’s start by creating a simple algebra for our application for printing messages on the screen:</p>
 
-<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">freestyle._</span>
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">freestyle._</span>
 <span class="c1">// import freestyle._
 </span>
 <span class="k">import</span> <span class="nn">freestyle.implicits._</span>
@@ -54,7 +54,7 @@ ga('send', 'pageview');
 
 <p>Then, make sure to include the Fetch algebra <code class="highlighter-rouge">FetchM</code> in your application:</p>
 
-<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">freestyle.fetch._</span>
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">freestyle.fetch._</span>
 <span class="c1">// import freestyle.fetch._
 </span>
 <span class="k">import</span> <span class="nn">freestyle.fetch.implicits._</span>
@@ -71,7 +71,7 @@ ga('send', 'pageview');
 
 <p>Now that we’ve got our <code class="highlighter-rouge">Interact</code> algebra and <code class="highlighter-rouge">FetchM</code> in our app, we’re ready to write the first program:</p>
 
-<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">def</span> <span class="n">program</span><span class="o">[</span><span class="kt">F</span><span class="o">[</span><span class="k">_</span><span class="o">]](</span>
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="k">def</span> <span class="n">program</span><span class="o">[</span><span class="kt">F</span><span class="o">[</span><span class="k">_</span><span class="o">]](</span>
   <span class="k">implicit</span> <span class="n">app</span><span class="k">:</span> <span class="kt">App</span><span class="o">[</span><span class="kt">F</span><span class="o">]</span>
 <span class="o">)</span><span class="k">:</span> <span class="kt">FreeS</span><span class="o">[</span><span class="kt">F</span>, <span class="kt">Int</span><span class="o">]</span> <span class="k">=</span>  <span class="k">for</span> <span class="o">{</span>
   <span class="k">_</span> <span class="k">&lt;-</span> <span class="n">app</span><span class="o">.</span><span class="n">interact</span><span class="o">.</span><span class="n">tell</span><span class="o">(</span><span class="s">"Hello"</span><span class="o">)</span>
@@ -84,7 +84,7 @@ ga('send', 'pageview');
 
 <p>To run this, we need to create an implicit interpreter for our <code class="highlighter-rouge">Interact</code> algebra:</p>
 
-<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">cats.Monad</span>
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">cats.Monad</span>
 <span class="c1">// import cats.Monad
 </span>
 <span class="k">implicit</span> <span class="k">def</span> <span class="n">interactInterp</span><span class="o">[</span><span class="kt">F</span><span class="o">[</span><span class="k">_</span><span class="o">]](</span>
@@ -101,7 +101,7 @@ ga('send', 'pageview');
 
 <p>Now we can run the program to a <code class="highlighter-rouge">Future</code>. Check how the result from the fetch is printed to the console:</p>
 
-<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">scala.concurrent._</span>
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">scala.concurrent._</span>
 <span class="c1">// import scala.concurrent._
 </span>
 <span class="k">import</span> <span class="nn">scala.concurrent.duration._</span>
@@ -124,7 +124,7 @@ ga('send', 'pageview');
 
 <p>We’ve already seen <code class="highlighter-rouge">FetchM#runA</code>, which runs a fetch that returns the final result:</p>
 
-<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">def</span> <span class="n">program</span><span class="o">[</span><span class="kt">F</span><span class="o">[</span><span class="k">_</span><span class="o">]](</span>
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="k">def</span> <span class="n">program</span><span class="o">[</span><span class="kt">F</span><span class="o">[</span><span class="k">_</span><span class="o">]](</span>
   <span class="k">implicit</span> <span class="n">app</span><span class="k">:</span> <span class="kt">App</span><span class="o">[</span><span class="kt">F</span><span class="o">]</span>
 <span class="o">)</span><span class="k">:</span> <span class="kt">FreeS</span><span class="o">[</span><span class="kt">F</span>, <span class="kt">Int</span><span class="o">]</span> <span class="k">=</span>  <span class="k">for</span> <span class="o">{</span>
   <span class="k">_</span> <span class="k">&lt;-</span> <span class="n">app</span><span class="o">.</span><span class="n">interact</span><span class="o">.</span><span class="n">tell</span><span class="o">(</span><span class="s">"Hello"</span><span class="o">)</span>
@@ -141,7 +141,7 @@ ga('send', 'pageview');
 
 <p>There is a variant of <code class="highlighter-rouge">runA</code> where a cache can be specified: <code class="highlighter-rouge">FetchM#runAWithCache</code>. In the following example, we simply pass an empty in-memory cache, but you can pass your own cache or a resulting cache from a previous fetch:</p>
 
-<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">def</span> <span class="n">program</span><span class="o">[</span><span class="kt">F</span><span class="o">[</span><span class="k">_</span><span class="o">]](</span>
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="k">def</span> <span class="n">program</span><span class="o">[</span><span class="kt">F</span><span class="o">[</span><span class="k">_</span><span class="o">]](</span>
   <span class="k">implicit</span> <span class="n">app</span><span class="k">:</span> <span class="kt">App</span><span class="o">[</span><span class="kt">F</span><span class="o">]</span>
 <span class="o">)</span><span class="k">:</span> <span class="kt">FreeS</span><span class="o">[</span><span class="kt">F</span>, <span class="kt">Int</span><span class="o">]</span> <span class="k">=</span>  <span class="k">for</span> <span class="o">{</span>
   <span class="k">_</span> <span class="k">&lt;-</span> <span class="n">app</span><span class="o">.</span><span class="n">interact</span><span class="o">.</span><span class="n">tell</span><span class="o">(</span><span class="s">"Hello"</span><span class="o">)</span>
@@ -160,7 +160,7 @@ ga('send', 'pageview');
 
 <p>Fetch tracks its internal state with an environment of type <code class="highlighter-rouge">FetchEnv</code>. The <code class="highlighter-rouge">FetchM#runE</code> allows us to run a fetch and get its final environment out, ignoring its result:</p>
 
-<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">def</span> <span class="n">program</span><span class="o">[</span><span class="kt">F</span><span class="o">[</span><span class="k">_</span><span class="o">]](</span>
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="k">def</span> <span class="n">program</span><span class="o">[</span><span class="kt">F</span><span class="o">[</span><span class="k">_</span><span class="o">]](</span>
   <span class="k">implicit</span> <span class="n">app</span><span class="k">:</span> <span class="kt">App</span><span class="o">[</span><span class="kt">F</span><span class="o">]</span>
 <span class="o">)</span><span class="k">:</span> <span class="kt">FreeS</span><span class="o">[</span><span class="kt">F</span>, <span class="kt">FetchEnv</span><span class="o">]</span> <span class="k">=</span>  <span class="k">for</span> <span class="o">{</span>
   <span class="k">_</span> <span class="k">&lt;-</span> <span class="n">app</span><span class="o">.</span><span class="n">interact</span><span class="o">.</span><span class="n">tell</span><span class="o">(</span><span class="s">"Hello"</span><span class="o">)</span>
@@ -171,13 +171,13 @@ ga('send', 'pageview');
 </span>
 <span class="nc">Await</span><span class="o">.</span><span class="n">result</span><span class="o">(</span><span class="n">program</span><span class="o">[</span><span class="kt">App.Op</span><span class="o">].</span><span class="n">interpret</span><span class="o">[</span><span class="kt">Future</span><span class="o">],</span> <span class="nc">Duration</span><span class="o">.</span><span class="nc">Inf</span><span class="o">)</span>
 <span class="c1">// Hello
-// res3: fetch.FetchEnv = FetchEnv(InMemoryCache(Map((One,1) -&gt; 1)),Queue(Round(InMemoryCache(Map()),FetchOne(1,DataSource:One),1,209757968023634,209757968148003)))
+// res3: fetch.FetchEnv = FetchEnv(InMemoryCache(Map((One,1) -&gt; 1)),Queue(Round(InMemoryCache(Map()),FetchOne(1,DataSource:One),1,134319181670173,134319181782983)))
 </span></code></pre>
 </div>
 
 <p>There is a variant of <code class="highlighter-rouge">runE</code> where a cache can be specified: <code class="highlighter-rouge">FetchM#runEWithCache</code>. In the following example, we simply pass an empty in-memory cache, but you can pass your own cache or a resulting cache from a previous fetch.</p>
 
-<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">def</span> <span class="n">program</span><span class="o">[</span><span class="kt">F</span><span class="o">[</span><span class="k">_</span><span class="o">]](</span>
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="k">def</span> <span class="n">program</span><span class="o">[</span><span class="kt">F</span><span class="o">[</span><span class="k">_</span><span class="o">]](</span>
   <span class="k">implicit</span> <span class="n">app</span><span class="k">:</span> <span class="kt">App</span><span class="o">[</span><span class="kt">F</span><span class="o">]</span>
 <span class="o">)</span><span class="k">:</span> <span class="kt">FreeS</span><span class="o">[</span><span class="kt">F</span>, <span class="kt">FetchEnv</span><span class="o">]</span> <span class="k">=</span>  <span class="k">for</span> <span class="o">{</span>
   <span class="k">_</span> <span class="k">&lt;-</span> <span class="n">app</span><span class="o">.</span><span class="n">interact</span><span class="o">.</span><span class="n">tell</span><span class="o">(</span><span class="s">"Hello"</span><span class="o">)</span>
@@ -188,7 +188,7 @@ ga('send', 'pageview');
 </span>
 <span class="nc">Await</span><span class="o">.</span><span class="n">result</span><span class="o">(</span><span class="n">program</span><span class="o">[</span><span class="kt">App.Op</span><span class="o">].</span><span class="n">interpret</span><span class="o">[</span><span class="kt">Future</span><span class="o">],</span> <span class="nc">Duration</span><span class="o">.</span><span class="nc">Inf</span><span class="o">)</span>
 <span class="c1">// Hello
-// res4: fetch.FetchEnv = FetchEnv(InMemoryCache(Map((One,1) -&gt; 1)),Queue(Round(InMemoryCache(Map()),FetchOne(1,DataSource:One),1,209758985884410,209758986031032)))
+// res4: fetch.FetchEnv = FetchEnv(InMemoryCache(Map((One,1) -&gt; 1)),Queue(Round(InMemoryCache(Map()),FetchOne(1,DataSource:One),1,134320276774862,134320276882202)))
 </span></code></pre>
 </div>
 
@@ -196,7 +196,7 @@ ga('send', 'pageview');
 
 <p>If we’re interested in both the final environment and the fetch result, we can use <code class="highlighter-rouge">FetchM#runF</code> to get a <code class="highlighter-rouge">(FetchEnv, A)</code> pair.</p>
 
-<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">def</span> <span class="n">program</span><span class="o">[</span><span class="kt">F</span><span class="o">[</span><span class="k">_</span><span class="o">]](</span>
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="k">def</span> <span class="n">program</span><span class="o">[</span><span class="kt">F</span><span class="o">[</span><span class="k">_</span><span class="o">]](</span>
   <span class="k">implicit</span> <span class="n">app</span><span class="k">:</span> <span class="kt">App</span><span class="o">[</span><span class="kt">F</span><span class="o">]</span>
 <span class="o">)</span><span class="k">:</span> <span class="kt">FreeS</span><span class="o">[</span><span class="kt">F</span>, <span class="kt">FetchEnv</span><span class="o">]</span> <span class="k">=</span>  <span class="k">for</span> <span class="o">{</span>
   <span class="k">_</span> <span class="k">&lt;-</span> <span class="n">app</span><span class="o">.</span><span class="n">interact</span><span class="o">.</span><span class="n">tell</span><span class="o">(</span><span class="s">"Hello"</span><span class="o">)</span>
@@ -208,13 +208,13 @@ ga('send', 'pageview');
 </span>
 <span class="nc">Await</span><span class="o">.</span><span class="n">result</span><span class="o">(</span><span class="n">program</span><span class="o">[</span><span class="kt">App.Op</span><span class="o">].</span><span class="n">interpret</span><span class="o">[</span><span class="kt">Future</span><span class="o">],</span> <span class="nc">Duration</span><span class="o">.</span><span class="nc">Inf</span><span class="o">)</span>
 <span class="c1">// Hello
-// res5: fetch.FetchEnv = FetchEnv(InMemoryCache(Map((One,1) -&gt; 1)),Queue(Round(InMemoryCache(Map()),FetchOne(1,DataSource:One),1,209760008871330,209760009002073)))
+// res5: fetch.FetchEnv = FetchEnv(InMemoryCache(Map((One,1) -&gt; 1)),Queue(Round(InMemoryCache(Map()),FetchOne(1,DataSource:One),1,134321299347238,134321299468135)))
 </span></code></pre>
 </div>
 
 <p>There is a variant of <code class="highlighter-rouge">runF</code> where a cache can be specified: <code class="highlighter-rouge">FetchM#runFWithCache</code>. In the following example, we simply pass an empty in-memory cache, but you can pass your own cache or a resulting cache from a previous fetch:</p>
 
-<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">def</span> <span class="n">program</span><span class="o">[</span><span class="kt">F</span><span class="o">[</span><span class="k">_</span><span class="o">]](</span>
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="k">def</span> <span class="n">program</span><span class="o">[</span><span class="kt">F</span><span class="o">[</span><span class="k">_</span><span class="o">]](</span>
   <span class="k">implicit</span> <span class="n">app</span><span class="k">:</span> <span class="kt">App</span><span class="o">[</span><span class="kt">F</span><span class="o">]</span>
 <span class="o">)</span><span class="k">:</span> <span class="kt">FreeS</span><span class="o">[</span><span class="kt">F</span>, <span class="kt">FetchEnv</span><span class="o">]</span> <span class="k">=</span>  <span class="k">for</span> <span class="o">{</span>
   <span class="k">_</span> <span class="k">&lt;-</span> <span class="n">app</span><span class="o">.</span><span class="n">interact</span><span class="o">.</span><span class="n">tell</span><span class="o">(</span><span class="s">"Hello"</span><span class="o">)</span>
@@ -226,7 +226,7 @@ ga('send', 'pageview');
 </span>
 <span class="nc">Await</span><span class="o">.</span><span class="n">result</span><span class="o">(</span><span class="n">program</span><span class="o">[</span><span class="kt">App.Op</span><span class="o">].</span><span class="n">interpret</span><span class="o">[</span><span class="kt">Future</span><span class="o">],</span> <span class="nc">Duration</span><span class="o">.</span><span class="nc">Inf</span><span class="o">)</span>
 <span class="c1">// Hello
-// res6: fetch.FetchEnv = FetchEnv(InMemoryCache(Map((One,1) -&gt; 1)),Queue(Round(InMemoryCache(Map()),FetchOne(1,DataSource:One),1,209761036622602,209761036757596)))
+// res6: fetch.FetchEnv = FetchEnv(InMemoryCache(Map((One,1) -&gt; 1)),Queue(Round(InMemoryCache(Map()),FetchOne(1,DataSource:One),1,134322126405463,134322126543337)))
 </span></code></pre>
 </div>
 
@@ -236,7 +236,7 @@ ga('send', 'pageview');
 
 <p>One of the things to consider when interleaving fetches in free programs is that the default in-memory cache won’t be shared between fetch executions on different steps of the program. Notice that the message from <code class="highlighter-rouge">OneSource</code> that says <code class="highlighter-rouge">"Fetching 1"</code> is printed twice:</p>
 
-<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">def</span> <span class="n">program</span><span class="o">[</span><span class="kt">F</span><span class="o">[</span><span class="k">_</span><span class="o">]](</span>
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="k">def</span> <span class="n">program</span><span class="o">[</span><span class="kt">F</span><span class="o">[</span><span class="k">_</span><span class="o">]](</span>
   <span class="k">implicit</span> <span class="n">app</span><span class="k">:</span> <span class="kt">App</span><span class="o">[</span><span class="kt">F</span><span class="o">]</span>
 <span class="o">)</span><span class="k">:</span> <span class="kt">FreeS</span><span class="o">[</span><span class="kt">F</span>, <span class="kt">Int</span><span class="o">]</span> <span class="k">=</span>  <span class="k">for</span> <span class="o">{</span>
   <span class="k">_</span> <span class="k">&lt;-</span> <span class="n">app</span><span class="o">.</span><span class="n">interact</span><span class="o">.</span><span class="n">tell</span><span class="o">(</span><span class="s">"Hello"</span><span class="o">)</span>
@@ -254,7 +254,7 @@ ga('send', 'pageview');
 
 <p>However, we can run a fetch getting both the environment and the result with <code class="highlighter-rouge">runF</code>, and pass the resulting cache to subsequent fetch runs. Note how the <code class="highlighter-rouge">"Fetching 1"</code> message is only printed once:</p>
 
-<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">def</span> <span class="n">program</span><span class="o">[</span><span class="kt">F</span><span class="o">[</span><span class="k">_</span><span class="o">]](</span>
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="k">def</span> <span class="n">program</span><span class="o">[</span><span class="kt">F</span><span class="o">[</span><span class="k">_</span><span class="o">]](</span>
   <span class="k">implicit</span> <span class="n">app</span><span class="k">:</span> <span class="kt">App</span><span class="o">[</span><span class="kt">F</span><span class="o">]</span>
 <span class="o">)</span><span class="k">:</span> <span class="kt">FreeS</span><span class="o">[</span><span class="kt">F</span>, <span class="kt">Int</span><span class="o">]</span> <span class="k">=</span>  <span class="k">for</span> <span class="o">{</span>
   <span class="k">_</span> <span class="k">&lt;-</span> <span class="n">app</span><span class="o">.</span><span class="n">interact</span><span class="o">.</span><span class="n">tell</span><span class="o">(</span><span class="s">"Hello"</span><span class="o">)</span>

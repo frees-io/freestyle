@@ -12,7 +12,7 @@ ga('send', 'pageview');
 
 <p>The standard freestyle and cats imports:</p>
 
-<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">freestyle._</span>
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">freestyle._</span>
 <span class="k">import</span> <span class="nn">freestyle.implicits._</span>
 
 <span class="k">import</span> <span class="nn">cats.implicits._</span>
@@ -21,7 +21,7 @@ ga('send', 'pageview');
 
 <p>And imports for the <em>frees-doobie</em> module and doobie itself:</p>
 
-<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">freestyle.doobie._</span>
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">freestyle.doobie._</span>
 <span class="k">import</span> <span class="nn">freestyle.doobie.implicits._</span>
 
 <span class="k">import</span> <span class="nn">_root_.doobie._</span>
@@ -32,7 +32,7 @@ ga('send', 'pageview');
 
 <p>We will ask the database for a <code class="highlighter-rouge">Person</code>. To keep this example concise, we just use a simple query and don’t bother to create actual tables:</p>
 
-<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">case</span> <span class="k">class</span> <span class="nc">Person</span><span class="o">(</span><span class="n">name</span><span class="k">:</span> <span class="kt">String</span><span class="o">,</span> <span class="n">birthYear</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span>
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="k">case</span> <span class="k">class</span> <span class="nc">Person</span><span class="o">(</span><span class="n">name</span><span class="k">:</span> <span class="kt">String</span><span class="o">,</span> <span class="n">birthYear</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span>
 <span class="c1">// defined class Person
 </span>
 <span class="k">val</span> <span class="n">getPerson</span><span class="k">:</span> <span class="kt">ConnectionIO</span><span class="o">[</span><span class="kt">Person</span><span class="o">]</span> <span class="k">=</span> <span class="n">sql</span><span class="s">"SELECT 'Alonzo Church', 1903"</span><span class="o">.</span><span class="n">query</span><span class="o">[</span><span class="kt">Person</span><span class="o">].</span><span class="n">unique</span>
@@ -42,7 +42,7 @@ ga('send', 'pageview');
 
 <p>We can embed this doobie <code class="highlighter-rouge">ConnectionIO</code> program in a freestyle program. We start with the most trivial case by only using the <code class="highlighter-rouge">DoobieM</code> algebra:</p>
 
-<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">val</span> <span class="n">doobieFrees</span><span class="k">:</span> <span class="kt">FreeS</span><span class="o">[</span><span class="kt">DoobieM.Op</span>, <span class="kt">Person</span><span class="o">]</span> <span class="k">=</span>
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="k">val</span> <span class="n">doobieFrees</span><span class="k">:</span> <span class="kt">FreeS</span><span class="o">[</span><span class="kt">DoobieM.Op</span>, <span class="kt">Person</span><span class="o">]</span> <span class="k">=</span>
   <span class="nc">DoobieM</span><span class="o">[</span><span class="kt">DoobieM.Op</span><span class="o">].</span><span class="n">transact</span><span class="o">(</span><span class="n">getPerson</span><span class="o">)</span>
 <span class="c1">// doobieFrees: freestyle.FreeS[freestyle.doobie.DoobieM.Op,Person] = Free(...)
 </span></code></pre>
@@ -50,21 +50,21 @@ ga('send', 'pageview');
 
 <p>To execute this <code class="highlighter-rouge">FreeS</code> program, we need a doobie <code class="highlighter-rouge">Transactor</code> for our target type; in this example we have chosen <code class="highlighter-rouge">cats.effect.IO</code>:</p>
 
-<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">cats.effect.IO</span>
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">cats.effect.IO</span>
 <span class="c1">// import cats.effect.IO
 </span>
 <span class="k">implicit</span> <span class="k">val</span> <span class="n">xa</span><span class="k">:</span> <span class="kt">Transactor</span><span class="o">[</span><span class="kt">IO</span><span class="o">]</span> <span class="k">=</span>
   <span class="n">H2Transactor</span><span class="o">[</span><span class="kt">IO</span><span class="o">](</span><span class="s">"jdbc:h2:mem:test;DB_CLOSE_DELAY=-1"</span><span class="o">,</span> <span class="s">"sa"</span><span class="o">,</span> <span class="s">""</span><span class="o">).</span><span class="n">unsafeRunSync</span>
-<span class="c1">// xa: doobie.Transactor[cats.effect.IO] = doobie.util.transactor$Transactor$$anon$10@20cede78
+<span class="c1">// xa: doobie.Transactor[cats.effect.IO] = doobie.util.transactor$Transactor$$anon$10@1c940413
 </span>
 <span class="k">val</span> <span class="n">io</span> <span class="k">=</span> <span class="n">doobieFrees</span><span class="o">.</span><span class="n">interpret</span><span class="o">[</span><span class="kt">IO</span><span class="o">]</span>
-<span class="c1">// io: cats.effect.IO[Person] = IO$327979606
+<span class="c1">// io: cats.effect.IO[Person] = IO$56908815
 </span></code></pre>
 </div>
 
 <p>To check if we actually get Alonzo Church as a <code class="highlighter-rouge">Person</code>, we can use <code class="highlighter-rouge">IO#unsafeRunSync</code> in this example:</p>
 
-<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="n">io</span><span class="o">.</span><span class="n">unsafeRunSync</span>
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="n">io</span><span class="o">.</span><span class="n">unsafeRunSync</span>
 <span class="c1">// res2: Person = Person(Alonzo Church,1903)
 </span></code></pre>
 </div>
@@ -73,7 +73,7 @@ ga('send', 'pageview');
 
 <p>Only using <code class="highlighter-rouge">DoobieM</code> is not exactly useful however, as it just adds an extra level of indirection on top of <code class="highlighter-rouge">ConnectionIO</code> in this case. As a more realistic example, we will use <code class="highlighter-rouge">DoobieM</code> in a module together with another algebra:</p>
 
-<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="nd">@free</span> <span class="k">trait</span> <span class="nc">Calc</span> <span class="o">{</span>
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="nd">@free</span> <span class="k">trait</span> <span class="nc">Calc</span> <span class="o">{</span>
   <span class="k">def</span> <span class="n">subtract</span><span class="o">(</span><span class="n">a</span><span class="k">:</span> <span class="kt">Int</span><span class="o">,</span> <span class="n">b</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span><span class="k">:</span> <span class="kt">FS</span><span class="o">[</span><span class="kt">Int</span><span class="o">]</span>
 <span class="o">}</span>
 <span class="c1">// defined trait Calc
@@ -90,17 +90,17 @@ ga('send', 'pageview');
 
 <p>A <code class="highlighter-rouge">Handler[IO]</code> for <code class="highlighter-rouge">Calc</code>:</p>
 
-<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">implicit</span> <span class="k">val</span> <span class="n">calcHandler</span><span class="k">:</span> <span class="kt">Calc.Handler</span><span class="o">[</span><span class="kt">IO</span><span class="o">]</span> <span class="k">=</span>
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="k">implicit</span> <span class="k">val</span> <span class="n">calcHandler</span><span class="k">:</span> <span class="kt">Calc.Handler</span><span class="o">[</span><span class="kt">IO</span><span class="o">]</span> <span class="k">=</span>
   <span class="k">new</span> <span class="nc">Calc</span><span class="o">.</span><span class="nc">Handler</span><span class="o">[</span><span class="kt">IO</span><span class="o">]</span> <span class="o">{</span>
     <span class="k">def</span> <span class="n">subtract</span><span class="o">(</span><span class="n">a</span><span class="k">:</span> <span class="kt">Int</span><span class="o">,</span> <span class="n">b</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span><span class="k">:</span> <span class="kt">IO</span><span class="o">[</span><span class="kt">Int</span><span class="o">]</span> <span class="k">=</span> <span class="nc">IO</span><span class="o">.</span><span class="n">pure</span><span class="o">(</span><span class="n">a</span> <span class="o">-</span> <span class="n">b</span><span class="o">)</span>
   <span class="o">}</span>
-<span class="c1">// calcHandler: Calc.Handler[cats.effect.IO] = $anon$1@517c56b2
+<span class="c1">// calcHandler: Calc.Handler[cats.effect.IO] = $anon$1@5998e734
 </span></code></pre>
 </div>
 
 <p>A program using the <code class="highlighter-rouge">Example</code> module:</p>
 
-<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">def</span> <span class="n">example</span><span class="o">[</span><span class="kt">F</span><span class="o">[</span><span class="k">_</span><span class="o">]</span><span class="kt">:</span> <span class="kt">DoobieM</span><span class="o">](</span><span class="k">implicit</span> <span class="n">example</span><span class="k">:</span> <span class="kt">Example</span><span class="o">[</span><span class="kt">F</span><span class="o">])</span><span class="k">:</span> <span class="kt">FreeS</span><span class="o">[</span><span class="kt">F</span>, <span class="o">(</span><span class="kt">Person</span>, <span class="kt">Int</span><span class="o">)]</span> <span class="k">=</span>
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="k">def</span> <span class="n">example</span><span class="o">[</span><span class="kt">F</span><span class="o">[</span><span class="k">_</span><span class="o">]</span><span class="kt">:</span> <span class="kt">DoobieM</span><span class="o">](</span><span class="k">implicit</span> <span class="n">example</span><span class="k">:</span> <span class="kt">Example</span><span class="o">[</span><span class="kt">F</span><span class="o">])</span><span class="k">:</span> <span class="kt">FreeS</span><span class="o">[</span><span class="kt">F</span>, <span class="o">(</span><span class="kt">Person</span>, <span class="kt">Int</span><span class="o">)]</span> <span class="k">=</span>
   <span class="k">for</span> <span class="o">{</span>
     <span class="n">person</span> <span class="k">&lt;-</span> <span class="n">getPerson</span><span class="o">.</span><span class="n">liftFS</span><span class="o">[</span><span class="kt">F</span><span class="o">]</span>  <span class="c1">// analogous to example.doobieM.transact(getPerson)
 </span>    <span class="n">age</span>    <span class="k">&lt;-</span> <span class="n">example</span><span class="o">.</span><span class="n">calc</span><span class="o">.</span><span class="n">subtract</span><span class="o">(</span><span class="mi">2017</span><span class="o">,</span> <span class="n">person</span><span class="o">.</span><span class="n">birthYear</span><span class="o">)</span>
@@ -111,8 +111,8 @@ ga('send', 'pageview');
 
 <p>We can use <code class="highlighter-rouge">Example.Op</code> as the functor and translate the resulting program to <code class="highlighter-rouge">IO</code>:</p>
 
-<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">val</span> <span class="n">io2</span> <span class="k">=</span> <span class="n">example</span><span class="o">[</span><span class="kt">Example.Op</span><span class="o">].</span><span class="n">interpret</span><span class="o">[</span><span class="kt">IO</span><span class="o">]</span>
-<span class="c1">// io2: cats.effect.IO[(Person, Int)] = IO$1876561595
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="k">val</span> <span class="n">io2</span> <span class="k">=</span> <span class="n">example</span><span class="o">[</span><span class="kt">Example.Op</span><span class="o">].</span><span class="n">interpret</span><span class="o">[</span><span class="kt">IO</span><span class="o">]</span>
+<span class="c1">// io2: cats.effect.IO[(Person, Int)] = IO$1741588133
 </span>
 <span class="n">io2</span><span class="o">.</span><span class="n">unsafeRunSync</span>
 <span class="c1">// res3: (Person, Int) = (Person(Alonzo Church,1903),114)

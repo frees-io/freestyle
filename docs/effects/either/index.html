@@ -19,7 +19,7 @@ for <code class="highlighter-rouge">Target</code> or any other runtime <code cla
 
 <p><code class="highlighter-rouge">either</code> allows us to lift values of <code class="highlighter-rouge">Either[E, ?]</code> into the context of <code class="highlighter-rouge">FreeS</code> raising an error that short circuits the program if the value is <code class="highlighter-rouge">Left(e: E)</code> or continuing with the computation in the case of a <code class="highlighter-rouge">Right(a)</code>:</p>
 
-<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">freestyle._</span>
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">freestyle._</span>
 <span class="c1">// import freestyle._
 </span>
 <span class="k">import</span> <span class="nn">freestyle.implicits._</span>
@@ -35,7 +35,7 @@ for <code class="highlighter-rouge">Target</code> or any other runtime <code cla
 <span class="c1">// defined object Biz1
 </span>
 <span class="k">val</span> <span class="n">e</span> <span class="k">=</span> <span class="n">either</span><span class="o">[</span><span class="kt">BizException</span><span class="o">]</span>
-<span class="c1">// e: freestyle.effects.either.ErrorProvider[BizException] = freestyle.effects.either$ErrorProvider@70f9ae61
+<span class="c1">// e: freestyle.effects.either.ErrorProvider[BizException] = freestyle.effects.either$ErrorProvider@6a2abd1
 </span>
 <span class="k">import</span> <span class="nn">e.implicits._</span>
 <span class="c1">// import e.implicits._
@@ -59,7 +59,7 @@ for <code class="highlighter-rouge">Target</code> or any other runtime <code cla
 </span></code></pre>
 </div>
 
-<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">def</span> <span class="n">continueWithRightValue</span><span class="o">[</span><span class="kt">F</span><span class="o">[</span><span class="k">_</span><span class="o">]</span><span class="kt">:</span> <span class="kt">e.EitherM</span><span class="o">]</span> <span class="k">=</span>
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="k">def</span> <span class="n">continueWithRightValue</span><span class="o">[</span><span class="kt">F</span><span class="o">[</span><span class="k">_</span><span class="o">]</span><span class="kt">:</span> <span class="kt">e.EitherM</span><span class="o">]</span> <span class="k">=</span>
   <span class="k">for</span> <span class="o">{</span>
     <span class="n">a</span> <span class="k">&lt;-</span> <span class="nc">FreeS</span><span class="o">.</span><span class="n">pure</span><span class="o">(</span><span class="mi">1</span><span class="o">)</span>
     <span class="n">b</span> <span class="k">&lt;-</span> <span class="n">e</span><span class="o">.</span><span class="nc">EitherM</span><span class="o">[</span><span class="kt">F</span><span class="o">].</span><span class="n">either</span><span class="o">[</span><span class="kt">Int</span><span class="o">](</span><span class="nc">Right</span><span class="o">(</span><span class="mi">1</span><span class="o">))</span>
@@ -76,7 +76,7 @@ for <code class="highlighter-rouge">Target</code> or any other runtime <code cla
 
 <p>If you simply want to raise an error without throwing an exception, you may use the <code class="highlighter-rouge">error</code> operation which short circuits the program.</p>
 
-<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">def</span> <span class="n">shortCircuitWithError</span><span class="o">[</span><span class="kt">F</span><span class="o">[</span><span class="k">_</span><span class="o">]</span><span class="kt">:</span> <span class="kt">e.EitherM</span><span class="o">]</span> <span class="k">=</span>
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="k">def</span> <span class="n">shortCircuitWithError</span><span class="o">[</span><span class="kt">F</span><span class="o">[</span><span class="k">_</span><span class="o">]</span><span class="kt">:</span> <span class="kt">e.EitherM</span><span class="o">]</span> <span class="k">=</span>
   <span class="k">for</span> <span class="o">{</span>
     <span class="n">a</span> <span class="k">&lt;-</span> <span class="nc">FreeS</span><span class="o">.</span><span class="n">pure</span><span class="o">(</span><span class="mi">1</span><span class="o">)</span>
     <span class="n">b</span> <span class="k">&lt;-</span> <span class="n">e</span><span class="o">.</span><span class="nc">EitherM</span><span class="o">[</span><span class="kt">F</span><span class="o">].</span><span class="n">error</span><span class="o">[</span><span class="kt">Int</span><span class="o">](</span><span class="nc">Biz1</span><span class="o">)</span>
@@ -98,7 +98,7 @@ in <code class="highlighter-rouge">scala.util.control.NonFatal</code>.</p>
 
 <p><code class="highlighter-rouge">catchNonFatal</code> expects a <code class="highlighter-rouge">cats.Eval</code> value which holds a lazy computation and a function of <code class="highlighter-rouge">Throwable =&gt; E</code> that transforms the exception into the parametrized <code class="highlighter-rouge">E</code>:</p>
 
-<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">cats.Eval</span>
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">cats.Eval</span>
 <span class="c1">// import cats.Eval
 </span>
 <span class="k">def</span> <span class="n">catchingExceptions</span><span class="o">[</span><span class="kt">F</span><span class="o">[</span><span class="k">_</span><span class="o">]</span><span class="kt">:</span> <span class="kt">e.EitherM</span><span class="o">]</span> <span class="k">=</span>

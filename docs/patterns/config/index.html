@@ -13,7 +13,7 @@ The current implementation exposes the most important combinators found in <a hr
 
 <p>In order to enable this integration, you can depend on <em>frees-config</em>:</p>
 
-<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="n">libraryDependencies</span> <span class="o">+=</span> <span class="s">"io.frees"</span> <span class="o">%%</span> <span class="s">"frees-config"</span> <span class="o">%</span> <span class="s">"0.4.4"</span>
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="n">libraryDependencies</span> <span class="o">+=</span> <span class="s">"io.frees"</span> <span class="o">%%</span> <span class="s">"frees-config"</span> <span class="o">%</span> <span class="s">"0.4.4"</span>
 </code></pre>
 </div>
 
@@ -21,7 +21,7 @@ The current implementation exposes the most important combinators found in <a hr
 
 <p>The set of abstract operations of the <code class="highlighter-rouge">ConfigM</code> algebra and <code class="highlighter-rouge">Config</code> object are specified as follows:</p>
 
-<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">sealed</span> <span class="k">trait</span> <span class="nc">Config</span> <span class="o">{</span>
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="k">sealed</span> <span class="k">trait</span> <span class="nc">Config</span> <span class="o">{</span>
   <span class="k">def</span> <span class="n">hasPath</span><span class="o">(</span><span class="n">path</span><span class="k">:</span> <span class="kt">String</span><span class="o">)</span><span class="k">:</span> <span class="kt">Boolean</span>
   <span class="k">def</span> <span class="n">config</span><span class="o">(</span><span class="n">path</span><span class="k">:</span> <span class="kt">String</span><span class="o">)</span><span class="k">:</span> <span class="kt">Option</span><span class="o">[</span><span class="kt">Config</span><span class="o">]</span>
   <span class="k">def</span> <span class="n">string</span><span class="o">(</span><span class="n">path</span><span class="k">:</span> <span class="kt">String</span><span class="o">)</span><span class="k">:</span> <span class="kt">Option</span><span class="o">[</span><span class="kt">String</span><span class="o">]</span>
@@ -54,7 +54,7 @@ The current implementation exposes the most important combinators found in <a hr
 
 <p>Before we do anything else, we’ll need to add the usual set of imports from freestyle and cats to create our algebras:</p>
 
-<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">freestyle._</span>
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">freestyle._</span>
 <span class="k">import</span> <span class="nn">freestyle.implicits._</span>
 <span class="k">import</span> <span class="nn">cats._</span>
 <span class="k">import</span> <span class="nn">cats.implicits._</span>
@@ -65,7 +65,7 @@ The current implementation exposes the most important combinators found in <a hr
 
 <p>We will define a very simple algebra with a stub handler that returns a list of issue states for illustration purposes:</p>
 
-<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="nd">@free</span> <span class="k">trait</span> <span class="nc">IssuesService</span> <span class="o">{</span>
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="nd">@free</span> <span class="k">trait</span> <span class="nc">IssuesService</span> <span class="o">{</span>
   <span class="k">def</span> <span class="n">states</span><span class="k">:</span> <span class="kt">FS</span><span class="o">[</span><span class="kt">List</span><span class="o">[</span><span class="kt">String</span><span class="o">]]</span>
 <span class="o">}</span>
 <span class="c1">// defined trait IssuesService
@@ -74,14 +74,14 @@ The current implementation exposes the most important combinators found in <a hr
 <span class="k">implicit</span> <span class="k">val</span> <span class="n">issuesServiceHandler</span><span class="k">:</span> <span class="kt">IssuesService.Handler</span><span class="o">[</span><span class="kt">Try</span><span class="o">]</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">IssuesService</span><span class="o">.</span><span class="nc">Handler</span><span class="o">[</span><span class="kt">Try</span><span class="o">]</span> <span class="o">{</span>
   <span class="k">def</span> <span class="n">states</span><span class="k">:</span> <span class="kt">Try</span><span class="o">[</span><span class="kt">List</span><span class="o">[</span><span class="kt">String</span><span class="o">]]</span> <span class="k">=</span> <span class="nc">Try</span><span class="o">(</span><span class="nc">List</span><span class="o">(</span><span class="s">"open"</span><span class="o">,</span> <span class="s">"reverted"</span><span class="o">,</span> <span class="s">"in progress"</span><span class="o">,</span> <span class="s">"closed"</span><span class="o">))</span>
 <span class="o">}</span>
-<span class="c1">// issuesServiceHandler: IssuesService.Handler[scala.util.Try] = $anon$1@3a3f2119
+<span class="c1">// issuesServiceHandler: IssuesService.Handler[scala.util.Try] = $anon$1@8fe95d1
 </span></code></pre>
 </div>
 
 <p>At this point, we may aggregate our issues algebra with any other algebras in a <em>@module</em> which will automatically compose monadic actions
 derived from using different algebras:</p>
 
-<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">freestyle.config._</span>
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">freestyle.config._</span>
 <span class="c1">// import freestyle.config._
 </span>
 <span class="k">import</span> <span class="nn">freestyle.config.implicits._</span>
@@ -98,7 +98,7 @@ derived from using different algebras:</p>
 
 <p>And finally, we can create a program and compose our config algebra in the same monadic comprehension along with our issues service:</p>
 
-<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">def</span> <span class="n">filteredStates</span><span class="o">[</span><span class="kt">F</span><span class="o">[</span><span class="k">_</span><span class="o">]](</span><span class="k">implicit</span> <span class="n">app</span> <span class="k">:</span> <span class="kt">App</span><span class="o">[</span><span class="kt">F</span><span class="o">])</span><span class="k">:</span> <span class="kt">FreeS</span><span class="o">[</span><span class="kt">F</span>, <span class="kt">List</span><span class="o">[</span><span class="kt">String</span><span class="o">]]</span> <span class="k">=</span>
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="k">def</span> <span class="n">filteredStates</span><span class="o">[</span><span class="kt">F</span><span class="o">[</span><span class="k">_</span><span class="o">]](</span><span class="k">implicit</span> <span class="n">app</span> <span class="k">:</span> <span class="kt">App</span><span class="o">[</span><span class="kt">F</span><span class="o">])</span><span class="k">:</span> <span class="kt">FreeS</span><span class="o">[</span><span class="kt">F</span>, <span class="kt">List</span><span class="o">[</span><span class="kt">String</span><span class="o">]]</span> <span class="k">=</span>
   <span class="k">for</span> <span class="o">{</span>
     <span class="n">currentStates</span> <span class="k">&lt;-</span> <span class="n">app</span><span class="o">.</span><span class="n">issuesService</span><span class="o">.</span><span class="n">states</span>
 	<span class="n">config</span> <span class="k">&lt;-</span> <span class="n">app</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">load</span>
@@ -110,7 +110,7 @@ derived from using different algebras:</p>
 
 <p>Once we have a program we can interpret it to our desired runtime, in this case <code class="highlighter-rouge">scala.util.Try</code>:</p>
 
-<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="n">filteredStates</span><span class="o">[</span><span class="kt">App.Op</span><span class="o">].</span><span class="n">interpret</span><span class="o">[</span><span class="kt">Try</span><span class="o">]</span>
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="n">filteredStates</span><span class="o">[</span><span class="kt">App.Op</span><span class="o">].</span><span class="n">interpret</span><span class="o">[</span><span class="kt">Try</span><span class="o">]</span>
 <span class="c1">// res1: scala.util.Try[List[String]] = Success(List(open, reverted, in progress, closed))
 </span></code></pre>
 </div>

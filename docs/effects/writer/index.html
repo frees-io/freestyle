@@ -21,7 +21,7 @@ for any runtime <code class="highlighter-rouge">M[_]</code> used in its interpre
 
 <p><code class="highlighter-rouge">writer</code> sets a tuple with the current accumulator value and returning value:</p>
 
-<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">freestyle._</span>
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">freestyle._</span>
 <span class="c1">// import freestyle._
 </span>
 <span class="k">import</span> <span class="nn">freestyle.implicits._</span>
@@ -40,7 +40,7 @@ for any runtime <code class="highlighter-rouge">M[_]</code> used in its interpre
 <span class="c1">// import cats.mtl.implicits._
 </span>
 <span class="k">val</span> <span class="n">wr</span> <span class="k">=</span> <span class="n">writer</span><span class="o">[</span><span class="kt">List</span><span class="o">[</span><span class="kt">Int</span><span class="o">]]</span>
-<span class="c1">// wr: freestyle.effects.writer.AccumulatorProvider[List[Int]] = freestyle.effects.writer$AccumulatorProvider@ee8467
+<span class="c1">// wr: freestyle.effects.writer.AccumulatorProvider[List[Int]] = freestyle.effects.writer$AccumulatorProvider@5d8d9155
 </span>
 <span class="k">import</span> <span class="nn">wr.implicits._</span>
 <span class="c1">// import wr.implicits._
@@ -65,7 +65,7 @@ for any runtime <code class="highlighter-rouge">M[_]</code> used in its interpre
 
 <p><code class="highlighter-rouge">tell</code> appends a value for monoidal accumulation:</p>
 
-<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">def</span> <span class="n">programTell</span><span class="o">[</span><span class="kt">F</span><span class="o">[</span><span class="k">_</span><span class="o">]</span><span class="kt">:</span> <span class="kt">wr.WriterM</span><span class="o">]</span> <span class="k">=</span>
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="k">def</span> <span class="n">programTell</span><span class="o">[</span><span class="kt">F</span><span class="o">[</span><span class="k">_</span><span class="o">]</span><span class="kt">:</span> <span class="kt">wr.WriterM</span><span class="o">]</span> <span class="k">=</span>
   <span class="k">for</span> <span class="o">{</span>
     <span class="k">_</span> <span class="k">&lt;-</span> <span class="nc">FreeS</span><span class="o">.</span><span class="n">pure</span><span class="o">(</span><span class="mi">1</span><span class="o">)</span>
     <span class="n">b</span> <span class="k">&lt;-</span> <span class="n">wr</span><span class="o">.</span><span class="nc">WriterM</span><span class="o">[</span><span class="kt">F</span><span class="o">].</span><span class="n">writer</span><span class="o">((</span><span class="nc">List</span><span class="o">(</span><span class="mi">1</span><span class="o">),</span> <span class="mi">1</span><span class="o">))</span>

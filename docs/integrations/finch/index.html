@@ -12,7 +12,7 @@ ga('send', 'pageview');
 
 <p>You can add the <em>frees-finch</em> module as follows:</p>
 
-<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="n">libraryDependencies</span> <span class="o">+=</span> <span class="s">"io.frees"</span> <span class="o">%%</span> <span class="s">"frees-finch"</span> <span class="o">%</span> <span class="s">"0.4.4"</span>
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="n">libraryDependencies</span> <span class="o">+=</span> <span class="s">"io.frees"</span> <span class="o">%%</span> <span class="s">"frees-finch"</span> <span class="o">%</span> <span class="s">"0.4.4"</span>
 </code></pre>
 </div>
 
@@ -24,14 +24,14 @@ ga('send', 'pageview');
 
 <p>The standard freestyle imports:</p>
 
-<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">freestyle._</span>
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">freestyle._</span>
 <span class="k">import</span> <span class="nn">freestyle.implicits._</span>
 </code></pre>
 </div>
 
 <p>In this example, we will create a Finch <code class="highlighter-rouge">Endpoint</code> which will be able to calculate the greatest common divisor (GCD) of two natural numbers:</p>
 
-<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="nd">@free</span> <span class="k">trait</span> <span class="nc">Calc</span> <span class="o">{</span>
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="nd">@free</span> <span class="k">trait</span> <span class="nc">Calc</span> <span class="o">{</span>
   <span class="k">def</span> <span class="n">gcd</span><span class="o">(</span><span class="n">a</span><span class="k">:</span> <span class="kt">Int</span><span class="o">,</span> <span class="n">b</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span><span class="k">:</span> <span class="kt">FS</span><span class="o">[</span><span class="kt">Int</span><span class="o">]</span>
 <span class="o">}</span>
 <span class="c1">// defined trait Calc
@@ -41,7 +41,7 @@ ga('send', 'pageview');
 
 <p>The greatest common divisor can be computed using Euclid’s algorithm:</p>
 
-<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">def</span> <span class="n">gcd</span><span class="o">(</span><span class="n">a</span><span class="k">:</span> <span class="kt">Int</span><span class="o">,</span> <span class="n">b</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span><span class="k">:</span> <span class="kt">Int</span> <span class="o">=</span>
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="k">def</span> <span class="n">gcd</span><span class="o">(</span><span class="n">a</span><span class="k">:</span> <span class="kt">Int</span><span class="o">,</span> <span class="n">b</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span><span class="k">:</span> <span class="kt">Int</span> <span class="o">=</span>
   <span class="k">if</span> <span class="o">(</span><span class="n">b</span> <span class="o">==</span> <span class="mi">0</span><span class="o">)</span> <span class="n">a</span><span class="o">.</span><span class="n">abs</span> <span class="k">else</span> <span class="n">gcd</span><span class="o">(</span><span class="n">b</span><span class="o">,</span> <span class="n">a</span> <span class="o">%</span> <span class="n">b</span><span class="o">)</span>
 <span class="c1">// gcd: (a: Int, b: Int)Int
 </span></code></pre>
@@ -49,7 +49,7 @@ ga('send', 'pageview');
 
 <p>A version returning a twitter <code class="highlighter-rouge">Future</code>:</p>
 
-<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">com.twitter.util.Future</span>
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">com.twitter.util.Future</span>
 <span class="c1">// import com.twitter.util.Future
 </span>
 <span class="k">def</span> <span class="n">gcdFuture</span><span class="o">(</span><span class="n">a</span><span class="k">:</span> <span class="kt">Int</span><span class="o">,</span> <span class="n">b</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span><span class="k">:</span> <span class="kt">Future</span><span class="o">[</span><span class="kt">Int</span><span class="o">]</span> <span class="k">=</span>
@@ -60,19 +60,19 @@ ga('send', 'pageview');
 
 <p>We can now create a <code class="highlighter-rouge">Calc.Handler[Future]</code>:</p>
 
-<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">io.catbird.util._</span>
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">io.catbird.util._</span>
 <span class="c1">// import io.catbird.util._
 </span>
 <span class="k">implicit</span> <span class="k">val</span> <span class="n">futureHandler</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">Calc</span><span class="o">.</span><span class="nc">Handler</span><span class="o">[</span><span class="kt">Future</span><span class="o">]</span> <span class="o">{</span>
   <span class="k">def</span> <span class="n">gcd</span><span class="o">(</span><span class="n">a</span><span class="k">:</span> <span class="kt">Int</span><span class="o">,</span> <span class="n">b</span><span class="k">:</span><span class="kt">Int</span><span class="o">)</span><span class="k">:</span> <span class="kt">Future</span><span class="o">[</span><span class="kt">Int</span><span class="o">]</span> <span class="k">=</span> <span class="n">gcdFuture</span><span class="o">(</span><span class="n">a</span><span class="o">,</span> <span class="n">b</span><span class="o">)</span>
 <span class="o">}</span>
-<span class="c1">// futureHandler: Calc.Handler[com.twitter.util.Future] = $anon$1@fddcd59
+<span class="c1">// futureHandler: Calc.Handler[com.twitter.util.Future] = $anon$1@501d327e
 </span></code></pre>
 </div>
 
 <p>Importing the <em>freestyle-finch</em> module, Finch, and shapeless’ <code class="highlighter-rouge">::</code> used by Finch:</p>
 
-<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">freestyle.http.finch._</span>
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">freestyle.http.finch._</span>
 
 <span class="k">import</span> <span class="nn">io.finch._</span>
 
@@ -82,8 +82,8 @@ ga('send', 'pageview');
 
 <p>We can use a freestyle program within <code class="highlighter-rouge">Endpoint#apply</code>:</p>
 
-<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="n">cats</span><span class="o">.</span><span class="nc">Monad</span><span class="o">[</span><span class="kt">Future</span><span class="o">]</span>
-<span class="c1">// res2: cats.Monad[com.twitter.util.Future] = io.catbird.util.FutureInstances$$anon$1@b4fb1c8
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="n">cats</span><span class="o">.</span><span class="nc">Monad</span><span class="o">[</span><span class="kt">Future</span><span class="o">]</span>
+<span class="c1">// res2: cats.Monad[com.twitter.util.Future] = io.catbird.util.FutureInstances$$anon$1@b60b2e9
 </span>
 <span class="k">val</span> <span class="n">gcdEndpointTwo</span> <span class="k">=</span> <span class="n">get</span><span class="o">(</span><span class="n">int</span> <span class="o">::</span> <span class="n">int</span><span class="o">)</span> <span class="o">{</span> <span class="o">(</span><span class="n">a</span><span class="k">:</span> <span class="kt">Int</span><span class="o">,</span> <span class="n">b</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span> <span class="k">=&gt;</span>
   <span class="nc">Calc</span><span class="o">[</span><span class="kt">Calc.Op</span><span class="o">].</span><span class="n">gcd</span><span class="o">(</span><span class="n">a</span><span class="o">,</span> <span class="n">b</span><span class="o">).</span><span class="n">map</span><span class="o">(</span><span class="nc">Ok</span><span class="o">(</span><span class="k">_</span><span class="o">))</span>
@@ -113,7 +113,7 @@ ga('send', 'pageview');
 
 <p>We can combine the three endpoints and check the responses if we access the three endpoints:</p>
 
-<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">shapeless.</span><span class="o">:+:</span>
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">shapeless.</span><span class="o">:+:</span>
 <span class="c1">// import shapeless.$colon$plus$colon
 </span>
 <span class="k">val</span> <span class="n">endpoint</span> <span class="k">=</span> <span class="n">gcdEndpointTwo</span> <span class="o">:+:</span> <span class="n">gcdEndpointOne</span> <span class="o">:+:</span> <span class="n">gcdEndpointZero</span>

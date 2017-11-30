@@ -14,7 +14,7 @@ ga('send', 'pageview');
 
 <p>A trait or abstract class annotated with <code class="highlighter-rouge">@free</code> or <a href="../tagless/"><code class="highlighter-rouge">@tagless</code></a> is all you need to create your first algebra with Freestyle:</p>
 
-<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">freestyle._</span>
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">freestyle._</span>
 <span class="c1">// import freestyle._
 </span>
 <span class="k">case</span> <span class="k">class</span> <span class="nc">User</span><span class="o">(</span><span class="n">id</span><span class="k">:</span> <span class="kt">Long</span><span class="o">,</span> <span class="n">name</span><span class="k">:</span> <span class="kt">String</span><span class="o">)</span>
@@ -32,7 +32,7 @@ ga('send', 'pageview');
 
 <p>This is similar to the simplified manual encoding below:</p>
 
-<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">freestyle.FreeS</span>
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">freestyle.FreeS</span>
 <span class="c1">// import freestyle.FreeS
 </span>
 <span class="k">import</span> <span class="nn">freestyle.internal.EffectLike</span>
@@ -115,17 +115,17 @@ constructors class implementation and an <code class="highlighter-rouge">apply</
 This effectively enables implicits based Dependency Injection where you may choose to override implementations
 using the implicits scoping rules to place different implementations where appropriate.</p>
 
-<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">val</span> <span class="n">userRepository</span> <span class="k">=</span> <span class="nc">UserRepository</span><span class="o">[</span><span class="kt">UserRepository.Op</span><span class="o">]</span>
-<span class="c1">// userRepository: UserRepository[UserRepository.Op] = UserRepository$To@7b701945
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="k">val</span> <span class="n">userRepository</span> <span class="k">=</span> <span class="nc">UserRepository</span><span class="o">[</span><span class="kt">UserRepository.Op</span><span class="o">]</span>
+<span class="c1">// userRepository: UserRepository[UserRepository.Op] = UserRepository$To@7c7274ea
 </span></code></pre>
 </div>
 
-<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">def</span> <span class="n">myService</span><span class="o">[</span><span class="kt">F</span><span class="o">[</span><span class="k">_</span><span class="o">]](</span><span class="k">implicit</span> <span class="n">userRepository</span><span class="k">:</span> <span class="kt">UserRepository</span><span class="o">[</span><span class="kt">F</span><span class="o">])</span> <span class="k">=</span> <span class="o">???</span>
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="k">def</span> <span class="n">myService</span><span class="o">[</span><span class="kt">F</span><span class="o">[</span><span class="k">_</span><span class="o">]](</span><span class="k">implicit</span> <span class="n">userRepository</span><span class="k">:</span> <span class="kt">UserRepository</span><span class="o">[</span><span class="kt">F</span><span class="o">])</span> <span class="k">=</span> <span class="o">???</span>
 <span class="c1">// myService: [F[_]](implicit userRepository: UserRepository[F])Nothing
 </span></code></pre>
 </div>
 
-<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">def</span> <span class="n">myService2</span><span class="o">[</span><span class="kt">F</span><span class="o">[</span><span class="k">_</span><span class="o">]</span><span class="kt">:</span> <span class="kt">UserRepository</span><span class="o">]</span> <span class="k">=</span> <span class="o">???</span>
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="k">def</span> <span class="n">myService2</span><span class="o">[</span><span class="kt">F</span><span class="o">[</span><span class="k">_</span><span class="o">]</span><span class="kt">:</span> <span class="kt">UserRepository</span><span class="o">]</span> <span class="k">=</span> <span class="o">???</span>
 <span class="c1">// myService2: [F[_]](implicit evidence$1: UserRepository[F])Nothing
 </span></code></pre>
 </div>
@@ -135,7 +135,7 @@ using the implicits scoping rules to place different implementations where appro
 <p>All companions generated with <code class="highlighter-rouge">@free</code> define a <code class="highlighter-rouge">sealed trait Op[A]</code> as the root node of the requests ADT.
 You may use this to manually build <code class="highlighter-rouge">Coproduct</code> types which will serve in the parametrization of your application and code as in the example below:</p>
 
-<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">cats.data.EitherK</span>
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">cats.data.EitherK</span>
 <span class="c1">// import cats.data.EitherK
 </span>
 <span class="nd">@free</span> <span class="k">trait</span> <span class="nc">Service1</span><span class="o">{</span>

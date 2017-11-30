@@ -10,13 +10,13 @@ ga('send', 'pageview');
 
 <p>Monix’ <code class="highlighter-rouge">Task</code> can be used as a target of your <code class="highlighter-rouge">FreeS</code> programs.</p>
 
-<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">freestyle._</span>
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">freestyle._</span>
 </code></pre>
 </div>
 
 <p>We will use an example similar to the one used in the <a href="/docs/core/parallelism/">parallelism</a> section. We will create a small algebra to validate numbers:</p>
 
-<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="nd">@free</span> <span class="k">trait</span> <span class="nc">Validator</span> <span class="o">{</span>
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="nd">@free</span> <span class="k">trait</span> <span class="nc">Validator</span> <span class="o">{</span>
   <span class="k">def</span> <span class="n">isPositive</span><span class="k">:</span> <span class="kt">FS</span><span class="o">[</span><span class="kt">Boolean</span><span class="o">]</span>
   <span class="k">def</span> <span class="n">isEven</span><span class="k">:</span> <span class="kt">FS</span><span class="o">[</span><span class="kt">Boolean</span><span class="o">]</span>
 <span class="o">}</span>
@@ -27,7 +27,7 @@ ga('send', 'pageview');
 
 <p>We can assert that something should be positive and even by combining both operations:</p>
 
-<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">cats.syntax.apply._</span>
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">cats.syntax.apply._</span>
 <span class="c1">// import cats.syntax.apply._
 </span>
 <span class="k">def</span> <span class="n">isPositiveEven</span><span class="o">[</span><span class="kt">F</span><span class="o">[</span><span class="k">_</span><span class="o">]](</span><span class="k">implicit</span> <span class="n">V</span><span class="k">:</span> <span class="kt">Validator</span><span class="o">[</span><span class="kt">F</span><span class="o">])</span><span class="k">:</span> <span class="kt">FreeS.Par</span><span class="o">[</span><span class="kt">F</span>, <span class="kt">Boolean</span><span class="o">]</span> <span class="k">=</span>
@@ -42,7 +42,7 @@ ga('send', 'pageview');
 
 <p>We can encode that we will validate integers by using <code class="highlighter-rouge">Reader[Int, ?]</code> and the (potential) asynchronicity with Monix <code class="highlighter-rouge">Task</code>, combining the two we end up with <code class="highlighter-rouge">ReaderT[Task, Int, ?]</code> or <code class="highlighter-rouge">Kleisli[Task, Int, ?]</code>.</p>
 
-<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">cats.data.Kleisli</span>
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">cats.data.Kleisli</span>
 <span class="c1">// import cats.data.Kleisli
 </span>
 <span class="k">import</span> <span class="nn">monix.eval.Task</span>
@@ -51,13 +51,13 @@ ga('send', 'pageview');
 <span class="k">type</span> <span class="kt">ValidateInt</span><span class="o">[</span><span class="kt">A</span><span class="o">]</span> <span class="k">=</span> <span class="nc">Kleisli</span><span class="o">[</span><span class="kt">Task</span>, <span class="kt">Int</span>, <span class="kt">A</span><span class="o">]</span>
 <span class="c1">// defined type alias ValidateInt
 </span>
-<span class="k">def</span> <span class="n">blockAndPrint</span><span class="o">(</span><span class="n">millis</span><span class="k">:</span> <span class="kt">Long</span><span class="o">,</span> <span class="n">msg</span><span class="k">:</span> <span class="kt">String</span><span class="o">)</span><span class="k">:</span> <span class="kt">Unit</span> <span class="o">=</span> <span class="o">{</span> 
+<span class="k">def</span> <span class="n">blockAndPrint</span><span class="o">(</span><span class="n">millis</span><span class="k">:</span> <span class="kt">Long</span><span class="o">,</span> <span class="n">msg</span><span class="k">:</span> <span class="kt">String</span><span class="o">)</span><span class="k">:</span> <span class="kt">Unit</span> <span class="o">=</span> <span class="o">{</span>
   <span class="nc">Thread</span><span class="o">.</span><span class="n">sleep</span><span class="o">(</span><span class="nc">Math</span><span class="o">.</span><span class="n">abs</span><span class="o">(</span><span class="n">millis</span><span class="o">))</span>
   <span class="n">println</span><span class="o">(</span><span class="n">msg</span><span class="o">)</span>
 <span class="o">}</span>
 <span class="c1">// blockAndPrint: (millis: Long, msg: String)Unit
 </span>
-<span class="k">implicit</span> <span class="k">val</span> <span class="n">validateIntTaskHandler</span><span class="k">:</span> <span class="kt">Validator.Handler</span><span class="o">[</span><span class="kt">ValidateInt</span><span class="o">]</span> <span class="k">=</span> 
+<span class="k">implicit</span> <span class="k">val</span> <span class="n">validateIntTaskHandler</span><span class="k">:</span> <span class="kt">Validator.Handler</span><span class="o">[</span><span class="kt">ValidateInt</span><span class="o">]</span> <span class="k">=</span>
   <span class="k">new</span> <span class="nc">Validator</span><span class="o">.</span><span class="nc">Handler</span><span class="o">[</span><span class="kt">ValidateInt</span><span class="o">]</span> <span class="o">{</span>
     <span class="k">def</span> <span class="n">isPositive</span><span class="k">:</span> <span class="kt">ValidateInt</span><span class="o">[</span><span class="kt">Boolean</span><span class="o">]</span> <span class="k">=</span>
       <span class="nc">Kleisli</span><span class="o">(</span><span class="n">i</span> <span class="k">=&gt;</span> <span class="nc">Task</span><span class="o">.</span><span class="n">eval</span> <span class="o">{</span> <span class="n">blockAndPrint</span><span class="o">(</span><span class="n">i</span> <span class="o">*</span> <span class="mi">500L</span><span class="o">,</span> <span class="n">s</span><span class="s">"isPositive($i)"</span><span class="o">);</span> <span class="n">i</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="o">})</span>
@@ -65,23 +65,23 @@ ga('send', 'pageview');
     <span class="k">def</span> <span class="n">isEven</span><span class="k">:</span> <span class="kt">ValidateInt</span><span class="o">[</span><span class="kt">Boolean</span><span class="o">]</span> <span class="k">=</span>
       <span class="nc">Kleisli</span><span class="o">(</span><span class="n">i</span> <span class="k">=&gt;</span> <span class="nc">Task</span><span class="o">.</span><span class="n">eval</span> <span class="o">{</span> <span class="n">blockAndPrint</span><span class="o">(</span><span class="n">i</span> <span class="o">*</span> <span class="mi">250L</span><span class="o">,</span> <span class="n">s</span><span class="s">"isEven($i)"</span><span class="o">);</span> <span class="n">i</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">==</span> <span class="mi">0</span> <span class="o">})</span>
   <span class="o">}</span>
-<span class="c1">// validateIntTaskHandler: Validator.Handler[ValidateInt] = $anon$1@787b9a13
+<span class="c1">// validateIntTaskHandler: Validator.Handler[ValidateInt] = $anon$1@335c944e
 </span></code></pre>
 </div>
 
 <p>With the Freestyle implicits and the Monix to Cats conversions in scope, we can use our handler to interpret the <code class="highlighter-rouge">isPositiveEven</code> program:</p>
 
-<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">freestyle.implicits._</span>
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">freestyle.implicits._</span>
 <span class="c1">// import freestyle.implicits._
 </span>
 <span class="k">val</span> <span class="n">check</span> <span class="k">=</span> <span class="n">isPositiveEven</span><span class="o">[</span><span class="kt">Validator.Op</span><span class="o">].</span><span class="n">interpret</span><span class="o">[</span><span class="kt">ValidateInt</span><span class="o">]</span>
-<span class="c1">// check: ValidateInt[Boolean] = Kleisli(cats.data.Kleisli$$Lambda$15195/488596616@1f700112)
+<span class="c1">// check: ValidateInt[Boolean] = Kleisli(cats.data.Kleisli$$Lambda$9108/2138976400@4e497b78)
 </span></code></pre>
 </div>
 
 <p>We can pass some integers to the <code class="highlighter-rouge">check</code> program with the <code class="highlighter-rouge">Kleisli#run</code> method and run the <code class="highlighter-rouge">Task</code> as a <code class="highlighter-rouge">Future</code> using <code class="highlighter-rouge">Task#runAsync</code>:</p>
 
-<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">monix.execution.Scheduler.Implicits.global</span>
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">monix.execution.Scheduler.Implicits.global</span>
 <span class="c1">// import monix.execution.Scheduler.Implicits.global
 </span>
 <span class="k">import</span> <span class="nn">scala.concurrent.Await</span>
@@ -111,30 +111,37 @@ ga('send', 'pageview');
 
 <p>This happens because, in most <code class="highlighter-rouge">Monad</code> instances, the <code class="highlighter-rouge">Applicative</code> operations are implemented using <code class="highlighter-rouge">flatMap</code>, which means that the operations are sequential.</p>
 
-<p>Monix however, also has a nondeterministic <code class="highlighter-rouge">Monad</code> instance, that will execute <code class="highlighter-rouge">Task</code>s in parallel:</p>
+<p>Monix however, allows parallel execution in batches, that does deterministic (ordered) signaling of results with the help of <code class="highlighter-rouge">Task</code>.</p>
 
-<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">Task.nondeterminism</span>
-<span class="c1">// import Task.nondeterminism
+<p>The following example uses <code class="highlighter-rouge">Task.gather</code>, which does parallel processing while preserving result ordering, but in order to ensure that parallel processing actually happens, the tasks need to be effectively asynchronous, which for simple functions need to fork threads.</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="k">val</span> <span class="n">check2</span> <span class="k">=</span> <span class="n">isPositiveEven</span><span class="o">[</span><span class="kt">Validator.Op</span><span class="o">].</span><span class="n">interpret</span><span class="o">[</span><span class="kt">ValidateInt</span><span class="o">]</span>
+<span class="c1">// check2: ValidateInt[Boolean] = Kleisli(cats.data.Kleisli$$Lambda$9108/2138976400@4389d2a2)
 </span>
-<span class="k">val</span> <span class="n">check2</span> <span class="k">=</span> <span class="n">isPositiveEven</span><span class="o">[</span><span class="kt">Validator.Op</span><span class="o">].</span><span class="n">interpret</span><span class="o">[</span><span class="kt">ValidateInt</span><span class="o">]</span>
-<span class="c1">// check2: ValidateInt[Boolean] = Kleisli(cats.data.Kleisli$$Lambda$15195/488596616@55e91aa8)
+<span class="k">val</span> <span class="n">items</span> <span class="k">=</span> <span class="mi">1</span> <span class="o">::</span> <span class="mi">2</span> <span class="o">::</span> <span class="o">-</span><span class="mi">1</span> <span class="o">::</span> <span class="nc">Nil</span>
+<span class="c1">// items: List[Int] = List(1, 2, -1)
 </span>
-<span class="nc">Await</span><span class="o">.</span><span class="n">result</span><span class="o">(</span><span class="n">check2</span><span class="o">.</span><span class="n">run</span><span class="o">(</span><span class="mi">1</span><span class="o">).</span><span class="n">runAsync</span><span class="o">,</span> <span class="nc">Duration</span><span class="o">.</span><span class="nc">Inf</span><span class="o">)</span>
-<span class="c1">// isEven(1)
-// isPositive(1)
-// res3: Boolean = false
+<span class="c1">// The list of all tasks needed for execution
+</span><span class="k">val</span> <span class="n">tasks</span> <span class="k">=</span> <span class="n">items</span><span class="o">.</span><span class="n">map</span><span class="o">(</span><span class="n">check2</span><span class="o">.</span><span class="n">run</span><span class="o">(</span><span class="k">_</span><span class="o">))</span>
+<span class="c1">// tasks: List[monix.eval.Task[Boolean]] = List(Task.FlatMap(Task@1327764818, monix.eval.instances.CatsBaseForTask$$Lambda$16189/350514612@271507c0), Task.FlatMap(Task@1185953277, monix.eval.instances.CatsBaseForTask$$Lambda$16189/350514612@606bf80b), Task.FlatMap(Task@260763601, monix.eval.instances.CatsBaseForTask$$Lambda$16189/350514612@aed2e7))
 </span>
-<span class="nc">Await</span><span class="o">.</span><span class="n">result</span><span class="o">(</span><span class="n">check2</span><span class="o">.</span><span class="n">run</span><span class="o">(</span><span class="mi">2</span><span class="o">).</span><span class="n">runAsync</span><span class="o">,</span> <span class="nc">Duration</span><span class="o">.</span><span class="nc">Inf</span><span class="o">)</span>
-<span class="c1">// isEven(2)
+<span class="c1">// Processing in parallel
+</span><span class="k">val</span> <span class="n">aggregate</span> <span class="k">=</span> <span class="nc">Task</span><span class="o">.</span><span class="n">gather</span><span class="o">(</span><span class="n">tasks</span><span class="o">).</span><span class="n">map</span><span class="o">(</span><span class="k">_</span><span class="o">.</span><span class="n">toList</span><span class="o">)</span>
+<span class="c1">// aggregate: monix.eval.Task[List[Boolean]] = Task.FlatMap(Task@279569388, monix.eval.Task$$Lambda$9932/643104371@5cdc1a38)
+</span>
+<span class="c1">// Evaluation:
+</span><span class="n">aggregate</span><span class="o">.</span><span class="n">foreach</span><span class="o">(</span><span class="n">println</span><span class="o">)</span>
+<span class="c1">// isPositive(-1)
+// isEven(-1)
 // isPositive(2)
-// res4: Boolean = true
-</span>
-<span class="nc">Await</span><span class="o">.</span><span class="n">result</span><span class="o">(</span><span class="n">check2</span><span class="o">.</span><span class="n">run</span><span class="o">(-</span><span class="mi">1</span><span class="o">).</span><span class="n">runAsync</span><span class="o">,</span> <span class="nc">Duration</span><span class="o">.</span><span class="nc">Inf</span><span class="o">)</span>
-<span class="c1">// isEven(-1)
-// isPositive(-1)
-// res5: Boolean = false
+// isEven(2)
+// isPositive(1)
+// isEven(1)
+// List(false, true, false)
+// res6: monix.execution.CancelableFuture[Unit] = Async(Future(Success(())),monix.execution.cancelables.StackedCancelable@4070e0cb)
 </span></code></pre>
 </div>
+<p>If ordering of results does not matter, you can also use <code class="highlighter-rouge">Task.gatherUnordered</code> instead of gather, which might yield better results, given its non-blocking execution.</p>
 
 <h3 id="async">Async</h3>
 

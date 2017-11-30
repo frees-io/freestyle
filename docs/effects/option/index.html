@@ -19,7 +19,7 @@ your target runtime <code class="highlighter-rouge">M[_]</code>.</p>
 
 <p><code class="highlighter-rouge">option</code> allows a value of type <code class="highlighter-rouge">Option[_]</code> to be lifted into the context of <code class="highlighter-rouge">FreeS</code>. If a <code class="highlighter-rouge">None</code> is found the program will short circuit.</p>
 
-<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">freestyle._</span>
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">freestyle._</span>
 <span class="c1">// import freestyle._
 </span>
 <span class="k">import</span> <span class="nn">freestyle.implicits._</span>
@@ -53,7 +53,7 @@ your target runtime <code class="highlighter-rouge">M[_]</code>.</p>
 <p>If a <code class="highlighter-rouge">Some(_)</code> is found, the value is extracted and lifted into the context and the programs resumes
 normally.</p>
 
-<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">def</span> <span class="n">programSome</span><span class="o">[</span><span class="kt">F</span><span class="o">[</span><span class="k">_</span><span class="o">]</span><span class="kt">:</span> <span class="kt">OptionM</span><span class="o">]</span> <span class="k">=</span>
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="k">def</span> <span class="n">programSome</span><span class="o">[</span><span class="kt">F</span><span class="o">[</span><span class="k">_</span><span class="o">]</span><span class="kt">:</span> <span class="kt">OptionM</span><span class="o">]</span> <span class="k">=</span>
   <span class="k">for</span> <span class="o">{</span>
     <span class="n">a</span> <span class="k">&lt;-</span> <span class="nc">FreeS</span><span class="o">.</span><span class="n">pure</span><span class="o">(</span><span class="mi">1</span><span class="o">)</span>
     <span class="n">b</span> <span class="k">&lt;-</span> <span class="nc">OptionM</span><span class="o">[</span><span class="kt">F</span><span class="o">].</span><span class="n">option</span><span class="o">(</span><span class="nc">Some</span><span class="o">(</span><span class="mi">1</span><span class="o">))</span>
@@ -71,7 +71,7 @@ normally.</p>
 <p><code class="highlighter-rouge">none</code> immediately short circuits the program without providing further information as to what the reason is. Handle with
 care.</p>
 
-<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">def</span> <span class="n">programNone2</span><span class="o">[</span><span class="kt">F</span><span class="o">[</span><span class="k">_</span><span class="o">]</span><span class="kt">:</span> <span class="kt">OptionM</span><span class="o">]</span> <span class="k">=</span>
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="k">def</span> <span class="n">programNone2</span><span class="o">[</span><span class="kt">F</span><span class="o">[</span><span class="k">_</span><span class="o">]</span><span class="kt">:</span> <span class="kt">OptionM</span><span class="o">]</span> <span class="k">=</span>
   <span class="k">for</span> <span class="o">{</span>
     <span class="n">a</span> <span class="k">&lt;-</span> <span class="nc">FreeS</span><span class="o">.</span><span class="n">pure</span><span class="o">(</span><span class="mi">1</span><span class="o">)</span>
     <span class="n">b</span> <span class="k">&lt;-</span> <span class="nc">OptionM</span><span class="o">[</span><span class="kt">F</span><span class="o">].</span><span class="n">none</span><span class="o">[</span><span class="kt">Int</span><span class="o">]</span>

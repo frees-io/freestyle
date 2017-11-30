@@ -22,7 +22,7 @@ for any runtime <code class="highlighter-rouge">M[_]</code> used in its interpre
 
 <p><code class="highlighter-rouge">ask</code> simply returns the entire environment in its current state.</p>
 
-<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">freestyle._</span>
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">freestyle._</span>
 <span class="c1">// import freestyle._
 </span>
 <span class="k">import</span> <span class="nn">freestyle.implicits._</span>
@@ -47,7 +47,7 @@ for any runtime <code class="highlighter-rouge">M[_]</code> used in its interpre
 <span class="c1">// defined type alias ConfigEnv
 </span>
 <span class="k">val</span> <span class="n">rd</span> <span class="k">=</span> <span class="n">reader</span><span class="o">[</span><span class="kt">Config</span><span class="o">]</span>
-<span class="c1">// rd: freestyle.effects.reader.EnvironmentProvider[Config] = freestyle.effects.reader$EnvironmentProvider@74067cea
+<span class="c1">// rd: freestyle.effects.reader.EnvironmentProvider[Config] = freestyle.effects.reader$EnvironmentProvider@1c94f756
 </span>
 <span class="k">import</span> <span class="nn">rd.implicits._</span>
 <span class="c1">// import rd.implicits._
@@ -69,7 +69,7 @@ for any runtime <code class="highlighter-rouge">M[_]</code> used in its interpre
 
 <p><code class="highlighter-rouge">reader</code> allows extracting values of the environment and lifting them into the context of <code class="highlighter-rouge">FreeS</code></p>
 
-<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">def</span> <span class="n">programReader</span><span class="o">[</span><span class="kt">F</span><span class="o">[</span><span class="k">_</span><span class="o">]</span><span class="kt">:</span> <span class="kt">rd.ReaderM</span><span class="o">]</span> <span class="k">=</span>
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="k">def</span> <span class="n">programReader</span><span class="o">[</span><span class="kt">F</span><span class="o">[</span><span class="k">_</span><span class="o">]</span><span class="kt">:</span> <span class="kt">rd.ReaderM</span><span class="o">]</span> <span class="k">=</span>
   <span class="k">for</span> <span class="o">{</span>
     <span class="n">a</span> <span class="k">&lt;-</span> <span class="nc">FreeS</span><span class="o">.</span><span class="n">pure</span><span class="o">(</span><span class="mi">1</span><span class="o">)</span>
     <span class="n">b</span> <span class="k">&lt;-</span> <span class="n">rd</span><span class="o">.</span><span class="nc">ReaderM</span><span class="o">[</span><span class="kt">F</span><span class="o">].</span><span class="n">reader</span><span class="o">(</span><span class="k">_</span><span class="o">.</span><span class="n">n</span><span class="o">)</span>

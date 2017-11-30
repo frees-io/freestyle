@@ -12,7 +12,7 @@ ga('send', 'pageview');
 
 <p>You can add the <em>frees-http4s</em> module as follows:</p>
 
-<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="n">libraryDependencies</span> <span class="o">+=</span> <span class="s">"io.frees"</span> <span class="o">%%</span> <span class="s">"frees-http4s"</span> <span class="o">%</span> <span class="s">"0.4.4"</span>
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="n">libraryDependencies</span> <span class="o">+=</span> <span class="s">"io.frees"</span> <span class="o">%%</span> <span class="s">"frees-http4s"</span> <span class="o">%</span> <span class="s">"0.4.4"</span>
 </code></pre>
 </div>
 
@@ -26,20 +26,20 @@ ga('send', 'pageview');
 
 <p>First, lets import all the regular freestyle imports:</p>
 
-<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">freestyle._</span>
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">freestyle._</span>
 <span class="k">import</span> <span class="nn">freestyle.implicits._</span>
 </code></pre>
 </div>
 
 <p>And the specific import for <code class="highlighter-rouge">frees-http4s</code>:</p>
 
-<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">freestyle.http.http4s._</span>
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">freestyle.http.http4s._</span>
 </code></pre>
 </div>
 
 <p>In this example, we will create an algebra to calculate the VAT of a product’s price:</p>
 
-<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">scala.math.BigDecimal</span>
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">scala.math.BigDecimal</span>
 <span class="c1">// import scala.math.BigDecimal
 </span>
 <span class="nd">@free</span> <span class="k">trait</span> <span class="nc">CalcVAT</span> <span class="o">{</span>
@@ -54,7 +54,7 @@ ga('send', 'pageview');
 
 <p>A handler for the <code class="highlighter-rouge">CalcVAT</code> algebra with <code class="highlighter-rouge">fs2.Task</code> as target type:</p>
 
-<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">cats.effect.IO</span>
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">cats.effect.IO</span>
 <span class="c1">// import cats.effect.IO
 </span>
 <span class="k">implicit</span> <span class="k">val</span> <span class="n">calcIoHandler</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">CalcVAT</span><span class="o">.</span><span class="nc">Handler</span><span class="o">[</span><span class="kt">IO</span><span class="o">]</span> <span class="o">{</span>
@@ -62,20 +62,20 @@ ga('send', 'pageview');
   <span class="k">def</span> <span class="n">vat</span><span class="o">(</span><span class="n">price</span><span class="k">:</span> <span class="kt">BigDecimal</span><span class="o">)</span><span class="k">:</span> <span class="kt">IO</span><span class="o">[</span><span class="kt">BigDecimal</span><span class="o">]</span> <span class="k">=</span>
     <span class="nc">IO</span><span class="o">.</span><span class="n">pure</span><span class="o">(</span><span class="n">price</span> <span class="o">*</span> <span class="n">rate</span><span class="o">)</span>
 <span class="o">}</span>
-<span class="c1">// calcIoHandler: CalcVAT.Handler[cats.effect.IO] = $anon$1@68c4cb49
+<span class="c1">// calcIoHandler: CalcVAT.Handler[cats.effect.IO] = $anon$1@7695ea00
 </span></code></pre>
 </div>
 
 <p>Some imports for http4s:</p>
 
-<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">org.http4s._</span>
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">org.http4s._</span>
 <span class="k">import</span> <span class="nn">org.http4s.dsl.io._</span>
 </code></pre>
 </div>
 
 <p>We can now create a simple <code class="highlighter-rouge">HttpService</code>:</p>
 
-<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">object</span> <span class="nc">Price</span> <span class="o">{</span>
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="k">object</span> <span class="nc">Price</span> <span class="o">{</span>
   <span class="k">def</span> <span class="n">unapply</span><span class="o">(</span><span class="n">s</span><span class="k">:</span> <span class="kt">String</span><span class="o">)</span><span class="k">:</span> <span class="kt">Option</span><span class="o">[</span><span class="kt">BigDecimal</span><span class="o">]</span> <span class="k">=</span>
     <span class="k">if</span> <span class="o">(</span><span class="n">s</span><span class="o">.</span><span class="n">isEmpty</span><span class="o">)</span> <span class="nc">None</span> <span class="k">else</span> <span class="nc">Some</span><span class="o">(</span><span class="nc">BigDecimal</span><span class="o">(</span><span class="n">s</span><span class="o">))</span>
 <span class="o">}</span>
@@ -87,13 +87,13 @@ ga('send', 'pageview');
   <span class="k">case</span> <span class="nc">GET</span> <span class="o">-&gt;</span> <span class="nc">Root</span> <span class="o">/</span> <span class="s">"calc-total"</span> <span class="o">/</span> <span class="nc">Price</span><span class="o">(</span><span class="n">p</span><span class="o">)</span> <span class="k">=&gt;</span>
     <span class="nc">Ok</span><span class="o">(</span><span class="nc">CalcVAT</span><span class="o">[</span><span class="kt">CalcVAT.Op</span><span class="o">].</span><span class="n">withVat</span><span class="o">(</span><span class="n">p</span><span class="o">).</span><span class="n">map</span><span class="o">(</span><span class="n">total</span> <span class="k">=&gt;</span> <span class="n">s</span><span class="s">"The total price including VAT is $total"</span><span class="o">))</span>
 <span class="o">}</span>
-<span class="c1">// userService: org.http4s.HttpService[cats.effect.IO] = Kleisli(org.http4s.HttpService$$$Lambda$18654/1687757848@d9152cb)
+<span class="c1">// userService: org.http4s.HttpService[cats.effect.IO] = Kleisli(org.http4s.HttpService$$$Lambda$12765/668034541@16807b6)
 </span></code></pre>
 </div>
 
 <p>Trying out our <code class="highlighter-rouge">HttpService</code>:</p>
 
-<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">val</span> <span class="n">getVAT</span> <span class="k">=</span> <span class="nc">Request</span><span class="o">[</span><span class="kt">IO</span><span class="o">](</span><span class="nc">Method</span><span class="o">.</span><span class="nc">GET</span><span class="o">,</span> <span class="n">uri</span><span class="o">(</span><span class="s">"/calc-vat/100.50"</span><span class="o">))</span>
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="k">val</span> <span class="n">getVAT</span> <span class="k">=</span> <span class="nc">Request</span><span class="o">[</span><span class="kt">IO</span><span class="o">](</span><span class="nc">Method</span><span class="o">.</span><span class="nc">GET</span><span class="o">,</span> <span class="n">uri</span><span class="o">(</span><span class="s">"/calc-vat/100.50"</span><span class="o">))</span>
 <span class="c1">// getVAT: org.http4s.Request[cats.effect.IO] = Request(method=GET, uri=/calc-vat/100.50, headers=Headers())
 </span>
 <span class="k">val</span> <span class="n">getTotal</span> <span class="k">=</span> <span class="nc">Request</span><span class="o">[</span><span class="kt">IO</span><span class="o">](</span><span class="nc">Method</span><span class="o">.</span><span class="nc">GET</span><span class="o">,</span> <span class="n">uri</span><span class="o">(</span><span class="s">"/calc-total/100.50"</span><span class="o">))</span>

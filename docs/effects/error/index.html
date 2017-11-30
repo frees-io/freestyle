@@ -20,7 +20,7 @@ It includes three basic operations <code class="highlighter-rouge">either</code>
 
 <p><code class="highlighter-rouge">either</code> allows us to lift values of <code class="highlighter-rouge">Either[Throwable, ?]</code> into the context of <code class="highlighter-rouge">FreeS</code>,  raising an error causing the program to short circuit if the value is a <code class="highlighter-rouge">Left(throwable)</code> or continuing with the computation in the case of a <code class="highlighter-rouge">Right(a)</code>.</p>
 
-<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">freestyle._</span>
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">freestyle._</span>
 <span class="c1">// import freestyle._
 </span>
 <span class="k">import</span> <span class="nn">freestyle.implicits._</span>
@@ -54,7 +54,7 @@ It includes three basic operations <code class="highlighter-rouge">either</code>
 </span></code></pre>
 </div>
 
-<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">def</span> <span class="n">continueWithRightValue</span><span class="o">[</span><span class="kt">F</span><span class="o">[</span><span class="k">_</span><span class="o">]</span><span class="kt">:</span> <span class="kt">ErrorM</span><span class="o">]</span> <span class="k">=</span>
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="k">def</span> <span class="n">continueWithRightValue</span><span class="o">[</span><span class="kt">F</span><span class="o">[</span><span class="k">_</span><span class="o">]</span><span class="kt">:</span> <span class="kt">ErrorM</span><span class="o">]</span> <span class="k">=</span>
   <span class="k">for</span> <span class="o">{</span>
     <span class="n">a</span> <span class="k">&lt;-</span> <span class="nc">FreeS</span><span class="o">.</span><span class="n">pure</span><span class="o">(</span><span class="mi">1</span><span class="o">)</span>
     <span class="n">b</span> <span class="k">&lt;-</span> <span class="nc">ErrorM</span><span class="o">[</span><span class="kt">F</span><span class="o">].</span><span class="n">either</span><span class="o">[</span><span class="kt">Int</span><span class="o">](</span><span class="nc">Right</span><span class="o">(</span><span class="mi">1</span><span class="o">))</span>
@@ -71,7 +71,7 @@ It includes three basic operations <code class="highlighter-rouge">either</code>
 
 <p>If you simply want to raise an error without throwing an exception, you can use the <code class="highlighter-rouge">error</code> operation which short circuits the program.</p>
 
-<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">def</span> <span class="n">shortCircuitWithError</span><span class="o">[</span><span class="kt">F</span><span class="o">[</span><span class="k">_</span><span class="o">]</span><span class="kt">:</span> <span class="kt">ErrorM</span><span class="o">]</span> <span class="k">=</span>
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="k">def</span> <span class="n">shortCircuitWithError</span><span class="o">[</span><span class="kt">F</span><span class="o">[</span><span class="k">_</span><span class="o">]</span><span class="kt">:</span> <span class="kt">ErrorM</span><span class="o">]</span> <span class="k">=</span>
   <span class="k">for</span> <span class="o">{</span>
     <span class="n">a</span> <span class="k">&lt;-</span> <span class="nc">FreeS</span><span class="o">.</span><span class="n">pure</span><span class="o">(</span><span class="mi">1</span><span class="o">)</span>
     <span class="n">b</span> <span class="k">&lt;-</span> <span class="nc">ErrorM</span><span class="o">[</span><span class="kt">F</span><span class="o">].</span><span class="n">error</span><span class="o">[</span><span class="kt">Int</span><span class="o">](</span><span class="n">boom</span><span class="o">)</span>
@@ -93,7 +93,7 @@ in <code class="highlighter-rouge">scala.util.control.NonFatal</code>.</p>
 
 <p><code class="highlighter-rouge">catchNonFatal</code> expects a <code class="highlighter-rouge">cats.Eval</code> value which holds a lazy computation.</p>
 
-<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">cats.Eval</span>
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">cats.Eval</span>
 <span class="c1">// import cats.Eval
 </span>
 <span class="k">def</span> <span class="n">catchingExceptions</span><span class="o">[</span><span class="kt">F</span><span class="o">[</span><span class="k">_</span><span class="o">]</span><span class="kt">:</span> <span class="kt">ErrorM</span><span class="o">]</span> <span class="k">=</span>
