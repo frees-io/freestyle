@@ -22,13 +22,13 @@ ga('send', 'pageview');
 
 <p>For Scala.jvm:</p>
 
-<div class="highlighter-rouge"><pre class="highlight"><code><span class="n">libraryDependencies</span> <span class="o">+=</span> <span class="s">"io.frees"</span> <span class="o">%%</span> <span class="s">"frees-tagless"</span> <span class="o">%</span> <span class="s">"0.4.4"</span>
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="n">libraryDependencies</span> <span class="o">+=</span> <span class="s">"io.frees"</span> <span class="o">%%</span> <span class="s">"frees-tagless"</span> <span class="o">%</span> <span class="s">"0.4.5"</span>
 </code></pre>
 </div>
 
 <p>For Scala.js:</p>
 
-<div class="highlighter-rouge"><pre class="highlight"><code><span class="n">libraryDependencies</span> <span class="o">+=</span> <span class="s">"io.frees"</span> <span class="o">%%%</span> <span class="s">"frees-tagless"</span> <span class="o">%</span> <span class="s">"0.4.4"</span>
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="n">libraryDependencies</span> <span class="o">+=</span> <span class="s">"io.frees"</span> <span class="o">%%%</span> <span class="s">"frees-tagless"</span> <span class="o">%</span> <span class="s">"0.4.5"</span>
 </code></pre>
 </div>
 
@@ -92,13 +92,13 @@ The tagless final encoding with direct style syntax is as stack-safe as the targ
   <span class="k">override</span> <span class="k">def</span> <span class="n">minSize</span><span class="o">(</span><span class="n">s</span><span class="k">:</span> <span class="kt">String</span><span class="o">,</span> <span class="n">n</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span><span class="k">:</span> <span class="kt">Try</span><span class="o">[</span><span class="kt">Boolean</span><span class="o">]</span> <span class="k">=</span> <span class="nc">Try</span><span class="o">(</span><span class="n">s</span><span class="o">.</span><span class="n">size</span> <span class="o">&gt;=</span> <span class="n">n</span><span class="o">)</span>
   <span class="k">override</span> <span class="k">def</span> <span class="n">hasNumber</span><span class="o">(</span><span class="n">s</span><span class="k">:</span> <span class="kt">String</span><span class="o">)</span><span class="k">:</span> <span class="kt">Try</span><span class="o">[</span><span class="kt">Boolean</span><span class="o">]</span> <span class="k">=</span> <span class="nc">Try</span><span class="o">(</span><span class="n">s</span><span class="o">.</span><span class="n">exists</span><span class="o">(</span><span class="n">c</span> <span class="k">=&gt;</span> <span class="s">"0123456789"</span><span class="o">.</span><span class="n">contains</span><span class="o">(</span><span class="n">c</span><span class="o">)))</span>
 <span class="o">}</span>
-<span class="c1">// validationHandler: Validation.Handler[scala.util.Try] = $anon$1@42e6b4b2
+<span class="c1">// validationHandler: Validation.Handler[scala.util.Try] = $anon$1@61740a1b
 </span>
 <span class="k">implicit</span> <span class="k">val</span> <span class="n">interactionHandler</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">Interaction</span><span class="o">.</span><span class="nc">Handler</span><span class="o">[</span><span class="kt">Try</span><span class="o">]</span> <span class="o">{</span>
   <span class="k">override</span> <span class="k">def</span> <span class="n">tell</span><span class="o">(</span><span class="n">s</span><span class="k">:</span> <span class="kt">String</span><span class="o">)</span><span class="k">:</span> <span class="kt">Try</span><span class="o">[</span><span class="kt">Unit</span><span class="o">]</span> <span class="k">=</span> <span class="nc">Try</span><span class="o">(</span><span class="n">println</span><span class="o">(</span><span class="n">s</span><span class="o">))</span>
   <span class="k">override</span> <span class="k">def</span> <span class="n">ask</span><span class="o">(</span><span class="n">s</span><span class="k">:</span> <span class="kt">String</span><span class="o">)</span><span class="k">:</span> <span class="kt">Try</span><span class="o">[</span><span class="kt">String</span><span class="o">]</span> <span class="k">=</span> <span class="nc">Try</span><span class="o">(</span><span class="s">"This could have been user input 1"</span><span class="o">)</span>
 <span class="o">}</span>
-<span class="c1">// interactionHandler: Interaction.Handler[scala.util.Try] = $anon$1@74155765
+<span class="c1">// interactionHandler: Interaction.Handler[scala.util.Try] = $anon$1@4d5786d9
 </span></code></pre>
 </div>
 

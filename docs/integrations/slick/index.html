@@ -40,7 +40,7 @@ ga('send', 'pageview');
 <span class="c1">// getPersonResult: slick.jdbc.GetResult[Person] = &lt;function1&gt;
 </span>
 <span class="k">val</span> <span class="n">getPerson</span><span class="k">:</span> <span class="kt">DBIO</span><span class="o">[</span><span class="kt">Person</span><span class="o">]</span> <span class="k">=</span> <span class="n">sql</span><span class="s">"SELECT 'Alonzo Church', 1903"</span><span class="o">.</span><span class="n">as</span><span class="o">[</span><span class="kt">Person</span><span class="o">].</span><span class="n">head</span>
-<span class="c1">// getPerson: slick.jdbc.H2Profile.api.DBIO[Person] = slick.jdbc.StreamingInvokerAction$HeadAction@61b33004
+<span class="c1">// getPerson: slick.jdbc.H2Profile.api.DBIO[Person] = slick.jdbc.StreamingInvokerAction$HeadAction@68514bbc
 </span></code></pre>
 </div>
 
@@ -68,7 +68,7 @@ In this Example, we are interpreting to <code class="highlighter-rouge">scala.co
 <span class="c1">// import scala.concurrent.ExecutionContext.Implicits.global
 </span>
 <span class="k">implicit</span> <span class="k">val</span> <span class="n">db</span> <span class="k">=</span> <span class="nc">Database</span><span class="o">.</span><span class="n">forURL</span><span class="o">(</span><span class="s">"jdbc:h2:mem:docs"</span><span class="o">,</span> <span class="n">driver</span> <span class="k">=</span> <span class="s">"org.h2.Driver"</span><span class="o">)</span>
-<span class="c1">// db: slick.jdbc.H2Profile.backend.DatabaseDef = slick.jdbc.JdbcBackend$DatabaseDef@49ebfd4b
+<span class="c1">// db: slick.jdbc.H2Profile.backend.DatabaseDef = slick.jdbc.JdbcBackend$DatabaseDef@74d92eb9
 </span>
 <span class="k">val</span> <span class="n">future</span> <span class="k">=</span> <span class="n">slickFrees</span><span class="o">.</span><span class="n">interpret</span><span class="o">[</span><span class="kt">Future</span><span class="o">]</span>
 <span class="c1">// future: scala.concurrent.Future[Person] = Future(&lt;not completed&gt;)
@@ -110,7 +110,7 @@ In this Example, we are interpreting to <code class="highlighter-rouge">scala.co
   <span class="k">new</span> <span class="nc">Calc</span><span class="o">.</span><span class="nc">Handler</span><span class="o">[</span><span class="kt">Future</span><span class="o">]</span> <span class="o">{</span>
     <span class="k">def</span> <span class="n">subtract</span><span class="o">(</span><span class="n">a</span><span class="k">:</span> <span class="kt">Int</span><span class="o">,</span> <span class="n">b</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span><span class="k">:</span> <span class="kt">Future</span><span class="o">[</span><span class="kt">Int</span><span class="o">]</span> <span class="k">=</span> <span class="nc">Future</span><span class="o">.</span><span class="n">successful</span><span class="o">(</span><span class="n">a</span> <span class="o">-</span> <span class="n">b</span><span class="o">)</span>
   <span class="o">}</span>
-<span class="c1">// calcHandler: Calc.Handler[scala.concurrent.Future] = $anon$1@3f88b8c3
+<span class="c1">// calcHandler: Calc.Handler[scala.concurrent.Future] = $anon$1@5814c640
 </span></code></pre>
 </div>
 

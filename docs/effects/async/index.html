@@ -31,10 +31,10 @@ ga('send', 'pageview');
 
 <p>To use the <em>frees-async</em> module, you need to include one of the following dependencies:</p>
 
-<div class="highlighter-rouge"><pre class="highlight"><code><span class="n">libraryDependencies</span> <span class="o">+=</span> <span class="s">"io.frees"</span> <span class="o">%%</span> <span class="s">"frees-async"</span> <span class="o">%</span> <span class="s">"0.4.4"</span>
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="n">libraryDependencies</span> <span class="o">+=</span> <span class="s">"io.frees"</span> <span class="o">%%</span> <span class="s">"frees-async"</span> <span class="o">%</span> <span class="s">"0.4.5"</span>
 
 <span class="c1">// and if you want to use cats.effect.IO or Monix' Task:
-</span><span class="n">libraryDependencies</span> <span class="o">+=</span> <span class="s">"io.frees"</span> <span class="o">%%</span> <span class="s">"frees-async-cats-effect"</span> <span class="o">%</span> <span class="s">"0.4.4"</span>
+</span><span class="n">libraryDependencies</span> <span class="o">+=</span> <span class="s">"io.frees"</span> <span class="o">%%</span> <span class="s">"frees-async-cats-effect"</span> <span class="o">%</span> <span class="s">"0.4.5"</span>
 </code></pre>
 </div>
 
@@ -80,7 +80,7 @@ ga('send', 'pageview');
 
 <div class="highlighter-rouge"><pre class="highlight"><code><span class="k">val</span> <span class="n">getSorted</span><span class="k">:</span> <span class="kt">Author</span> <span class="o">=&gt;</span> <span class="nc">FreeS</span><span class="o">[</span><span class="kt">AsyncM.Op</span>, <span class="kt">List</span><span class="o">[</span><span class="kt">Book</span><span class="o">]]</span> <span class="k">=</span>
   <span class="n">sortedBooks</span><span class="o">[</span><span class="kt">AsyncM.Op</span><span class="o">](</span><span class="nc">Library</span><span class="o">)</span> <span class="k">_</span>
-<span class="c1">// getSorted: Author =&gt; freestyle.FreeS[freestyle.async.AsyncM.Op,List[Book]] = $$Lambda$9859/1374319785@543b4b0e
+<span class="c1">// getSorted: Author =&gt; freestyle.FreeS[freestyle.async.AsyncM.Op,List[Book]] = $$Lambda$9843/2140977057@147c15bc
 </span>
 <span class="k">val</span> <span class="n">dickensBooks</span> <span class="k">=</span> <span class="n">getSorted</span><span class="o">(</span><span class="nc">Author</span><span class="o">(</span><span class="s">"Dickens"</span><span class="o">))</span>
 <span class="c1">// dickensBooks: freestyle.FreeS[freestyle.async.AsyncM.Op,List[Book]] = Free(...)
@@ -109,10 +109,10 @@ ga('send', 'pageview');
 <span class="c1">// import cats.effect.IO
 </span>
 <span class="k">val</span> <span class="n">io1</span> <span class="k">=</span> <span class="n">dickensBooks</span><span class="o">.</span><span class="n">interpret</span><span class="o">[</span><span class="kt">IO</span><span class="o">]</span>
-<span class="c1">// io1: cats.effect.IO[List[Book]] = IO$82437109
+<span class="c1">// io1: cats.effect.IO[List[Book]] = IO$1346733780
 </span>
 <span class="k">val</span> <span class="n">io2</span> <span class="k">=</span> <span class="n">otherBooks</span><span class="o">.</span><span class="n">interpret</span><span class="o">[</span><span class="kt">IO</span><span class="o">]</span>
-<span class="c1">// io2: cats.effect.IO[List[Book]] = IO$928607089
+<span class="c1">// io2: cats.effect.IO[List[Book]] = IO$1163238260
 </span></code></pre>
 </div>
 
@@ -121,10 +121,10 @@ ga('send', 'pageview');
 //   at Library$.findBooks(&lt;console&gt;:33)
 //   at .$anonfun$sortedBooks$1(&lt;console&gt;:31)
 //   at .$anonfun$sortedBooks$1$adapted(&lt;console&gt;:30)
-//   at $$Lambda$9860/2048400312.apply(Unknown Source)
+//   at $$Lambda$9844/362355729.apply(Unknown Source)
 //   at cats.effect.IO$.$anonfun$async$1(IO.scala:449)
 //   at cats.effect.IO$.$anonfun$async$1$adapted(IO.scala:447)
-//   at cats.effect.IO$$$Lambda$9869/1447977011.apply(Unknown Source)
+//   at cats.effect.IO$$$Lambda$9853/857914345.apply(Unknown Source)
 //   at cats.effect.IO.unsafeRunAsync(IO.scala:222)
 //   at cats.effect.IO.unsafeToFuture(IO.scala:286)
 //   ... 48 elided
@@ -147,13 +147,13 @@ ga('send', 'pageview');
 <span class="c1">// import monix.execution.Scheduler
 </span>
 <span class="k">implicit</span> <span class="k">val</span> <span class="n">executionContext</span> <span class="k">=</span> <span class="nc">Scheduler</span><span class="o">.</span><span class="nc">Implicits</span><span class="o">.</span><span class="n">global</span>
-<span class="c1">// executionContext: monix.execution.Scheduler = monix.execution.schedulers.AsyncScheduler@36ff0bc3
+<span class="c1">// executionContext: monix.execution.Scheduler = monix.execution.schedulers.AsyncScheduler@117ac53b
 </span>
 <span class="k">val</span> <span class="n">monixTask1</span> <span class="k">=</span> <span class="n">dickensBooks</span><span class="o">.</span><span class="n">interpret</span><span class="o">[</span><span class="kt">Task</span><span class="o">]</span>
-<span class="c1">// monixTask1: monix.eval.Task[List[Book]] = Task.FlatMap(Task@857013666, monix.eval.Task$$$Lambda$9923/681374162@6ac19d41)
+<span class="c1">// monixTask1: monix.eval.Task[List[Book]] = Task.FlatMap(Task@1006258813, monix.eval.Task$$$Lambda$9907/697871792@346372bc)
 </span>
 <span class="k">val</span> <span class="n">monixTask2</span> <span class="k">=</span> <span class="n">otherBooks</span><span class="o">.</span><span class="n">interpret</span><span class="o">[</span><span class="kt">Task</span><span class="o">]</span>
-<span class="c1">// monixTask2: monix.eval.Task[List[Book]] = Task.FlatMap(Task@1473700246, monix.eval.Task$$$Lambda$9923/681374162@4534c6a2)
+<span class="c1">// monixTask2: monix.eval.Task[List[Book]] = Task.FlatMap(Task@1237227607, monix.eval.Task$$$Lambda$9907/697871792@4001453f)
 </span></code></pre>
 </div>
 
@@ -162,10 +162,10 @@ ga('send', 'pageview');
 //   at Library$.findBooks(&lt;console&gt;:33)
 //   at .$anonfun$sortedBooks$1(&lt;console&gt;:31)
 //   at .$anonfun$sortedBooks$1$adapted(&lt;console&gt;:30)
-//   at $$Lambda$9860/2048400312.apply(Unknown Source)
+//   at $$Lambda$9844/362355729.apply(Unknown Source)
 //   at monix.eval.instances.CatsAsyncForTask.$anonfun$async$1(CatsAsyncForTask.scala:38)
 //   at monix.eval.instances.CatsAsyncForTask.$anonfun$async$1$adapted(CatsAsyncForTask.scala:38)
-//   at monix.eval.instances.CatsAsyncForTask$$Lambda$9931/1534732480.apply(Unknown Source)
+//   at monix.eval.instances.CatsAsyncForTask$$Lambda$9915/14920074.apply(Unknown Source)
 //   at monix.eval.internal.TaskRunLoop$.executeOnFinish$1(TaskRunLoop.scala:166)
 //   at monix.eval.internal.TaskRunLoop$.monix$eval$internal$TaskRunLoop$$loop$1(TaskRunLoop.scala:243)
 //   at monix.eval.internal.TaskRunLoop$.startWithCallback(TaskRunLoop.scala:268)
@@ -195,7 +195,7 @@ ga('send', 'pageview');
 <span class="c1">// import cats.implicits._
 </span>
 <span class="k">val</span> <span class="n">fut1</span> <span class="k">=</span> <span class="n">dickensBooks</span><span class="o">.</span><span class="n">interpret</span><span class="o">[</span><span class="kt">Future</span><span class="o">]</span>
-<span class="c1">// fut1: scala.concurrent.Future[List[Book]] = Future(Failure(NoBooksFound: No books found from Dickens))
+<span class="c1">// fut1: scala.concurrent.Future[List[Book]] = Future(&lt;not completed&gt;)
 </span>
 <span class="k">val</span> <span class="n">fut2</span> <span class="k">=</span> <span class="n">otherBooks</span><span class="o">.</span><span class="n">interpret</span><span class="o">[</span><span class="kt">Future</span><span class="o">]</span>
 <span class="c1">// fut2: scala.concurrent.Future[List[Book]] = Future(&lt;not completed&gt;)
@@ -207,7 +207,7 @@ ga('send', 'pageview');
 //   at Library$.findBooks(&lt;console&gt;:33)
 //   at .$anonfun$sortedBooks$1(&lt;console&gt;:31)
 //   at .$anonfun$sortedBooks$1$adapted(&lt;console&gt;:30)
-//   at $$Lambda$9860/2048400312.apply(Unknown Source)
+//   at $$Lambda$9844/362355729.apply(Unknown Source)
 //   at freestyle.async$Implicits$$anon$3$$anon$4.run(async.scala:58)
 //   at scala.concurrent.impl.ExecutionContextImpl$AdaptedForkJoinTask.exec(ExecutionContextImpl.scala:140)
 //   at java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:289)
