@@ -23,7 +23,7 @@ class Tests extends WordSpec with Matchers {
 
   "Presentation Compiler Support" should {
 
-    "generate code that works in the presentation compiler" in {
+    "generate code that works in the presentation compiler" ignore {
       import org.ensime.pcplod._
       withMrPlod("pcplodtest.scala") { pc =>
         pc.typeAtPoint('result) shouldBe Some("Option[Int]")

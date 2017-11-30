@@ -42,12 +42,12 @@ import monix.eval.Task
 
 type ValidateInt[A] = Kleisli[Task, Int, A]
 
-def blockAndPrint(millis: Long, msg: String): Unit = { 
+def blockAndPrint(millis: Long, msg: String): Unit = {
   Thread.sleep(Math.abs(millis))
   println(msg)
 }
 
-implicit val validateIntTaskHandler: Validator.Handler[ValidateInt] = 
+implicit val validateIntTaskHandler: Validator.Handler[ValidateInt] =
   new Validator.Handler[ValidateInt] {
     def isPositive: ValidateInt[Boolean] =
       Kleisli(i => Task.eval { blockAndPrint(i * 500L, s"isPositive($i)"); i > 0 })
@@ -81,17 +81,24 @@ We can see that `isPositive` is always printed before `isEven` even though `isEv
 
 This happens because, in most `Monad` instances, the `Applicative` operations are implemented using `flatMap`, which means that the operations are sequential.
 
-Monix however, also has a nondeterministic `Monad` instance, that will execute `Task`s in parallel:
+Monix however, allows parallel execution in batches, that does deterministic (ordered) signaling of results with the help of `Task`.
+
+The following example uses `Task.gather`, which does parallel processing while preserving result ordering, but in order to ensure that parallel processing actually happens, the tasks need to be effectively asynchronous, which for simple functions need to fork threads.
 
 ```tut:book
-import Task.nondeterminism
-
 val check2 = isPositiveEven[Validator.Op].interpret[ValidateInt]
 
-Await.result(check2.run(1).runAsync, Duration.Inf)
-Await.result(check2.run(2).runAsync, Duration.Inf)
-Await.result(check2.run(-1).runAsync, Duration.Inf)
-```
+val items = 1 :: 2 :: -1 :: Nil
+
+// The list of all tasks needed for execution
+val tasks = items.map(check2.run(_))
+// Processing in parallel
+val aggregate = Task.gather(tasks).map(_.toList)
+
+// Evaluation:
+aggregate.foreach(println)
+```              
+If ordering of results does not matter, you can also use `Task.gatherUnordered` instead of gather, which might yield better results, given its non-blocking execution.
 
 ### Async
 
