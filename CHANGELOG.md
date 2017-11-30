@@ -1,5 +1,12 @@
 # Changelog
 
+## 11/30/2017 - Version 0.4.5
+
+Release changes:
+
+* Upgrades to cats 1.0.0-RC1 ([#459](https://github.com/frees-io/freestyle/pull/459))
+
+
 ## 11/22/2017 - Version 0.4.4
 
 Release changes:
