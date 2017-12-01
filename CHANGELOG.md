@@ -1,5 +1,12 @@
 # Changelog
 
+## 12/01/2017 - Version 0.4.6
+
+Release changes:
+
+* Fix microsite publication ([#467](https://github.com/frees-io/freestyle/pull/467))
+
+
 ## 11/30/2017 - Version 0.4.5
 
 Release changes:
