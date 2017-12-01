@@ -162,9 +162,6 @@ private[internal] case class ModEffect(effVal: Decl.Val) {
       })
     )
 
-  // x => q"x.OpTypes"
-  val opType: Type.Select = Type.Select(typeToObject(effVal.decltpe), Type.Name("OpTypes"))
-
   // from the reference to a type (a class), make the reference to its companion object
   def typeToObject(ty: Type): Term.Ref = ty match {
     case Type.Name(n)                 => Term.Name(n)
