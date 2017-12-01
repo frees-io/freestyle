@@ -14,7 +14,7 @@ In order to enable this algebra, you can depend on _freestyle-cache_:
 [comment]: # (Start Replace)
 
 ```scala
-libraryDependencies += "io.frees" %% "frees-cache" % "0.4.5"
+libraryDependencies += "io.frees" %% "frees-cache" % "0.4.6"
 ```
 
 [comment]: # (End Replace)

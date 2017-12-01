@@ -13,7 +13,7 @@ You can add the _frees-finch_ module as follows:
 [comment]: # (Start Replace)
 
 ```scala
-libraryDependencies += "io.frees" %% "frees-finch" % "0.4.5"
+libraryDependencies += "io.frees" %% "frees-finch" % "0.4.6"
 ```
 
 [comment]: # (End Replace)
