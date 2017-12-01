@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
- package freestyle.tagless
+package freestyle.tagless
 
 import org.scalatest.{Matchers, WordSpec}
 
-import freestyle.{free, module, tagless}
+import freestyle._
 
 import cats.{~>, Monad}
 import cats.arrow.FunctionK
@@ -95,6 +95,17 @@ class TaglessTests extends WordSpec with Matchers {
       program[ErrorOr] shouldBe Right(3)
     }
 
+    "allow for tagless modules" in {
+
+      def program[F[_]: AppTagless: Monad] =
+        for {
+          x <- AppTagless[F].tg1.x(1)
+          y <- AppTagless[F].tg2.x2(2)
+        } yield x + y
+
+      program[Option] shouldBe Some(3)
+    }
+
   }
 
 }
@@ -167,10 +178,15 @@ object modules {
 
   import algebras._
 
-  @module trait App {
+  @_root_.freestyle.module trait App {
     val f1: F1
     val tg1: TG1.StackSafe
     val tg2: TG2.StackSafe
+  }
+
+  @tagless.module trait AppTagless {
+    val tg1: TG1
+    val tg2: TG2
   }
 
 }
