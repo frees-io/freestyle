@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="815px" height="129px" viewBox="0 0 815 129" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 44.1 (41455) - http://www.bohemiancoding.com/sketch -->
+    <title>freestyle-lines-libraries</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="freestyle-ui" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="freestyle-lines-libraries">
+            <path d="M407.5,10.5 L407.5,69.5338886" id="line" stroke="#99A6B1" stroke-linecap="square" stroke-dasharray="1"></path>
+            <path d="M5.5,70.5 L5.5,126.535703" id="line" stroke="#99A6B1" stroke-linecap="square" stroke-dasharray="3,3,3"></path>
+            <polygon id="arrow" fill="#99A6B1" fill-rule="nonzero" points="5.5 129 1 123 10 123"></polygon>
+            <polygon id="arrow" fill="#99A6B1" fill-rule="nonzero" points="272.5 129 268 123 277 123"></polygon>
+            <polygon id="arrow" fill="#99A6B1" fill-rule="nonzero" points="540.5 129 536 123 545 123"></polygon>
+            <polygon id="arrow" fill="#99A6B1" fill-rule="nonzero" points="809.5 129 805 123 814 123"></polygon>
+            <path d="M272.5,70.5 L272.5,126.535703" id="line" stroke="#99A6B1" stroke-linecap="square" stroke-dasharray="3,3,3"></path>
+            <path d="M540.5,70.5 L540.5,126.535703" id="line" stroke="#99A6B1" stroke-linecap="square" stroke-dasharray="3,3,3"></path>
+            <path d="M809.5,70.5 L809.5,126.535703" id="line" stroke="#99A6B1" stroke-linecap="square" stroke-dasharray="3,3,3"></path>
+            <path d="M5,70.5 L808.583426,70.5" id="line" stroke="#99A6B1" stroke-linecap="square" stroke-dasharray="1"></path>
+            <circle id="point" fill="#99A6B1" fill-rule="nonzero" opacity="0.35" cx="407.5" cy="9.5" r="9.5"></circle>
+            <circle id="point" fill="#99A6B1" fill-rule="nonzero" cx="407.5" cy="9.5" r="4.31818182"></circle>
+            <circle id="point" fill="#99A6B1" fill-rule="nonzero" opacity="0.35" cx="272.5" cy="70.5" r="5.5"></circle>
+            <circle id="point" fill="#99A6B1" fill-rule="nonzero" cx="272.5" cy="70.5" r="2.5"></circle>
+            <circle id="point" fill="#99A6B1" fill-rule="nonzero" opacity="0.35" cx="540.5" cy="70.5" r="5.5"></circle>
+            <circle id="point" fill="#99A6B1" fill-rule="nonzero" cx="540.5" cy="70.5" r="2.5"></circle>
+            <circle id="point" fill="#99A6B1" fill-rule="nonzero" opacity="0.35" cx="809.5" cy="70.5" r="5.5"></circle>
+            <circle id="point" fill="#99A6B1" fill-rule="nonzero" cx="809.5" cy="70.5" r="2.5"></circle>
+            <circle id="point" fill="#99A6B1" fill-rule="nonzero" opacity="0.35" cx="5.5" cy="70.5" r="5.5"></circle>
+            <circle id="point" fill="#99A6B1" fill-rule="nonzero" cx="5.5" cy="70.5" r="2.5"></circle>
+        </g>
+    </g>
+</svg>
