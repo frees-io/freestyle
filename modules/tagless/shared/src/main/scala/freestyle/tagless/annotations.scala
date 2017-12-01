@@ -17,7 +17,7 @@
 package freestyle
 package tagless
 
-import freestyle.tagless.internal.taglessImpl
+import freestyle.tagless.internal._
 
 import scala.annotation.{StaticAnnotation, compileTimeOnly}
 
@@ -26,4 +26,11 @@ class tagless extends StaticAnnotation {
   import scala.meta._
 
   inline def apply(defn: Any): Any = meta { taglessImpl.tagless(defn) }
+}
+
+@compileTimeOnly("enable macro paradise to expand @module macro annotations")
+class module extends StaticAnnotation {
+  import scala.meta._
+
+  inline def apply(defn: Any): Any = meta { moduleImpl.module(defn) }
 }
