@@ -18,7 +18,7 @@ package freestyle.tagless
 
 import org.scalatest.{Matchers, WordSpec}
 
-import freestyle._
+import freestyle.free._
 
 import cats.{~>, Monad}
 import cats.arrow.FunctionK
@@ -58,8 +58,8 @@ class TaglessTests extends WordSpec with Matchers {
     }
 
     "combine with FreeS monadic comprehensions" in {
-      import freestyle._
-      import freestyle.implicits._
+      import freestyle.free._
+      import freestyle.free.implicits._
 
       def program[F[_] : F1: TG1.StackSafe : TG2.StackSafe]: FreeS[F, Int] = {
         val tg1 = TG1.StackSafe[F]
@@ -178,13 +178,13 @@ object modules {
 
   import algebras._
 
-  @_root_.freestyle.module trait App {
+  @_root_.freestyle.free.module trait App {
     val f1: F1
     val tg1: TG1.StackSafe
     val tg2: TG2.StackSafe
   }
 
-  @tagless.module trait AppTagless {
+  @_root_.freestyle.tagless.module trait AppTagless {
     val tg1: TG1
     val tg2: TG2
   }
