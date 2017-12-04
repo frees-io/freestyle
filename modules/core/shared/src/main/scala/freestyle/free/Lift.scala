@@ -15,6 +15,7 @@
  */
 
 package freestyle
+package free
 
 import annotation.implicitNotFound
 

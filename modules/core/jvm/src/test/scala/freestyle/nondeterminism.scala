@@ -15,6 +15,7 @@
  */
 
 package freestyle
+package free
 
 import cats.Eq
 import cats.instances.int._

@@ -14,9 +14,10 @@
  * limitations under the License.
  */
 
-package freestyle.internal
+package freestyle
+package free.internal
 
-import freestyle.FreeS
+import freestyle.free.FreeS
 import scala.collection.immutable.Seq
 import scala.meta._
 import scala.meta.Defn.{Class, Object, Trait}

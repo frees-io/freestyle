@@ -15,9 +15,10 @@
  */
 
 package freestyle
+package free
 
 import scala.annotation.{compileTimeOnly, StaticAnnotation}
-import freestyle.internal.{ freeImpl, moduleImpl }
+import freestyle.free.internal.{ freeImpl, moduleImpl }
 
 @compileTimeOnly("enable macro paradise to expand @free macro annotations")
 class free extends StaticAnnotation {

@@ -15,6 +15,7 @@
  */
 
 package freestyle
+package free
 
 import cats.arrow.FunctionK
 import cats.{~>, InjectK}

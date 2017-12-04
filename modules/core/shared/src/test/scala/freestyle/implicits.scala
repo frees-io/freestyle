@@ -15,6 +15,7 @@
  */
 
 package freestyle
+package free
 
 import cats.implicits._
 import cats.Monad

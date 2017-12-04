@@ -14,11 +14,13 @@
  * limitations under the License.
  */
 
+package freestyle
+
 import cats.free.{Free, FreeApplicative}
 import cats.{~>, Applicative, Monad}
 import annotation.implicitNotFound
 
-package object freestyle {
+package object free {
 
   /**
    * A sequential series of parallel program fragments.

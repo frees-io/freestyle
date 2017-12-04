@@ -14,9 +14,10 @@
  * limitations under the License.
  */
 
-package freestyle.internal
+package freestyle
+package free.internal
 
-import freestyle.FreeS
+import freestyle.free.FreeS
 
 import scala.collection.immutable.Seq
 import scala.meta._
@@ -90,10 +91,10 @@ private[internal] case class Algebra(
   def enrich: Algebra = {
     val pat = tparams.toList match {
       case List(f @ tparam"..$mods $name[$tparam]") =>
-        q"trait Foo[$f] extends _root_.freestyle.internal.EffectLike[${toType(f)}]"
+        q"trait Foo[$f] extends _root_.freestyle.free.internal.EffectLike[${toType(f)}]"
       case _ =>
         val ff: Type.Name = Type.fresh("FF$")
-        q"trait Foo[${tyParamK(ff)}] extends _root_.freestyle.internal.EffectLike[$ff]"
+        q"trait Foo[${tyParamK(ff)}] extends _root_.freestyle.free.internal.EffectLike[$ff]"
     }
     Algebra(mods, name, pat.tparams, ctor, templ.copy(parents = pat.templ.parents))
   }

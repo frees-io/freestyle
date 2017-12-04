@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package freestyle
+package freestyle\npackage free
 
 import cats.Id
 import cats.instances.option._

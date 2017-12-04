@@ -14,7 +14,8 @@
  * limitations under the License.
  */
 
-package freestyle.internal
+package freestyle
+package free.internal
 
 import scala.collection.immutable.Seq
 import scala.meta._

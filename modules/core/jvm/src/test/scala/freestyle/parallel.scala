@@ -15,6 +15,7 @@
  */
 
 package freestyle
+package free
 
 import cats.data.Kleisli
 import cats.instances.future._

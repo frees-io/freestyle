@@ -15,6 +15,7 @@
  */
 
 package freestyle
+package free
 
 import cats.{ Applicative, Monad }
 import cats.free.{Free, FreeApplicative }
