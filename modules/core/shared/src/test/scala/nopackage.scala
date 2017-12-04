@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-// The purpose of this test is to see if freestyle still compiles classes in _root_ package. 
+// The purpose of this test is to see if freestyle still compiles classes in _root_ package.
 
 import freestyle.free._
 

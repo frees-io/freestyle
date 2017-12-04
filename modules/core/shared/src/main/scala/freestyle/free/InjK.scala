@@ -22,12 +22,12 @@ import cats.{~>, InjectK}
 import iota._
 
 /** A generalized injection typeclass to abstract over support for
-  * various coproduct implementations
-  */
+ * various coproduct implementations
+ */
 sealed trait InjK[F[_], G[_]] {
   def inj: FunctionK[F, G]
   def prj: FunctionK[G, λ[α => Option[F[α]]]]
-  final def apply[A](fa: F[A]): G[A] = inj(fa)
+  final def apply[A](fa: F[A]): G[A]           = inj(fa)
   final def unapply[A](ga: G[A]): Option[F[A]] = prj(ga)
 }
 
@@ -42,14 +42,14 @@ private[freestyle] sealed trait InjKInstances0 extends InjKInstances1 {
 
 private[freestyle] sealed trait InjKInstances1 {
   implicit def injKFromCatsInjectK[F[_], G[_]](
-    implicit ev: InjectK[F, G]
+      implicit ev: InjectK[F, G]
   ): InjK[F, G] = new InjK[F, G] {
     def inj = λ[F ~> G](ev.inj(_))
     def prj = λ[G ~> λ[α => Option[F[α]]]](ev.prj(_))
   }
 
   implicit def injKfromIotaCopKInjectL[F[_], L <: TListK](
-    implicit ev: CopK.InjectL[F, L]
+      implicit ev: CopK.InjectL[F, L]
   ): InjK[F, CopK[L, ?]] = new InjK[F, CopK[L, ?]] {
     def inj = λ[F ~> CopK[L, ?]](ev.inj(_))
     def prj = λ[CopK[L, ?] ~> λ[α => Option[F[α]]]](ev.proj(_))

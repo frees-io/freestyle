@@ -30,8 +30,8 @@ class ParallelTests extends WordSpec with Matchers {
   "Applicative Parallel Support" should {
 
     "allow non deterministic execution when interpreting to scala.concurrent.Future" in {
-      import freestyle.nondeterminism._
-      import freestyle.implicits._
+      import freestyle.free.nondeterminism._
+      import freestyle.free.implicits._
 
       import scala.concurrent.ExecutionContext.Implicits.global
 
@@ -50,8 +50,8 @@ class ParallelTests extends WordSpec with Matchers {
     }
 
     "allow deterministic programs with FreeS.Par nodes run deterministically" in {
-      import freestyle.nondeterminism._
-      import freestyle.implicits._
+      import freestyle.free.nondeterminism._
+      import freestyle.free.implicits._
 
       val test = new NonDeterminismTestShared
       import test._
@@ -62,7 +62,6 @@ class ParallelTests extends WordSpec with Matchers {
           override def y: Option[Int] = Option(blocker(2, 0L))
           override def z: Option[Int] = Option(blocker(3, 2000L))
         }
-
       program.interpret[Option] shouldBe Option(List(3, 1, 2, 3))
       buf.toArray shouldBe Array(3, 1, 2, 3)
     }
@@ -75,8 +74,8 @@ class ParallelTests extends WordSpec with Matchers {
       import cats.implicits._
       import scala.concurrent.ExecutionContext.Implicits.global
 
-      import freestyle.nondeterminism._
-      import freestyle.implicits._
+      import freestyle.free.nondeterminism._
+      import freestyle.free.implicits._
 
       type ParValidator[A] = Kleisli[Future, String, A]
 
@@ -110,8 +109,8 @@ class ParallelTests extends WordSpec with Matchers {
 }
 
 class NonDeterminismTestShared {
-  import freestyle.nondeterminism._
-  import freestyle.implicits._
+  import freestyle.free.nondeterminism._
+  import freestyle.free.implicits._
 
   val buf = scala.collection.mutable.ArrayBuffer.empty[Int]
 

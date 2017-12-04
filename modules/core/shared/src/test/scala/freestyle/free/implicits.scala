@@ -25,7 +25,7 @@ class implicitsTests extends WordSpec with Matchers {
 
   "Implicits" should {
 
-    import freestyle.implicits._
+    import freestyle.free.implicits._
 
     "provide a Monad for FreeS" in {
       type G[A] = FreeS[SCtors1.Op, A]
@@ -34,7 +34,7 @@ class implicitsTests extends WordSpec with Matchers {
 
     "enable traverse" in {
       implicit val optionHandler = interps.optionHandler1
-      val program = List(1, 2).traverse(SCtors1[SCtors1.Op].x)
+      val program                = List(1, 2).traverse(SCtors1[SCtors1.Op].x)
       program.interpret[Option] shouldBe (Some(List(1, 2)))
     }
 
@@ -47,9 +47,7 @@ class implicitsTests extends WordSpec with Matchers {
     }
 
     "provide a custom implicit not found message for a missing Capture instance" in {
-      shapeless.test.illTyped(
-        """Capture[Option]""",
-        ".*No Capture instance found for Option.*")
+      shapeless.test.illTyped("""Capture[Option]""", ".*No Capture instance found for Option.*")
     }
 
     "provide a custom implicit not found message for a missing implicit Handler" in {
@@ -64,5 +62,5 @@ class implicitsTests extends WordSpec with Matchers {
         ".*No FreeSLift instance found for.*")
     }
 
-   }
+  }
 }

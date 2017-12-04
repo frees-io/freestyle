@@ -146,7 +146,7 @@ private[internal] case class Algebra(
     val highBoundTypeDecl: Seq[Decl.Type] = requestParams.flatten
 
     q"""
-      trait Handler[${tyParamK(mm)}, ..$cleanedTParams] extends _root_.freestyle.FSHandler[$OP, $mm] {
+      trait Handler[${tyParamK(mm)}, ..$cleanedTParams] extends _root_.freestyle.free.FSHandler[$OP, $mm] {
         ..${requests.map(_.handlerDef(mm))}
         ..$highBoundTypeDecl
         $applyDef
@@ -166,15 +166,15 @@ private[internal] case class Algebra(
 
       val sup: Term.ApplyType = Term.ApplyType(Ctor.Ref.Name(name.value), injTArgs)
       q"""
-          class To[..$injTParams](implicit $ii: _root_.freestyle.InjK[$OP, $gg]) extends $sup {
-            private[this] val $injPat = _root_.freestyle.FreeS.inject[$OP, $gg]($ii)
+          class To[..$injTParams](implicit $ii: _root_.freestyle.free.InjK[$OP, $gg]) extends $sup {
+            private[this] val $injPat = _root_.freestyle.free.FreeS.inject[$OP, $gg]($ii)
             ..${requests.map(_.toDef(inj))}
           }
         """
     }
 
     val toDef: Defn.Def =
-      q"implicit def to[..$injTParams](implicit $ii: _root_.freestyle.InjK[$OP, $gg]): To[..$injTArgs] = new To[..$injTArgs]"
+      q"implicit def to[..$injTParams](implicit $ii: _root_.freestyle.free.InjK[$OP, $gg]): To[..$injTArgs] = new To[..$injTArgs]"
 
     val applyDef: Defn.Def = {
       val ev = Term.fresh("ev$")
@@ -192,10 +192,10 @@ private[internal] case class Algebra(
       val index: Decl.Val = q"val ${toVar(indexName)} : _root_.scala.Int"
       q"sealed trait $OP[_] extends _root_.scala.Product with _root_.java.io.Serializable { $index }"
     }
-    val opTypes                    = q"type OpTypes = _root_.iota.TConsK[$OP, _root_.iota.TNilK]"
-    val adt: Seq[Stat]             = opTrait +: requests.map(_.reqClass(OP, cleanedTParams, indexName))
+    val opTypes                                      = q"type OpTypes = _root_.iota.TConsK[$OP, _root_.iota.TNilK]"
+    val adt: Seq[Stat]                               = opTrait +: requests.map(_.reqClass(OP, cleanedTParams, indexName))
     val (toClass, toDef, applyDef, applyDefConcrete) = lifterStats
-    val prot                       = q"""@_root_.java.lang.SuppressWarnings(_root_.scala.Array(
+    val prot                                         = q"""@_root_.java.lang.SuppressWarnings(_root_.scala.Array(
                                            "org.wartremover.warts.Any",
                                            "org.wartremover.warts.AsInstanceOf",
                                            "org.wartremover.warts.Throw"

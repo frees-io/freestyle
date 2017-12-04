@@ -25,19 +25,17 @@ import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Prop._
 
 object InjKChecks {
-  def roundTripInj[F[_], G[_], A](implicit
-    arbFA: Arbitrary[F[A]],
-    injK: InjK[F, G]
-  ): Prop =
-    forAll((fa: F[A]) =>
-      injK.prj(injK.inj(fa)) ?= Some(fa))
+  def roundTripInj[F[_], G[_], A](
+      implicit
+      arbFA: Arbitrary[F[A]],
+      injK: InjK[F, G]): Prop =
+    forAll((fa: F[A]) => injK.prj(injK.inj(fa)) ?= Some(fa))
 
-  def roundTripPrj[F[_], G[_], A](implicit
-    arbGA: Arbitrary[G[A]],
-    injK: InjK[F, G]
-  ): Prop =
-    forAll((ga: G[A]) =>
-      injK.prj(ga).map(fa => injK.inj(fa)) ?= Some(ga))
+  def roundTripPrj[F[_], G[_], A](
+      implicit
+      arbGA: Arbitrary[G[A]],
+      injK: InjK[F, G]): Prop =
+    forAll((ga: G[A]) => injK.prj(ga).map(fa => injK.inj(fa)) ?= Some(ga))
 }
 
 class InjKTests extends Properties("InjK") {
@@ -53,44 +51,42 @@ class InjKTests extends Properties("InjK") {
 
   object arbCoproduct {
 
-    implicit def left[F[_], G[_], A](implicit
-      arbFA: Arbitrary[F[A]]
-    ): Arbitrary[EitherK[F, G, A]] =
+    implicit def left[F[_], G[_], A](
+        implicit
+        arbFA: Arbitrary[F[A]]): Arbitrary[EitherK[F, G, A]] =
       Arbitrary(arbFA.arbitrary.map(v => EitherK.left(v)))
 
-    implicit def right[F[_], G[_], A](implicit
-      arbGA: Arbitrary[G[A]]
-    ): Arbitrary[EitherK[F, G, A]] =
+    implicit def right[F[_], G[_], A](
+        implicit
+        arbGA: Arbitrary[G[A]]): Arbitrary[EitherK[F, G, A]] =
       Arbitrary(arbGA.arbitrary.map(v => EitherK.right(v)))
 
-    implicit def both[F[_], G[_], A](implicit
-      arbFA: Arbitrary[F[A]],
-      arbGA: Arbitrary[G[A]]
-    ): Arbitrary[EitherK[F, G, A]] =
+    implicit def both[F[_], G[_], A](
+        implicit
+        arbFA: Arbitrary[F[A]],
+        arbGA: Arbitrary[G[A]]): Arbitrary[EitherK[F, G, A]] =
       Arbitrary(arbitrary[Boolean].flatMap(toggle =>
-        if (toggle) left[F, G, A].arbitrary else right[F, G, A].arbitrary
-      ))
+        if (toggle) left[F, G, A].arbitrary else right[F, G, A].arbitrary))
   }
 
   object arbCopK {
 
-    implicit def left[F[_], G[_], A](implicit
-      arbFA: Arbitrary[F[A]]
-    ): Arbitrary[CopK[F ::: G ::: TNilK, A]] =
+    implicit def left[F[_], G[_], A](
+        implicit
+        arbFA: Arbitrary[F[A]]): Arbitrary[CopK[F ::: G ::: TNilK, A]] =
       Arbitrary(arbFA.arbitrary.map(v => CopK.unsafeApply(0, v)))
 
-    implicit def right[F[_], G[_], A](implicit
-      arbGA: Arbitrary[G[A]]
-    ): Arbitrary[CopK[F ::: G ::: TNilK, A]] =
+    implicit def right[F[_], G[_], A](
+        implicit
+        arbGA: Arbitrary[G[A]]): Arbitrary[CopK[F ::: G ::: TNilK, A]] =
       Arbitrary(arbGA.arbitrary.map(v => CopK.unsafeApply(1, v)))
 
-    implicit def both[F[_], G[_], A](implicit
-      arbFA: Arbitrary[F[A]],
-      arbGA: Arbitrary[G[A]]
-    ): Arbitrary[CopK[F ::: G ::: TNilK, A]] =
+    implicit def both[F[_], G[_], A](
+        implicit
+        arbFA: Arbitrary[F[A]],
+        arbGA: Arbitrary[G[A]]): Arbitrary[CopK[F ::: G ::: TNilK, A]] =
       Arbitrary(arbitrary[Boolean].flatMap(toggle =>
-        if (toggle) left[F, G, A].arbitrary else right[F, G, A].arbitrary
-      ))
+        if (toggle) left[F, G, A].arbitrary else right[F, G, A].arbitrary))
   }
 
   property("roundtrip inj [EitherK]") = {

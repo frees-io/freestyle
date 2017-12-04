@@ -99,7 +99,6 @@ trait StateProp {
   val s2: S2
 }
 
-
 object comp {
 
   @module
@@ -112,7 +111,6 @@ object comp {
   }
 
 }
-
 
 object interps {
 

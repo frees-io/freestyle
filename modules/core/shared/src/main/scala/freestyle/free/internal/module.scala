@@ -63,13 +63,14 @@ private[internal] case class FreeSModule(
   import ScalametaUtil._
 
   val cleanedTParams: Seq[Type.Param] = tparams.toList match {
-    case List(f@tparam"..$mods $name[$tparam]") => Nil
-    case _ => tparams
+    case List(f @ tparam"..$mods $name[$tparam]") => Nil
+    case _                                        => tparams
   }
 
   val effects: Seq[ModEffect] =
     templ.stats.getOrElse(Nil).collect {
-      case vdec @ Decl.Val(_, Seq(Pat.Var.Term(_)), Type.Apply(tname @ _, Seq(Type.Name(_)))) => ModEffect(vdec)
+      case vdec @ Decl.Val(_, Seq(Pat.Var.Term(_)), Type.Apply(tname @ _, Seq(Type.Name(_)))) =>
+        ModEffect(vdec)
       case vdec @ Decl.Val(_, Seq(Pat.Var.Term(_)), _) => ModEffect(vdec)
     }
 
@@ -84,12 +85,14 @@ private[internal] case class FreeSModule(
   /* The effects are Val Declarations (no value definition) */
   def makeClass: Defn = {
 
-    val (ff, pat)           = tparams.toList match {
+    val (ff, pat) = tparams.toList match {
       case List(f @ tparam"..$mods $name[$tparam]") =>
-        (Type.Name(f.name.value), q"trait Foo[$f] extends _root_.freestyle.internal.EffectLike[${toType(f)}]")
+        (
+          Type.Name(f.name.value),
+          q"trait Foo[$f] extends _root_.freestyle.free.internal.EffectLike[${toType(f)}]")
       case _ =>
         val ff: Type.Name = Type.fresh("FF$")
-        (ff, q"trait Foo[${tyParamK(ff)}] extends _root_.freestyle.internal.EffectLike[$ff]")
+        (ff, q"trait Foo[${tyParamK(ff)}] extends _root_.freestyle.free.internal.EffectLike[$ff]")
     }
 
     val nstats = templ.stats.map(_.map(stat => enrichStat(ff, stat)))
@@ -162,7 +165,7 @@ private[internal] case class ModEffect(effVal: Decl.Val) {
       name = effVal.pats.head.name,
       decltpe = Some(effVal.decltpe match {
         case Type.Apply(t @ _, _) => Type.Apply(t, Seq(gg))
-        case _ => Type.Apply(effVal.decltpe, Seq(gg))
+        case _                    => Type.Apply(effVal.decltpe, Seq(gg))
       })
     )
 
@@ -173,7 +176,7 @@ private[internal] case class ModEffect(effVal: Decl.Val) {
       name = effVal.pats.head.name,
       decltpe = Some(effVal.decltpe match {
         case Type.Apply(t @ _, _) => Type.Apply(t, Seq(gg))
-        case _ => Type.Apply(effVal.decltpe, Seq(gg))
+        case _                    => Type.Apply(effVal.decltpe, Seq(gg))
       })
     )
 

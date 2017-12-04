@@ -14,13 +14,14 @@
  * limitations under the License.
  */
 
-package freestyle\npackage free
+package freestyle
+package free
 
 import cats.Id
 import cats.instances.option._
 import cats.instances.list._
 import cats.syntax.apply._
-import freestyle.implicits._
+import freestyle.free.implicits._
 import org.scalatest.{Matchers, WordSpec}
 
 class freeTests extends WordSpec with Matchers {
@@ -192,7 +193,6 @@ class freeTests extends WordSpec with Matchers {
       }""" should compile
     }
 
-
   }
 
   "the @free macro annotation works together with @debug annotation" when {
@@ -220,10 +220,10 @@ class freeTests extends WordSpec with Matchers {
       }
       val v = Combine[Combine.Op]
       implicit val interpreter: Combine.Handler[Id] =
-        new Combine.Handler[Id]{
+        new Combine.Handler[Id] {
           override def x(a: Int): Int = 4
         }
-      v.y(5).interpret[Id] shouldBe(true)
+      v.y(5).interpret[Id] shouldBe (true)
     }
 
     "let implicits args reach handlers as explicit args" in {
@@ -263,7 +263,7 @@ class freeTests extends WordSpec with Matchers {
         def z: String
       }
       @free trait AlgWithImplicits {
-        def x[A: X : Y](a: A): FS[(X[A], Y[A])]
+        def x[A: X: Y](a: A): FS[(X[A], Y[A])]
       }
       implicit def xa[A]: X[A] = new X[A] {
         def z = "xa"
@@ -286,7 +286,7 @@ class freeTests extends WordSpec with Matchers {
       @free trait AlgWithImplicits {
         def x[A: X](a: A)(implicit s: S): FS[String]
       }
-      implicit val s: S = "s"
+      implicit val s: S        = "s"
       implicit def xa[A]: X[A] = new X[A] {}
       implicit val h: AlgWithImplicits.Handler[Id] = new AlgWithImplicits.Handler[Id] {
         def x[A](a: A, s: S, ev: X[A]): Id[String] = ev.y + s
@@ -309,7 +309,7 @@ class freeTests extends WordSpec with Matchers {
 
     "reuse program interpretation in diferent runtimes" in {
       implicit val optionHandler: FSHandler[SCtors1.Op, Option] = interps.optionHandler1
-      implicit val listHandler:   FSHandler[SCtors1.Op, List]   = interps.listHandler1
+      implicit val listHandler: FSHandler[SCtors1.Op, List]     = interps.listHandler1
 
       val s = SCtors1[SCtors1.Op]
 
@@ -379,7 +379,7 @@ class freeTests extends WordSpec with Matchers {
       v.z shouldBe 6
 
       implicit val interpreter: WithExtra.Handler[Id] =
-        new WithExtra.Handler[Id]{
+        new WithExtra.Handler[Id] {
           override def x(a: Int): String = a.toString
         }
       v.x(v.z).interpret[Id] shouldBe "6"
@@ -392,20 +392,20 @@ class freeTests extends WordSpec with Matchers {
       }
       val v = Combine[Combine.Op]
       implicit val interpreter: Combine.Handler[Id] =
-        new Combine.Handler[Id]{
+        new Combine.Handler[Id] {
           override def x(a: Int): Int = 4
         }
-      v.y(5).interpret[Id] shouldBe(true)
+      v.y(5).interpret[Id] shouldBe (true)
     }
 
     "generate interpreters or Handlers when mix higher bound params and implicits" in {
       trait X[A]
       @free trait Algebra {
-        def x[A <: String : X](a: A): FS[Int]
+        def x[A <: String: X](a: A): FS[Int]
       }
       val v = Algebra[Algebra.Op]
       implicit val interpreter: Algebra.Handler[Id] =
-        new Algebra.Handler[Id]{
+        new Algebra.Handler[Id] {
           override def x[A <: String](a: A, x: X[A]): Int = 4
         }
       implicit def x[A]: X[A] = new X[A] {}

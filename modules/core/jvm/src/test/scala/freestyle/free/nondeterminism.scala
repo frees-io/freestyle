@@ -31,7 +31,7 @@ import scala.concurrent.{Await, Future}
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.duration._
 
-import freestyle.nondeterminism._
+import freestyle.free.nondeterminism._
 
 class NonDeterminismTests extends FunSuite with Discipline with Matchers {
 

@@ -63,7 +63,7 @@ package object free {
       Free.liftF(freeap)
 
     def inject[F[_], G[_]](implicit I: InjK[F, G]): F ~> FreeS.Par[G, ?] =
-      λ[F ~> FreeS.Par[G, ?]](fa => FreeApplicative.lift(I.inj(fa) ) )
+      λ[F ~> FreeS.Par[G, ?]](fa => FreeApplicative.lift(I.inj(fa)))
 
     /**
      * Lift a pure `A` value `FreeS[F, A]`.
@@ -116,7 +116,7 @@ package object free {
      */
     def freeS: FreeS[F, A] = FreeS.liftPar(fa)
 
-    def interpret[G[_]: Applicative](implicit handler: FSHandler[F,G]): G[A] =
+    def interpret[G[_]: Applicative](implicit handler: FSHandler[F, G]): G[A] =
       fa.foldMap(handler)
   }
 

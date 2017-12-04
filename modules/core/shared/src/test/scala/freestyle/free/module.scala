@@ -25,7 +25,7 @@ class moduleTests extends WordSpec with Matchers {
 
   "the @module annotation" should {
 
-    import freestyle.implicits._
+    import freestyle.free.implicits._
     import interps._
 
     "be rejected if applied to a non-abstract class" in {
@@ -101,7 +101,7 @@ class moduleTests extends WordSpec with Matchers {
     }
 
     "[simple] find a FunctionK[Module.Op, ?] providing there is existing ones for it's smart constructors" in {
-      import freestyle.implicits._
+      import freestyle.free.implicits._
       import interps.{optionHandler1, optionHandler2}
       "implicitly[FunctionK[M1.Op, Option]]" should compile
       "implicitly[FSHandler[M1.Op, Option]]" should compile
