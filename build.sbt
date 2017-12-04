@@ -20,20 +20,13 @@ lazy val core = module("core")
       %("iota-core", "0.3.3"),
       %("simulacrum"),
       %("shapeless") % "test",
-      %("cats-laws") % "test"
+      %("cats-laws") % "test",
+      %%("mainecoon-core")
     ): _*
   )
 
 lazy val coreJVM = core.jvm
 lazy val coreJS  = core.js
-
-lazy val tagless = module("tagless")
-  .dependsOn(core)
-  .jsSettings(sharedJsSettings: _*)
-  .crossDepSettings(commonDeps ++ Seq(%%("mainecoon-core")): _*)
-
-lazy val taglessJVM = tagless.jvm
-lazy val taglessJS  = tagless.js
 
 lazy val tests = jvmModule("tests")
   .dependsOn(coreJVM % "compile->compile;test->test")
@@ -320,7 +313,6 @@ lazy val slickExample = jvmModule("slick-example", subFolder = Some("examples"))
 
 lazy val jvmModules: Seq[ProjectReference] = Seq(
   coreJVM,
-  taglessJVM,
   effectsJVM,
   asyncJVM,
   asyncCatsEffectJVM,
@@ -349,7 +341,6 @@ lazy val jvmModules: Seq[ProjectReference] = Seq(
 
 lazy val jsModules: Seq[ProjectReference] = Seq(
   coreJS,
-  taglessJS,
   effectsJS,
   asyncJS,
   asyncCatsEffectJS,

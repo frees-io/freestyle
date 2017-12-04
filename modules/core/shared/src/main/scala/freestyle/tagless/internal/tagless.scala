@@ -19,7 +19,7 @@ package freestyle.tagless.internal
 import scala.collection.immutable.Seq
 import scala.meta._
 import scala.meta.Defn.{Class, Object, Trait}
-import freestyle.internal.ScalametaUtil._
+import freestyle.free.internal.ScalametaUtil._
 
 trait TaglessEffectLike[F[_]] {
   final type FS[A] = F[A]
@@ -110,7 +110,7 @@ case class Algebra(
     """
 
     val stackSafeT: Trait = q"""
-      @_root_.freestyle.free 
+      @_root_.freestyle.free.free
       trait StackSafe {
         ..${requests.map(_.freeDef)}
       }

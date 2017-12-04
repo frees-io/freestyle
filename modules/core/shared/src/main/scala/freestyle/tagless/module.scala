@@ -16,7 +16,7 @@
 
 package freestyle.tagless.internal
 
-import freestyle.internal._
+import freestyle.free.internal._
 import scala.collection.immutable.Seq
 import scala.meta._
 import scala.meta.Defn.{Class, Object, Trait}
