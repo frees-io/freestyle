@@ -17,6 +17,7 @@
 package freestyle
 package twitter
 
+import freestyle.free._
 import com.twitter.util._
 import io.catbird.util._
 

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package freestyle
+package freestyle.free
 
 import org.scalatest._
 import _root_.fs2._
@@ -23,9 +23,9 @@ import cats.Applicative
 
 import fs2._
 
-import freestyle.fs2._
-import freestyle.implicits._
-import freestyle.fs2.implicits._
+import freestyle.free.fs2._
+import freestyle.free.implicits._
+import freestyle.free.fs2.implicits._
 import cats.Monoid
 import cats.instances.future._
 import scala.concurrent._

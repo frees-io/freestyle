@@ -25,7 +25,8 @@ import io.finch.syntax.Mapper
 import shapeless.HNil
 import shapeless.ops.function.FnToProduct
 
-import freestyle.implicits._
+import freestyle.free._
+import freestyle.free.implicits._
 
 object finch extends FinchMapperFrees
 

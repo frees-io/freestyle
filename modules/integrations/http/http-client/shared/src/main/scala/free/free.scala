@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package freestyle
+package freestyle.free
 package http
 
 import _root_.hammock._
@@ -25,8 +25,8 @@ import cats.effect.Sync
 import cats.free.Free
 
 object client {
-  import freestyle._
-  import freestyle.implicits._
+  import freestyle.free._
+  import freestyle.free.implicits._
 
   @free sealed trait HammockM {
     def options(uri: Uri, headers: Map[String, String]): FS[HttpResponse]

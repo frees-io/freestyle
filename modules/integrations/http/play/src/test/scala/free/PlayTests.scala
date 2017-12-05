@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package freestyle.http
+package freestyle.free.http
 
 import org.scalatest.{Matchers, WordSpec}
 import javax.inject.Inject
 import scala.concurrent.ExecutionContext
 import cats.Monad
-import freestyle._
-import freestyle.implicits._
+import freestyle.free._
+import freestyle.free.implicits._
 import freestyle.http.play.implicits._
 import _root_.play.api.mvc.{
   Action,

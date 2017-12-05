@@ -17,14 +17,14 @@
 package freestyle
 package http
 
-import freestyle.{FreeS}
+import freestyle.free.FreeS
 import _root_.akka.http.scaladsl.marshalling.ToEntityMarshaller
 import cats.{~>, Monad}
 
 package object akka {
 
-  import freestyle._
-  import freestyle.implicits._
+  import freestyle.free._
+  import freestyle.free.implicits._
 
   implicit def seqToEntityMarshaller[F[_], G[_], A](
       implicit NT: F ~> G,

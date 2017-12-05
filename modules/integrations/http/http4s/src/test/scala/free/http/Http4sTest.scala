@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package freestyle.http
+package freestyle.free.http
 
 import org.scalatest.{AsyncWordSpec, Matchers}
 
@@ -23,8 +23,8 @@ import org.http4s._
 import org.http4s.dsl.io._
 import org.http4s.implicits._
 
-import freestyle._
-import freestyle.implicits._
+import freestyle.free._
+import freestyle.free.implicits._
 import freestyle.http.http4s._
 
 class Http4sTests extends AsyncWordSpec with Matchers {

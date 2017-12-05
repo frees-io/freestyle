@@ -14,16 +14,16 @@
  * limitations under the License.
  */
 
-package freestyle
+package freestyle.free
 
 import _root_.slick.dbio.DBIO
 import _root_.slick.jdbc.H2Profile.api._
 
 import org.scalatest.{AsyncWordSpec, Matchers}
 
-import freestyle.implicits._
-import freestyle.slick._
-import freestyle.slick.implicits._
+import freestyle.free.implicits._
+import freestyle.free.slick._
+import freestyle.free.slick.implicits._
 import cats.instances.future._
 
 import scala.concurrent.Future

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package freestyle
+package freestyle.free
 
 import cats.Monad
 import _root_.doobie.{ConnectionIO, Transactor}

@@ -17,7 +17,7 @@
 package freestyle.http
 
 import cats.instances.future._
-import freestyle._
+import freestyle.free._
 import scala.concurrent.{ExecutionContext, Future}
 
 package play {

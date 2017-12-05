@@ -17,6 +17,7 @@
 package freestyle
 package http
 
+import freestyle.free._
 import cats.{Applicative, Monad}
 import org.http4s.EntityEncoder
 

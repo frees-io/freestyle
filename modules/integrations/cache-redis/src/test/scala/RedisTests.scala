@@ -17,8 +17,8 @@
 package freestyle.cache.redis
 
 import cats.{~>, Applicative}
-import freestyle._
-import freestyle.implicits._
+import freestyle.free._
+import freestyle.free.implicits._
 import freestyle.cache.redis.rediscala._
 import org.scalatest._
 import scala.concurrent.{ExecutionContext, Future}
@@ -28,7 +28,7 @@ class RedisTests extends AsyncWordSpec with Matchers with RedisTestContext {
 
   implicit override def executionContext = ExecutionContext.Implicits.global
 
-  private[this] val provider = freestyle.cache.apply[String, Int]
+  private[this] val provider = freestyle.free.cache.apply[String, Int]
 
   import provider.CacheM
   import provider.implicits._

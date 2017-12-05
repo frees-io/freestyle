@@ -16,6 +16,7 @@
 
 package freestyle
 
+import freestyle.free._
 import monix.eval.Task
 
 object monixCapture {

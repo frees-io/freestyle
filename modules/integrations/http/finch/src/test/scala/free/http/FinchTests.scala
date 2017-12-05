@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package freestyle.http
+package freestyle.free.http
 
 import org.scalatest.{AsyncWordSpec, Matchers}
 
@@ -24,8 +24,8 @@ import io.catbird.util._
 import io.finch.{stringToPath => _, _}
 import shapeless.::
 
-import freestyle._
-import freestyle.implicits._
+import freestyle.free._
+import freestyle.free.implicits._
 import freestyle.http.finch._
 
 class FinchTests extends AsyncWordSpec with Matchers {

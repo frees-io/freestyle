@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package freestyle.http.akka
+package freestyle.free.http.akka
 
 import _root_.akka.http.scaladsl.marshalling.{Marshaller, ToEntityMarshaller}
 import _root_.akka.http.scaladsl.model.StatusCodes.OK
@@ -23,8 +23,9 @@ import _root_.akka.http.scaladsl.server.Route
 import _root_.akka.http.scaladsl.server.PathMatchers.IntNumber
 import _root_.akka.http.scaladsl.testkit.ScalatestRouteTest
 import cats.Id
-import freestyle._
-import freestyle.implicits._
+import freestyle.http.akka._
+import freestyle.free._
+import freestyle.free.implicits._
 import org.scalatest.{Matchers, WordSpec}
 
 class AkkaHttpTests extends WordSpec with Matchers with ScalatestRouteTest {

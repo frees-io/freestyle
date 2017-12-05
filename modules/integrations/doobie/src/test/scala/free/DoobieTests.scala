@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package freestyle
+package freestyle.free
 
 import cats.effect.IO
 import cats.syntax.either._
@@ -23,9 +23,9 @@ import _root_.doobie._
 import _root_.doobie.implicits._
 import _root_.doobie.h2.H2Transactor
 
-import freestyle.implicits._
-import freestyle.doobie._
-import freestyle.doobie.implicits._
+import freestyle.free.implicits._
+import freestyle.free.doobie._
+import freestyle.free.doobie.implicits._
 
 import scala.language.postfixOps
 

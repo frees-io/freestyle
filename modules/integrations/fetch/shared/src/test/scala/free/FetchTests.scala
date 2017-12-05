@@ -14,16 +14,16 @@
  * limitations under the License.
  */
 
-package freestyle
+package freestyle.free
 
 import org.scalatest.{AsyncWordSpec, Matchers}
 import _root_.fetch._
 import _root_.fetch.implicits._
 
 import cats.syntax.cartesian._
-import freestyle.fetch._
-import freestyle.implicits._
-import freestyle.fetch.implicits._
+import freestyle.free.fetch._
+import freestyle.free.implicits._
+import freestyle.free.fetch.implicits._
 import scala.concurrent.{ExecutionContext, Future}
 
 class FetchTests extends AsyncWordSpec with Matchers {

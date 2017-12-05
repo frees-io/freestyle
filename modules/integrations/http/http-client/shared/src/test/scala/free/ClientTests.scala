@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package freestyle
+package freestyle.free
 package http
 
 
@@ -26,9 +26,9 @@ import _root_.hammock._
 import _root_.hammock.free._
 import _root_.hammock.free.algebra._
 
-import freestyle.implicits._
-import freestyle.http.client._
-import freestyle.http.client.implicits._
+import freestyle.free.implicits._
+import freestyle.free.http.client._
+import freestyle.free.http.client.implicits._
 
 
 class ClientTests extends WordSpec with Matchers {

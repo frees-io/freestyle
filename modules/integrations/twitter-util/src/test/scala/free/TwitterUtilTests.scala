@@ -14,14 +14,15 @@
  * limitations under the License.
  */
 
-package freestyle
+package freestyle.free
 package twitter
 
 import cats.implicits._
 import org.scalatest.{Matchers, WordSpec}
 
 import com.twitter.util._
-import freestyle.implicits._
+import freestyle.free._
+import freestyle.free.implicits._
 
 class TwitterUtilTests extends WordSpec with Matchers {
 

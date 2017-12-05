@@ -20,7 +20,7 @@ import cats.{~>, Functor}
 import cats.syntax.functor._
 import scala.concurrent.Future
 import _root_.redis.{ByteStringDeserializer, ByteStringSerializer, Cursor}
-import freestyle.cache.KeyValueMap
+import freestyle.free.cache.KeyValueMap
 
 class MapWrapper[M[_], Key, Value](
     implicit formatKey: Format[Key],
