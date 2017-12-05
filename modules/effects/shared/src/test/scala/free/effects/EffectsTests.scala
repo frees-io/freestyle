@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package freestyle.effects
+package freestyle.free.effects
 
 import cats.{Applicative, Eval}
 
 import org.scalatest._
 
-import freestyle._
-import freestyle.implicits._
+import freestyle.free._
+import freestyle.free.implicits._
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -33,8 +33,8 @@ class EffectsTests extends AsyncWordSpec with Matchers {
 
   "Option Freestyle integration" should {
 
-    import freestyle.effects.option._
-    import freestyle.effects.option.implicits._
+    import freestyle.free.effects.option._
+    import freestyle.free.effects.option.implicits._
 
     import cats.instances.option._
     import cats.mtl.implicits._
@@ -75,8 +75,8 @@ class EffectsTests extends AsyncWordSpec with Matchers {
 
     val ex = new RuntimeException("BOOM")
 
-    import freestyle.effects.error._
-    import freestyle.effects.error.implicits._
+    import freestyle.free.effects.error._
+    import freestyle.free.effects.error.implicits._
 
     import cats.instances.either._
     import cats.syntax.either._
@@ -148,7 +148,7 @@ class EffectsTests extends AsyncWordSpec with Matchers {
     sealed trait CustomError
     case object Custom1 extends CustomError
 
-    import freestyle.effects.either
+    import freestyle.free.effects.either
 
     val e = either[CustomError]
     val ex = Custom1
@@ -222,7 +222,7 @@ class EffectsTests extends AsyncWordSpec with Matchers {
 
   "Reader integration" should {
 
-    import freestyle.effects._
+    import freestyle.free.effects._
     import cats.data.Reader
     import cats.mtl.implicits._
 
@@ -252,7 +252,7 @@ class EffectsTests extends AsyncWordSpec with Matchers {
 
   "State integration" should {
 
-    import freestyle.effects._
+    import freestyle.free.effects._
     import cats.data.State
     import cats.mtl.instances.state._
 
@@ -309,7 +309,7 @@ class EffectsTests extends AsyncWordSpec with Matchers {
 
   "Writer integration" should {
 
-    import freestyle.effects._
+    import freestyle.free.effects._
     import cats.data.Writer
     import cats.instances.list._
     import cats.mtl.implicits._
@@ -341,7 +341,7 @@ class EffectsTests extends AsyncWordSpec with Matchers {
   }
 
   "Validation integration" should {
-    import freestyle.effects._
+    import freestyle.free.effects._
 
     import cats.data.{State, StateT}
     import cats.instances.future._
@@ -464,7 +464,7 @@ class EffectsTests extends AsyncWordSpec with Matchers {
 
   "Traverse integration" should {
 
-    import freestyle.effects._
+    import freestyle.free.effects._
     import cats.instances.list._
 
     val list = traverse.list
@@ -503,8 +503,8 @@ class EffectsTests extends AsyncWordSpec with Matchers {
   }
 
   "Uber implicits import" should {
-    import freestyle.effects.error._
-    import freestyle.effects.implicits._
+    import freestyle.free.effects.error._
+    import freestyle.free.effects.implicits._
 
     "import error implicits" in {
       import cats.instances.either._
