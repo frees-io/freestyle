@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package freestyle.free.asyncCatsEffect
+package freestyle.asyncCatsEffect
 
 import cats.effect.IO
 import freestyle.free._

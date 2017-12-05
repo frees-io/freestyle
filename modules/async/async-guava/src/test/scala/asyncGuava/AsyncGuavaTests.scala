@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package freestyle.free.asyncGuava
+package freestyle.asyncGuava
 
 import java.util.concurrent.{Callable, Executors}
 
