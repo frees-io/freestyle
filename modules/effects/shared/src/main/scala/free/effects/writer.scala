@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package freestyle
+package freestyle.free
 package effects
 
 import cats.mtl.FunctorTell
