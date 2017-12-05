@@ -19,7 +19,7 @@ package freestyle.free.cache.redis
 import cats.arrow.FunctionK
 import cats.instances.future
 import scala.concurrent.{ExecutionContext, Future}
-import freestyle.cache.redis.rediscala._
+import freestyle.free.cache.redis.rediscala._
 
 object TestUtil {
 

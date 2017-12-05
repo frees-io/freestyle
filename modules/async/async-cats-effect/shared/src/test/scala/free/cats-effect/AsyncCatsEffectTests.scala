@@ -21,7 +21,7 @@ import freestyle.free._
 import freestyle.free.implicits._
 import freestyle.free.async._
 import freestyle.free.async.implicits._
-import freestyle.asyncCatsEffect.implicits._
+import freestyle.free.asyncCatsEffect.implicits._
 import org.scalatest.{AsyncWordSpec, Matchers}
 import scala.concurrent.ExecutionContext
 

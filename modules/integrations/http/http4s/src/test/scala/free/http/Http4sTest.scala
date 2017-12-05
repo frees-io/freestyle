@@ -25,7 +25,7 @@ import org.http4s.implicits._
 
 import freestyle.free._
 import freestyle.free.implicits._
-import freestyle.http.http4s._
+import freestyle.free.http.http4s._
 
 class Http4sTests extends AsyncWordSpec with Matchers {
   import algebras._

@@ -23,7 +23,7 @@ import _root_.akka.http.scaladsl.server.Route
 import _root_.akka.http.scaladsl.server.PathMatchers.IntNumber
 import _root_.akka.http.scaladsl.testkit.ScalatestRouteTest
 import cats.Id
-import freestyle.http.akka._
+import freestyle.free.http.akka._
 import freestyle.free._
 import freestyle.free.implicits._
 import org.scalatest.{Matchers, WordSpec}

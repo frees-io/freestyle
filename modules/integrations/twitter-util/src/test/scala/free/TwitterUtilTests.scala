@@ -53,7 +53,7 @@ class TwitterUtilTests extends WordSpec with Matchers {
     }
 
     "allow non deterministic execution when interpreting to twitter.util.Future" in {
-      import freestyle.twitter.util.implicits._
+      import freestyle.free.twitter.util.implicits._
 
       val test = new NonDeterminismTestShared
       import test._

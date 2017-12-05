@@ -19,7 +19,7 @@ package freestyle.free.cache.redis
 import cats.{~>, Applicative}
 import freestyle.free._
 import freestyle.free.implicits._
-import freestyle.cache.redis.rediscala._
+import freestyle.free.cache.redis.rediscala._
 import org.scalatest._
 import scala.concurrent.{ExecutionContext, Future}
 import cats.implicits._

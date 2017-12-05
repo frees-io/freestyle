@@ -22,7 +22,7 @@ import scala.concurrent.ExecutionContext
 import cats.Monad
 import freestyle.free._
 import freestyle.free.implicits._
-import freestyle.http.play.implicits._
+import freestyle.free.http.play.implicits._
 import _root_.play.api.mvc.{
   Action,
   BaseController,

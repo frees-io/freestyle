@@ -26,7 +26,7 @@ import shapeless.::
 
 import freestyle.free._
 import freestyle.free.implicits._
-import freestyle.http.finch._
+import freestyle.free.http.finch._
 
 class FinchTests extends AsyncWordSpec with Matchers {
 
