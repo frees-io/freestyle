@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package freestyle
+package freestyle.free
 
 import org.scalatest.{Matchers, WordSpec}
-import freestyle.implicits._
-import freestyle.config._
-import freestyle.config.implicits._
+import freestyle.free.implicits._
+import freestyle.free.config._
+import freestyle.free.config.implicits._
 import java.util.concurrent.TimeUnit
 
 import scala.concurrent.{ExecutionContext, Future}
