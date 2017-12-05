@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package freestyle
+package freestyle.free
 
 import cats.Id
 import cats.data.Kleisli
-import freestyle.logging.LoggingM
+import freestyle.free.logging.LoggingM
 
 import scala.concurrent.Future
 

@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-import freestyle._
-import freestyle.implicits._
+import freestyle.free._
+import freestyle.free.implicits._
 import cats.implicits._
 
 object pcplodtest {

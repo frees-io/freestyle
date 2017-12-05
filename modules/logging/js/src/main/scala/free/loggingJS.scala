@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package freestyle
+package freestyle.free
 
 import cats.Monad
-import freestyle.logging._
+import freestyle.free.logging._
 import slogging._
 
 object loggingJS {

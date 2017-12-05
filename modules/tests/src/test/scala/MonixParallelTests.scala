@@ -16,7 +16,7 @@
 
 package freestyle.tests
 
-import freestyle.implicits._
+import freestyle.free.implicits._
 import monix.eval.Task
 import monix.execution.Scheduler.Implicits.global
 import org.scalatest.{Matchers, WordSpec}

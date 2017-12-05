@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package freestyle
+package freestyle.free
 
 import cats.instances.future._
 import cats.{Id, Monad}
-import freestyle.implicits._
-import freestyle.loggingJVM.implicits._
+import freestyle.free.implicits._
+import freestyle.free.loggingJVM.implicits._
 import org.scalatest.{AsyncWordSpec, Matchers}
 
 import scala.concurrent.{ExecutionContext, Future}

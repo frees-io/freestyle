@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package freestyle
+package freestyle.free
 
 import cats.data.Kleisli
 import cats.arrow.FunctionK
 import cats.Monad
-import freestyle.logging._
+import freestyle.free.logging._
 import journal._
 import org.slf4j.LoggerFactory
 
