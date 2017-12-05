@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package freestyle.cache
+package freestyle.free.cache
 
 import cats.{Applicative, Id, ~>}
 import cats.syntax.cartesian._
-import freestyle._
-import freestyle.implicits._
+import freestyle.free._
+import freestyle.free.implicits._
 import org.scalatest.{ Matchers, WordSpec }
 
 class CacheTests extends WordSpec with Matchers with CacheTestContext {

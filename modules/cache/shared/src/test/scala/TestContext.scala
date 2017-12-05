@@ -14,18 +14,18 @@
  * limitations under the License.
  */
 
-package freestyle.cache
+package freestyle.free.cache
 
 import cats.arrow.FunctionK
 import cats.{~>, Applicative, Id}
-import freestyle.FSHandler
-import freestyle.cache.hashmap._
+import freestyle.free.FSHandler
+import freestyle.free.cache.hashmap._
 import org.scalatest.{BeforeAndAfterEach, Suite}
 
 trait CacheTestContext extends BeforeAndAfterEach { self: Suite =>
 
   import Hasher.string
-  import freestyle.Capture.freeStyleIdCaptureInstance
+  import freestyle.free.Capture.freeStyleIdCaptureInstance
 
   private[this] implicit val rawMap: KeyValueMap[Id, String, Int] =
     new ConcurrentHashMapWrapper[Id, String, Int]

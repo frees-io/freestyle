@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package freestyle.cache.hashmap
+package freestyle.free.cache.hashmap
 
 trait Hasher[A] {
   def hashCode(a: A): Int
