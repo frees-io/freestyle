@@ -26,7 +26,7 @@ import io.finch._
 import io.finch.circe._
 import io.circe.generic.auto._
 import freestyle.free._
-import freestyle.http.finch._
+import freestyle.free.http.finch._
 import freestyle.free.logging._
 import todo.model.TodoItem
 import todo.services._

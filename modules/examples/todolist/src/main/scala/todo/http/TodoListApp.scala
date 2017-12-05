@@ -33,7 +33,7 @@ import freestyle.free.config.ConfigM
 import freestyle.free.effects.error.implicits._
 import freestyle.free.config.implicits._
 import freestyle.free.loggingJVM.implicits._
-import freestyle.http.finch._
+import freestyle.free.http.finch._
 import freestyle.free.logging.LoggingM
 import todo.persistence.{TagRepository, _}
 import todo.services.{AppServices, Services, TagService}

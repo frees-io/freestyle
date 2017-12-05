@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package freestyle
+package freestyle.free
 
 import _root_.fs2._
 import _root_.fs2.util.{Attempt, Catchable, Free, Monad, Suspendable}

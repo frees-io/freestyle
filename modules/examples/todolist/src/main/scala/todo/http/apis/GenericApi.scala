@@ -22,7 +22,7 @@ import cats.~>
 import com.twitter.util.Future
 import io.finch._
 import freestyle.free._
-import freestyle.http.finch._
+import freestyle.free.http.finch._
 import freestyle.free.logging._
 import todo.model.Pong
 

@@ -21,7 +21,7 @@ package apis
 import cats.~>
 import com.twitter.util.Future
 import freestyle.free._
-import freestyle.http.finch._
+import freestyle.free.http.finch._
 import io.circe.generic.auto._
 import io.finch._
 import io.finch.circe._
