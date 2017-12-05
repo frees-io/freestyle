@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package freestyle
+package freestyle.free
 
-import freestyle.async.implicits._
-import freestyle.async.{AsyncContext, Future2AsyncM, Proc}
+import freestyle.free.async.implicits._
+import freestyle.free.async.{AsyncContext, Future2AsyncM, Proc}
 import org.scalatest._
 import cats.effect.{Effect, IO}
 

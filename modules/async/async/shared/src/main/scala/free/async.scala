@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package freestyle
+package freestyle.free
 
 import scala.concurrent._
 import scala.util._

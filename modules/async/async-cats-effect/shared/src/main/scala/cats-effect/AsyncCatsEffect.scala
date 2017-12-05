@@ -16,7 +16,7 @@
 
 package freestyle.asyncCatsEffect
 
-import freestyle.async._
+import freestyle.free.async._
 import cats.effect.Effect
 
 trait AsyncCatsEffectImplicits {
