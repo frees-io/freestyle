@@ -123,7 +123,7 @@ Let’s start looking at how to define the `Person` message that we saw previous
 Before starting, these are the Scala imports we need:
 
 ```tut:silent
-import freestyle._
+import freestyle.free._
 import freestyle.rpc.protocol._
 ``` 
 
@@ -360,7 +360,7 @@ Next, our dummy `Greeter` server implementation:
 
 ```tut:silent
 import cats.~>
-import freestyle.Capture
+import freestyle.free.Capture
 import monix.eval.Task
 import monix.reactive.Observable
 import service._
@@ -542,8 +542,8 @@ So, taking into account all we have just said, how would our code look?
 
 ```tut:silent
 import cats.implicits._
-import freestyle.config.implicits._
-import freestyle.asyncCatsEffect.implicits._
+import freestyle.free.config.implicits._
+import freestyle.free.asyncCatsEffect.implicits._
 import freestyle.rpc.client._
 import freestyle.rpc.client.implicits._
 import monix.eval.Task

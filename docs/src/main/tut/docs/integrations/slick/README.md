@@ -13,8 +13,8 @@ Here is an example that uses the Slick integration.
 The standard freestyle and cats imports:
 
 ```tut:silent
-import freestyle._
-import freestyle.implicits._
+import freestyle.free._
+import freestyle.free.implicits._
 
 import cats.implicits._
 ```
@@ -22,7 +22,7 @@ import cats.implicits._
 And some imports for the _freestyle-slick_ module and slick itself:
 
 ```tut:silent
-import freestyle.slick._
+import freestyle.free.slick._
 
 import _root_.slick.jdbc.JdbcBackend
 import _root_.slick.jdbc.H2Profile.api._
@@ -51,7 +51,7 @@ To execute this `FreeS` program, we need to import the _freestyle-slick_ module 
 In this Example, we are interpreting to `scala.concurrent.Future` and the following imports already include all the implicits needed to achieve that once an implicit `Database` is provided. For simplicity, we will use an `H2` in memory database:
 
 ```tut:book
-import freestyle.slick.implicits._
+import freestyle.free.slick.implicits._
 import scala.concurrent.Future
 import scala.concurrent.duration._
 import scala.concurrent.ExecutionContext.Implicits.global

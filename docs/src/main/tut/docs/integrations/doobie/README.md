@@ -11,8 +11,8 @@ It's easy to embed a doobie program in a Freestyle program using the _frees-doob
 The standard freestyle and cats imports:
 
 ```tut:silent
-import freestyle._
-import freestyle.implicits._
+import freestyle.free._
+import freestyle.free.implicits._
 
 import cats.implicits._
 ```
@@ -20,8 +20,8 @@ import cats.implicits._
 And imports for the _frees-doobie_ module and doobie itself:
 
 ```tut:silent
-import freestyle.doobie._
-import freestyle.doobie.implicits._
+import freestyle.free.doobie._
+import freestyle.free.doobie.implicits._
 
 import _root_.doobie._
 import _root_.doobie.implicits._

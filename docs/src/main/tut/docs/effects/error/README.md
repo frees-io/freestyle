@@ -19,10 +19,10 @@ In the example below, this constraint is satisfied by
 `either` allows us to lift values of `Either[Throwable, ?]` into the context of `FreeS`,  raising an error causing the program to short circuit if the value is a `Left(throwable)` or continuing with the computation in the case of a `Right(a)`. 
 
 ```tut:book
-import freestyle._
-import freestyle.implicits._
-import freestyle.effects.error._
-import freestyle.effects.error.implicits._
+import freestyle.free._
+import freestyle.free.implicits._
+import freestyle.free.effects.error._
+import freestyle.free.effects.error.implicits._
 import cats.implicits._
 
 val boom = new RuntimeException("BOOM")

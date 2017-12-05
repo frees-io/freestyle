@@ -39,15 +39,15 @@ libraryDependencies += "io.frees" %% "frees-async-cats-effect" % "0.4.6"
 The standard freestyle imports:
 
 ```tut:silent
-import freestyle._
-import freestyle.implicits._
+import freestyle.free._
+import freestyle.free.implicits._
 ```
 
 The imports for the _frees-async_ module:
 
 ```tut:silent
-import freestyle.async._
-import freestyle.async.implicits._
+import freestyle.free.async._
+import freestyle.free.async.implicits._
 ```
 
 Now if we want to create a freestyle program which uses the `findBooks` function and returns all the books sorted by the year they were written, we can use the `AsyncM` effect:
@@ -86,7 +86,7 @@ We can run these programs using:
 - Cats' `IO` as target effect type:
 
 ```tut:book
-import freestyle.asyncCatsEffect.implicits._
+import freestyle.free.asyncCatsEffect.implicits._
 
 import scala.concurrent.{Await, ExecutionContext}
 import scala.concurrent.duration.Duration

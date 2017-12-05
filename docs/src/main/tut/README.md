@@ -13,7 +13,7 @@ Applications built with Freestyle can be interpreted to any runtime semantics su
 </div>
 <div class="col-md-6" markdown="1">
 ```scala
-import freestyle._
+import freestyle.free._
 
 @free trait Database {
   def get(id: UserId): FS[User]

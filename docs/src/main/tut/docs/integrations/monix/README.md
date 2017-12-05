@@ -9,7 +9,7 @@ permalink: /docs/integrations/monix/
 Monix' `Task` can be used as a target of your `FreeS` programs.
 
 ```tut:silent
-import freestyle._
+import freestyle.free._
 ```
 
 We will use an example similar to the one used in the [parallelism](/docs/core/parallelism/) section. We will create a small algebra to validate numbers:
@@ -60,7 +60,7 @@ implicit val validateIntTaskHandler: Validator.Handler[ValidateInt] =
 With the Freestyle implicits and the Monix to Cats conversions in scope, we can use our handler to interpret the `isPositiveEven` program:
 
 ```tut:book
-import freestyle.implicits._
+import freestyle.free.implicits._
 
 val check = isPositiveEven[Validator.Op].interpret[ValidateInt]
 ```

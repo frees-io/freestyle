@@ -21,9 +21,9 @@ The reader effect comes with two operations `ask` and `reader`.
 `ask` simply returns the entire environment in its current state.
 
 ```tut:book
-import freestyle._
-import freestyle.implicits._
-import freestyle.effects.reader
+import freestyle.free._
+import freestyle.free.implicits._
+import freestyle.free.effects.reader
 import cats.data.Reader
 import cats.implicits._
 import cats.mtl.implicits._

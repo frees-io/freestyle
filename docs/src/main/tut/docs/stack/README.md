@@ -11,8 +11,8 @@ In this example, a company selling multiple varieties of apples wants to process
 We start by importing Freestyle's core:
 
 ```tut:silent
-import freestyle._
-import freestyle.implicits._
+import freestyle.free._
+import freestyle.free.implicits._
 ```
 
 Now we can create data types for a customer and an order together with a `Config` data type which holds a set of all the apple varieties the company sells.
@@ -49,9 +49,9 @@ These two algebras will be combined together in a `Persistence` module, that in 
 capabilities to fail, to read from our `Config` configuration, and to cache `Customer`s using respectively `error` and `reader` from the _freestyle-effects_ module and `cache` from the _freestyle-cache_ module.
 
 ```tut:book
-import freestyle.effects.error._
-import freestyle.effects.reader
-import freestyle.cache.KeyValueProvider
+import freestyle.free.effects.error._
+import freestyle.free.effects.reader
+import freestyle.free.cache.KeyValueProvider
 
 object modules {
   val rd = reader[Config]
@@ -205,8 +205,8 @@ A handler that can cache `Customer`s can be created with a `ConcurrentHashMapWra
 
 ```tut:book
 import cats.{~>, Id}
-import freestyle.cache.hashmap._
-import freestyle.cache.KeyValueMap
+import freestyle.free.cache.hashmap._
+import freestyle.free.cache.KeyValueMap
 
 implicit val freestyleHasherCustomerId: Hasher[CustomerId] =
   Hasher[CustomerId](_.hashCode)
@@ -234,7 +234,7 @@ val program: FreeS[App.Op, String] =
 With the persistence algebras, interpreters, and the `Customer` cache interpreter in place and with the right imports for the `reader` and `error` effect, we can execute a program resulting in `Stack[String]`:
 
 ```tut:book
-import freestyle.effects.error.implicits._
+import freestyle.free.effects.error.implicits._
 import rd.implicits._
 import cats.mtl.implicits._
 

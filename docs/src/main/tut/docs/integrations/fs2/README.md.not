@@ -13,7 +13,7 @@ Familiarity with fs2 is assumed, take a look at the [fs2 documentation](https://
 We'll start by creating a simple algebra for our application for printing messages on the screen:
 
 ```tut:book
-import freestyle._
+import freestyle.free._
 
 @free trait Interact {
   def tell(msg: String): FS[Unit]
@@ -23,10 +23,10 @@ import freestyle._
 Then, make sure to include the streams algebra `StreamM` in your application:
 
 ```tut:book
-import freestyle._
-import freestyle.implicits._
-import freestyle.fs2._
-import freestyle.fs2.implicits._
+import freestyle.free._
+import freestyle.free.implicits._
+import freestyle.free.fs2._
+import freestyle.free.fs2.implicits._
 
 @module trait App {
   val interact: Interact

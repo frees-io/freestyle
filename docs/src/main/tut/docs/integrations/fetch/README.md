@@ -31,8 +31,8 @@ def fetchOne(x: Int): Fetch[Int] = Fetch(x)(OneSource)
 Let's start by creating a simple algebra for our application for printing messages on the screen:
 
 ```tut:book
-import freestyle._
-import freestyle.implicits._
+import freestyle.free._
+import freestyle.free.implicits._
 
 @free trait Interact {
   def tell(msg: String): FS[Unit]
@@ -42,8 +42,8 @@ import freestyle.implicits._
 Then, make sure to include the Fetch algebra `FetchM` in your application:
 
 ```tut:book
-import freestyle.fetch._
-import freestyle.fetch.implicits._
+import freestyle.free.fetch._
+import freestyle.free.fetch.implicits._
 
 @module trait App {
   val interact: Interact

@@ -27,8 +27,8 @@ The _frees-finch_ module allows you to return a `FreeS[F, io.finch.Output[A]]` v
 The standard freestyle imports:
 
 ```tut:silent
-import freestyle._
-import freestyle.implicits._
+import freestyle.free._
+import freestyle.free.implicits._
 ```
 
 In this example, we will create a Finch `Endpoint` which will be able to calculate the greatest common divisor (GCD) of two natural numbers:
@@ -68,7 +68,7 @@ implicit val futureHandler = new Calc.Handler[Future] {
 Importing the _freestyle-finch_ module, Finch, and shapeless' `::` used by Finch:
 
 ```tut:silent
-import freestyle.http.finch._
+import freestyle.free.http.finch._
 
 import io.finch._
 

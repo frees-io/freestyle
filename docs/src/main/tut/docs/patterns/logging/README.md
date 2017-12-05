@@ -48,8 +48,8 @@ In the following example, we will show how easy it is to add the logging algebra
 Before we do anything else, we need to add the usual set of imports from Freestyle and Cats to create our algebras:
 
 ```tut:silent
-import freestyle._
-import freestyle.implicits._
+import freestyle.free._
+import freestyle.free.implicits._
 import cats._
 import cats.implicits._
 
@@ -72,8 +72,8 @@ At this point, we may aggregate our customer algebra with any other algebras in 
 derived from using different algebras:
 
 ```tut:book
-import freestyle.logging._
-import freestyle.loggingJVM.implicits._
+import freestyle.free.logging._
+import freestyle.free.loggingJVM.implicits._
 
 @module trait App {
   val customerService: CustomerService

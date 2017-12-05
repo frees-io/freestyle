@@ -16,9 +16,9 @@ for any runtime `M[_]` where `E` is the type of the validation error due to the 
 The validation effect comes with three basic operations `valid`, `invalid`, and `errors`. Apart from these, it includes a couple of combinators for accumulating errors: `fromEither` and `fromValidatedNel`.
 
 ```tut:silent
-import freestyle._
-import freestyle.implicits._
-import freestyle.effects.validation
+import freestyle.free._
+import freestyle.free.implicits._
+import freestyle.free.effects.validation
 import cats.data.State
 import cats.implicits._
 import cats.mtl.implicits._

@@ -43,8 +43,8 @@ Freestyle's core feature is the definition of `Free` boilerplate-free algebras t
 In the example below, we will define two algebras with intermixed sequential and parallel computations.
 
 ```tut:book
-import freestyle._
-import freestyle.implicits._
+import freestyle.free._
+import freestyle.free.implicits._
 
 @free trait Validation {
   def minSize(s: String, n: Int): FS[Boolean]

@@ -32,7 +32,7 @@ As `FreeS` is a [monad](http://typelevel.org/cats/typeclasses/monad.html) and `F
 To see how we can use `FreeS` and `FreeS.Par` in combination with existing Cats functions, we will create a simple algebra with a sum and a product operation:
 
 ```tut:book
-import freestyle._
+import freestyle.free._
 
 @free trait Calc {
   def sum(a: Int, b: Int): FS[Int]
@@ -83,7 +83,7 @@ We will use `traverse` (provided by Cats' [`Traverse`](http://typelevel.org/cats
 
 ```tut:book
 import cats.implicits._
-import freestyle.implicits._
+import freestyle.free.implicits._
 
 val numbers = List.range(1, 10)
 
@@ -113,7 +113,7 @@ def simpleTime[A](th: => A): A = {
 When we execute the increment traversals again using `Future`, we can observe that the parallel execution is now quicker than the sequential.
 
 ```tut:book
-import freestyle.nondeterminism._
+import freestyle.free.nondeterminism._
 import scala.concurrent.Await
 import scala.concurrent.duration.Duration
 

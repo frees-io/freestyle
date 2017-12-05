@@ -20,9 +20,9 @@ The writer effect comes with two operations `writer` and `tell`.
 `writer` sets a tuple with the current accumulator value and returning value:
 
 ```tut:book
-import freestyle._
-import freestyle.implicits._
-import freestyle.effects.writer
+import freestyle.free._
+import freestyle.free.implicits._
+import freestyle.free.effects.writer
 import cats.data.Writer
 import cats.implicits._
 import cats.mtl.implicits._

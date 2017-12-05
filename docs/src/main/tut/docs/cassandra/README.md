@@ -69,7 +69,7 @@ Cassandra configuration.
 ```tut:silent
 
 import com.datastax.driver.core.{Configuration, Metadata, Metrics, Session}
-import freestyle.free
+import freestyle.free._
 
 @free
 trait ClusterAPI {
@@ -97,7 +97,7 @@ SessionAPI directly is unsafe and does not check query correctness at compile ti
 
 ```tut:silent
 
-import freestyle.free
+import freestyle.free._
 import com.datastax.driver.core._
 import freestyle.cassandra.query.model.SerializableValueBy
 
@@ -136,7 +136,7 @@ BoundStatement, which can now be ran in a safe way.
 ```tut:silent
 
 import com.datastax.driver.core._
-import freestyle.free
+import freestyle.free._
 import freestyle.cassandra.codecs.ByteBufferCodec
 import freestyle.cassandra.query.model.SerializableValueBy
 
@@ -187,7 +187,7 @@ current Cassandra instance.
 ```tut:silent
 
 import com.datastax.driver.core.ResultSet
-import freestyle.free
+import freestyle.free._
 import freestyle.cassandra.query.mapper.FromReader
 
 @free
@@ -216,8 +216,8 @@ Let's see how we can use it:
 import java.util.UUID
 
 import com.datastax.driver.core._
-import freestyle._
-import freestyle.implicits._
+import freestyle.free._
+import freestyle.free.implicits._
 import freestyle.cassandra.implicits._
 import freestyle.cassandra.api.QueryModule
 import freestyle.cassandra.codecs._
@@ -291,9 +291,9 @@ module to interact with other algebras:
 import java.util.UUID
 
 import com.datastax.driver.core.ResultSet
-import freestyle.{free, module}
+import freestyle.free._
 import freestyle.cassandra.api._
-import freestyle.logging._
+import freestyle.free.logging._
 
 @free
 trait UserAPI {
@@ -318,7 +318,7 @@ import java.util.UUID
 
 import cats.MonadError
 import com.datastax.driver.core.{ResultSet, Session}
-import freestyle.async.AsyncContext
+import freestyle.free.async.AsyncContext
 import freestyle.cassandra.query.interpolator._
 import freestyle.cassandra.api._
 import Model.SchemaInterpolator
@@ -356,8 +356,8 @@ So, now we can compose those algebras ops easily:
 import java.util.UUID
 
 import com.datastax.driver.core._
-import freestyle._
-import freestyle.implicits._
+import freestyle.free._
+import freestyle.free.implicits._
 import freestyle.cassandra.api._
 import freestyle.cassandra.implicits._
 import freestyle.cassandra.query.interpolator._

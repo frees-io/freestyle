@@ -21,15 +21,15 @@ libraryDependencies += "io.frees" %% "frees-play" % "0.4.6"
 The regular imports for working with Freestyle and Cats:
 
 ```tut:silent
-import freestyle._
-import freestyle.implicits._
+import freestyle.free._
+import freestyle.free.implicits._
 import cats.implicits._
 ```
 
 And some imports for the _frees-http-play_ module and Play itself:
 
 ```tut:silent
-import freestyle.http.play.implicits._
+import freestyle.free.http.play.implicits._
 
 import javax.inject._
 
@@ -45,7 +45,7 @@ import akka.stream.{ActorMaterializer, Materializer}
 For demonstration purposes, we will create a very simple program that returns an `OK` http status response:
 
 ```tut:book
-import freestyle._
+import freestyle.free._
 
 object algebras {
   @free

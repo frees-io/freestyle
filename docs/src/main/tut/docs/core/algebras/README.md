@@ -13,7 +13,7 @@ When you build an algebra with Freestyle, you only need to concentrate on the AP
 A trait or abstract class annotated with `@free` or [`@tagless`](../tagless/) is all you need to create your first algebra with Freestyle:
 
 ```tut:book
-import freestyle._
+import freestyle.free._
 
 case class User(id: Long, name: String)
 
@@ -27,8 +27,8 @@ case class User(id: Long, name: String)
 This is similar to the simplified manual encoding below:
 
 ```tut:book
-import freestyle.FreeS
-import freestyle.internal.EffectLike
+import freestyle.free.FreeS
+import freestyle.free.internal.EffectLike
 
 case class User(id: Long, name: String)
 
@@ -40,8 +40,8 @@ trait UserRepository[F[_]] extends EffectLike[F] {
 
 object UserRepository {
   import _root_.cats.arrow.FunctionK
-  import _root_.freestyle.InjK
-  import _root_.freestyle.FreeS
+  import _root_.freestyle.free.InjK
+  import _root_.freestyle.free.FreeS
 
   sealed trait Op[A] extends Product with Serializable
   final case class Get(id: Long) extends Op[User]

@@ -19,10 +19,10 @@ your target runtime `M[_]`.
 
 
 ```tut:book
-import freestyle._
-import freestyle.implicits._
-import freestyle.effects.option._
-import freestyle.effects.option.implicits._
+import freestyle.free._
+import freestyle.free.implicits._
+import freestyle.free.effects.option._
+import freestyle.free.effects.option.implicits._
 import cats.implicits._
 import cats.mtl.implicits._
 
