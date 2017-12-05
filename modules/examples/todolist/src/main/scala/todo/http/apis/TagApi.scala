@@ -25,9 +25,9 @@ import com.twitter.util.Future
 import io.finch._
 import io.finch.circe._
 import io.circe.generic.auto._
-import freestyle._
+import freestyle.free._
 import freestyle.http.finch._
-import freestyle.logging._
+import freestyle.free.logging._
 import todo.model.Tag
 import todo.services._
 import todo.model.Tag

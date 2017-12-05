@@ -17,7 +17,7 @@
 package todo
 package persistence
 
-import freestyle._
+import freestyle.free._
 import todo.model.Tag
 
 /**

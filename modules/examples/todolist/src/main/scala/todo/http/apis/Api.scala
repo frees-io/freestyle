@@ -18,7 +18,7 @@ package todo
 package http
 package apis
 
-import freestyle.module
+import freestyle.free.module
 
 /**
  * Finch http endpoints

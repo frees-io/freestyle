@@ -17,9 +17,9 @@
 package todo
 package services
 
-import freestyle._
-import freestyle.config.ConfigM
-import freestyle.logging.LoggingM
+import freestyle.free._
+import freestyle.free.config.ConfigM
+import freestyle.free.logging.LoggingM
 
 /**
  * Module containing all the algebras declared in this layer.

@@ -16,9 +16,9 @@
 
 package freeslick
 
-import freestyle._
-import freestyle.slick._
-import freestyle.logging._
+import freestyle.free._
+import freestyle.free.slick._
+import freestyle.free.logging._
 
 object modules {
   @module

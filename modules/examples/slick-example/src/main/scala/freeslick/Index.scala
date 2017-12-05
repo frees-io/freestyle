@@ -18,10 +18,10 @@ package freeslick
 
 import cats.implicits._
 
-import freestyle._
-import freestyle.implicits._
-import freestyle.slick.implicits._
-import freestyle.loggingJVM.implicits._
+import freestyle.free._
+import freestyle.free.implicits._
+import freestyle.free.slick.implicits._
+import freestyle.free.loggingJVM.implicits._
 
 import scala.concurrent.Future
 import scala.concurrent.duration._
