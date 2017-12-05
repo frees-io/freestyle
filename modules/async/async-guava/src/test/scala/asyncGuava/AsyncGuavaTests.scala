@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package freestyle.asyncGuava
+package freestyle.free.asyncGuava
 
 import java.util.concurrent.{Callable, Executors}
 
 import cats.~>
 import com.google.common.util.concurrent.{ListenableFuture, ListeningExecutorService, MoreExecutors}
 import org.scalatest._
-import freestyle.async.implicits._
+import freestyle.free.async.implicits._
 
 import scala.concurrent.duration.Duration
 import scala.concurrent.{Await, ExecutionContext, Future}

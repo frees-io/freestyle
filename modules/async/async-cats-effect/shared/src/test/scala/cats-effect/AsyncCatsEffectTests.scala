@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package freestyle.asyncCatsEffect
+package freestyle.free.asyncCatsEffect
 
 import cats.effect.IO
-import freestyle._
-import freestyle.implicits._
-import freestyle.async._
-import freestyle.async.implicits._
+import freestyle.free._
+import freestyle.free.implicits._
+import freestyle.free.async._
+import freestyle.free.async.implicits._
 import freestyle.asyncCatsEffect.implicits._
 import org.scalatest.{AsyncWordSpec, Matchers}
 import scala.concurrent.ExecutionContext
