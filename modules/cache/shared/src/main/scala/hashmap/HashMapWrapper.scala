@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package freestyle.cache.hashmap
+package freestyle.free.cache.hashmap
 
-import freestyle.cache.KeyValueMap
-import freestyle.Capture
+import freestyle.free.cache.KeyValueMap
+import freestyle.free.Capture
 import java.util.concurrent.ConcurrentHashMap
 
 /* A _mutable_ Concurrent Hash Map, that contains a _mutable_ set of _immutable_
