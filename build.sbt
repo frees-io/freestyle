@@ -67,7 +67,7 @@ lazy val bench = jvmModule("bench")
     sourceGenerators += Def.task {
       val path = (sourceManaged in (Compile, compile)).value / "bench.scala"
       (runner in (Codegen, run)).value.run(
-        "freestyle.bench.BenchBoiler",
+        "freestyle.free.bench.BenchBoiler",
         Attributed.data((fullClasspath in Codegen).value),
         path.toString :: Nil,
         streams.value.log)
