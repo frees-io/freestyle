@@ -103,7 +103,7 @@ object BenchBoiler {
 
   def imports: String =
     """
-      |  package freestylebench
+      |  package freestyle.free.bench
       |
       |  import java.util.concurrent.TimeUnit
       |  import org.openjdk.jmh.annotations._
@@ -113,8 +113,8 @@ object BenchBoiler {
       |  import cats.free._
       |  import cats.implicits._
       |
-      |  import freestyle._
-      |  import freestyle.implicits._
+      |  import freestyle.free._
+      |  import freestyle.free.implicits._
       |
     """.stripMargin
 
