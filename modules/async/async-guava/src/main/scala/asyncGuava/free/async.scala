@@ -19,7 +19,7 @@ package freestyle.free.asyncGuava
 import cats.~>
 import com.google.common.util.concurrent._
 import freestyle.free._
-import freestyle.free.async.AsyncContext
+import freestyle.async.AsyncContext
 import java.util.concurrent.{Executor => JavaExecutor}
 
 import scala.concurrent.ExecutionContext

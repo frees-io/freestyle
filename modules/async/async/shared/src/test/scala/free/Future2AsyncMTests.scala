@@ -17,7 +17,8 @@
 package freestyle.free
 
 import freestyle.free.async.implicits._
-import freestyle.free.async.{AsyncContext, Future2AsyncM, Proc}
+import freestyle.async._
+import freestyle.free.async.Future2AsyncM
 import org.scalatest._
 import cats.effect.{Effect, IO}
 

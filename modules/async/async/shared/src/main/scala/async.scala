@@ -14,17 +14,20 @@
  * limitations under the License.
  */
 
-package freestyle.free.asyncCatsEffect
+package freestyle
 
-import freestyle.async._
-import freestyle.free.async._
-import cats.effect.Effect
+import scala.concurrent._
+import scala.util._
 
-trait AsyncCatsEffectImplicits {
-  implicit def catsEffectAsyncContext[F[_]](implicit F: Effect[F]): AsyncContext[F] =
-    new AsyncContext[F] {
-      def runAsync[A](fa: Proc[A]): F[A] = F.async(fa)
-    }
+object async
+{
+  /** An asynchronous computation that might fail. **/
+  type Proc[A] = (Either[Throwable, A] => Unit) => Unit
+
+  /** The context required to run an asynchronous computation. **/
+  trait AsyncContext[M[_]]
+  {
+    def runAsync[A](fa : Proc[A]) : M[A]
+  }
+
 }
-
-object implicits extends AsyncCatsEffectImplicits

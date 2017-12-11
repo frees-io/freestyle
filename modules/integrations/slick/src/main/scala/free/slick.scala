@@ -19,6 +19,7 @@ package freestyle.free
 import _root_.slick.dbio.{DBIO, DBIOAction}
 import _root_.slick.jdbc.JdbcBackend
 import freestyle.free.async._
+import freestyle.async.AsyncContext
 
 import scala.util.{Failure, Success}
 

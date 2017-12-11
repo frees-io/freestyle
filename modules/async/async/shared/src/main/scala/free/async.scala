@@ -18,16 +18,9 @@ package freestyle.free
 
 import scala.concurrent._
 import scala.util._
+import freestyle.async._
 
 object async {
-
-  /** An asynchronous computation that might fail. **/
-  type Proc[A] = (Either[Throwable, A] => Unit) => Unit
-
-  /** The context required to run an asynchronous computation. **/
-  trait AsyncContext[M[_]] {
-    def runAsync[A](fa: Proc[A]): M[A]
-  }
 
   /** Async computation algebra. **/
   @free sealed trait AsyncM {
