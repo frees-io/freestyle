@@ -43,11 +43,18 @@ import freestyle.free._
 import freestyle.free.implicits._
 ```
 
-The imports for the _frees-async_ module:
+The imports for the _frees-async_ free module:
 
 ```tut:silent
 import freestyle.free.async._
 import freestyle.free.async.implicits._
+```
+
+The imports for the _frees-async_ AsyncContext:
+
+```tut:silent
+import freestyle.async._
+import freestyle.async.implicits._
 ```
 
 Now if we want to create a freestyle program which uses the `findBooks` function and returns all the books sorted by the year they were written, we can use the `AsyncM` effect:

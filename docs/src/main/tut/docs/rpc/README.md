@@ -360,7 +360,7 @@ Next, our dummy `Greeter` server implementation:
 
 ```tut:silent
 import cats.~>
-import freestyle.free.Capture
+import freestyle.free._
 import monix.eval.Task
 import monix.reactive.Observable
 import service._
@@ -415,15 +415,11 @@ In [frees-rpc] programs, we'll at least need an implicit evidence related to the
 
 > The `monix.execution.Scheduler` is inspired by `ReactiveX`, being an enhanced Scala `ExecutionContext` and also a replacement for Java’s `ScheduledExecutorService`, but also for Javascript’s `setTimeout`.
 
-Here, for our example, we also need to provide a `scala.concurrent.ExecutionContext` implicit evidence, because we'll interpret our program to `scala.concurrent.Future`:
-
 ```tut:silent
-import scala.concurrent.ExecutionContext
 import monix.execution.Scheduler
 
 trait CommonRuntime {
 
-  implicit val EC: ExecutionContext = ExecutionContext.Implicits.global
   implicit val S: Scheduler         = monix.execution.Scheduler.Implicits.global
 
 }
@@ -435,8 +431,8 @@ As a side note, `CommonRuntime` will also be used later on for the client progra
 
 Now, we need to implicitly provide two things:
 
-* A runtime interpreter of our `ServiceHandler` tied to a specific type. In our case, we'll use `scala.concurrent.Future`.
-* A Natural Transformation implicit evidence of `GrpcServer.Op ~> F` where `F` would be your target monad. In our example, the implicit evidence would be: `GrpcServer.Op ~> Future`. We have to consider few things to tackle this:
+* A runtime interpreter of our `ServiceHandler` tied to a specific type. In our case, we'll use `cats.effects.IO`.
+* A Natural Transformation implicit evidence of `GrpcServer.Op ~> F` where `F` would be your target monad. In our example, the implicit evidence would be: `GrpcServer.Op ~> IO`. We have to consider few things to tackle this:
 	* First of all, we need to decide on the rpc port where the server will bootstrap.
 	* Then, we need to register the set of configurations we want to add to our [gRPC] server, like our `Greeter` service. All these configurations are aggregated in a `List[GrpcConfig]`. Later on, an internal builder will build the final server based on this list. The full available list of settings are exposed in [this file](https://github.com/frees-io/freestyle-rpc/blob/master/rpc/src/main/scala/server/GrpcConfig.scala).
 	* Finally, we need to compose:
@@ -452,21 +448,20 @@ import freestyle.rpc.server._
 import freestyle.rpc.server.handlers._
 import freestyle.rpc.server.implicits._
 
-import scala.concurrent.Future
 
 object gserver {
 
   trait Implicits extends CommonRuntime {
 
-    implicit val greeterServiceHandler: Greeter.Handler[Future] = new ServiceHandler[Future]
+    implicit val greeterServiceHandler: Greeter.Handler[IO] = new ServiceHandler[IO]
 
     val grpcConfigs: List[GrpcConfig] = List(
-      AddService(Greeter.bindService[Greeter.Op, Future])
+      AddService(Greeter.bindService[Greeter.Op, IO])
     )
 
-    implicit val grpcServerHandler: GrpcServer.Op ~> Future =
-      new GrpcServerHandler[Future] andThen
-        new GrpcKInterpreter[Future](ServerW(8080, grpcConfigs).server)
+    implicit val grpcServerHandler: GrpcServer.Op ~> IO =
+      new GrpcServerHandler[IO] andThen
+        new GrpcKInterpreter[IO](ServerW(8080, grpcConfigs).server)
   }
 
   object implicits extends Implicits
@@ -479,7 +474,7 @@ Here are a few additional notes related to the previous snippet of code:
 * The Server will bootstrap on port `8080`.
 * `Greeter.bindService` is an auto-derived method which creates, behind the scenes, the binding service for [gRPC]. It requires two type parameters, `F[_]` and `M[_]`.
 	* `F[_]` would be our algebra, which matches with our `Greeter` service definition.
-	* `M[_]`, the target monad, in our example: `scala.concurrent.Future`.
+	* `M[_]`, the target monad, in our example: `cats.effects.IO`.
 
 ### Server Bootstrap
 
@@ -491,18 +486,15 @@ import freestyle.rpc.server.GrpcServerApp
 import freestyle.rpc.server.implicits._
 import gserver.implicits._
 
-import scala.concurrent.{Await, Future}
-import scala.concurrent.duration.Duration
-
 object RPCServer {
 
   def main(args: Array[String]): Unit =
-    Await.result(server[GrpcServerApp.Op].bootstrapM[Future], Duration.Inf)
+    server[GrpcServerApp.Op].bootstrapM[IO].unsafeRunSync()
 
 }
 ```
 
-Fortunately, once all the runtime requirements are in place (**`import gserver.implicits._`**), we only have to write the previous piece of code, which primarily, should be the same in all cases (except if your target Monad is different from `scala.concurrent.Future`).
+Fortunately, once all the runtime requirements are in place (**`import gserver.implicits._`**), we only have to write the previous piece of code, which primarily, should be the same in all cases (except if your target Monad is different from `cats.effects.IO`).
 
 ### Client
 
@@ -514,7 +506,7 @@ Similarly in this section, as we saw for the server case, we are defining all th
 
 #### Execution Context
 
-In our example, we are going to use the same Execution Context described for the Server. However, for the sake of observing a slightly different runtime configuration, our client will be interpreting to `monix.eval.Task`. Hence, in this case, we would only need the `monix.execution.Scheduler` implicit evidence (`scala.concurrent` wouldn't be necessary).
+In our example, we are going to use the same Execution Context described for the Server. However, for the sake of observing a slightly different runtime configuration, our client will be interpreting to `monix.eval.Task`. Hence, in this case, we would only need the `monix.execution.Scheduler` implicit evidence.
 
 We are going to interpret to `monix.eval.Task`, however, behind the scenes, we will use the [cats-effect] `IO` monad as an abstraction. Concretely, Freestyle has an integration with `cats-effect` that we need to add to our project if we are following the same pattern:
 
@@ -550,7 +542,6 @@ import monix.eval.Task
 import io.grpc.ManagedChannel
 import service._
 
-import scala.concurrent.Future
 import scala.util.{Failure, Success, Try}
 
 object gclient {
@@ -569,7 +560,7 @@ object gclient {
     val channelConfigList: List[ManagedChannelConfig] = List(UsePlaintext(true))
 
     val managedChannelInterpreter =
-      new ManagedChannelInterpreter[Future](channelFor, channelConfigList)
+      new ManagedChannelInterpreter[IO](channelFor, channelConfigList)
 
     val channel: ManagedChannel = managedChannelInterpreter.build(channelFor, channelConfigList)
 
