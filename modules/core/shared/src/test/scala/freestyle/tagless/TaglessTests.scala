@@ -20,11 +20,13 @@ import org.scalatest.{Matchers, WordSpec}
 
 import freestyle.free._
 
-import cats.{~>, Id, Monad, Monoid, Eq}
+import cats.{~>, Id, Functor, Applicative, Monad, Monoid, Eq}
 import cats.arrow.FunctionK
 import cats.free.Free
 import cats.instances.either._
 import cats.instances.option._
+import cats.kernel.instances.int._
+import cats.syntax.apply._
 import cats.syntax.flatMap._
 import cats.syntax.functor._
 
@@ -143,7 +145,6 @@ class TaglessTests extends WordSpec with Matchers {
         def f[T: Monoid](a: T): T = a
         def g[S: Eq](a: S, b: S): Boolean = Eq[S].eqv(a,b)
       }
-      import cats.kernel.instances.int._
       Y.f[Int](42)
       Y.g[Int](42, 42)
     }
@@ -174,6 +175,57 @@ class TaglessTests extends WordSpec with Matchers {
 
     "a trait with any non-abstact methods of type FS" in {
       "@tagless trait X { def f(a: Char) : FS[Int] = 0 } " shouldNot compile
+    }
+
+  }
+
+  "A @tagles trait can define derive methods by combining other basic methods" when {
+    "they use a Functor[FS] instance to provide a map operation" in {
+      @tagless trait X {
+        def a: FS[Int]
+        def b(implicit f: Functor[FS]): FS[Int] = a.map(x => x+1)
+      }
+      implicit object IdX extends X.Handler[Id] {
+        def a: Int = 41
+      }
+      IdX.b shouldEqual 42
+    }
+
+    "using the Applicative instance to combine operations into a FS.Par" in {
+      @tagless trait X {
+        def a: FS[Int]
+        def b(implicit f: Applicative[FS]): FS[Int] = (a, a).mapN(_+_)
+      }
+      object IdX extends X.Handler[Id] {
+        def a: Int = 5
+      }
+      IdX.b shouldEqual 10
+    }
+
+    "using the Monad instance to combine operations into a FS.Seq" in {
+      @tagless trait X {
+        def a: FS[Int]
+        def b(x: Int): FS[Int]
+        def c(implicit m: Monad[FS]): FS[Int] = a.flatMap(b)
+      }
+      object IdX extends X.Handler[Id] {
+        def a: Int = 41
+        def b(x: Int) = x+1
+      }
+      IdX.c shouldEqual 42
+    }
+
+    "mixing all of the above" in {
+      @tagless trait X {
+        def a: FS[Int]
+        def b(i: Int)(implicit f: Functor[FS]): FS[Int] = a.map(x => x+i)
+        def c(implicit ap: Applicative[FS]): FS[Int] = (a,a).mapN(_+_)
+        def d(implicit m: Monad[FS]): FS[Int] = c.flatMap(b)
+      }
+      object IdX extends X.Handler[Id] {
+        def a: Int = 5
+      }
+        
     }
 
   }

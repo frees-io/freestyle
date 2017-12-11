@@ -64,7 +64,7 @@ class freeTests extends WordSpec with Matchers {
     }
 
     "a trait with an F[_] bound type param" in {
-      @free @debug trait FBound[F[_]] { def bar(x:Int): FS[Int] }
+      @free trait FBound[F[_]] { def bar(x:Int): FS[Int] }
     }
 
     "an abstract class with at least one request" in {
@@ -80,11 +80,15 @@ class freeTests extends WordSpec with Matchers {
     }
 
     "a trait with some concrete non-FS members" in {
-      """@free trait X {
+      @free trait X {
         def x: FS[Int]
         def y: Int = 5
         val z: Int = 6
-      }""" should compile
+      }
+      implicit object IdX extends X.Handler[Id]{
+        def x: Int = 31
+      }
+      0 shouldEqual 0
     }
 
   }
@@ -194,7 +198,14 @@ class freeTests extends WordSpec with Matchers {
   "a @free trait can define methods of type FS.Par and FS.Seq by combining FS through" when {
 
     "the use of the `map` operation from Functor, to derive a  FS.Par" in {
-      "@free trait X { def a: FS[Int] ; def b: FS.Par[Int] = a.map(x => x+1) }" should compile
+      @free trait X {
+        def a: FS[Int]
+        def b: FS.Par[Int] = a.map(x => x+1)
+      }
+      implicit object IdX extends X.Handler[Id] {
+        def a: Int = 41
+      }
+      X.to[X.Op].b.interpret[Id] shouldEqual 42
     }
 
     "using the Applicative instance to combine operations into a FS.Par" in {
@@ -203,12 +214,39 @@ class freeTests extends WordSpec with Matchers {
         def a: FS[Int]
         def b: FS.Par[Int] = (a, a).mapN(_+_)
       }
-      object Y extends X.Handler[Id] {
+      implicit object Y extends X.Handler[Id] {
         def a: Int = 5
       }
-      //X[X.Op].b.interpret[Id] shouldEqual 10
+      X.to[X.Op].b.interpret[Id] shouldEqual 10
     }
 
+    "using the Monad instance to combine operations into a FS.Seq" in {
+      import cats.syntax.monad._
+      @free trait X {
+        def a: FS[Int]
+        def b(x: Int): FS[Int]
+        def c: FS.Seq[Int] = {
+          val fa: FS.Seq[Int] = a.freeS
+          fa.flatMap(x => b(x).freeS)
+        }
+      }
+      implicit object IdX extends X.Handler[Id] {
+        def a: Int = 41
+        def b(x: Int) = x+1
+      }
+      X.to[X.Op].c.interpret[Id] shouldEqual 42
+    }
+
+    "mixing all of the above" in {
+      import cats.syntax.apply._
+      @free trait X {
+        def a: FS[Int]
+        def b(i: Int): FS.Par[Int] = a.map(x => x+i)
+        def c: FS.Par[Int] = (a,a).mapN(_+_)
+        def d: FS.Seq[Int] = c.freeS.flatMap(x => b(x).freeS)
+      }
+
+    }
   }
 
   "the @free annotation" should {
