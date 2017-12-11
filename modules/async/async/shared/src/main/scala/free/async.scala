@@ -19,6 +19,7 @@ package freestyle.free
 import scala.concurrent._
 import scala.util._
 import freestyle.async._
+import freestyle.async.implicits._
 
 object async {
 
@@ -41,19 +42,6 @@ object async {
   }
 
   trait Implicits {
-    implicit def futureAsyncContext(
-        implicit ec: ExecutionContext
-    ) = new AsyncContext[Future] {
-      def runAsync[A](fa: Proc[A]): Future[A] = {
-        val p = Promise[A]()
-
-        ec.execute(new Runnable {
-          def run() = fa(_.fold(p.tryFailure, p.trySuccess))
-        })
-
-        p.future
-      }
-    }
 
     implicit def freeStyleAsyncMHandler[M[_]](
         implicit MA: AsyncContext[M]

@@ -318,7 +318,7 @@ import java.util.UUID
 
 import cats.MonadError
 import com.datastax.driver.core.{ResultSet, Session}
-import freestyle.free.async.AsyncContext
+import freestyle.async.AsyncContext
 import freestyle.cassandra.query.interpolator._
 import freestyle.cassandra.api._
 import Model.SchemaInterpolator

@@ -16,18 +16,31 @@
 
 package freestyle
 
-import scala.concurrent._
 import scala.util._
+import scala.concurrent._
 
-object async
-{
+object async {
+
   /** An asynchronous computation that might fail. **/
   type Proc[A] = (Either[Throwable, A] => Unit) => Unit
 
   /** The context required to run an asynchronous computation. **/
-  trait AsyncContext[M[_]]
-  {
-    def runAsync[A](fa : Proc[A]) : M[A]
+  trait AsyncContext[M[_]] {
+    def runAsync[A](fa: Proc[A]): M[A]
   }
 
+  trait Implicits {
+    implicit def futureAsyncContext(implicit ec: ExecutionContext) = new AsyncContext[Future] {
+      def runAsync[A](fa: Proc[A]): Future[A] = {
+        val p = Promise[A]()
+
+        ec.execute(new Runnable {
+          def run() = fa(_.fold(p.tryFailure, p.trySuccess))
+        })
+
+        p.future
+      }
+    }
+  }
+  object implicits extends Implicits
 }
