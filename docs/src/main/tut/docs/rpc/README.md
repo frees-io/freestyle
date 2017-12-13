@@ -54,7 +54,7 @@ Add the following dependency to your project's build file.
 For Scala `2.11.x` and `2.12.x`:
 
 ```scala
-libraryDependencies += "io.frees" %% "frees-rpc" % "0.3.0"
+libraryDependencies += "io.frees" %% "frees-rpc" % "0.4.2"
 ```
 
 ## About gRPC
@@ -165,9 +165,8 @@ object protocols {
   @message
   case class HelloReply(message: String)
 
-  @free
   @service
-  trait Greeter {
+  trait Greeter[F[_]] {
 
     /**
      * The greeter service definition.
@@ -175,7 +174,7 @@ object protocols {
      * @param request Say Hello Request.
      * @return HelloReply.
      */
-    @rpc(Protobuf) def sayHello(request: HelloRequest): FS[HelloReply]
+    @rpc(Protobuf) def sayHello(request: HelloRequest): F[HelloReply]
 
   }
 }
@@ -216,9 +215,8 @@ object service {
   @message
   case class HelloResponse(reply: String)
 
-  @free
   @service
-  trait Greeter {
+  trait Greeter[F[_]] {
 
     /**
      * Unary RPCs where the client sends a single request to the server and gets a single response back,
@@ -230,7 +228,7 @@ object service {
      * @return Server Response.
      */
     @rpc(Protobuf)
-    def sayHello(request: HelloRequest): FS[HelloResponse]
+    def sayHello(request: HelloRequest): F[HelloResponse]
 
     /**
      * Server streaming RPCs where the client sends a request to the server and gets a stream to read a
@@ -243,7 +241,7 @@ object service {
      */
     @rpc(Protobuf)
     @stream[ResponseStreaming.type]
-    def lotsOfReplies(request: HelloRequest): FS[Observable[HelloResponse]]
+    def lotsOfReplies(request: HelloRequest): F[Observable[HelloResponse]]
 
     /**
      * Client streaming RPCs where the client writes a sequence of messages and sends them to the server,
@@ -257,7 +255,7 @@ object service {
      */
     @rpc(Protobuf)
     @stream[RequestStreaming.type]
-    def lotsOfGreetings(request: Observable[HelloRequest]): FS[HelloResponse]
+    def lotsOfGreetings(request: Observable[HelloRequest]): F[HelloResponse]
 
     /**
      * Bidirectional streaming RPCs where both sides send a sequence of messages using a read-write stream.
@@ -273,7 +271,7 @@ object service {
      */
     @rpc(Protobuf)
     @stream[BidirectionalStreaming.type]
-    def bidiHello(request: Observable[HelloRequest]): FS[Observable[HelloResponse]]
+    def bidiHello(request: Observable[HelloRequest]): F[Observable[HelloResponse]]
 
   }
 
@@ -365,7 +363,7 @@ import monix.eval.Task
 import monix.reactive.Observable
 import service._
 
-class ServiceHandler[F[_]](implicit C: Capture[F], T2F: Task ~> F) extends Greeter.Handler[F] {
+class ServiceHandler[F[_]](implicit C: Capture[F], T2F: Task ~> F) extends Greeter[F] {
 
   private[this] val dummyObservableResponse: Observable[HelloResponse] =
     Observable.fromIterable(1 to 5 map (i => HelloResponse(s"Reply $i")))
@@ -443,20 +441,21 @@ In summary, the result would be as follows:
 
 ```tut:silent
 import cats.~>
-import cats.implicits._
+import cats.effect.IO
 import freestyle.rpc.server._
 import freestyle.rpc.server.handlers._
 import freestyle.rpc.server.implicits._
-
+import freestyle.free.asyncCatsEffect.implicits._
+import service._
 
 object gserver {
 
   trait Implicits extends CommonRuntime {
 
-    implicit val greeterServiceHandler: Greeter.Handler[IO] = new ServiceHandler[IO]
+    implicit val greeterServiceHandler: ServiceHandler[IO] = new ServiceHandler[IO]
 
     val grpcConfigs: List[GrpcConfig] = List(
-      AddService(Greeter.bindService[Greeter.Op, IO])
+      AddService(Greeter.bindService[IO])
     )
 
     implicit val grpcServerHandler: GrpcServer.Op ~> IO =
@@ -481,7 +480,8 @@ Here are a few additional notes related to the previous snippet of code:
 What else is needed? We just need to define a `main` method:
 
 ```tut:silent
-import cats.implicits._
+import cats.effect.IO
+import cats.effect.IO._
 import freestyle.rpc.server.GrpcServerApp
 import freestyle.rpc.server.implicits._
 import gserver.implicits._
@@ -514,7 +514,7 @@ We are going to interpret to `monix.eval.Task`, however, behind the scenes, we w
 
 ```scala
 // build.sbt
-libraryDependencies += "io.frees" %% "frees-async-cats-effect" % "0.4.6"
+libraryDependencies += "io.frees" %% "frees-async-cats-effect" % "0.5.0"
 ```
 
 [comment]: # (End Replace)
@@ -534,6 +534,7 @@ So, taking into account all we have just said, how would our code look?
 
 ```tut:silent
 import cats.implicits._
+import cats.effect.IO
 import freestyle.free.config.implicits._
 import freestyle.free.asyncCatsEffect.implicits._
 import freestyle.rpc.client._

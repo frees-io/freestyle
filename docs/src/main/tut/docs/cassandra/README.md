@@ -47,7 +47,7 @@ For Scala `2.11.x` and `2.12.x`:
 
 ```scala
 Resolver.bintrayRepo("tabdulradi", "maven")
-libraryDependencies += "io.frees" %% "frees-cassandra" % "0.0.4" 
+libraryDependencies += "io.frees" %% "frees-cassandra" % "0.0.5" 
 ```
 
 ## About Freestyle Cassandra
