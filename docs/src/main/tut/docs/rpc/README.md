@@ -183,6 +183,15 @@ object protocols {
 
 Naturally, the [RPC] services are grouped in a [@free algebra]. Therefore, we are following one of the primary principles of Freestyle; you only need to concentrate on the API that you want to expose as abstract smart constructors, without worrying how they will be implemented.
 
+In the above example, we can see that `sayHello` returns a `FS[HelloReply]`. This service is returning a specific `HelloReply` message. However, the result of some functions could be an empty message. You can do it with the object `Empty` defined at `freestyle.rpc.protocol`. 
+
+In this case, this service would return an empty content.
+
+```tut:silent
+@rpc(Protobuf) def sayHello(request: HelloRequest): FS[Empty.type]
+
+```
+
 We are also using some additional annotations:
 
 * `@option`: used to define the equivalent headers in `.proto` files.
