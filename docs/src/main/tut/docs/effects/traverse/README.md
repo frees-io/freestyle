@@ -16,9 +16,9 @@ Traverse includes two basic operations `fromTraversable` and `empty`.
 `fromTraversable` allows the lifting of any `G[_]: Foldable` into the context of `FreeS`:
 
 ```tut:book
-import freestyle._
-import freestyle.implicits._
-import freestyle.effects._
+import freestyle.free._
+import freestyle.free.implicits._
+import freestyle.free.effects._
 import cats.implicits._
 
 val list = traverse[List]

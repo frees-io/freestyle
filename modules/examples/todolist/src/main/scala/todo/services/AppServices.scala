@@ -17,8 +17,8 @@
 package todo
 package services
 
-import freestyle.effects.error.ErrorM
-import freestyle._
+import freestyle.free.effects.error.ErrorM
+import freestyle.free._
 import todo.model.{Tag, TodoForm, TodoList}
 import todo.persistence.AppRepository
 import cats.implicits._

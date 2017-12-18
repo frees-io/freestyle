@@ -14,7 +14,7 @@ In order to enable this integration, you can depend on _frees-config_:
 [comment]: # (Start Replace)
 
 ```scala
-libraryDependencies += "io.frees" %% "frees-config" % "0.4.6"
+libraryDependencies += "io.frees" %% "frees-config" % "0.5.0"
 ```
 
 [comment]: # (End Replace)
@@ -58,8 +58,8 @@ disallowedStates = ["reverted", "closed"]
 Before we do anything else, we’ll need to add the usual set of imports from freestyle and cats to create our algebras:
 
 ```tut:silent
-import freestyle._
-import freestyle.implicits._
+import freestyle.free._
+import freestyle.free.implicits._
 import cats._
 import cats.implicits._
 
@@ -82,8 +82,8 @@ At this point, we may aggregate our issues algebra with any other algebras in a 
 derived from using different algebras:
 
 ```tut:book
-import freestyle.config._
-import freestyle.config.implicits._
+import freestyle.free.config._
+import freestyle.free.config.implicits._
 
 @module trait App {
   val issuesService: IssuesService

@@ -19,9 +19,9 @@ The state effect comes with four basic operations `get`, `set`, `modify`, and `i
 `get` retrieves the current state:
 
 ```tut:book
-import freestyle._
-import freestyle.implicits._
-import freestyle.effects.state
+import freestyle.free._
+import freestyle.free.implicits._
+import freestyle.free.effects.state
 import cats.data.State
 import cats.implicits._
 import cats.mtl.implicits._

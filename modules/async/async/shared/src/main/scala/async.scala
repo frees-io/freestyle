@@ -16,8 +16,8 @@
 
 package freestyle
 
-import scala.concurrent._
 import scala.util._
+import scala.concurrent._
 
 object async {
 
@@ -29,28 +29,8 @@ object async {
     def runAsync[A](fa: Proc[A]): M[A]
   }
 
-  /** Async computation algebra. **/
-  @free sealed trait AsyncM {
-    def async[A](fa: Proc[A]): FS[A]
-  }
-
-  class Future2AsyncM[F[_]](implicit AC: AsyncContext[F], E: ExecutionContext)
-    extends FSHandler[Future, F] {
-    override def apply[A](future: Future[A]): F[A] =
-      AC.runAsync { cb =>
-        E.execute(new Runnable {
-          def run(): Unit = future.onComplete {
-            case Failure(e) => cb(Left(e))
-            case Success(r) => cb(Right(r))
-          }
-        })
-      }
-  }
-
   trait Implicits {
-    implicit def futureAsyncContext(
-        implicit ec: ExecutionContext
-    ) = new AsyncContext[Future] {
+    implicit def futureAsyncContext(implicit ec: ExecutionContext) = new AsyncContext[Future] {
       def runAsync[A](fa: Proc[A]): Future[A] = {
         val p = Promise[A]()
 
@@ -61,28 +41,6 @@ object async {
         p.future
       }
     }
-
-    implicit def freeStyleAsyncMHandler[M[_]](
-        implicit MA: AsyncContext[M]
-    ): AsyncM.Handler[M] =
-      new AsyncM.Handler[M] {
-        def async[A](fa: Proc[A]): M[A] =
-          MA.runAsync(fa)
-      }
   }
-
-  trait Syntax {
-
-    implicit def futureOps[A](f: Future[A]): FutureOps[A] = new FutureOps(f)
-
-    final class FutureOps[A](f: Future[A]) {
-
-      def to[F[_]](implicit AC: AsyncContext[F], E: ExecutionContext): F[A] =
-        new Future2AsyncM[F].apply(f)
-
-    }
-
-  }
-
-  object implicits extends Implicits with Syntax
+  object implicits extends Implicits
 }

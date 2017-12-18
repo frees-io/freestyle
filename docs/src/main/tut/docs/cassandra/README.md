@@ -47,7 +47,7 @@ For Scala `2.11.x` and `2.12.x`:
 
 ```scala
 Resolver.bintrayRepo("tabdulradi", "maven")
-libraryDependencies += "io.frees" %% "frees-cassandra" % "0.0.4" 
+libraryDependencies += "io.frees" %% "frees-cassandra" % "0.0.5" 
 ```
 
 ## About Freestyle Cassandra
@@ -69,7 +69,7 @@ Cassandra configuration.
 ```tut:silent
 
 import com.datastax.driver.core.{Configuration, Metadata, Metrics, Session}
-import freestyle.free
+import freestyle.free._
 
 @free
 trait ClusterAPI {
@@ -95,9 +95,9 @@ Provides a way to interact with a proper query. We can both define a query as a 
 placeholders for real values - or a raw query string. Bear in mind that running a raw query using the 
 SessionAPI directly is unsafe and does not check query correctness at compile time. 
 
-```tut:silent
+```scala
 
-import freestyle.free
+import freestyle.free._
 import com.datastax.driver.core._
 import freestyle.cassandra.query.model.SerializableValueBy
 
@@ -133,10 +133,10 @@ trait SessionAPI {
 Provides methods to bind real query values to an already existing PreparedStatement, returning a 
 BoundStatement, which can now be ran in a safe way.
 
-```tut:silent
+```scala
 
 import com.datastax.driver.core._
-import freestyle.free
+import freestyle.free._
 import freestyle.cassandra.codecs.ByteBufferCodec
 import freestyle.cassandra.query.model.SerializableValueBy
 
@@ -184,10 +184,10 @@ Provides methods to interact directly with a Cassandra ResultSet, so we can get 
 representation, a list of them, or describe that that ResultSet could not have been found in the 
 current Cassandra instance.
 
-```tut:silent
+```scala
 
 import com.datastax.driver.core.ResultSet
-import freestyle.free
+import freestyle.free._
 import freestyle.cassandra.query.mapper.FromReader
 
 @free
@@ -212,12 +212,12 @@ any requested value, table or keyspace names does not exist at the schema defini
 
 Let's see how we can use it:
 
-```tut:silent
+```scala
 import java.util.UUID
 
 import com.datastax.driver.core._
-import freestyle._
-import freestyle.implicits._
+import freestyle.free._
+import freestyle.free.implicits._
 import freestyle.cassandra.implicits._
 import freestyle.cassandra.api.QueryModule
 import freestyle.cassandra.codecs._
@@ -270,7 +270,7 @@ cassandra keyspaces & tables schemas.
 
 Example
 
-```tut:silent
+```scala
 
 import freestyle.cassandra.query.interpolator.MacroInterpolator.SchemaFileInterpolator
 
@@ -287,13 +287,13 @@ Now we can import this SchemaInterpolator and take advantage of this macro gener
 Let's see an example. We can define an algebra to represent operations over an user, and a 
 module to interact with other algebras:
 
-```tut:silent
+```scala
 import java.util.UUID
 
 import com.datastax.driver.core.ResultSet
-import freestyle.{free, module}
+import freestyle.free._
 import freestyle.cassandra.api._
-import freestyle.logging._
+import freestyle.free.logging._
 
 @free
 trait UserAPI {
@@ -351,13 +351,13 @@ object implicits {
 
 So, now we can compose those algebras ops easily:
 
-```tut:silent
+```scala
 
 import java.util.UUID
 
 import com.datastax.driver.core._
-import freestyle._
-import freestyle.implicits._
+import freestyle.free._
+import freestyle.free.implicits._
 import freestyle.cassandra.api._
 import freestyle.cassandra.implicits._
 import freestyle.cassandra.query.interpolator._

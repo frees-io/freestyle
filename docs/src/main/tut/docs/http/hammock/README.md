@@ -15,7 +15,7 @@ First of all, include the _frees-http-client_ as follows:
 [comment]: # (Start Replace)
 
 ```scala
-libraryDependencies += "io.frees" %% "frees-http-client" % "0.4.6"
+libraryDependencies += "io.frees" %% "frees-http-client" % "0.5.0"
 ```
 
 [comment]: # (End Replace)
@@ -25,10 +25,10 @@ libraryDependencies += "io.frees" %% "frees-http-client" % "0.4.6"
 As always, we should start with the freestyle imports:
 
 ```tut:silent
-import freestyle._
-import freestyle.implicits._
-import freestyle.http.client._
-import freestyle.http.client.implicits._
+import freestyle.free._
+import freestyle.free.implicits._
+import freestyle.free.http.client._
+import freestyle.free.http.client.implicits._
 import cats.effect.{Sync, IO}
 import _root_.hammock._
 import _root_.hammock.Uri._

@@ -17,8 +17,8 @@
 package todo
 package services
 
-import freestyle.logging.LoggingM
-import freestyle._
+import freestyle.free.logging.LoggingM
+import freestyle.free._
 import todo.model.Tag
 import todo.persistence.TagRepository
 import cats.implicits._

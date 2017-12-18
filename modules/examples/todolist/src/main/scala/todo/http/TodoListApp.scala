@@ -21,20 +21,20 @@ import com.twitter.finagle.http.{Request, Response}
 import com.twitter.finagle.{Http, ListeningServer, Service}
 import com.twitter.server.TwitterServer
 import com.twitter.util.{Await, Future}
-import freestyle._
-import freestyle.implicits._
+import freestyle.free._
+import freestyle.free.implicits._
 import io.circe.generic.auto._
 import io.finch.circe._
 import todo.http.apis.{Api, AppApi}
 import runtime.implicits._
 import cats.implicits._
 import cats.~>
-import freestyle.config.ConfigM
-import freestyle.effects.error.implicits._
-import freestyle.config.implicits._
-import freestyle.loggingJVM.implicits._
-import freestyle.http.finch._
-import freestyle.logging.LoggingM
+import freestyle.free.config.ConfigM
+import freestyle.free.effects.error.implicits._
+import freestyle.free.config.implicits._
+import freestyle.free.loggingJVM.implicits._
+import freestyle.free.http.finch._
+import freestyle.free.logging.LoggingM
 import todo.persistence.{TagRepository, _}
 import todo.services.{AppServices, Services, TagService}
 

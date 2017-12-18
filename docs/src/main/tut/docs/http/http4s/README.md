@@ -13,7 +13,7 @@ You can add the _frees-http4s_ module as follows:
 [comment]: # (Start Replace)
 
 ```scala
-libraryDependencies += "io.frees" %% "frees-http4s" % "0.4.6"
+libraryDependencies += "io.frees" %% "frees-http4s" % "0.5.0"
 ```
 
 [comment]: # (End Replace)
@@ -29,14 +29,14 @@ The _frees-http4s_ module allows you to return a `FreeS[F, A]` value if there is
 First, lets import all the regular freestyle imports:
 
 ```tut:silent
-import freestyle._
-import freestyle.implicits._
+import freestyle.free._
+import freestyle.free.implicits._
 ```
 
 And the specific import for `frees-http4s`:
 
 ```tut:silent
-import freestyle.http.http4s._
+import freestyle.free.http.http4s._
 ```
 
 In this example, we will create an algebra to calculate the VAT of a product's price:

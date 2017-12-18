@@ -29,8 +29,8 @@ To be precise, what the integration gives us is a couple of  `implicit` methods 
 Note that the method has to be parameterized both on the `F` and on `A`, to make it as generic as possible.
 
 ```tut:book
-import freestyle._
-import freestyle.implicits._
+import freestyle.free._
+import freestyle.free.implicits._
 import cats.{ ~>, Monad }
 import _root_.akka.http.scaladsl.marshalling.ToEntityMarshaller
 
@@ -52,11 +52,11 @@ To build an object `marsh`, our method needs to find in scope:
 * A _base_ entity marshaller, `base: ToEntityMarshaller[ G[A]]`, where `G[_]` is a constructor type, which may be different for each application; 
   and `A` refers to the same type of the result in the response.
 * A way to interpret an expression of type `FreeS[F, A]` into a `G[A]`. This is built by the implicit methods in
-  `freestyle.implicits`, from a natural transformation `F ~> G` and an instance of `cats.Monad[G]`.
+  `freestyle.free.implicits`, from a natural transformation `F ~> G` and an instance of `cats.Monad[G]`.
 
 In essence, the generated marshaller first _interprets_ the value of type `FreeS[F,A]` into a `G[A]`, and then it passes the generated
 value to the base marshaller. To build an Akka HTTP route using a `FreeS` program, one only needs to bring this method into the implicit context, which can be done using an
-`import freestyle.http.akka._` statement.
+`import freestyle.free.http.akka._` statement.
 
 #### Small Example
 
@@ -66,7 +66,7 @@ You need to import it separately, by adding the following dependency:
 [comment]: # (Start Replace)
 
 ```scala
-libraryDependencies += "io.frees" %% "frees-akka" % "0.4.6"
+libraryDependencies += "io.frees" %% "frees-akka" % "0.5.0"
 ```
 
 [comment]: # (End Replace)
@@ -76,8 +76,8 @@ a `@free` algebra that returns values of a type `FreeS[F, User]`, and then (3) d
 which a `Marshaller` _magnet_ exists. To keep things simple, we just interpret to `Id`:
 
 ```tut:book
-import freestyle._
-import freestyle.implicits._
+import freestyle.free._
+import freestyle.free.implicits._
 
 case class User(name: String)
 

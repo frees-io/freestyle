@@ -17,7 +17,7 @@
 package todo
 package persistence
 
-import freestyle._
+import freestyle.free._
 
 /**
  * Module containing all the algebras declared in this layer.

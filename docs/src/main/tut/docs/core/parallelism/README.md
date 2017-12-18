@@ -27,7 +27,7 @@ We use `FreeS.Par` as an alias for `FreeApplicative` to denote functions that re
 Independent operations that can potentially be executed in parallel can be placed inside `@free` algebras as abstract definitions like in the example below:
 
 ```tut:book
-import freestyle._
+import freestyle.free._
 
 @free trait Validation {
   def minSize(n: Int): FS[Boolean]
@@ -43,7 +43,7 @@ Freestyle ships with ready to use instances for `scala.concurrent.Future` and co
 To enable these instances and support parallelism you need to explicitly import:
 
 ```tut:book
-import freestyle.nondeterminism._
+import freestyle.free.nondeterminism._
 ```
 
 The code below illustrates a handler that will allow parallel executions thanks to the unsafe nature of `scala.concurrent.Future#apply` which runs immediately:

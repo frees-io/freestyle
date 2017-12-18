@@ -28,10 +28,10 @@ To use the _frees-async_ module, you need to include one of the following depend
 [comment]: # (Start Replace)
 
 ```scala
-libraryDependencies += "io.frees" %% "frees-async" % "0.4.6"
+libraryDependencies += "io.frees" %% "frees-async" % "0.5.0"
 
 // and if you want to use cats.effect.IO or Monix' Task:
-libraryDependencies += "io.frees" %% "frees-async-cats-effect" % "0.4.6"
+libraryDependencies += "io.frees" %% "frees-async-cats-effect" % "0.5.0"
 ```
 
 [comment]: # (End Replace)
@@ -39,11 +39,18 @@ libraryDependencies += "io.frees" %% "frees-async-cats-effect" % "0.4.6"
 The standard freestyle imports:
 
 ```tut:silent
-import freestyle._
-import freestyle.implicits._
+import freestyle.free._
+import freestyle.free.implicits._
 ```
 
-The imports for the _frees-async_ module:
+The imports for the _frees-async_ free module:
+
+```tut:silent
+import freestyle.free.async._
+import freestyle.free.async.implicits._
+```
+
+The imports for the _frees-async_ AsyncContext:
 
 ```tut:silent
 import freestyle.async._
@@ -86,7 +93,7 @@ We can run these programs using:
 - Cats' `IO` as target effect type:
 
 ```tut:book
-import freestyle.asyncCatsEffect.implicits._
+import freestyle.free.asyncCatsEffect.implicits._
 
 import scala.concurrent.{Await, ExecutionContext}
 import scala.concurrent.duration.Duration

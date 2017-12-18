@@ -25,13 +25,13 @@ addCompilerPlugin("org.scalameta" % "paradise" % "3.0.0-M10" cross CrossVersion.
 For Scala.jvm:
 
 ```scala
-libraryDependencies += "io.frees" %% "frees-core" % "0.4.6"
+libraryDependencies += "io.frees" %% "frees-core" % "0.5.0"
 ```
 
 For Scala.js:
 
 ```scala
-libraryDependencies += "io.frees" %%% "frees-core" % "0.4.6"
+libraryDependencies += "io.frees" %%% "frees-core" % "0.5.0"
 ```
 
 [comment]: # (End Replace)
@@ -43,8 +43,8 @@ Freestyle's core feature is the definition of `Free` boilerplate-free algebras t
 In the example below, we will define two algebras with intermixed sequential and parallel computations.
 
 ```tut:book
-import freestyle._
-import freestyle.implicits._
+import freestyle.free._
+import freestyle.free.implicits._
 
 @free trait Validation {
   def minSize(s: String, n: Int): FS[Boolean]

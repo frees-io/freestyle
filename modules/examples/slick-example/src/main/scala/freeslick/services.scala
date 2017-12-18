@@ -18,9 +18,9 @@ package freeslick
 
 import cats.implicits._
 
-import freestyle._
-import freestyle.slick._
-import freestyle.slick.implicits._
+import freestyle.free._
+import freestyle.free.slick._
+import freestyle.free.slick.implicits._
 
 import scala.concurrent.ExecutionContext
 import persistence._

@@ -13,7 +13,7 @@ help organize algebras in groups that can be arbitrarily nested.
 Let’s first define a few algebras to illustrate how Modules work. We will start with some basic low-level style ops related to persistence, presentation and validation. In our Persistence related algebras, we have a few ops that can go against a DB and others to a Cache service or system. On the presentation side, an application can display or perform input validation.
 
 ```tut:book
-import freestyle._
+import freestyle.free._
 
 object algebras {
     @free trait Database {

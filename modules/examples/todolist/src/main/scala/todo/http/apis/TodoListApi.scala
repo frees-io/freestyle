@@ -23,8 +23,8 @@ import com.twitter.util.Future
 import io.finch._
 import io.finch.circe._
 import io.circe.generic.auto._
-import freestyle._
-import freestyle.http.finch._
+import freestyle.free._
+import freestyle.free.http.finch._
 import todo.model.TodoList
 import todo.services._
 

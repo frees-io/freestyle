@@ -14,7 +14,7 @@ In order to enable this algebra, you can depend on _freestyle-cache_:
 [comment]: # (Start Replace)
 
 ```scala
-libraryDependencies += "io.frees" %% "frees-cache" % "0.4.6"
+libraryDependencies += "io.frees" %% "frees-cache" % "0.5.0"
 ```
 
 [comment]: # (End Replace)
@@ -43,9 +43,9 @@ For the same reason, it poses no type constraint on `Key` or `Val` with regards 
 The following code snippet shows how to import and use the operations from the Cache algebra inside a program:
 
 ```tut:book
-import freestyle._
-import freestyle.implicits._
-import freestyle.cache._
+import freestyle.free._
+import freestyle.free.implicits._
+import freestyle.free.cache._
 import cats.implicits._
 
 val prov = new KeyValueProvider[Char, Int]

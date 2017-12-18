@@ -23,13 +23,13 @@ addCompilerPlugin("org.scalameta" % "paradise" % "3.0.0-M10" cross CrossVersion.
 For Scala.jvm:
 
 ```scala
-libraryDependencies += "io.frees" %% "frees-tagless" % "0.4.6"
+libraryDependencies += "io.frees" %% "frees-tagless" % "0.5.0"
 ```
 
 For Scala.js:
 
 ```scala
-libraryDependencies += "io.frees" %%% "frees-tagless" % "0.4.6"
+libraryDependencies += "io.frees" %%% "frees-tagless" % "0.5.0"
 ```
 
 [comment]: # (End Replace)
@@ -128,11 +128,11 @@ to lift `@tagless` algebras to the context of application where `@free` and `@ta
 Let's redefine `program` to support `LoggingM` which is a `@free` defined algebra of logging operations:
 
 ```tut:silent
-import freestyle._
-import freestyle.implicits._
+import freestyle.free._
+import freestyle.free.implicits._
 
-import freestyle.logging._
-import freestyle.loggingJVM.implicits._
+import freestyle.free.logging._
+import freestyle.free.loggingJVM.implicits._
 ```
 
 ```tut:book

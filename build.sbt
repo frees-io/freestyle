@@ -20,20 +20,13 @@ lazy val core = module("core")
       %("iota-core", "0.3.3"),
       %("simulacrum"),
       %("shapeless") % "test",
-      %("cats-laws") % "test"
+      %("cats-laws") % "test",
+      %%("mainecoon-core")
     ): _*
   )
 
 lazy val coreJVM = core.jvm
 lazy val coreJS  = core.js
-
-lazy val tagless = module("tagless")
-  .dependsOn(core)
-  .jsSettings(sharedJsSettings: _*)
-  .crossDepSettings(commonDeps ++ Seq(%%("mainecoon-core")): _*)
-
-lazy val taglessJVM = tagless.jvm
-lazy val taglessJS  = tagless.js
 
 lazy val tests = jvmModule("tests")
   .dependsOn(coreJVM % "compile->compile;test->test")
@@ -74,7 +67,7 @@ lazy val bench = jvmModule("bench")
     sourceGenerators += Def.task {
       val path = (sourceManaged in (Compile, compile)).value / "bench.scala"
       (runner in (Codegen, run)).value.run(
-        "freestyle.bench.BenchBoiler",
+        "freestyle.free.bench.BenchBoiler",
         Attributed.data((fullClasspath in Codegen).value),
         path.toString :: Nil,
         streams.value.log)
@@ -224,18 +217,6 @@ lazy val fetch = module("fetch", subFolder = Some("integrations"))
 lazy val fetchJVM = fetch.jvm
 lazy val fetchJS  = fetch.js
 
-// lazy val fs2 = module("fs2", subFolder = Some("integrations"))
-//  .dependsOn(core)
-//   .jsSettings(sharedJsSettings: _*)
-//   .crossDepSettings(
-//     commonDeps ++ Seq(
-//       %("fs2-core")
-//     ): _*
-//   )
-
-// lazy val fs2JVM = fs2.jvm
-// lazy val fs2JS  = fs2.js
-
 /////////////////////////////
 //// INTEGRATIONS - HTTP ////
 /////////////////////////////
@@ -320,7 +301,6 @@ lazy val slickExample = jvmModule("slick-example", subFolder = Some("examples"))
 
 lazy val jvmModules: Seq[ProjectReference] = Seq(
   coreJVM,
-  taglessJVM,
   effectsJVM,
   asyncJVM,
   asyncCatsEffectJVM,
@@ -335,7 +315,6 @@ lazy val jvmModules: Seq[ProjectReference] = Seq(
   slick,
   twitterUtil,
   fetchJVM,
-  // fs2JVM,
   httpHttp4s,
   httpFinch,
   httpAkka,
@@ -349,7 +328,6 @@ lazy val jvmModules: Seq[ProjectReference] = Seq(
 
 lazy val jsModules: Seq[ProjectReference] = Seq(
   coreJS,
-  taglessJS,
   effectsJS,
   asyncJS,
   asyncCatsEffectJS,
@@ -359,7 +337,6 @@ lazy val jsModules: Seq[ProjectReference] = Seq(
   monixJS,
   fetchJS,
   httpClientJS
-  //, fs2JS
 )
 
 lazy val allModules: Seq[ProjectReference] = jvmModules ++ jsModules
@@ -397,13 +374,13 @@ lazy val docs = (project in file("docs"))
       Resolver.bintrayRepo("tabdulradi", "maven")
     ),
     libraryDependencies ++= Seq(
-      %%("frees-rpc", "0.3.0"),
+      %%("frees-rpc", "0.4.2-SNAPSHOT"),
       %%("monix"),
       %%("doobie-h2"),
       %%("http4s-dsl"),
       %%("play"),
       %("h2") % "test",
-      "io.frees" %% "frees-cassandra-core"    % "0.0.4"
+      "io.frees" %% "frees-cassandra-core"    % "0.0.5-SNAPSHOT"
     )
   )
   .settings(

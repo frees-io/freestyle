@@ -20,7 +20,7 @@ member in your algebras companion.
 Consider the following algebra adapted to Freestyle from the [Typelevel Cats Free monads examples](http://typelevel.org/cats/datatypes/freemonad.html):
 
 ```tut:book
-import freestyle._
+import freestyle.free._
 import cats.implicits._
 
 @free trait KVStore {
@@ -130,10 +130,10 @@ def program[F[_]](implicit B: Backend[F]): FreeS[F, Option[Int]] = {
 }
 ```
 
-Once we have combined our algebras, we can evaluate them by providing implicit evidence of the Coproduct interpreters. `import freestyle.implicits._` brings into scope, among others, the necessary implicit definitions to derive a unified interpreter given implicit evidence of each one of the individual algebra's interpreters:
+Once we have combined our algebras, we can evaluate them by providing implicit evidence of the Coproduct interpreters. `import freestyle.free.implicits._` brings into scope, among others, the necessary implicit definitions to derive a unified interpreter given implicit evidence of each one of the individual algebra's interpreters:
 
 ```tut:book
-import freestyle.implicits._
+import freestyle.free.implicits._
 program[Backend.Op].interpret[KVStoreState]
 ```
 
