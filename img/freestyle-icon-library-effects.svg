@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="52px" height="52px" viewBox="0 0 52 52" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 44.1 (41455) - http://www.bohemiancoding.com/sketch -->
+    <title>freestyle-icon-library-effects</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="freestyle-ui" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="freestyle-icon-library-effects">
+            <polygon id="hexagon" fill="#01C2C2" points="26 2 46.7846097 14 46.7846097 38 26 50 5.21539031 38 5.21539031 14"></polygon>
+            <polyline id="opacity" fill="#FFFFFF" opacity="0.3" points="26 50 5.21539031 38 5.21539031 14 26 2 26 2"></polyline>
+            <path d="M26,14.5 L26,37.5" id="line" stroke="#058F97" stroke-width="2" stroke-linecap="square"></path>
+            <path d="M29.5,20.5 L32.5,15.5" id="line" stroke="#058F97" stroke-width="2"></path>
+            <path d="M29.5,36.5 L32.5,31.5" id="line" stroke="#058F97" stroke-width="2" transform="translate(31.000000, 34.000000) scale(1, -1) translate(-31.000000, -34.000000) "></path>
+            <path d="M19.5,20.5 L22.5,15.5" id="line" stroke="#058F97" stroke-width="2" transform="translate(21.000000, 18.000000) scale(-1, 1) translate(-21.000000, -18.000000) "></path>
+            <path d="M19.5,36.5 L22.5,31.5" id="line" stroke="#058F97" stroke-width="2" transform="translate(21.000000, 34.000000) scale(-1, -1) translate(-21.000000, -34.000000) "></path>
+            <path d="M20,26 L14,26" id="line" stroke="#058F97" stroke-width="2"></path>
+            <path d="M38,26 L32,26" id="line" stroke="#058F97" stroke-width="2"></path>
+            <path d="M37.0216064,20 L15,32.0616455" id="line" stroke="#058F97" stroke-width="2"></path>
+            <path d="M15.1721191,19.9729004 L36.9821777,31.9604492" id="line" stroke="#058F97" stroke-width="2"></path>
+            <circle id="point" stroke="#058F97" stroke-width="2" fill="#FFFFFF" cx="26" cy="26" r="3"></circle>
+        </g>
+    </g>
+</svg>
