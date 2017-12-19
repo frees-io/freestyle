@@ -1,5 +1,13 @@
 # Changelog
 
+## 12/18/2017 - Version 0.5.0
+
+Release changes:
+
+* Support for `@freestyle.tagless.module` that allows tagless algebras agreggation ([#468](https://github.com/frees-io/freestyle/pull/468))
+*  Moves to freestyle.free ([#475](https://github.com/frees-io/freestyle/pull/475))
+
+
 ## 12/01/2017 - Version 0.4.6
 
 Release changes:

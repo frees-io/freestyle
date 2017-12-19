@@ -217,18 +217,6 @@ lazy val fetch = module("fetch", subFolder = Some("integrations"))
 lazy val fetchJVM = fetch.jvm
 lazy val fetchJS  = fetch.js
 
-// lazy val fs2 = module("fs2", subFolder = Some("integrations"))
-//  .dependsOn(core)
-//   .jsSettings(sharedJsSettings: _*)
-//   .crossDepSettings(
-//     commonDeps ++ Seq(
-//       %("fs2-core")
-//     ): _*
-//   )
-
-// lazy val fs2JVM = fs2.jvm
-// lazy val fs2JS  = fs2.js
-
 /////////////////////////////
 //// INTEGRATIONS - HTTP ////
 /////////////////////////////
@@ -327,7 +315,6 @@ lazy val jvmModules: Seq[ProjectReference] = Seq(
   slick,
   twitterUtil,
   fetchJVM,
-  // fs2JVM,
   httpHttp4s,
   httpFinch,
   httpAkka,
@@ -350,7 +337,6 @@ lazy val jsModules: Seq[ProjectReference] = Seq(
   monixJS,
   fetchJS,
   httpClientJS
-  //, fs2JS
 )
 
 lazy val allModules: Seq[ProjectReference] = jvmModules ++ jsModules
