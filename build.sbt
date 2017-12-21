@@ -374,13 +374,13 @@ lazy val docs = (project in file("docs"))
       Resolver.bintrayRepo("tabdulradi", "maven")
     ),
     libraryDependencies ++= Seq(
-      %%("frees-rpc", "0.4.2-SNAPSHOT"),
+      %%("frees-rpc", "0.5.2"),
       %%("monix"),
       %%("doobie-h2"),
       %%("http4s-dsl"),
       %%("play"),
       %("h2") % "test",
-      "io.frees" %% "frees-cassandra-core"    % "0.0.5-SNAPSHOT"
+      "io.frees" %% "frees-cassandra-core"    % "0.1.0"
     )
   )
   .settings(

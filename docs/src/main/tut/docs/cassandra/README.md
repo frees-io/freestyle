@@ -47,7 +47,7 @@ For Scala `2.11.x` and `2.12.x`:
 
 ```scala
 Resolver.bintrayRepo("tabdulradi", "maven")
-libraryDependencies += "io.frees" %% "frees-cassandra" % "0.0.5" 
+libraryDependencies += "io.frees" %% "frees-cassandra" % "0.1.0" 
 ```
 
 ## About Freestyle Cassandra
@@ -95,7 +95,7 @@ Provides a way to interact with a proper query. We can both define a query as a 
 placeholders for real values - or a raw query string. Bear in mind that running a raw query using the 
 SessionAPI directly is unsafe and does not check query correctness at compile time. 
 
-```scala
+```tut:silent
 
 import freestyle.free._
 import com.datastax.driver.core._
@@ -133,7 +133,7 @@ trait SessionAPI {
 Provides methods to bind real query values to an already existing PreparedStatement, returning a 
 BoundStatement, which can now be ran in a safe way.
 
-```scala
+```tut:silent
 
 import com.datastax.driver.core._
 import freestyle.free._
@@ -184,7 +184,7 @@ Provides methods to interact directly with a Cassandra ResultSet, so we can get 
 representation, a list of them, or describe that that ResultSet could not have been found in the 
 current Cassandra instance.
 
-```scala
+```tut:silent
 
 import com.datastax.driver.core.ResultSet
 import freestyle.free._
@@ -212,7 +212,7 @@ any requested value, table or keyspace names does not exist at the schema defini
 
 Let's see how we can use it:
 
-```scala
+```tut:silent
 import java.util.UUID
 
 import com.datastax.driver.core._
@@ -270,7 +270,7 @@ cassandra keyspaces & tables schemas.
 
 Example
 
-```scala
+```tut:silent
 
 import freestyle.cassandra.query.interpolator.MacroInterpolator.SchemaFileInterpolator
 
@@ -287,7 +287,7 @@ Now we can import this SchemaInterpolator and take advantage of this macro gener
 Let's see an example. We can define an algebra to represent operations over an user, and a 
 module to interact with other algebras:
 
-```scala
+```tut:silent
 import java.util.UUID
 
 import com.datastax.driver.core.ResultSet
@@ -351,7 +351,7 @@ object implicits {
 
 So, now we can compose those algebras ops easily:
 
-```scala
+```tut:silent
 
 import java.util.UUID
 

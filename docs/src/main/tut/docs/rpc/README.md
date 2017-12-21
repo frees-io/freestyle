@@ -54,7 +54,7 @@ Add the following dependency to your project's build file.
 For Scala `2.11.x` and `2.12.x`:
 
 ```scala
-libraryDependencies += "io.frees" %% "frees-rpc" % "0.4.2"
+libraryDependencies += "io.frees" %% "frees-rpc" % "0.5.2"
 ```
 
 ## About gRPC
@@ -122,14 +122,14 @@ First things first, the main difference in respect to [gRPC] is that [frees-rpc]
 Let’s start looking at how to define the `Person` message that we saw previously.
 Before starting, these are the Scala imports we need:
 
-```scala
+```tut:silent
 import freestyle.free._
 import freestyle.rpc.protocol._
 ``` 
 
 `Person` definition would be defined as follows:
 
-```scala
+```tut:silent
 /**
   * Message Example.
   *
@@ -145,7 +145,7 @@ As we can see, it’s quite simple since it’s just a Scala case class preceded
 
 By the same token, let’s see now how the `Greeter` service would be translated to the [frees-rpc] style (in your `.scala` file):
 
-```scala
+```tut:silent
 @option(name = "java_package", value = "quickstart", quote = true)
 @option(name = "java_multiple_files", value = "true", quote = false)
 @option(name = "java_outer_classname", value = "Quickstart", quote = true)
@@ -201,7 +201,7 @@ As [gRPC], [frees-rpc] allows you to define four kinds of service methods:
 
 Let's complete our protocol's example with these four kinds of service methods:
 
-```scala
+```tut:silent
 @option(name = "java_package", value = "quickstart", quote = true)
 @option(name = "java_multiple_files", value = "true", quote = false)
 @option(name = "java_outer_classname", value = "Quickstart", quote = true)
@@ -356,7 +356,7 @@ Predictably, generating the server code is just implementing a service [Handler]
 
 Next, our dummy `Greeter` server implementation:
 
-```scala
+```tut:silent
 import cats.~>
 import freestyle.free._
 import monix.eval.Task
@@ -413,12 +413,12 @@ In [frees-rpc] programs, we'll at least need an implicit evidence related to the
 
 > The `monix.execution.Scheduler` is inspired by `ReactiveX`, being an enhanced Scala `ExecutionContext` and also a replacement for Java’s `ScheduledExecutorService`, but also for Javascript’s `setTimeout`.
 
-```scala
+```tut:silent
 import monix.execution.Scheduler
 
 trait CommonRuntime {
 
-  implicit val S: Scheduler         = monix.execution.Scheduler.Implicits.global
+  implicit val S: Scheduler = monix.execution.Scheduler.Implicits.global
 
 }
 ```
@@ -439,7 +439,7 @@ Now, we need to implicitly provide two things:
 
 In summary, the result would be as follows:
 
-```scala
+```tut:silent
 import cats.~>
 import cats.effect.IO
 import freestyle.rpc.server._
@@ -479,7 +479,7 @@ Here are a few additional notes related to the previous snippet of code:
 
 What else is needed? We just need to define a `main` method:
 
-```scala
+```tut:silent
 import cats.effect.IO
 import cats.effect.IO._
 import freestyle.rpc.server.GrpcServerApp
@@ -532,7 +532,7 @@ Given the transport settings and a list of optional configurations, we can creat
 
 So, taking into account all we have just said, how would our code look?
 
-```scala
+```tut:silent
 import cats.implicits._
 import cats.effect.IO
 import freestyle.free.config.implicits._
@@ -570,7 +570,7 @@ object gclient {
   trait Implicits extends CommonRuntime with ClientConf {
 
     implicit val serviceClient: Greeter.Client[Task] =
-      Greeter.client[Task](channel)
+      Greeter.client[Task](channelFor)
   }
 
   object implicits extends Implicits
@@ -584,7 +584,7 @@ object gclient {
 
 Once we have our runtime configuration defined as above, everything gets easier. This is an example of a client application, following our dummy quickstart:
 
-```scala
+```tut:silent
 import service._
 import gclient.implicits._
 import monix.eval.Task
