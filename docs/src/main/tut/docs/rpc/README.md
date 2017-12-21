@@ -484,10 +484,11 @@ import cats.effect.IO
 import cats.effect.IO._
 import freestyle.rpc.server.GrpcServerApp
 import freestyle.rpc.server.implicits._
-import gserver.implicits._
 
 object RPCServer {
 
+  import gserver.implicits._
+  
   def main(args: Array[String]): Unit =
     server[GrpcServerApp.Op].bootstrapM[IO].unsafeRunSync()
 
