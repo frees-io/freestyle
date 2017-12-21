@@ -559,13 +559,6 @@ object gclient {
           throw new RuntimeException("Unable to load the client configuration", e)
       }
 
-    val channelConfigList: List[ManagedChannelConfig] = List(UsePlaintext(true))
-
-    val managedChannelInterpreter =
-      new ManagedChannelInterpreter[IO](channelFor, channelConfigList)
-
-    val channel: ManagedChannel = managedChannelInterpreter.build(channelFor, channelConfigList)
-
   }
 
   trait Implicits extends CommonRuntime with ClientConf {
