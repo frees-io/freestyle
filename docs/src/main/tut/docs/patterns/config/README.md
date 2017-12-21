@@ -9,7 +9,7 @@ permalink: /docs/patterns/config/
 The `Config` effect algebra is part of the `frees-config` module, and it allows obtaining values from configuration files at any point in the monadic computation flow of a Freestyle program.
 The current implementation exposes the most important combinators found in [Typesafe Config](https://github.com/typesafehub/config).
 
-In order to enable this integration, you can depend on _frees-config_:
+To enable this integration, you can depend on _frees-config_:
 
 [comment]: # (Start Replace)
 
@@ -48,9 +48,9 @@ The _frees-config_ module contains a built-in handler which you can use out of t
 
 ### Example by using Case Classy
 
-freestyle integrates case classy library to make it easy to decode Typesafe config - or other untyped structured data - into case classes hierarchies.
+Freestyle integrates with the Case Classy library to make it easy to decode Typesafe config - or other untyped structured data - into case class hierarchies.
 
-In the following example, we will see what steps we have to take to use case classy library along with config algebra in a pure program.
+In the following example, we will review the steps we have to take to use the Case Classy library along with config algebra in a pure program.
  
 Provided we have a configuration file in our classpath following the Typesafe config conventions called `application.conf` with the following value:
 
@@ -58,7 +58,7 @@ Provided we have a configuration file in our classpath following the Typesafe co
 disallowedStates = ["reverted", "closed"]
 ```
 
-Before we do anything else, we’ll need to add the usual set of imports from freestyle and cats to create our algebras:
+Before we do anything else, we’ll need to add the usual set of imports from Freestyle and cats to create our algebras:
 
 ```tut:silent
 import freestyle._
@@ -69,13 +69,13 @@ import cats.implicits._
 import scala.util.Try
 ```
 
-We'll create a case class containing all the config values required by our program.
+We'll create a case class containing all the config values required by our program:
 
 ```tut:book
 case class AppConfig(disallowedStates: List[String])
 ``` 
 
-Additionally we have to write the config decoder for that case class.
+Additionally, we have to write the config decoder for that case class:
 
 ```tut:book
 import classy.config._
@@ -84,7 +84,7 @@ implicit val configDecoder: ConfigDecoder[AppConfig] =
   readConfig[List[String]]("disallowedStates").map(AppConfig.apply)
 ``` 
 
-We will define a very simple algebra with a stub handler that returns a list of issue states for illustration purposes:
+We will define a simple algebra with a stub handler that returns a list of issue states for illustration purposes:
 
 ```tut:book
 @free trait IssuesService {
@@ -119,7 +119,7 @@ def filteredStates[F[_]](implicit app : App[F]): FreeS[F, List[String]] =
   } yield currentStates.filterNot(config.disallowedStates.contains)
 ```
 
-Once we have a program we can interpret it to our desired runtime, in this case `scala.util.Try`:
+Once we have a program, we can interpret it to our desired runtime, in this case `scala.util.Try`:
 
 ```tut:book
 filteredStates[App.Op].interpret[Try]
@@ -127,9 +127,9 @@ filteredStates[App.Op].interpret[Try]
 
 ### Example by using Typesafe Config
 
-If we decide to use Typesafe Config object instead of case classy library, we won't need to create case class nor config decoder.
+If we decide to use the Typesafe Config object instead of the Case Classy library, we won't need to create a case class or a config decoder.
 
-So given the same example described above, the required code will be pretty similar except we'll load the Config object and use the methods that it provides:
+So, given the example described above, the required code will be pretty similar except we'll load the Config object and use the methods that it provides:
 
 ```
 tut:book
