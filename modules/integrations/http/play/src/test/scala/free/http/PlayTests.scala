@@ -23,15 +23,7 @@ import cats.Monad
 import freestyle.free._
 import freestyle.free.implicits._
 import freestyle.free.http.play.implicits._
-import _root_.play.api.mvc.{
-  Action,
-  BaseController,
-  Codec,
-  ControllerComponents,
-  Request,
-  Result,
-  Results
-}
+import _root_.play.api.mvc._
 import _root_.play.api.http.{ContentTypeOf, Writeable}
 import ExecutionContext.Implicits.global
 

@@ -16,7 +16,7 @@ Freestyle encourages programs built atop [Free algebras](http://frees.io/docs/co
 Applications built with Freestyle can be interpreted to any runtime semantics supported by the interpreter target type.
 
 ```scala
-import freestyle._
+import freestyle.free_
 
 @free trait Database {
   def get(id: UserId): FS[User]
@@ -119,7 +119,6 @@ libraryDependencies += "io.frees" %% "frees-core"               % "0.5.0"
 
 // optional - effects and patterns
 libraryDependencies += "io.frees" %% "frees-effects"            % "0.5.0"
-libraryDependencies += "io.frees" %% "frees-tagless"            % "0.5.0"
 libraryDependencies += "io.frees" %% "frees-async"              % "0.5.0"
 libraryDependencies += "io.frees" %% "frees-async-cats-effect"  % "0.5.0"
 libraryDependencies += "io.frees" %% "frees-async-guava"        % "0.5.0"
@@ -149,7 +148,6 @@ libraryDependencies += "io.frees" %%% "frees-core"              % "0.5.0"
 
 // optional - effects and patterns
 libraryDependencies += "io.frees" %%% "frees-effects"           % "0.5.0"
-libraryDependencies += "io.frees" %%% "frees-tagless"           % "0.5.0"
 libraryDependencies += "io.frees" %%% "frees-async"             % "0.5.0"
 libraryDependencies += "io.frees" %%% "frees-async-cats-effect" % "0.5.0"
 libraryDependencies += "io.frees" %%% "frees-async-fs2"         % "0.5.0"
