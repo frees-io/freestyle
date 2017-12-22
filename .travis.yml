@@ -90,6 +90,8 @@ jobs:
                 sbt release;
                 git clone https://github.com/frees-io/freestyle-rpc.git;
                 cd freestyle-rpc && sbt docs/tut;
+                git clone https://github.com/frees-io/freestyle-cassandra.git;
+                cd freestyle-cassandra && sbt docs/tut;
                 sbt docs/publishMicrosite;
               fi
             fi
