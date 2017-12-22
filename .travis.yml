@@ -88,6 +88,8 @@ jobs:
                 git checkout master;
                 git pull origin master;
                 sbt release;
+                git clone https://github.com/frees-io/freestyle-rpc.git;
+                cd freestyle-rpc && sbt docs/tut;
                 sbt docs/publishMicrosite;
               fi
             fi
