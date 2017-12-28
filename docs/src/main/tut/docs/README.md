@@ -63,10 +63,30 @@ Learn more about [algebras](./core/algebras) in the extended documentation.
 
 Freestyle algebras can be combined into `@module` definitions which provide aggregation and unification over the parameterization of Free programs.
 
+## Building programs
+
+Abstract definitions are all it takes to start building programs that support sequential and parallel 
+operations that are entirely decoupled from their runtime interpretation.
+
+The example below combines both algebras to produce a more complex program:
+
 ```tut:book
 @module trait Application {
   val validation: Validation
   val interaction: Interaction
+  
+  def program: FS.Seq[Unit] = {
+  import cats.implicits._
+  
+    for {
+      userInput <- interaction.ask("Give me something with at least 3 chars and a number on it")
+      valid <- (validation.minSize(userInput, 3) |@| validation.hasNumber(userInput)).map(_ && _).freeS
+      _ <- if (valid)
+              interaction.tell("awesomesauce!")
+           else
+              interaction.tell(s"$userInput is not valid")
+    } yield ()
+  }
 }
 ```
 
@@ -75,28 +95,6 @@ Freestyle automatically wires all dependencies through implicit evidences that a
 Once you have these abstract definitions, you can combine them in whichever way you want. Freestyle supports nested modules enabling onion-style architectures of any arbitrary depth.
 
 Learn more about [modules](./core/modules) in the extended documentation.
-
-## Building programs
-
-Abstract definitions are all it takes to start building programs that support sequential and parallel operations that are entirely decoupled from their runtime interpretation.
-
-The example below combines both algebras to produce a more complex program:
-
-```tut:book
-def program[F[_]](implicit A: Application[F]) = {
-  import A._
-  import cats.implicits._
-
-  for {
-    userInput <- interaction.ask("Give me something with at least 3 chars and a number on it")
-    valid <- (validation.minSize(userInput, 3) |@| validation.hasNumber(userInput)).map(_ && _).freeS
-    _ <- if (valid)
-            interaction.tell("awesomesauce!")
-         else
-            interaction.tell(s"$userInput is not valid")
-  } yield ()
-}
-```
 
 ## Running programs
 
@@ -126,7 +124,7 @@ import cats.implicits._
 import scala.concurrent.duration.Duration
 import scala.concurrent.Await
 
-val futureValue = program[Application.Op].interpret[Future]
+val futureValue = Application.instance.program.interpret[Future]
 Await.result(futureValue, Duration.Inf) //blocking only for demo purposes. Don't do this at home.
 ```
 
