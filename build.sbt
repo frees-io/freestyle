@@ -16,11 +16,11 @@ lazy val core = module("core")
   )
   .crossDepSettings(
     commonDeps ++ Seq(
-      %("cats-free"),
+      %("cats-free", "1.0.0"),
       %("iota-core", "0.3.3"),
       %("simulacrum"),
       %("shapeless") % "test",
-      %("cats-laws") % "test",
+      %("cats-laws", "1.0.0") % "test",
       %%("mainecoon-core")
     ): _*
   )
