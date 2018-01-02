@@ -34,6 +34,107 @@ import modules._
 
 class TaglessTests extends WordSpec with Matchers {
 
+  "the @tagless macro annotation should be accepted if it is applied to" when {
+
+    "a trait with at least one request" in {
+      "@tagless trait X { def bar(x:Int): FS[Int] }" should compile
+    }
+
+    "a trait with an F[_] bound type param" in {
+      "@tagless @debug trait FBound[F[_]] { def bar(x:Int): FS[Int] }" should compile
+    }
+
+    "an abstract class with at least one request" in {
+      "@tagless abstract class X { def bar(x:Int): FS[Int] }" should compile
+    }
+
+    "a trait with an abstact method of type FS" in {
+      "@tagless trait X { def f(a: Char) : FS[Int] }" should compile
+    }
+
+    "a trait with type parameters" ignore {
+      "@tagless trait X[A] { def ix(a: A) : FS[A] }" should compile
+    }
+
+    "a trait with some concrete non-FS members" ignore {
+      """@tagless trait X {
+        def x: FS[Int]
+        def y: Int = 5
+        val z: Int = 6
+      }""" should compile
+    }
+
+    "a trait with a request with multiple params" in {
+      "@tagless trait X { def f(a: Int, b: Int): FS[Int] }" should compile
+    }
+
+    "a trait with a currified request, with multiple params lists" ignore {
+      "@tagless trait X { def f(a: Int)(b: Int): FS[Int] }" should compile
+    }
+
+    "a trait with some implicit parameters, with many params lists" ignore {
+      "@tagless trait X { def f(a: Int)(implicit b: Int): FS[Int] }" should compile
+    }
+
+    "a trait with a request with no args" ignore {
+      "@tagless @debug trait X { def f: FS[Int] }" should compile
+    }
+
+    "a trait with type parameters in the method" in {
+      "@tagless trait X { def ix[A](a: A) : FS[A] }" should compile
+    }
+
+    "a trait with high bounded type parameters in the method" in {
+      "@tagless trait X { def ix[A <: Int](a: A) : FS[A] }" should compile
+    }
+
+    "a trait with lower bounded type parameters in the method" in {
+      "@tagless trait X { def ix[A >: Int](a: A) : FS[A] }" should compile
+    }
+
+    "a trait with different type parameters in the method" in {
+      "@tagless trait X { def ix[A <: Int, B, C >: Int](a: A, b: B, c: C) : FS[A] }" should compile
+    }
+
+    "a trait with high bounded type parameters and implicits in the method" in {
+      """
+        trait X[A]
+        @tagless trait Y { def ix[A <: Int : X](a: A) : FS[A] }
+      """ should compile
+    }
+
+  }
+
+  "the @tagless macro annotation should be rejected, and the compilation fail, if it is applied to" when {
+
+    "an empty trait" in (
+      "@tagless trait X" shouldNot compile
+    )
+
+    "an empty abstract class" in (
+      "@tagless abstract class X" shouldNot compile
+    )
+
+    "a non-abstract class" in {
+      "@tagless class X" shouldNot compile
+    }
+
+    "a trait with companion object" in {
+      "@tagless trait X {def f: FS[Int]} ; object X" shouldNot compile
+    }
+
+    "an abstract class with a companion object" in {
+      "@tagless trait X {def f: FS[Int]} ; object X" shouldNot compile
+    }
+
+    "a trait with any non-abstact methods of type FS" in {
+      "@tagless trait X { def f(a: Char) : FS[Int] = 0 } " shouldNot compile
+    }
+
+  }
+
+
+
   "Tagless final algebras" should {
 
     "Allow a trait with an F[_] bound type param" in {
