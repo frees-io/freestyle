@@ -40,8 +40,8 @@ class TaglessTests extends WordSpec with Matchers {
       "@tagless trait X { def bar(x:Int): FS[Int] }" should compile
     }
 
-    "a trait with an F[_] bound type param" in {
-      "@tagless @debug trait FBound[F[_]] { def bar(x:Int): FS[Int] }" should compile
+    "a trait with an F-Bound type param" in {
+      "@tagless trait FBound[F[_]] { def bar(x:Int): FS[Int] }" should compile
     }
 
     "an abstract class with at least one request" in {
@@ -80,8 +80,8 @@ class TaglessTests extends WordSpec with Matchers {
       "@tagless @debug trait X { def f: FS[Int] }" should compile
     }
 
-    "a trait with type parameters in the method" in {
-      "@tagless trait X { def ix[A](a: A) : FS[A] }" should compile
+    "a trait with a method with type parameters" in {
+      "@tagless trait WiX { def ix[A](a: A) : FS[A] }" should compile
     }
 
     "a trait with high bounded type parameters in the method" in {

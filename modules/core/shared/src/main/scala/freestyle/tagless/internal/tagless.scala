@@ -20,6 +20,7 @@ import scala.collection.immutable.Seq
 import scala.meta._
 import scala.meta.Defn.{Class, Object, Trait}
 import freestyle.free.internal.ScalametaUtil._
+import freestyle.free.internal.{Algebra => FreeAlgebra}
 
 trait TaglessEffectLike[F[_]] {
   final type FS[A] = F[A]
@@ -66,10 +67,25 @@ case class Algebra(
   def toTrait: Trait = Trait(mods, name, tparams, ctor, templ)
   def toClass: Class = Class(mods, name, tparams, ctor, templ)
 
-  val cleanedTParams: Seq[Type.Param] = tparams.toList match {
-    case List(f@tparam"..$mods $name[$tparam]") => Nil
-    case _ => tparams
+  def pickOrGenerateFF( tparams: Seq[Type.Param]): List[Type.Param] = {
+    def isKind1(tparam: Type.Param): Boolean =
+      tparam.tparams.toList match {
+        case List(tp) if tp.tparams.isEmpty => true
+        case _ => false
+      }
+    tparams.toList match {
+      case headParam :: tail if isKind1(headParam) => headParam :: tail
+      case _ => Type.fresh("FF$").paramK :: tparams.toList
+    }
   }
+
+  val allTParams: Seq[Type.Param] = pickOrGenerateFF(tparams)
+  val allTNames: Seq[Type.Name] = allTParams.map(_.toName)
+  val fs: Type.Param = allTParams.head
+  val tailTParams: Seq[Type.Param] = allTParams.tail
+  val tailTNames: Seq[Type.Name] = tailTParams.map(_.toName)
+
+  val cleanedTParams = tailTParams
 
   val requestDecls: Seq[Decl.Def] = templ.stats.get.collect {
     case dd: Decl.Def =>
@@ -78,45 +94,52 @@ case class Algebra(
         case _                              => abort(s"$invalid in definition of method ${dd.name} in $name. $onlyReqs")
       }
   }
+  val requests: Seq[Request] = requestDecls.map(dd => new Request(dd))
 
   // The enrich method adds a kind-1 type parameter `$ff[_]` to the algebra type,
   // making that trait extends from AnyRef.
   def enrich: Algebra = {
-    val ff: Type.Name = Type.fresh("FF$")
-    val pat           = tparams.toList match {
-      case List(f @ tparam"..$mods $name[$tparam]") =>
-        q"trait Foo[$f] extends _root_.freestyle.tagless.internal.TaglessEffectLike[${toType(f)}]"
-      case _ =>
-        val ff: Type.Name = Type.fresh("FF$")
-        q"trait Foo[${tyParamK(ff)}] extends _root_.freestyle.tagless.internal.TaglessEffectLike[$ff]"
-    }
-    Algebra(mods, name, pat.tparams, ctor, templ.copy(parents = pat.templ.parents))
+    val pat = q"trait Foo[$fs] extends _root_.freestyle.tagless.internal.TaglessEffectLike[${fs.toName}]"
+    val self = Term.fresh("self$")
+    Algebra(mods, name, allTParams, ctor, templ.copy(
+      parents = pat.templ.parents,
+      self = self.param,
+      stats = templ.stats.map( _ :+ mapKDef(self))
+    ))
   }
 
-  val requests: Seq[Request] = requestDecls.map(dd => new Request(dd))
+  def mapKDef(sf: Term.Name): Defn.Def = {
+    val mm = Type.fresh("MM$")
+    val fk = Term.fresh("fk$")
 
-  val cname = Ctor.Ref.Name(name.value)
+    q"""
+      def mapK[${mm.paramK}](
+        $fk: _root_.cats.arrow.FunctionK[${fs.toName}, $mm]
+      ): $name[$mm, ..$tailTNames] =
+        new ${name.ctor}[$mm, ..$tailTNames] {
+          ..${requests.map(_.mapKDef(fk, sf, mm))}
+        }
+    """
+  }
 
   def mkObject: Object = {
     val mm = Type.fresh("MM$")
     val nn = Type.fresh("NN$")
-    val hh = Term.fresh("hh$")
-
     val runTParams: Seq[Type.Param] = tyParamK(mm) +: cleanedTParams
     val runTArgs: Seq[Type]         = mm +: cleanedTParams.map(toType)
 
     val handlerT: Trait = q"""
-      trait Handler[..$runTParams] extends $cname[..$runTArgs] with StackSafe.Handler[..$runTArgs] {
-         ..${requests.map(_.handlerDef(mm))}
+      trait Handler[..$allTParams] extends ${name.ctor}[..$allTNames] with StackSafe.Handler[..$allTNames] {
+        ..${requestDecls.map(_.addMod(Mod.Override()))}
       }
     """
 
-    val stackSafeT: Trait = q"""
-      @_root_.freestyle.free.free
-      trait StackSafe {
-        ..$requestDecls
-      }
-    """
+    val stackSafeAlg: FreeAlgebra = {
+      val t: Trait = q" trait StackSafe { ..$requestDecls } "
+      FreeAlgebra(Seq.empty[Mod], Type.Name("StackSafe"), allTParams, t.ctor, t.templ)
+    }
+    val stackSafeT: Trait = stackSafeAlg.enrich.toTrait
+    val stackSafeD: Object = stackSafeAlg.mkCompanion
 
     val deriveDef: Defn.Def = {
       val deriveTTs = tyParamK(mm) +: tyParamK(nn) +: cleanedTParams
@@ -124,29 +147,28 @@ case class Algebra(
       q"""
         implicit def derive[..$deriveTTs](
           implicit h: $name[..$runTArgs],
-          FK: _root_.mainecoon.FunctorK[$name],
           fk: _root_.cats.arrow.FunctionK[$mm, $nn]
-      ): $name[..$nnTTs] = FK.mapK(h)(fk)
+      ): $name[..$nnTTs] = h.mapK[$nn](fk)
       """
     }
 
-    val applyDef: Defn.Def =
-      q"def apply[..$runTParams](implicit ev: $name[..$runTArgs]): $name[..$runTArgs] = ev"
+    val applyDef: Defn.Def = {
+      val ev = Term.fresh("ev$")
+      q"def apply[..$runTParams](implicit $ev: $name[..$runTArgs]): $name[..$runTArgs] = $ev"
+    }
 
     val functorKDef: Defn.Val = {
+      val functorK       = Pat.Var.Term.apply(Term.fresh("functorKInstance$"))
       val mapKTTs        = tyParamK(mm) +: tyParamK(nn) +: cleanedTParams
       val tParamsAsTypes = cleanedTParams.map(toType)
-      val nnTTs          = nn +: tParamsAsTypes
-      val ctor           = Ctor.Ref.Name(name.value)
+      val hh = Term.fresh("hh$")
 
       q"""
-      implicit val functorK: _root_.mainecoon.FunctorK[({ type λ[α[_]] = $name[α, ..$tParamsAsTypes] })#λ] =
+      implicit val $functorK: _root_.mainecoon.FunctorK[({ type λ[α[_]] = $name[α, ..$tParamsAsTypes] })#λ] =
         new _root_.mainecoon.FunctorK[({ type λ[α[_]] = $name[α, ..$tParamsAsTypes] })#λ] {
           def mapK[..$mapKTTs]($hh: $name[$mm, ..$tParamsAsTypes])(
-            fk: _root_.cats.arrow.FunctionK[$mm, $nn]): $name[..$nnTTs] =
-              new $ctor[$nn, ..$tParamsAsTypes] {
-                ..${requests.map(_.functorKDef(hh, nn))}
-              }
+            fk: _root_.cats.arrow.FunctionK[$mm, $nn]): $name[$nn, ..$tailTNames] =
+              $hh.mapK(fk)
         }"""
     }
 
@@ -154,7 +176,7 @@ case class Algebra(
     prot.copy(
       name = Term.Name(name.value),
       templ = prot.templ.copy(
-        stats = Some(Seq(applyDef, functorKDef, deriveDef, stackSafeT, handlerT))
+        stats = Some(Seq(applyDef, functorKDef, deriveDef, stackSafeT, stackSafeD, handlerT))
       ))
   }
 
@@ -162,29 +184,15 @@ case class Algebra(
 
 class Request(reqDef: Decl.Def) {
 
-  // Name of the Request ADT Class
-
-  import reqDef.{name, tparams }
-  private[this] val params: Seq[Term.Param] = reqDef.paramss.flatten
-  private[this] val args: Seq[Term.Name] = params.map(toName)
-
   private[this] val res: Type = reqDef.decltpe match {
     case Type.Apply(_, args) => args.last
     case _                   => abort("Internal @tagless failure. Attempted to do request of non-applied type")
   }
 
-  def functorKDef(hH: Term.Name, rt: Type.Name): Defn.Def = {
-    if (params.isEmpty)
-      q"def $name[..$tparams] : $rt[$res] = fk($hH.$name)"
-    else
-      q"def $name[..$tparams](..$params): $rt[$res] = fk($hH.$name(..$args))"
-  }
-
-  def handlerDef(mm: Type.Name): Decl.Def =
-    if (params.isEmpty)
-      q"override def $name[..$tparams]: $mm[$res]"
-    else
-      q"override def $name[..$tparams](..$params): $mm[$res]"
+  def mapKDef(fk: Term.Name, hh: Term.Name, rt: Type.Name): Defn.Def =
+    reqDef
+      .withType(Type.Apply( rt, Seq(res)))
+      .addBody( q"$fk($hh.${reqDef.name}(...${reqDef.argss}))" )
 
 }
 
