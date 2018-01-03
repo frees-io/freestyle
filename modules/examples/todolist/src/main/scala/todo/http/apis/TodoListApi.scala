@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 47 Degrees, LLC. <http://www.47deg.com>
+ * Copyright 2017-2018 47 Degrees, LLC. <http://www.47deg.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -37,7 +37,7 @@ class TodoListApi[F[_]](implicit service: TodoListService[F], handler: F ~> Futu
     }
 
   val retrieve: Endpoint[TodoList] =
-    get(service.prefix :: int) { id: Int =>
+    get(service.prefix :: path[Int]) { id: Int =>
       service.retrieve(id) map (item =>
         item.fold[Output[TodoList]](
           NotFound(new NoSuchElementException(s"Could not find ${service.model} with $id")))(Ok(_)))
@@ -56,12 +56,12 @@ class TodoListApi[F[_]](implicit service: TodoListService[F], handler: F ~> Futu
     }
 
   val update: Endpoint[Option[TodoList]] =
-    put(service.prefix :: int :: jsonBody[TodoList]) { (id: Int, item: TodoList) =>
+    put(service.prefix :: path[Int] :: jsonBody[TodoList]) { (id: Int, item: TodoList) =>
       service.update(item.copy(id = Some(id))).map(Ok(_))
     }
 
   val destroy: Endpoint[Int] =
-    delete(service.prefix :: int) { id: Int =>
+    delete(service.prefix :: path[Int]) { id: Int =>
       service.destroy(id).map(Ok(_))
     }
 }

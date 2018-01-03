@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 47 Degrees, LLC. <http://www.47deg.com>
+ * Copyright 2017-2018 47 Degrees, LLC. <http://www.47deg.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -43,10 +43,10 @@ class FinchTests extends AsyncWordSpec with Matchers {
       import futureHandlers._
 
       val endpoint0 = get(/) { sumOk(1, 2) }
-      val endpoint1 = post(int) { i: Int =>
+      val endpoint1 = post(path[Int]) { i: Int =>
         sumOk(1, i)
       }
-      val endpoint2 = post(int :: int) { (a: Int, b: Int) =>
+      val endpoint2 = post(path[Int] :: path[Int]) { (a: Int, b: Int) =>
         sumOk(a, b)
       }
 
@@ -59,10 +59,10 @@ class FinchTests extends AsyncWordSpec with Matchers {
       import futureHandlers._
 
       val endpoint0 = get(/) { sumParOk(1, 2) }
-      val endpoint1 = post(int) { i: Int =>
+      val endpoint1 = post(path[Int]) { i: Int =>
         sumParOk(1, i)
       }
-      val endpoint2 = post(int :: int) { (a: Int, b: Int) =>
+      val endpoint2 = post(path[Int] :: path[Int]) { (a: Int, b: Int) =>
         sumParOk(a, b)
       }
 
@@ -75,10 +75,10 @@ class FinchTests extends AsyncWordSpec with Matchers {
       import idHandlers._
 
       val endpoint0 = get(/) { sumOk(1, 2) }
-      val endpoint1 = post(int) { i: Int =>
+      val endpoint1 = post(path[Int]) { i: Int =>
         sumOk(1, i)
       }
-      val endpoint2 = post(int :: int) { (a: Int, b: Int) =>
+      val endpoint2 = post(path[Int] :: path[Int]) { (a: Int, b: Int) =>
         sumOk(a, b)
       }
 
@@ -91,10 +91,10 @@ class FinchTests extends AsyncWordSpec with Matchers {
       import idHandlers._
 
       val endpoint0 = get(/) { sumParOk(1, 2) }
-      val endpoint1 = post(int) { i: Int =>
+      val endpoint1 = post(path[Int]) { i: Int =>
         sumParOk(1, i)
       }
-      val endpoint2 = post(int :: int) { (a: Int, b: Int) =>
+      val endpoint2 = post(path[Int] :: path[Int]) { (a: Int, b: Int) =>
         sumParOk(a, b)
       }
 

@@ -17,9 +17,9 @@ lazy val core = module("core")
   .crossDepSettings(
     commonDeps ++ Seq(
       %("cats-free", "1.0.0"),
-      %("iota-core", "0.3.3"),
+      %("iota-core", "0.3.4-SNAPSHOT"),
       %("simulacrum"),
-      %("shapeless") % "test",
+      %("shapeless")          % "test",
       %("cats-laws", "1.0.0") % "test",
       %%("mainecoon-core")
     ): _*
@@ -80,10 +80,7 @@ lazy val Codegen = sbt.config("codegen").hide
 lazy val effects = module("effects")
   .dependsOn(core)
   .jsSettings(sharedJsSettings: _*)
-  .crossDepSettings(
-    commonDeps ++ Seq(
-      %("cats-mtl-core")
-    ): _*)
+  .crossDepSettings(commonDeps ++ Seq(%("cats-mtl-core","0.2.1")): _*)
 
 lazy val effectsJVM = effects.jvm
 lazy val effectsJS  = effects.js
@@ -91,9 +88,7 @@ lazy val effectsJS  = effects.js
 lazy val async = module("async", subFolder = Some("async"))
   .dependsOn(core)
   .jsSettings(sharedJsSettings: _*)
-  .crossDepSettings(commonDeps ++ Seq(
-    %("cats-effect") % Test
-  ): _*)
+  .crossDepSettings(commonDeps ++ Seq(%("cats-effect") % Test): _*)
 
 lazy val asyncJVM = async.jvm
 lazy val asyncJS  = async.js
@@ -101,10 +96,7 @@ lazy val asyncJS  = async.js
 lazy val asyncCatsEffect = module("async-cats-effect", subFolder = Some("async"))
   .dependsOn(core, async)
   .jsSettings(sharedJsSettings: _*)
-  .crossDepSettings(
-    commonDeps ++ Seq(
-      %("cats-effect")
-    ): _*)
+  .crossDepSettings(commonDeps ++ Seq(%("cats-effect")): _*)
 
 lazy val asyncCatsEffectJVM = asyncCatsEffect.jvm
 lazy val asyncCatsEffectJS  = asyncCatsEffect.js
@@ -378,7 +370,7 @@ lazy val docs = (project in file("docs"))
       %%("doobie-h2"),
       %%("http4s-dsl"),
       %%("play"),
-      %("h2") % "test",
+      %("h2") % "test"
     )
   )
   .settings(

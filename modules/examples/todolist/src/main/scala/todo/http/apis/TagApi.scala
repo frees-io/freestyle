@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 47 Degrees, LLC. <http://www.47deg.com>
+ * Copyright 2017-2018 47 Degrees, LLC. <http://www.47deg.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -40,7 +40,7 @@ class TagApi[F[_]](implicit service: TagService[F], handler: F ~> Future) extend
     }
 
   val retrieve: Endpoint[Tag] =
-    get(service.prefix :: int) { id: Int =>
+    get(service.prefix :: path[Int]) { id: Int =>
       service.retrieve(id) map (item =>
         item.fold[Output[Tag]](
           NotFound(new NoSuchElementException(s"Could not find ${service.model} with $id")))(Ok))
@@ -59,12 +59,12 @@ class TagApi[F[_]](implicit service: TagService[F], handler: F ~> Future) extend
     }
 
   val update: Endpoint[Option[Tag]] =
-    put(service.prefix :: int :: jsonBody[Tag]) { (id: Int, item: Tag) =>
+    put(service.prefix :: path[Int] :: jsonBody[Tag]) { (id: Int, item: Tag) =>
       service.update(item.copy(id = Some(id))).map(Ok)
     }
 
   val destroy: Endpoint[Int] =
-    delete(service.prefix :: int) { id: Int =>
+    delete(service.prefix :: path[Int]) { id: Int =>
       service.destroy(id).map(Ok(_))
     } handle {
       case nse: NoSuchElementException => NotFound(nse)
