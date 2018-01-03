@@ -14,11 +14,10 @@
  * limitations under the License.
  */
 
-package freestyle
-package free.internal
+package freestyle.free.internal
 
 import scala.collection.immutable.Seq
-import scala.meta.Defn.{Class, Object}
+import scala.meta.Defn.{Class, Trait, Object}
 import scala.meta._
 
 /* Utilities for scalameta independents of freestyle*/
@@ -59,4 +58,41 @@ object ScalametaUtil {
       self: Term.Param = Term.Param(Nil, Name.Anonymous(), None, None),
       stats: Seq[Stat]) =
     Object(mods, name, Template(early, parents, self, if (stats.isEmpty) Some(stats) else None))
+
+  implicit class TypeNameOps(val typeName: Type.Name) extends AnyVal {
+
+    // take Y, replace Y name with tyn
+    def param: Type.Param = q"type X[Y]".tparams.head.copy(name = typeName)
+
+    // take Y[_], replace Y name with Tyn
+    def paramK: Type.Param = q"type X[Y[_]]".tparams.head.copy(name = typeName)
+
+    def ctor: Ctor.Ref.Name = Ctor.Ref.Name(typeName.value)
+
+    def term: Term.Name = Term.Name(typeName.value)
+  }
+
+  implicit class TermNameOps(val termName: Term.Name) extends AnyVal {
+    def toVar = Pat.Var.Term.apply(termName)
+    def param: Term.Param = Term.Param( Nil, termName, None, None)
+  }
+
+  implicit class TypeParamOps(val typeParam: Type.Param) extends AnyVal {
+    def toName: Type.Name = Type.Name(typeParam.name.value)
+  }
+
+  implicit class DeclDefOps(val declDef: Decl.Def) extends AnyVal {
+
+    def addMod(mod: Mod): Decl.Def = declDef.copy(mods = declDef.mods :+ mod)
+
+    def argss: Seq[Seq[Term.Name]] = declDef.paramss.map(_.map(toName))
+
+    def withType(ty: Type) = declDef.copy(decltpe = ty)
+
+    def addBody(body: Term): Defn.Def = {
+      import declDef._
+      Defn.Def(mods, name, tparams, paramss, Some(decltpe), body)
+    }
+
+  }
 }
