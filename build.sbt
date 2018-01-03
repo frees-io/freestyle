@@ -16,11 +16,11 @@ lazy val core = module("core")
   )
   .crossDepSettings(
     commonDeps ++ Seq(
-      %("cats-free", "1.0.0"),
-      %("iota-core", "0.3.4-SNAPSHOT"),
+      %("cats-free"),
+      %("iota-core", "0.3.4"),
       %("simulacrum"),
-      %("shapeless")          % "test",
-      %("cats-laws", "1.0.0") % "test",
+      %("shapeless") % "test",
+      %("cats-laws") % "test",
       %%("mainecoon-core")
     ): _*
   )
@@ -39,7 +39,7 @@ lazy val tests = jvmModule("tests")
     ),
     fork in Test := true,
     javaOptions in Test ++= {
-      val excludedScalacOptions: List[String] = List("-Yliteral-types", "-Ypartial-unification")
+      val excludedScalacOptions: List[String] = List("-Yliteral-types")
       val options = (scalacOptions in Test).value.distinct
         .filterNot(excludedScalacOptions.contains)
         .mkString(",")
@@ -80,7 +80,7 @@ lazy val Codegen = sbt.config("codegen").hide
 lazy val effects = module("effects")
   .dependsOn(core)
   .jsSettings(sharedJsSettings: _*)
-  .crossDepSettings(commonDeps ++ Seq(%("cats-mtl-core","0.2.1")): _*)
+  .crossDepSettings(commonDeps ++ Seq(%("cats-mtl-core")): _*)
 
 lazy val effectsJVM = effects.jvm
 lazy val effectsJS  = effects.js
@@ -130,7 +130,7 @@ lazy val config = jvmModule("config")
   )
   .settings(
     libraryDependencies ++= Seq(
-      %("config", "1.2.1"),
+      %("config"),
       %%("classy-config-typesafe"),
       %%("classy-core")
     ) ++ commonDeps
@@ -196,7 +196,7 @@ lazy val slick = jvmModule("slick", subFolder = Some("integrations"))
 lazy val twitterUtil = jvmModule("twitter-util", subFolder = Some("integrations"))
   .dependsOn(coreJVM)
   .settings(
-    libraryDependencies ++= Seq(%%("catbird-util", "0.21.0")) ++ commonDeps
+    libraryDependencies ++= Seq(%%("catbird-util")) ++ commonDeps
   )
 
 lazy val fetch = module("fetch", subFolder = Some("integrations"))
@@ -225,7 +225,7 @@ lazy val httpHttp4s = jvmModule("http4s", subFolder = Some("integrations/http"))
 lazy val httpFinch = jvmModule("finch", subFolder = Some("integrations/http"))
   .dependsOn(coreJVM)
   .settings(
-    libraryDependencies ++= Seq(%%("finch-core", "0.16.0-M5")) ++ commonDeps
+    libraryDependencies ++= Seq(%%("finch-core")) ++ commonDeps
   )
 
 lazy val httpAkka = jvmModule("akka", subFolder = Some("integrations/http"))
@@ -252,7 +252,7 @@ lazy val httpClient = module("http-client", subFolder = Some("integrations/http"
   .settings(resolvers += Resolver.jcenterRepo)
   .jsSettings(sharedJsSettings: _*)
   .crossDepSettings(
-    commonDeps ++ Seq(%("hammock-core", "0.7.1"), %("cats-effect") % "test"): _*
+    commonDeps ++ Seq(%("hammock-core"), %("cats-effect") % "test"): _*
   )
 
 lazy val httpClientJS  = httpClient.js

@@ -17,11 +17,14 @@
 package freestyle
 package free
 
+import cats.Semigroupal
 import cats.data.Kleisli
 import cats.instances.future._
 import cats.instances.option._
-import cats.syntax.cartesian._
+import cats.syntax.SemigroupalOps
+import cats.syntax.semigroupal._
 import org.scalatest.{Matchers, WordSpec}
+
 import scala.concurrent.{Await, Future}
 import scala.concurrent.duration.Duration
 

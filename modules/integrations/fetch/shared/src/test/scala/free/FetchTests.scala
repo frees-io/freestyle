@@ -20,7 +20,7 @@ import org.scalatest.{AsyncWordSpec, Matchers}
 import _root_.fetch._
 import _root_.fetch.implicits._
 
-import cats.syntax.cartesian._
+import cats.syntax.semigroupal._
 import freestyle.free.fetch._
 import freestyle.free.implicits._
 import freestyle.free.fetch.implicits._
