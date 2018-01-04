@@ -40,8 +40,13 @@ class TaglessTests extends WordSpec with Matchers {
       "@tagless trait X { def bar(x:Int): FS[Int] }" should compile
     }
 
-    "a trait with an F-Bound type param" in {
-      "@tagless trait FBound[F[_]] { def bar(x:Int): FS[Int] }" should compile
+    "a trait with a kind-1 type param" when {
+      "typing the request with reserved FS" in {
+        "@tagless trait FBound[F[_]] { def ann(x:Int): FS[Int] }" should compile
+      }
+      "typing the request with the user-provided F-Bound type param" in {
+        "@tagless trait FBound[F[_]] { def bob(y:Int): F[Int] }" should compile
+      }
     }
 
     "an abstract class with at least one request" in {

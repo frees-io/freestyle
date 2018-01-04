@@ -91,6 +91,7 @@ case class Algebra(
     case dd: Decl.Def =>
       dd.decltpe match {
         case Type.Apply(Type.Name("FS"), _) => dd
+        case Type.Apply(Type.Name(ff), _) if ff == fs.toName.value => dd
         case _                              => abort(s"$invalid in definition of method ${dd.name} in $name. $onlyReqs")
       }
   }
@@ -135,7 +136,13 @@ case class Algebra(
     """
 
     val stackSafeAlg: FreeAlgebra = {
-      val t: Trait = q" trait StackSafe { ..$requestDecls } "
+      def withFS( req: Decl.Def): Decl.Def =
+        req.copy(decltpe = req.decltpe match {
+          case Type.Apply(_, targs) => Type.Apply( Type.Name("FS"), targs)
+          case _ => req.decltpe
+        })
+
+      val t: Trait = q" trait StackSafe { ..${requestDecls.map(withFS)} } "
       FreeAlgebra(Seq.empty[Mod], Type.Name("StackSafe"), allTParams, t.ctor, t.templ)
     }
     val stackSafeT: Trait = stackSafeAlg.enrich.toTrait
@@ -182,7 +189,7 @@ case class Algebra(
 
 }
 
-class Request(reqDef: Decl.Def) {
+private[freestyle] class Request(reqDef: Decl.Def) {
 
   private[this] val res: Type = reqDef.decltpe match {
     case Type.Apply(_, args) => args.last

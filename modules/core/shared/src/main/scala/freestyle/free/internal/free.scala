@@ -66,7 +66,7 @@ object freeImpl {
 
 }
 
-case class Algebra(
+private[freestyle] case class Algebra(
     mods: Seq[Mod],
     name: Type.Name,
     tparams: Seq[Type.Param],
