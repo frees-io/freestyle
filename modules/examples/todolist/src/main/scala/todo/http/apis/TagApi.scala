@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 47 Degrees, LLC. <http://www.47deg.com>
+ * Copyright 2017-2018 47 Degrees, LLC. <http://www.47deg.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,41 +34,37 @@ import todo.model.Tag
 
 class TagApi[F[_]](implicit service: TagService[F], handler: F ~> Future) extends CRUDApi[Tag] {
 
-  val reset: Endpoint[Int] =
-    post(service.prefix :: "reset") {
-      service.reset.map(Ok)
-    }
+  import io.finch.syntax._
 
-  val retrieve: Endpoint[Tag] =
-    get(service.prefix :: int) { id: Int =>
-      service.retrieve(id) map (item =>
-        item.fold[Output[Tag]](
-          NotFound(new NoSuchElementException(s"Could not find ${service.model} with $id")))(Ok))
-    } handle {
-      case nse: NoSuchElementException => NotFound(nse)
-    }
+  val reset = post(service.prefix :: "reset") {
+    service.reset.map(Ok)
+  }
 
-  val list: Endpoint[List[Tag]] =
-    get(service.prefix) {
-      service.list.map(Ok)
-    }
+  val retrieve = get(service.prefix :: path[Int]) { id: Int =>
+    service.retrieve(id) map (item =>
+      item.fold[Output[Tag]](
+        NotFound(new NoSuchElementException(s"Could not find ${service.model} with $id")))(Ok))
+  } handle {
+    case nse: NoSuchElementException => NotFound(nse)
+  }
 
-  val insert: Endpoint[Option[Tag]] =
-    post(service.prefix :: jsonBody[Tag]) { item: Tag =>
-      service.insert(item).map(Ok)
-    }
+  val list = get(service.prefix) {
+    service.list.map(Ok)
+  }
 
-  val update: Endpoint[Option[Tag]] =
-    put(service.prefix :: int :: jsonBody[Tag]) { (id: Int, item: Tag) =>
-      service.update(item.copy(id = Some(id))).map(Ok)
-    }
+  val insert = post(service.prefix :: jsonBody[Tag]) { item: Tag =>
+    service.insert(item).map(Ok)
+  }
 
-  val destroy: Endpoint[Int] =
-    delete(service.prefix :: int) { id: Int =>
-      service.destroy(id).map(Ok(_))
-    } handle {
-      case nse: NoSuchElementException => NotFound(nse)
-    }
+  val update = put(service.prefix :: path[Int] :: jsonBody[Tag]) { (id: Int, item: Tag) =>
+    service.update(item.copy(id = Some(id))).map(Ok)
+  }
+
+  val destroy = delete(service.prefix :: path[Int]) { id: Int =>
+    service.destroy(id).map(Ok)
+  } handle {
+    case nse: NoSuchElementException => NotFound(nse)
+  }
 }
 
 object TagApi {

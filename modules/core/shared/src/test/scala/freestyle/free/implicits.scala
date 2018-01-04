@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 47 Degrees, LLC. <http://www.47deg.com>
+ * Copyright 2017-2018 47 Degrees, LLC. <http://www.47deg.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,13 +33,13 @@ class implicitsTests extends WordSpec with Matchers {
     }
 
     "enable traverse" in {
-      implicit val optionHandler = interps.optionHandler1
+      implicit val optionHandler : FSHandler[SCtors1.Op, Option] = interps.optionHandler1
       val program                = List(1, 2).traverse(SCtors1[SCtors1.Op].x)
       program.interpret[Option] shouldBe (Some(List(1, 2)))
     }
 
     "enable sequence" in {
-      implicit val optionHandler = interps.optionHandler1
+      implicit val optionHandler : FSHandler[SCtors1.Op, Option] = interps.optionHandler1
       def program[F[_]](implicit sc: SCtors1[F]) =
         List(sc.x(1), sc.x(2)).sequence[sc.FS.Par, Int]
 

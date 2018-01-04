@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 47 Degrees, LLC. <http://www.47deg.com>
+ * Copyright 2017-2018 47 Degrees, LLC. <http://www.47deg.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -37,34 +37,34 @@ class MapWrapper[M[_], Key, Value](
     ByteStringSerializer.String.contramap(formatVal)
 
   override def get(key: Key): Ops[M, Option[Value]] =
-    RediscalaCont.get[Key, Option[Value]](key).transform(toM).map(_.flatten)
+    RediscalaCont.get[Key, Option[Value]](key).mapK(toM).map(_.flatten)
 
   override def put(key: Key, value: Value): Ops[M, Unit] =
-    RediscalaCont.set(key, value).transform(toM).void
+    RediscalaCont.set(key, value).mapK(toM).void
 
   override def putAll(keyValues: Map[Key, Value]): Ops[M, Unit] =
-    RediscalaCont.mset(keyValues).transform(toM).void
+    RediscalaCont.mset(keyValues).mapK(toM).void
 
   override def putIfAbsent(key: Key, newVal: Value): Ops[M, Unit] =
-    RediscalaCont.setnx(key, newVal).transform(toM).void
+    RediscalaCont.setnx(key, newVal).mapK(toM).void
 
   override def delete(key: Key): Ops[M, Unit] =
-    RediscalaCont.del(List(key)).transform(toM).void
+    RediscalaCont.del(List(key)).mapK(toM).void
 
   override def hasKey(key: Key): Ops[M, Boolean] =
-    RediscalaCont.exists(key).transform(toM)
+    RediscalaCont.exists(key).mapK(toM)
 
   override def keys: Ops[M, List[Key]] =
-    RediscalaCont.keys.transform(toM).map(_.toList.flatMap(parseKey.apply))
+    RediscalaCont.keys.mapK(toM).map(_.toList.flatMap(parseKey.apply))
 
   override def clear(): Ops[M, Unit] =
-    RediscalaCont.flushDB.transform(toM).void
+    RediscalaCont.flushDB.mapK(toM).void
 
   override def replace(key: Key, newVal: Value): Ops[M, Unit] =
-    RediscalaCont.setxx(key, newVal).transform(toM).void
+    RediscalaCont.setxx(key, newVal).mapK(toM).void
 
   override def isEmpty: Ops[M, Boolean] =
-    RediscalaCont.scan.transform(toM).map(_.data.isEmpty)
+    RediscalaCont.scan.mapK(toM).map(_.data.isEmpty)
 
 }
 

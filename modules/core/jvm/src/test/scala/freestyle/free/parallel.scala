@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 47 Degrees, LLC. <http://www.47deg.com>
+ * Copyright 2017-2018 47 Degrees, LLC. <http://www.47deg.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,11 +17,14 @@
 package freestyle
 package free
 
+import cats.Semigroupal
 import cats.data.Kleisli
 import cats.instances.future._
 import cats.instances.option._
-import cats.syntax.cartesian._
+import cats.syntax.SemigroupalOps
+import cats.syntax.semigroupal._
 import org.scalatest.{Matchers, WordSpec}
+
 import scala.concurrent.{Await, Future}
 import scala.concurrent.duration.Duration
 
