@@ -30,6 +30,8 @@ import freestyle.free.http.finch._
 
 class FinchTests extends AsyncWordSpec with Matchers {
 
+  import io.finch.syntax._
+
   "Finch Freestyle integration" should {
     import algebra._
 
