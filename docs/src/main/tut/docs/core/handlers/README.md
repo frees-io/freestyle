@@ -173,11 +173,11 @@ being present, for the target runtime monad you are planning to interpret to.
 def taglessProgram[F[_]: Monad](implicit validation : Validation[F], interaction: Interaction[F]) =
   for {
     userInput <- interaction.ask("Give me something with at least 3 chars and a number on it")
-    valid <- (validation.minSize(userInput, 3), validation.hasNumber(userInput)).mapN(_ && _)
-    _ <- if (valid)
-            interaction.tell("awesomesauce!") 
-         else
-            interaction.tell(s"$userInput is not valid")
+    valid     <- (validation.minSize(userInput, 3), validation.hasNumber(userInput)).mapN(_ && _)
+    _         <- if (valid)
+                    interaction.tell("awesomesauce!") 
+                 else
+                    interaction.tell(s"$userInput is not valid")
   } yield ()
 ```
 
@@ -248,12 +248,12 @@ def taglessProgram[F[_]]
 
   for {
     userInput <- interaction.ask("Give me something with at least 3 chars and a number on it")
-    valid <- (validation.minSize(userInput, 3), validation.hasNumber(userInput)).mapN(_ && _)
-    _ <- if (valid)
-            interaction.tell("awesomesauce!") 
-         else
-            interaction.tell(s"$userInput is not valid")
-    _ <- log.debug("Program finished")
+    valid     <- (validation.minSize(userInput, 3), validation.hasNumber(userInput)).mapN(_ && _)
+    _         <- if (valid)
+                    interaction.tell("awesomesauce!") 
+                 else
+                    interaction.tell(s"$userInput is not valid")
+    _         <- log.debug("Program finished")
   } yield ()
 }
 ```
@@ -271,14 +271,5 @@ Once all of our algebras are considered, we can execute our programs
 ```tut:book
 taglessProgram[App.Op].interpret[Try]
 ```
-
-## A note on performance
-
-You've heard the phrase, `With great power comes great responsibility,` this is also true for apps based on `Freestructures`. While reifying your actions allows freedom of interpretation, you should also be aware that interpreting many individual steps in the `Free` monad can become a performance bottleneck if abused or used in hot spots of an application.
-
-This is because apps built with `Free` reify each action in an in-memory data structure prior to being interpreted. This structure is then folded into a final result, applying the Handler natural transformation over each defined action. The entire process is also trampolined, guaranteeing stack safety in the program declaration.
-
-As a rule of thumb, the approach that we've seen working in production is modeling your key biz logic concepts as `Free` actions and leaving the heavy lifting to the interpreters where needed.
-For most common apps true bottlenecks are IO to Databases, Network, or the file system and this is rarely a concern.
 
 Now that we've learned to define our own interpreters, let's jump into [Parallelism](../parallelism/).

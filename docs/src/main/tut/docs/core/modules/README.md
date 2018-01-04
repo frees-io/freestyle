@@ -64,14 +64,12 @@ This enables one to build programs that are properly typed and parameterized in 
 ```tut:book
 import modules._
 
-def program[F[_]](
-	implicit
-	  app: App[F]): FreeS[F, Int] = {
+def program[F[_]](implicit app: App[F]): FreeS[F, Int] = {
   import app.display._, app.persistence._
   for {
     cachedToken <- cache.get(1)
-    id <- validator.validate(cachedToken)
-    value <- database.get(id)
+    id          <- validator.validate(cachedToken)
+    value       <- database.get(id)
     view <- presenter.show(value)
   } yield view
 }
@@ -115,8 +113,7 @@ If you were to create this by hand, in the case of the example above, it will lo
 ```tut:book
 import iota._
 import TListK.:::
-type ManualAppCoproduct[A] = CopK[
-  IdValidation.Op ::: Presenter.Op ::: Cache.StackSafe.Op ::: Database.StackSafe.Op ::: TNilK, A]
+type ManualAppCoproduct[A] = CopK[IdValidation.Op ::: Presenter.Op ::: Cache ::: Database ::: TNilK, A]
 ```
 
 Things get more complicated once the number of Algebras grows.
