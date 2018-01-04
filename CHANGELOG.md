@@ -1,5 +1,17 @@
 # Changelog
 
+## 01/04/2018 - Version 0.5.1
+
+Release changes:
+
+* Get the `frees-rpc` docs when publishing frees.io microsite ([#483](https://github.com/frees-io/freestyle/pull/483))
+* FS-465 Improving config doc ([#480](https://github.com/frees-io/freestyle/pull/480))
+* Update cassandra docs ([#485](https://github.com/frees-io/freestyle/pull/485))
+* Update License to 2018 ([#489](https://github.com/frees-io/freestyle/pull/489))
+* Upgrade to cats 1.0.1 ([#492](https://github.com/frees-io/freestyle/pull/492))
+* Freestyle Release 0.5.1 ([#493](https://github.com/frees-io/freestyle/pull/493))
+
+
 ## 12/18/2017 - Version 0.5.0
 
 Release changes:
