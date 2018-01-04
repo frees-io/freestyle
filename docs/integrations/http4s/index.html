@@ -12,7 +12,7 @@ ga('send', 'pageview');
 
 <p>You can add the <em>frees-http4s</em> module as follows:</p>
 
-<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="n">libraryDependencies</span> <span class="o">+=</span> <span class="s">"io.frees"</span> <span class="o">%%</span> <span class="s">"frees-http4s"</span> <span class="o">%</span> <span class="s">"0.5.0"</span>
+<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="n">libraryDependencies</span> <span class="o">+=</span> <span class="s">"io.frees"</span> <span class="o">%%</span> <span class="s">"frees-http4s"</span> <span class="o">%</span> <span class="s">"0.5.1"</span>
 </code></pre>
 </div>
 
@@ -62,7 +62,7 @@ ga('send', 'pageview');
   <span class="k">def</span> <span class="n">vat</span><span class="o">(</span><span class="n">price</span><span class="k">:</span> <span class="kt">BigDecimal</span><span class="o">)</span><span class="k">:</span> <span class="kt">IO</span><span class="o">[</span><span class="kt">BigDecimal</span><span class="o">]</span> <span class="k">=</span>
     <span class="nc">IO</span><span class="o">.</span><span class="n">pure</span><span class="o">(</span><span class="n">price</span> <span class="o">*</span> <span class="n">rate</span><span class="o">)</span>
 <span class="o">}</span>
-<span class="c1">// calcIoHandler: CalcVAT.Handler[cats.effect.IO] = $anon$1@6bcb6258
+<span class="c1">// calcIoHandler: CalcVAT.Handler[cats.effect.IO] = $anon$1@2947c30
 </span></code></pre>
 </div>
 
@@ -87,7 +87,7 @@ ga('send', 'pageview');
   <span class="k">case</span> <span class="nc">GET</span> <span class="o">-&gt;</span> <span class="nc">Root</span> <span class="o">/</span> <span class="s">"calc-total"</span> <span class="o">/</span> <span class="nc">Price</span><span class="o">(</span><span class="n">p</span><span class="o">)</span> <span class="k">=&gt;</span>
     <span class="nc">Ok</span><span class="o">(</span><span class="nc">CalcVAT</span><span class="o">[</span><span class="kt">CalcVAT.Op</span><span class="o">].</span><span class="n">withVat</span><span class="o">(</span><span class="n">p</span><span class="o">).</span><span class="n">map</span><span class="o">(</span><span class="n">total</span> <span class="k">=&gt;</span> <span class="n">s</span><span class="s">"The total price including VAT is $total"</span><span class="o">))</span>
 <span class="o">}</span>
-<span class="c1">// userService: org.http4s.HttpService[cats.effect.IO] = Kleisli(org.http4s.HttpService$$$Lambda$14441/763874018@19322447)
+<span class="c1">// userService: org.http4s.HttpService[cats.effect.IO] = Kleisli(org.http4s.HttpService$$$Lambda$11245/323969201@3588c1c)
 </span></code></pre>
 </div>
 

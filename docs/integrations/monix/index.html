@@ -65,7 +65,7 @@ ga('send', 'pageview');
     <span class="k">def</span> <span class="n">isEven</span><span class="k">:</span> <span class="kt">ValidateInt</span><span class="o">[</span><span class="kt">Boolean</span><span class="o">]</span> <span class="k">=</span>
       <span class="nc">Kleisli</span><span class="o">(</span><span class="n">i</span> <span class="k">=&gt;</span> <span class="nc">Task</span><span class="o">.</span><span class="n">eval</span> <span class="o">{</span> <span class="n">blockAndPrint</span><span class="o">(</span><span class="n">i</span> <span class="o">*</span> <span class="mi">250L</span><span class="o">,</span> <span class="n">s</span><span class="s">"isEven($i)"</span><span class="o">);</span> <span class="n">i</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">==</span> <span class="mi">0</span> <span class="o">})</span>
   <span class="o">}</span>
-<span class="c1">// validateIntTaskHandler: Validator.Handler[ValidateInt] = $anon$1@6b56b7ca
+<span class="c1">// validateIntTaskHandler: Validator.Handler[ValidateInt] = $anon$1@2ae5d2ff
 </span></code></pre>
 </div>
 
@@ -75,7 +75,7 @@ ga('send', 'pageview');
 <span class="c1">// import freestyle.free.implicits._
 </span>
 <span class="k">val</span> <span class="n">check</span> <span class="k">=</span> <span class="n">isPositiveEven</span><span class="o">[</span><span class="kt">Validator.Op</span><span class="o">].</span><span class="n">interpret</span><span class="o">[</span><span class="kt">ValidateInt</span><span class="o">]</span>
-<span class="c1">// check: ValidateInt[Boolean] = Kleisli(cats.data.Kleisli$$Lambda$10845/531504635@52e9d237)
+<span class="c1">// check: ValidateInt[Boolean] = Kleisli(cats.data.Kleisli$$Lambda$7538/743311976@4d5b59dd)
 </span></code></pre>
 </div>
 
@@ -116,18 +116,18 @@ ga('send', 'pageview');
 <p>The following example uses <code class="highlighter-rouge">Task.gather</code>, which does parallel processing while preserving result ordering, but in order to ensure that parallel processing actually happens, the tasks need to be effectively asynchronous, which for simple functions need to fork threads.</p>
 
 <div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">val</span> <span class="n">check2</span> <span class="k">=</span> <span class="n">isPositiveEven</span><span class="o">[</span><span class="kt">Validator.Op</span><span class="o">].</span><span class="n">interpret</span><span class="o">[</span><span class="kt">ValidateInt</span><span class="o">]</span>
-<span class="c1">// check2: ValidateInt[Boolean] = Kleisli(cats.data.Kleisli$$Lambda$10845/531504635@738b6823)
+<span class="c1">// check2: ValidateInt[Boolean] = Kleisli(cats.data.Kleisli$$Lambda$7538/743311976@1c136300)
 </span>
 <span class="k">val</span> <span class="n">items</span> <span class="k">=</span> <span class="mi">1</span> <span class="o">::</span> <span class="mi">2</span> <span class="o">::</span> <span class="o">-</span><span class="mi">1</span> <span class="o">::</span> <span class="nc">Nil</span>
 <span class="c1">// items: List[Int] = List(1, 2, -1)
 </span>
 <span class="c1">// The list of all tasks needed for execution
 </span><span class="k">val</span> <span class="n">tasks</span> <span class="k">=</span> <span class="n">items</span><span class="o">.</span><span class="n">map</span><span class="o">(</span><span class="n">check2</span><span class="o">.</span><span class="n">run</span><span class="o">(</span><span class="k">_</span><span class="o">))</span>
-<span class="c1">// tasks: List[monix.eval.Task[Boolean]] = List(Task.FlatMap(Task@1462751581, monix.eval.instances.CatsBaseForTask$$Lambda$17830/654850291@ed2d90d), Task.FlatMap(Task@1311413191, monix.eval.instances.CatsBaseForTask$$Lambda$17830/654850291@6a890718), Task.FlatMap(Task@1124439597, monix.eval.instances.CatsBaseForTask$$Lambda$17830/654850291@5b8735f1))
+<span class="c1">// tasks: List[monix.eval.Task[Boolean]] = List(Task.FlatMap(Task@1034580422, monix.eval.instances.CatsBaseForTask$$Lambda$14648/1300237748@17fd830a), Task.FlatMap(Task@882624925, monix.eval.instances.CatsBaseForTask$$Lambda$14648/1300237748@3966d6d6), Task.FlatMap(Task@1470932093, monix.eval.instances.CatsBaseForTask$$Lambda$14648/1300237748@2cb29851))
 </span>
 <span class="c1">// Processing in parallel
 </span><span class="k">val</span> <span class="n">aggregate</span> <span class="k">=</span> <span class="nc">Task</span><span class="o">.</span><span class="n">gather</span><span class="o">(</span><span class="n">tasks</span><span class="o">).</span><span class="n">map</span><span class="o">(</span><span class="k">_</span><span class="o">.</span><span class="n">toList</span><span class="o">)</span>
-<span class="c1">// aggregate: monix.eval.Task[List[Boolean]] = Task.FlatMap(Task@190582140, monix.eval.Task$$Lambda$11653/1551746746@3ef2c38d)
+<span class="c1">// aggregate: monix.eval.Task[List[Boolean]] = Task.FlatMap(Task@1347527660, monix.eval.Task$$Lambda$8392/1951530313@94f9dcd)
 </span>
 <span class="c1">// Evaluation:
 </span><span class="n">aggregate</span><span class="o">.</span><span class="n">foreach</span><span class="o">(</span><span class="n">println</span><span class="o">)</span>
@@ -138,7 +138,7 @@ ga('send', 'pageview');
 // isPositive(1)
 // isEven(1)
 // List(false, true, false)
-// res6: monix.execution.CancelableFuture[Unit] = Async(Future(Success(())),monix.execution.cancelables.StackedCancelable@15f8d130)
+// res6: monix.execution.CancelableFuture[Unit] = Async(Future(Success(())),monix.execution.cancelables.StackedCancelable@1aa4583)
 </span></code></pre>
 </div>
 <p>If ordering of results does not matter, you can also use <code class="highlighter-rouge">Task.gatherUnordered</code> instead of gather, which might yield better results, given its non-blocking execution.</p>

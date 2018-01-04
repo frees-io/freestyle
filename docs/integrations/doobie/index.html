@@ -55,10 +55,13 @@ ga('send', 'pageview');
 </span>
 <span class="k">implicit</span> <span class="k">val</span> <span class="n">xa</span><span class="k">:</span> <span class="kt">Transactor</span><span class="o">[</span><span class="kt">IO</span><span class="o">]</span> <span class="k">=</span>
   <span class="n">H2Transactor</span><span class="o">[</span><span class="kt">IO</span><span class="o">](</span><span class="s">"jdbc:h2:mem:test;DB_CLOSE_DELAY=-1"</span><span class="o">,</span> <span class="s">"sa"</span><span class="o">,</span> <span class="s">""</span><span class="o">).</span><span class="n">unsafeRunSync</span>
-<span class="c1">// xa: doobie.Transactor[cats.effect.IO] = doobie.util.transactor$Transactor$$anon$10@6d425b8e
+<span class="c1">// &lt;console&gt;:38: warning: method apply in object H2Transactor is deprecated (since doobie 0.5.0): This method has been renamed `newH2Transactor` to help clarify usage
+//          H2Transactor[IO]("jdbc:h2:mem:test;DB_CLOSE_DELAY=-1", "sa", "").unsafeRunSync
+//          ^
+// xa: doobie.Transactor[cats.effect.IO] = doobie.util.transactor$Transactor$$anon$10@e76ca2e
 </span>
 <span class="k">val</span> <span class="n">io</span> <span class="k">=</span> <span class="n">doobieFrees</span><span class="o">.</span><span class="n">interpret</span><span class="o">[</span><span class="kt">IO</span><span class="o">]</span>
-<span class="c1">// io: cats.effect.IO[Person] = IO$1446078104
+<span class="c1">// io: cats.effect.IO[Person] = IO$383639751
 </span></code></pre>
 </div>
 
@@ -94,7 +97,7 @@ ga('send', 'pageview');
   <span class="k">new</span> <span class="nc">Calc</span><span class="o">.</span><span class="nc">Handler</span><span class="o">[</span><span class="kt">IO</span><span class="o">]</span> <span class="o">{</span>
     <span class="k">def</span> <span class="n">subtract</span><span class="o">(</span><span class="n">a</span><span class="k">:</span> <span class="kt">Int</span><span class="o">,</span> <span class="n">b</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span><span class="k">:</span> <span class="kt">IO</span><span class="o">[</span><span class="kt">Int</span><span class="o">]</span> <span class="k">=</span> <span class="nc">IO</span><span class="o">.</span><span class="n">pure</span><span class="o">(</span><span class="n">a</span> <span class="o">-</span> <span class="n">b</span><span class="o">)</span>
   <span class="o">}</span>
-<span class="c1">// calcHandler: Calc.Handler[cats.effect.IO] = $anon$1@664b0970
+<span class="c1">// calcHandler: Calc.Handler[cats.effect.IO] = $anon$1@7d18fb45
 </span></code></pre>
 </div>
 
@@ -112,7 +115,7 @@ ga('send', 'pageview');
 <p>We can use <code class="highlighter-rouge">Example.Op</code> as the functor and translate the resulting program to <code class="highlighter-rouge">IO</code>:</p>
 
 <div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">val</span> <span class="n">io2</span> <span class="k">=</span> <span class="n">example</span><span class="o">[</span><span class="kt">Example.Op</span><span class="o">].</span><span class="n">interpret</span><span class="o">[</span><span class="kt">IO</span><span class="o">]</span>
-<span class="c1">// io2: cats.effect.IO[(Person, Int)] = IO$1168939362
+<span class="c1">// io2: cats.effect.IO[(Person, Int)] = IO$1993159249
 </span>
 <span class="n">io2</span><span class="o">.</span><span class="n">unsafeRunSync</span>
 <span class="c1">// res3: (Person, Int) = (Person(Alonzo Church,1903),114)

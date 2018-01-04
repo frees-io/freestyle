@@ -31,10 +31,10 @@ ga('send', 'pageview');
 
 <p>To use the <em>frees-async</em> module, you need to include one of the following dependencies:</p>
 
-<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="n">libraryDependencies</span> <span class="o">+=</span> <span class="s">"io.frees"</span> <span class="o">%%</span> <span class="s">"frees-async"</span> <span class="o">%</span> <span class="s">"0.5.0"</span>
+<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="n">libraryDependencies</span> <span class="o">+=</span> <span class="s">"io.frees"</span> <span class="o">%%</span> <span class="s">"frees-async"</span> <span class="o">%</span> <span class="s">"0.5.1"</span>
 
 <span class="c1">// and if you want to use cats.effect.IO or Monix' Task:
-</span><span class="n">libraryDependencies</span> <span class="o">+=</span> <span class="s">"io.frees"</span> <span class="o">%%</span> <span class="s">"frees-async-cats-effect"</span> <span class="o">%</span> <span class="s">"0.5.0"</span>
+</span><span class="n">libraryDependencies</span> <span class="o">+=</span> <span class="s">"io.frees"</span> <span class="o">%%</span> <span class="s">"frees-async-cats-effect"</span> <span class="o">%</span> <span class="s">"0.5.1"</span>
 </code></pre>
 </div>
 
@@ -87,7 +87,7 @@ ga('send', 'pageview');
 
 <div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">val</span> <span class="n">getSorted</span><span class="k">:</span> <span class="kt">Author</span> <span class="o">=&gt;</span> <span class="nc">FreeS</span><span class="o">[</span><span class="kt">AsyncM.Op</span>, <span class="kt">List</span><span class="o">[</span><span class="kt">Book</span><span class="o">]]</span> <span class="k">=</span>
   <span class="n">sortedBooks</span><span class="o">[</span><span class="kt">AsyncM.Op</span><span class="o">](</span><span class="nc">Library</span><span class="o">)</span> <span class="k">_</span>
-<span class="c1">// getSorted: Author =&gt; freestyle.free.FreeS[freestyle.free.async.AsyncM.Op,List[Book]] = $$Lambda$11581/873605253@5a85c47e
+<span class="c1">// getSorted: Author =&gt; freestyle.free.FreeS[freestyle.free.async.AsyncM.Op,List[Book]] = $$Lambda$8319/1451620357@ae0342c
 </span>
 <span class="k">val</span> <span class="n">dickensBooks</span> <span class="k">=</span> <span class="n">getSorted</span><span class="o">(</span><span class="nc">Author</span><span class="o">(</span><span class="s">"Dickens"</span><span class="o">))</span>
 <span class="c1">// dickensBooks: freestyle.free.FreeS[freestyle.free.async.AsyncM.Op,List[Book]] = Free(...)
@@ -116,10 +116,10 @@ ga('send', 'pageview');
 <span class="c1">// import cats.effect.IO
 </span>
 <span class="k">val</span> <span class="n">io1</span> <span class="k">=</span> <span class="n">dickensBooks</span><span class="o">.</span><span class="n">interpret</span><span class="o">[</span><span class="kt">IO</span><span class="o">]</span>
-<span class="c1">// io1: cats.effect.IO[List[Book]] = IO$1218579867
+<span class="c1">// io1: cats.effect.IO[List[Book]] = IO$1837009958
 </span>
 <span class="k">val</span> <span class="n">io2</span> <span class="k">=</span> <span class="n">otherBooks</span><span class="o">.</span><span class="n">interpret</span><span class="o">[</span><span class="kt">IO</span><span class="o">]</span>
-<span class="c1">// io2: cats.effect.IO[List[Book]] = IO$28486947
+<span class="c1">// io2: cats.effect.IO[List[Book]] = IO$500304228
 </span></code></pre>
 </div>
 
@@ -128,10 +128,12 @@ ga('send', 'pageview');
 //   at Library$.findBooks(&lt;console&gt;:39)
 //   at .$anonfun$sortedBooks$1(&lt;console&gt;:37)
 //   at .$anonfun$sortedBooks$1$adapted(&lt;console&gt;:36)
-//   at cats.effect.IO$.$anonfun$async$1(IO.scala:449)
-//   at cats.effect.IO$.$anonfun$async$1$adapted(IO.scala:447)
-//   at cats.effect.IO.unsafeRunAsync(IO.scala:222)
-//   at cats.effect.IO.unsafeToFuture(IO.scala:286)
+//   at cats.effect.IO$.$anonfun$async$1(IO.scala:427)
+//   at cats.effect.IO$.$anonfun$async$1$adapted(IO.scala:425)
+//   at cats.effect.internals.IORunLoop$.cats$effect$internals$IORunLoop$$loop(IORunLoop.scala:106)
+//   at cats.effect.internals.IORunLoop$.start(IORunLoop.scala:34)
+//   at cats.effect.IO.unsafeRunAsync(IO.scala:191)
+//   at cats.effect.IO.unsafeToFuture(IO.scala:244)
 //   ... 43 elided
 </span></code></pre>
 </div>
@@ -152,13 +154,13 @@ ga('send', 'pageview');
 <span class="c1">// import monix.execution.Scheduler
 </span>
 <span class="k">implicit</span> <span class="k">val</span> <span class="n">executionContext</span> <span class="k">=</span> <span class="nc">Scheduler</span><span class="o">.</span><span class="nc">Implicits</span><span class="o">.</span><span class="n">global</span>
-<span class="c1">// executionContext: monix.execution.Scheduler = monix.execution.schedulers.AsyncScheduler@6113f9ca
+<span class="c1">// executionContext: monix.execution.Scheduler = monix.execution.schedulers.AsyncScheduler@47070991
 </span>
 <span class="k">val</span> <span class="n">monixTask1</span> <span class="k">=</span> <span class="n">dickensBooks</span><span class="o">.</span><span class="n">interpret</span><span class="o">[</span><span class="kt">Task</span><span class="o">]</span>
-<span class="c1">// monixTask1: monix.eval.Task[List[Book]] = Task.FlatMap(Task@448437803, monix.eval.Task$$$Lambda$11644/1492903042@1522633)
+<span class="c1">// monixTask1: monix.eval.Task[List[Book]] = Task.FlatMap(Task@1844181495, monix.eval.Task$$$Lambda$8383/105389837@65a3d430)
 </span>
 <span class="k">val</span> <span class="n">monixTask2</span> <span class="k">=</span> <span class="n">otherBooks</span><span class="o">.</span><span class="n">interpret</span><span class="o">[</span><span class="kt">Task</span><span class="o">]</span>
-<span class="c1">// monixTask2: monix.eval.Task[List[Book]] = Task.FlatMap(Task@1620035001, monix.eval.Task$$$Lambda$11644/1492903042@80c7b64)
+<span class="c1">// monixTask2: monix.eval.Task[List[Book]] = Task.FlatMap(Task@204007405, monix.eval.Task$$$Lambda$8383/105389837@59e62908)
 </span></code></pre>
 </div>
 
@@ -198,10 +200,10 @@ ga('send', 'pageview');
 <span class="c1">// import cats.implicits._
 </span>
 <span class="k">val</span> <span class="n">fut1</span> <span class="k">=</span> <span class="n">dickensBooks</span><span class="o">.</span><span class="n">interpret</span><span class="o">[</span><span class="kt">Future</span><span class="o">]</span>
-<span class="c1">// fut1: scala.concurrent.Future[List[Book]] = Future(&lt;not completed&gt;)
+<span class="c1">// fut1: scala.concurrent.Future[List[Book]] = Future(Failure(NoBooksFound: No books found from Dickens))
 </span>
 <span class="k">val</span> <span class="n">fut2</span> <span class="k">=</span> <span class="n">otherBooks</span><span class="o">.</span><span class="n">interpret</span><span class="o">[</span><span class="kt">Future</span><span class="o">]</span>
-<span class="c1">// fut2: scala.concurrent.Future[List[Book]] = Future(Success(List(Book(The Old Man and the Sea,1951), Book(1984,1948), Book(On the Road,1957))))
+<span class="c1">// fut2: scala.concurrent.Future[List[Book]] = Future(&lt;not completed&gt;)
 </span></code></pre>
 </div>
 

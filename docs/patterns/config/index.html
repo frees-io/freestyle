@@ -11,9 +11,9 @@ ga('send', 'pageview');
 <p>The <code class="highlighter-rouge">Config</code> effect algebra is part of the <code class="highlighter-rouge">frees-config</code> module, and it allows obtaining values from configuration files at any point in the monadic computation flow of a Freestyle program.
 The current implementation exposes the most important combinators found in <a href="https://github.com/typesafehub/config">Typesafe Config</a>.</p>
 
-<p>In order to enable this integration, you can depend on <em>frees-config</em>:</p>
+<p>To enable this integration, you can depend on <em>frees-config</em>:</p>
 
-<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="n">libraryDependencies</span> <span class="o">+=</span> <span class="s">"io.frees"</span> <span class="o">%%</span> <span class="s">"frees-config"</span> <span class="o">%</span> <span class="s">"0.5.0"</span>
+<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="n">libraryDependencies</span> <span class="o">+=</span> <span class="s">"io.frees"</span> <span class="o">%%</span> <span class="s">"frees-config"</span> <span class="o">%</span> <span class="s">"0.5.1"</span>
 </code></pre>
 </div>
 
@@ -36,23 +36,27 @@ The current implementation exposes the most important combinators found in <a hr
   <span class="k">def</span> <span class="n">load</span><span class="k">:</span> <span class="kt">FS</span><span class="o">[</span><span class="kt">Config</span><span class="o">]</span>
   <span class="k">def</span> <span class="n">empty</span><span class="k">:</span> <span class="kt">FS</span><span class="o">[</span><span class="kt">Config</span><span class="o">]</span>
   <span class="k">def</span> <span class="n">parseString</span><span class="o">(</span><span class="n">s</span><span class="k">:</span> <span class="kt">String</span><span class="o">)</span><span class="k">:</span> <span class="kt">FS</span><span class="o">[</span><span class="kt">Config</span><span class="o">]</span>
+  <span class="k">def</span> <span class="n">loadAs</span><span class="o">[</span><span class="kt">T:</span> <span class="kt">ConfigDecoder</span><span class="o">]</span><span class="k">:</span> <span class="kt">FS</span><span class="o">[</span><span class="kt">T</span><span class="o">]</span>
+  <span class="k">def</span> <span class="n">parseStringAs</span><span class="o">[</span><span class="kt">T:</span> <span class="kt">ConfigDecoder</span><span class="o">](</span><span class="n">s</span><span class="k">:</span> <span class="kt">String</span><span class="o">)</span><span class="k">:</span> <span class="kt">FS</span><span class="o">[</span><span class="kt">T</span><span class="o">]</span>
 <span class="o">}</span>
 </code></pre>
 </div>
 
 <p>The <em>frees-config</em> module contains a built-in handler which you can use out of the box with target types such as <code class="highlighter-rouge">Try</code>, <code class="highlighter-rouge">Future</code>, <code class="highlighter-rouge">monix.eval.Task</code>, <code class="highlighter-rouge">fs2.Task</code>, and any other type in general that can satisfy a <code class="highlighter-rouge">MonadError[M, Throwable]</code> constraint.</p>
 
-<h3 id="example">Example</h3>
+<h3 id="example-by-using-case-classy">Example by using Case Classy</h3>
 
-<p>In the following example, we will show how easy it is to add the config algebra and use it in a pure program.</p>
+<p>Freestyle integrates with the Case Classy library to make it easy to decode Typesafe config - or other untyped structured data - into case class hierarchies.</p>
 
-<p>Provided we have a configuration file in our classpath following the typesafe config conventions called <code class="highlighter-rouge">application.conf</code> with the following value:</p>
+<p>In the following example, we will review the steps we have to take to use the Case Classy library along with config algebra in a pure program.</p>
+
+<p>Provided we have a configuration file in our classpath following the Typesafe config conventions called <code class="highlighter-rouge">application.conf</code> with the following value:</p>
 
 <div class="highlighter-rouge"><pre class="highlight"><code>disallowedStates = ["reverted", "closed"]
 </code></pre>
 </div>
 
-<p>Before we do anything else, we’ll need to add the usual set of imports from freestyle and cats to create our algebras:</p>
+<p>Before we do anything else, we’ll need to add the usual set of imports from Freestyle and cats to create our algebras:</p>
 
 <div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">freestyle.free._</span>
 <span class="k">import</span> <span class="nn">freestyle.free.implicits._</span>
@@ -63,7 +67,25 @@ The current implementation exposes the most important combinators found in <a hr
 </code></pre>
 </div>
 
-<p>We will define a very simple algebra with a stub handler that returns a list of issue states for illustration purposes:</p>
+<p>We’ll create a case class containing all the config values required by our program:</p>
+
+<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">case</span> <span class="k">class</span> <span class="nc">AppConfig</span><span class="o">(</span><span class="n">disallowedStates</span><span class="k">:</span> <span class="kt">List</span><span class="o">[</span><span class="kt">String</span><span class="o">])</span>
+<span class="c1">// defined class AppConfig
+</span></code></pre>
+</div>
+
+<p>Additionally, we have to write the config decoder for that case class:</p>
+
+<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">classy.config._</span>
+<span class="c1">// import classy.config._
+</span>
+<span class="k">implicit</span> <span class="k">val</span> <span class="n">configDecoder</span><span class="k">:</span> <span class="kt">ConfigDecoder</span><span class="o">[</span><span class="kt">AppConfig</span><span class="o">]</span> <span class="k">=</span>
+  <span class="n">readConfig</span><span class="o">[</span><span class="kt">List</span><span class="o">[</span><span class="kt">String</span><span class="o">]](</span><span class="s">"disallowedStates"</span><span class="o">).</span><span class="n">map</span><span class="o">(</span><span class="nc">AppConfig</span><span class="o">.</span><span class="n">apply</span><span class="o">)</span>
+<span class="c1">// configDecoder: classy.config.ConfigDecoder[AppConfig] = Instance(classy.Decoder$$Lambda$15798/23068500@500cbc2b)
+</span></code></pre>
+</div>
+
+<p>We will define a simple algebra with a stub handler that returns a list of issue states for illustration purposes:</p>
 
 <div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="nd">@free</span> <span class="k">trait</span> <span class="nc">IssuesService</span> <span class="o">{</span>
   <span class="k">def</span> <span class="n">states</span><span class="k">:</span> <span class="kt">FS</span><span class="o">[</span><span class="kt">List</span><span class="o">[</span><span class="kt">String</span><span class="o">]]</span>
@@ -74,7 +96,7 @@ The current implementation exposes the most important combinators found in <a hr
 <span class="k">implicit</span> <span class="k">val</span> <span class="n">issuesServiceHandler</span><span class="k">:</span> <span class="kt">IssuesService.Handler</span><span class="o">[</span><span class="kt">Try</span><span class="o">]</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">IssuesService</span><span class="o">.</span><span class="nc">Handler</span><span class="o">[</span><span class="kt">Try</span><span class="o">]</span> <span class="o">{</span>
   <span class="k">def</span> <span class="n">states</span><span class="k">:</span> <span class="kt">Try</span><span class="o">[</span><span class="kt">List</span><span class="o">[</span><span class="kt">String</span><span class="o">]]</span> <span class="k">=</span> <span class="nc">Try</span><span class="o">(</span><span class="nc">List</span><span class="o">(</span><span class="s">"open"</span><span class="o">,</span> <span class="s">"reverted"</span><span class="o">,</span> <span class="s">"in progress"</span><span class="o">,</span> <span class="s">"closed"</span><span class="o">))</span>
 <span class="o">}</span>
-<span class="c1">// issuesServiceHandler: IssuesService.Handler[scala.util.Try] = $anon$1@1b616350
+<span class="c1">// issuesServiceHandler: IssuesService.Handler[scala.util.Try] = $anon$1@207d404f
 </span></code></pre>
 </div>
 
@@ -96,23 +118,38 @@ derived from using different algebras:</p>
 </span></code></pre>
 </div>
 
-<p>And finally, we can create a program and compose our config algebra in the same monadic comprehension along with our issues service:</p>
+<p>And finally, we can create a program and compose our config algebra in the same monadic comprehension along with our issues service. As you may observe, we’re calling <code class="highlighter-rouge">loadAs[AppConfig]</code> method to populate config values into our case class.</p>
 
 <div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">def</span> <span class="n">filteredStates</span><span class="o">[</span><span class="kt">F</span><span class="o">[</span><span class="k">_</span><span class="o">]](</span><span class="k">implicit</span> <span class="n">app</span> <span class="k">:</span> <span class="kt">App</span><span class="o">[</span><span class="kt">F</span><span class="o">])</span><span class="k">:</span> <span class="kt">FreeS</span><span class="o">[</span><span class="kt">F</span>, <span class="kt">List</span><span class="o">[</span><span class="kt">String</span><span class="o">]]</span> <span class="k">=</span>
   <span class="k">for</span> <span class="o">{</span>
     <span class="n">currentStates</span> <span class="k">&lt;-</span> <span class="n">app</span><span class="o">.</span><span class="n">issuesService</span><span class="o">.</span><span class="n">states</span>
-	<span class="n">config</span> <span class="k">&lt;-</span> <span class="n">app</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">load</span>
-	<span class="n">disallowedStates</span> <span class="k">=</span> <span class="n">config</span><span class="o">.</span><span class="n">stringList</span><span class="o">(</span><span class="s">"disallowedStates"</span><span class="o">)</span>
-  <span class="o">}</span> <span class="k">yield</span> <span class="n">currentStates</span><span class="o">.</span><span class="n">filterNot</span><span class="o">(</span><span class="n">disallowedStates</span><span class="o">.</span><span class="n">contains</span><span class="o">)</span>
+    <span class="n">config</span> <span class="k">&lt;-</span> <span class="n">app</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">loadAs</span><span class="o">[</span><span class="kt">AppConfig</span><span class="o">]</span>
+  <span class="o">}</span> <span class="k">yield</span> <span class="n">currentStates</span><span class="o">.</span><span class="n">filterNot</span><span class="o">(</span><span class="n">config</span><span class="o">.</span><span class="n">disallowedStates</span><span class="o">.</span><span class="n">contains</span><span class="o">)</span>
 <span class="c1">// filteredStates: [F[_]](implicit app: App[F])freestyle.free.FreeS[F,List[String]]
 </span></code></pre>
 </div>
 
-<p>Once we have a program we can interpret it to our desired runtime, in this case <code class="highlighter-rouge">scala.util.Try</code>:</p>
+<p>Once we have a program, we can interpret it to our desired runtime, in this case <code class="highlighter-rouge">scala.util.Try</code>:</p>
 
 <div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="n">filteredStates</span><span class="o">[</span><span class="kt">App.Op</span><span class="o">].</span><span class="n">interpret</span><span class="o">[</span><span class="kt">Try</span><span class="o">]</span>
-<span class="c1">// res1: scala.util.Try[List[String]] = Success(List(open, reverted, in progress, closed))
+<span class="c1">// res1: scala.util.Try[List[String]] = Success(List(open, in progress))
 </span></code></pre>
+</div>
+
+<h3 id="example-by-using-typesafe-config">Example by using Typesafe Config</h3>
+
+<p>If we decide to use the Typesafe Config object instead of the Case Classy library, we won’t need to create a case class or a config decoder.</p>
+
+<p>So, given the example described above, the required code will be pretty similar except we’ll load the Config object and use the methods that it provides:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>tut:book
+def filteredStates[F[_]](implicit app : App[F]): FreeS[F, List[String]] =
+  for {
+    currentStates &lt;- app.issuesService.states
+	  config &lt;- app.config.load
+	  disallowedStates = config.stringList("disallowedStates")
+  } yield currentStates.filterNot(disallowedStates.getOrElse(Nil).contains)
+</code></pre>
 </div>
 </section></div></div></div></div><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script><script src="/highlight/highlight.pack.js"></script><script>hljs.configure({
 languages:['scala','java','bash']

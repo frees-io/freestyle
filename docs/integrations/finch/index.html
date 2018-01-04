@@ -12,7 +12,7 @@ ga('send', 'pageview');
 
 <p>You can add the <em>frees-finch</em> module as follows:</p>
 
-<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="n">libraryDependencies</span> <span class="o">+=</span> <span class="s">"io.frees"</span> <span class="o">%%</span> <span class="s">"frees-finch"</span> <span class="o">%</span> <span class="s">"0.5.0"</span>
+<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="n">libraryDependencies</span> <span class="o">+=</span> <span class="s">"io.frees"</span> <span class="o">%%</span> <span class="s">"frees-finch"</span> <span class="o">%</span> <span class="s">"0.5.1"</span>
 </code></pre>
 </div>
 
@@ -66,7 +66,7 @@ ga('send', 'pageview');
 <span class="k">implicit</span> <span class="k">val</span> <span class="n">futureHandler</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">Calc</span><span class="o">.</span><span class="nc">Handler</span><span class="o">[</span><span class="kt">Future</span><span class="o">]</span> <span class="o">{</span>
   <span class="k">def</span> <span class="n">gcd</span><span class="o">(</span><span class="n">a</span><span class="k">:</span> <span class="kt">Int</span><span class="o">,</span> <span class="n">b</span><span class="k">:</span><span class="kt">Int</span><span class="o">)</span><span class="k">:</span> <span class="kt">Future</span><span class="o">[</span><span class="kt">Int</span><span class="o">]</span> <span class="k">=</span> <span class="n">gcdFuture</span><span class="o">(</span><span class="n">a</span><span class="o">,</span> <span class="n">b</span><span class="o">)</span>
 <span class="o">}</span>
-<span class="c1">// futureHandler: Calc.Handler[com.twitter.util.Future] = $anon$1@5a0d58de
+<span class="c1">// futureHandler: Calc.Handler[com.twitter.util.Future] = $anon$1@4b9c5849
 </span></code></pre>
 </div>
 
@@ -83,12 +83,15 @@ ga('send', 'pageview');
 <p>We can use a freestyle program within <code class="highlighter-rouge">Endpoint#apply</code>:</p>
 
 <div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="n">cats</span><span class="o">.</span><span class="nc">Monad</span><span class="o">[</span><span class="kt">Future</span><span class="o">]</span>
-<span class="c1">// res2: cats.Monad[com.twitter.util.Future] = io.catbird.util.FutureInstances$$anon$1@11efdb06
+<span class="c1">// res2: cats.Monad[com.twitter.util.Future] = io.catbird.util.FutureInstances$$anon$1@7b4d55d9
 </span>
 <span class="k">val</span> <span class="n">gcdEndpointTwo</span> <span class="k">=</span> <span class="n">get</span><span class="o">(</span><span class="n">int</span> <span class="o">::</span> <span class="n">int</span><span class="o">)</span> <span class="o">{</span> <span class="o">(</span><span class="n">a</span><span class="k">:</span> <span class="kt">Int</span><span class="o">,</span> <span class="n">b</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span> <span class="k">=&gt;</span>
   <span class="nc">Calc</span><span class="o">[</span><span class="kt">Calc.Op</span><span class="o">].</span><span class="n">gcd</span><span class="o">(</span><span class="n">a</span><span class="o">,</span> <span class="n">b</span><span class="o">).</span><span class="n">map</span><span class="o">(</span><span class="nc">Ok</span><span class="o">(</span><span class="k">_</span><span class="o">))</span>
 <span class="o">}</span>
-<span class="c1">// &lt;console&gt;:31: warning: value int in trait Paths is deprecated (since 0.16): Use path[Int] instead
+<span class="c1">// &lt;console&gt;:31: warning: method get in trait DeprecatedEndpointMappers is deprecated (since 0.16): Enable syntax explicitly: import io.finch.syntax._
+//        val gcdEndpointTwo = get(int :: int) { (a: Int, b: Int) =&gt;
+//                             ^
+// &lt;console&gt;:31: warning: value int in trait Paths is deprecated (since 0.16): Use path[Int] instead
 //        val gcdEndpointTwo = get(int :: int) { (a: Int, b: Int) =&gt;
 //                                 ^
 // &lt;console&gt;:31: warning: value int in trait Paths is deprecated (since 0.16): Use path[Int] instead
@@ -99,7 +102,10 @@ ga('send', 'pageview');
 <span class="k">val</span> <span class="n">gcdEndpointOne</span> <span class="k">=</span> <span class="n">get</span><span class="o">(</span><span class="n">int</span><span class="o">)</span> <span class="o">{</span> <span class="o">(</span><span class="n">a</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span> <span class="k">=&gt;</span>
   <span class="nc">Calc</span><span class="o">[</span><span class="kt">Calc.Op</span><span class="o">].</span><span class="n">gcd</span><span class="o">(</span><span class="n">a</span><span class="o">,</span> <span class="mi">12</span><span class="o">).</span><span class="n">map</span><span class="o">(</span><span class="nc">Ok</span><span class="o">(</span><span class="k">_</span><span class="o">))</span>
 <span class="o">}</span>
-<span class="c1">// &lt;console&gt;:31: warning: value int in trait Paths is deprecated (since 0.16): Use path[Int] instead
+<span class="c1">// &lt;console&gt;:31: warning: method get in trait DeprecatedEndpointMappers is deprecated (since 0.16): Enable syntax explicitly: import io.finch.syntax._
+//        val gcdEndpointOne = get(int) { (a: Int) =&gt;
+//                             ^
+// &lt;console&gt;:31: warning: value int in trait Paths is deprecated (since 0.16): Use path[Int] instead
 //        val gcdEndpointOne = get(int) { (a: Int) =&gt;
 //                                 ^
 // gcdEndpointOne: io.finch.Endpoint[Int] = GET /:int
@@ -107,7 +113,10 @@ ga('send', 'pageview');
 <span class="k">val</span> <span class="n">gcdEndpointZero</span> <span class="k">=</span> <span class="n">get</span><span class="o">(/)</span> <span class="o">{</span>
   <span class="nc">Calc</span><span class="o">[</span><span class="kt">Calc.Op</span><span class="o">].</span><span class="n">gcd</span><span class="o">(</span><span class="mi">2209</span><span class="o">,</span> <span class="mi">94</span><span class="o">).</span><span class="n">map</span><span class="o">(</span><span class="nc">Ok</span><span class="o">(</span><span class="k">_</span><span class="o">))</span>
 <span class="o">}</span>
-<span class="c1">// gcdEndpointZero: io.finch.Endpoint[Int] = GET /
+<span class="c1">// &lt;console&gt;:31: warning: method get in trait DeprecatedEndpointMappers is deprecated (since 0.16): Enable syntax explicitly: import io.finch.syntax._
+//        val gcdEndpointZero = get(/) {
+//                              ^
+// gcdEndpointZero: io.finch.Endpoint[Int] = GET /
 </span></code></pre>
 </div>
 

@@ -72,7 +72,7 @@ ga('send', 'pageview');
 
 <p>For Scala <code class="highlighter-rouge">2.11.x</code> and <code class="highlighter-rouge">2.12.x</code>:</p>
 
-<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="n">libraryDependencies</span> <span class="o">+=</span> <span class="s">"io.frees"</span> <span class="o">%%</span> <span class="s">"frees-rpc"</span> <span class="o">%</span> <span class="s">"0.4.2"</span>
+<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="n">libraryDependencies</span> <span class="o">+=</span> <span class="s">"io.frees"</span> <span class="o">%%</span> <span class="s">"frees-rpc"</span> <span class="o">%</span> <span class="s">"0.6.0"</span>
 </code></pre>
 </div>
 
@@ -166,7 +166,7 @@ Before starting, these are the Scala imports we need:</p>
 </code></pre>
 </div>
 
-<p>As we can see, it’s quite simple since it’s just a Scala case class preceded by the <code class="highlighter-rouge">@message</code> annotation:</p>
+<p>As we can see, it’s quite simple since it’s just a Scala case class preceded by the <code class="highlighter-rouge">@message</code> annotation (<code class="highlighter-rouge">@message</code> is optional though and used exclusively by <a href="https://github.com/frees-io/sbt-freestyle-protogen">sbt-freestyle-protogen</a>):</p>
 
 <p>By the same token, let’s see now how the <code class="highlighter-rouge">Greeter</code> service would be translated to the <a href="https://github.com/frees-io/freestyle-rpc">frees-rpc</a> style (in your <code class="highlighter-rouge">.scala</code> file):</p>
 
@@ -206,6 +206,58 @@ Before starting, these are the Scala imports we need:</p>
 </div>
 
 <p>Naturally, the <a href="https://en.wikipedia.org/wiki/Remote_procedure_call">RPC</a> services are grouped in a <a href="http://frees.io/docs/core/algebras/">@free algebra</a>. Therefore, we are following one of the primary principles of Freestyle; you only need to concentrate on the API that you want to expose as abstract smart constructors, without worrying how they will be implemented.</p>
+
+<p>In the above example, we can see that <code class="highlighter-rouge">sayHello</code> returns a <code class="highlighter-rouge">FS[HelloReply]</code>. However, very often the services might:</p>
+
+<ul>
+  <li>Return an empty response.</li>
+  <li>Receive an empty request.</li>
+  <li>A combination of both.</li>
+</ul>
+
+<p><code class="highlighter-rouge">frees-rpc</code> provides an <code class="highlighter-rouge">Empty</code> object, defined at <code class="highlighter-rouge">freestyle.rpc.protocol</code>, that you might want to use for these purposes.</p>
+
+<p>For instance:</p>
+
+<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="nd">@option</span><span class="o">(</span><span class="n">name</span> <span class="k">=</span> <span class="s">"java_package"</span><span class="o">,</span> <span class="n">value</span> <span class="k">=</span> <span class="s">"quickstart"</span><span class="o">,</span> <span class="n">quote</span> <span class="k">=</span> <span class="kc">true</span><span class="o">)</span>
+<span class="nd">@option</span><span class="o">(</span><span class="n">name</span> <span class="k">=</span> <span class="s">"java_multiple_files"</span><span class="o">,</span> <span class="n">value</span> <span class="k">=</span> <span class="s">"true"</span><span class="o">,</span> <span class="n">quote</span> <span class="k">=</span> <span class="kc">false</span><span class="o">)</span>
+<span class="nd">@option</span><span class="o">(</span><span class="n">name</span> <span class="k">=</span> <span class="s">"java_outer_classname"</span><span class="o">,</span> <span class="n">value</span> <span class="k">=</span> <span class="s">"Quickstart"</span><span class="o">,</span> <span class="n">quote</span> <span class="k">=</span> <span class="kc">true</span><span class="o">)</span>
+<span class="k">object</span> <span class="nc">protocol</span> <span class="o">{</span>
+
+  <span class="cm">/**
+   * The request message containing the user's name.
+   * @param name User's name.
+   */</span>
+  <span class="nd">@message</span>
+  <span class="k">case</span> <span class="k">class</span> <span class="nc">HelloRequest</span><span class="o">(</span><span class="n">name</span><span class="k">:</span> <span class="kt">String</span><span class="o">)</span>
+
+  <span class="cm">/**
+   * The response message,
+   * @param message Message containing the greetings.
+   */</span>
+  <span class="nd">@message</span>
+  <span class="k">case</span> <span class="k">class</span> <span class="nc">HelloReply</span><span class="o">(</span><span class="n">message</span><span class="k">:</span> <span class="kt">String</span><span class="o">)</span>
+
+  <span class="nd">@service</span>
+  <span class="k">trait</span> <span class="nc">Greeter</span><span class="o">[</span><span class="kt">F</span><span class="o">[</span><span class="k">_</span><span class="o">]]</span> <span class="o">{</span>
+
+    <span class="cm">/**
+     * The greeter service definition.
+     *
+     * @param request Say Hello Request.
+     * @return HelloReply.
+     */</span>
+    <span class="nd">@rpc</span><span class="o">(</span><span class="nc">Protobuf</span><span class="o">)</span> <span class="k">def</span> <span class="n">sayHello</span><span class="o">(</span><span class="n">request</span><span class="k">:</span> <span class="kt">HelloRequest</span><span class="o">)</span><span class="k">:</span> <span class="kt">F</span><span class="o">[</span><span class="kt">HelloReply</span><span class="o">]</span>
+
+    <span class="nd">@rpc</span><span class="o">(</span><span class="nc">Protobuf</span><span class="o">)</span> <span class="k">def</span> <span class="n">emptyResponse</span><span class="o">(</span><span class="n">request</span><span class="k">:</span> <span class="kt">HelloRequest</span><span class="o">)</span><span class="k">:</span> <span class="kt">F</span><span class="o">[</span><span class="kt">Empty.</span><span class="k">type</span><span class="o">]</span>
+
+    <span class="nd">@rpc</span><span class="o">(</span><span class="nc">Protobuf</span><span class="o">)</span> <span class="k">def</span> <span class="n">emptyRequest</span><span class="o">(</span><span class="n">request</span><span class="k">:</span> <span class="kt">Empty.</span><span class="k">type</span><span class="o">)</span><span class="k">:</span> <span class="kt">F</span><span class="o">[</span><span class="kt">HelloReply</span><span class="o">]</span>
+
+    <span class="nd">@rpc</span><span class="o">(</span><span class="nc">Protobuf</span><span class="o">)</span> <span class="k">def</span> <span class="n">emptyRequestRespose</span><span class="o">(</span><span class="n">request</span><span class="k">:</span> <span class="kt">Empty.</span><span class="k">type</span><span class="o">)</span><span class="k">:</span> <span class="kt">F</span><span class="o">[</span><span class="kt">Empty.</span><span class="k">type</span><span class="o">]</span>
+  <span class="o">}</span>
+<span class="o">}</span>
+</code></pre>
+</div>
 
 <p>We are also using some additional annotations:</p>
 
@@ -361,15 +413,15 @@ syntax = "proto3";
 option java_package = "quickstart";
 option java_multiple_files = true;
 option java_outer_classname = "Quickstart";
-           
+
 message HelloRequest {
    string greeting = 1;
 }
-           
+
 message HelloResponse {
    string reply = 1;
 }
-           
+
 service Greeter {
    rpc sayHello (HelloRequest) returns (HelloResponse) {}
    rpc lotsOfReplies (HelloRequest) returns (stream HelloResponse) {}
@@ -452,7 +504,7 @@ service Greeter {
 
 <span class="k">trait</span> <span class="nc">CommonRuntime</span> <span class="o">{</span>
 
-  <span class="k">implicit</span> <span class="k">val</span> <span class="n">S</span><span class="k">:</span> <span class="kt">Scheduler</span>         <span class="o">=</span> <span class="n">monix</span><span class="o">.</span><span class="n">execution</span><span class="o">.</span><span class="nc">Scheduler</span><span class="o">.</span><span class="nc">Implicits</span><span class="o">.</span><span class="n">global</span>
+  <span class="k">implicit</span> <span class="k">val</span> <span class="n">S</span><span class="k">:</span> <span class="kt">Scheduler</span> <span class="o">=</span> <span class="n">monix</span><span class="o">.</span><span class="n">execution</span><span class="o">.</span><span class="nc">Scheduler</span><span class="o">.</span><span class="nc">Implicits</span><span class="o">.</span><span class="n">global</span>
 
 <span class="o">}</span>
 </code></pre>
@@ -466,16 +518,10 @@ service Greeter {
 
 <ul>
   <li>A runtime interpreter of our <code class="highlighter-rouge">ServiceHandler</code> tied to a specific type. In our case, we’ll use <code class="highlighter-rouge">cats.effects.IO</code>.</li>
-  <li>A Natural Transformation implicit evidence of <code class="highlighter-rouge">GrpcServer.Op ~&gt; F</code> where <code class="highlighter-rouge">F</code> would be your target monad. In our example, the implicit evidence would be: <code class="highlighter-rouge">GrpcServer.Op ~&gt; IO</code>. We have to consider few things to tackle this:
+  <li>A <code class="highlighter-rouge">ServerW</code> implicit evidence, compounded by:
     <ul>
-      <li>First of all, we need to decide on the rpc port where the server will bootstrap.</li>
-      <li>Then, we need to register the set of configurations we want to add to our <a href="https://grpc.io/">gRPC</a> server, like our <code class="highlighter-rouge">Greeter</code> service. All these configurations are aggregated in a <code class="highlighter-rouge">List[GrpcConfig]</code>. Later on, an internal builder will build the final server based on this list. The full available list of settings are exposed in <a href="https://github.com/frees-io/freestyle-rpc/blob/master/rpc/src/main/scala/server/GrpcConfig.scala">this file</a>.</li>
-      <li>Finally, we need to compose:
-        <ul>
-          <li>A runtime interpreter of <code class="highlighter-rouge">freestyle.rpc.server.handlers.GrpcServerHandler</code>, which is another handler in charge of managing the server.</li>
-          <li>With another runtime interpreter of <code class="highlighter-rouge">freestyle.rpc.server.GrpcKInterpreter</code>, who will configure the server.</li>
-        </ul>
-      </li>
+      <li>RPC port where the server will bootstrap.</li>
+      <li>The set of configurations we want to add to our <a href="https://grpc.io/">gRPC</a> server, like our <code class="highlighter-rouge">Greeter</code> service definition. All these configurations are aggregated in a <code class="highlighter-rouge">List[GrpcConfig]</code>. Later on, an internal builder will build the final server based on this list. The full available list of settings are exposed in <a href="https://github.com/frees-io/freestyle-rpc/blob/master/rpc/src/main/scala/server/GrpcConfig.scala">this file</a>.</li>
     </ul>
   </li>
 </ul>
@@ -500,9 +546,7 @@ service Greeter {
       <span class="nc">AddService</span><span class="o">(</span><span class="nc">Greeter</span><span class="o">.</span><span class="n">bindService</span><span class="o">[</span><span class="kt">IO</span><span class="o">])</span>
     <span class="o">)</span>
 
-    <span class="k">implicit</span> <span class="k">val</span> <span class="n">grpcServerHandler</span><span class="k">:</span> <span class="kt">GrpcServer.Op</span> <span class="kt">~&gt;</span> <span class="kt">IO</span> <span class="o">=</span>
-      <span class="k">new</span> <span class="nc">GrpcServerHandler</span><span class="o">[</span><span class="kt">IO</span><span class="o">]</span> <span class="n">andThen</span>
-        <span class="k">new</span> <span class="nc">GrpcKInterpreter</span><span class="o">[</span><span class="kt">IO</span><span class="o">](</span><span class="nc">ServerW</span><span class="o">(</span><span class="mi">8080</span><span class="o">,</span> <span class="n">grpcConfigs</span><span class="o">).</span><span class="n">server</span><span class="o">)</span>
+    <span class="k">implicit</span> <span class="k">val</span> <span class="n">serverW</span><span class="k">:</span> <span class="kt">ServerW</span> <span class="o">=</span> <span class="nc">ServerW</span><span class="o">(</span><span class="mi">8080</span><span class="o">,</span> <span class="n">grpcConfigs</span><span class="o">)</span>
   <span class="o">}</span>
 
   <span class="k">object</span> <span class="nc">implicits</span> <span class="k">extends</span> <span class="nc">Implicits</span>
@@ -531,9 +575,10 @@ service Greeter {
 <span class="k">import</span> <span class="nn">cats.effect.IO._</span>
 <span class="k">import</span> <span class="nn">freestyle.rpc.server.GrpcServerApp</span>
 <span class="k">import</span> <span class="nn">freestyle.rpc.server.implicits._</span>
-<span class="k">import</span> <span class="nn">gserver.implicits._</span>
 
 <span class="k">object</span> <span class="nc">RPCServer</span> <span class="o">{</span>
+
+  <span class="k">import</span> <span class="nn">gserver.implicits._</span>
 
   <span class="k">def</span> <span class="n">main</span><span class="o">(</span><span class="n">args</span><span class="k">:</span> <span class="kt">Array</span><span class="o">[</span><span class="kt">String</span><span class="o">])</span><span class="k">:</span> <span class="kt">Unit</span> <span class="o">=</span>
     <span class="n">server</span><span class="o">[</span><span class="kt">GrpcServerApp.Op</span><span class="o">].</span><span class="n">bootstrapM</span><span class="o">[</span><span class="kt">IO</span><span class="o">].</span><span class="n">unsafeRunSync</span><span class="o">()</span>
@@ -556,12 +601,7 @@ service Greeter {
 
 <p>In our example, we are going to use the same Execution Context described for the Server. However, for the sake of observing a slightly different runtime configuration, our client will be interpreting to <code class="highlighter-rouge">monix.eval.Task</code>. Hence, in this case, we would only need the <code class="highlighter-rouge">monix.execution.Scheduler</code> implicit evidence.</p>
 
-<p>We are going to interpret to <code class="highlighter-rouge">monix.eval.Task</code>, however, behind the scenes, we will use the <a href="https://github.com/typelevel/cats-effect">cats-effect</a> <code class="highlighter-rouge">IO</code> monad as an abstraction. Concretely, Freestyle has an integration with <code class="highlighter-rouge">cats-effect</code> that we need to add to our project if we are following the same pattern:</p>
-
-<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="c1">// build.sbt
-</span><span class="n">libraryDependencies</span> <span class="o">+=</span> <span class="s">"io.frees"</span> <span class="o">%%</span> <span class="s">"frees-async-cats-effect"</span> <span class="o">%</span> <span class="s">"0.5.0"</span>
-</code></pre>
-</div>
+<p>We are going to interpret to <code class="highlighter-rouge">monix.eval.Task</code>, however, behind the scenes, we will use the <a href="https://github.com/typelevel/cats-effect">cats-effect</a> <code class="highlighter-rouge">IO</code> monad as an abstraction. Concretely, Freestyle has an integration with <code class="highlighter-rouge">cats-effect</code> that is included transitively in the classpath through <code class="highlighter-rouge">frees-async-cats-effect</code> dependency.</p>
 
 <h4 id="runtime-implicits-1">Runtime Implicits</h4>
 
@@ -592,7 +632,7 @@ service Greeter {
 
 <span class="k">object</span> <span class="nc">gclient</span> <span class="o">{</span>
 
-  <span class="k">trait</span> <span class="nc">ClientConf</span> <span class="o">{</span>
+  <span class="k">trait</span> <span class="nc">Implicits</span> <span class="k">extends</span> <span class="nc">CommonRuntime</span> <span class="o">{</span>
 
     <span class="k">val</span> <span class="n">channelFor</span><span class="k">:</span> <span class="kt">ManagedChannelFor</span> <span class="o">=</span>
       <span class="nc">ConfigForAddress</span><span class="o">[</span><span class="kt">ChannelConfig.Op</span><span class="o">](</span><span class="s">"rpc.host"</span><span class="o">,</span> <span class="s">"rpc.port"</span><span class="o">)</span>
@@ -601,21 +641,9 @@ service Greeter {
         <span class="k">case</span> <span class="nc">Failure</span><span class="o">(</span><span class="n">e</span><span class="o">)</span> <span class="k">=&gt;</span>
           <span class="n">e</span><span class="o">.</span><span class="n">printStackTrace</span><span class="o">()</span>
           <span class="k">throw</span> <span class="k">new</span> <span class="nc">RuntimeException</span><span class="o">(</span><span class="s">"Unable to load the client configuration"</span><span class="o">,</span> <span class="n">e</span><span class="o">)</span>
-      <span class="o">}</span>
-
-    <span class="k">val</span> <span class="n">channelConfigList</span><span class="k">:</span> <span class="kt">List</span><span class="o">[</span><span class="kt">ManagedChannelConfig</span><span class="o">]</span> <span class="k">=</span> <span class="nc">List</span><span class="o">(</span><span class="nc">UsePlaintext</span><span class="o">(</span><span class="kc">true</span><span class="o">))</span>
-
-    <span class="k">val</span> <span class="n">managedChannelInterpreter</span> <span class="k">=</span>
-      <span class="k">new</span> <span class="nc">ManagedChannelInterpreter</span><span class="o">[</span><span class="kt">IO</span><span class="o">](</span><span class="n">channelFor</span><span class="o">,</span> <span class="n">channelConfigList</span><span class="o">)</span>
-
-    <span class="k">val</span> <span class="n">channel</span><span class="k">:</span> <span class="kt">ManagedChannel</span> <span class="o">=</span> <span class="n">managedChannelInterpreter</span><span class="o">.</span><span class="n">build</span><span class="o">(</span><span class="n">channelFor</span><span class="o">,</span> <span class="n">channelConfigList</span><span class="o">)</span>
-
-  <span class="o">}</span>
-
-  <span class="k">trait</span> <span class="nc">Implicits</span> <span class="k">extends</span> <span class="nc">CommonRuntime</span> <span class="k">with</span> <span class="nc">ClientConf</span> <span class="o">{</span>
 
     <span class="k">implicit</span> <span class="k">val</span> <span class="n">serviceClient</span><span class="k">:</span> <span class="kt">Greeter.Client</span><span class="o">[</span><span class="kt">Task</span><span class="o">]</span> <span class="k">=</span>
-      <span class="nc">Greeter</span><span class="o">.</span><span class="n">client</span><span class="o">[</span><span class="kt">Task</span><span class="o">](</span><span class="n">channel</span><span class="o">)</span>
+      <span class="nc">Greeter</span><span class="o">.</span><span class="n">client</span><span class="o">[</span><span class="kt">Task</span><span class="o">](</span><span class="n">channelFor</span><span class="o">)</span>
   <span class="o">}</span>
 
   <span class="k">object</span> <span class="nc">implicits</span> <span class="k">extends</span> <span class="nc">Implicits</span>
@@ -634,18 +662,11 @@ service Greeter {
 <span class="k">import</span> <span class="nn">gclient.implicits._</span>
 <span class="k">import</span> <span class="nn">monix.eval.Task</span>
 
-<span class="k">import</span> <span class="nn">scala.concurrent.Await</span>
-<span class="k">import</span> <span class="nn">scala.concurrent.duration._</span>
-
 <span class="k">object</span> <span class="nc">RPCDemoApp</span> <span class="o">{</span>
-
-  <span class="k">def</span> <span class="n">clientProgram</span><span class="o">(</span><span class="k">implicit</span> <span class="n">C</span><span class="k">:</span> <span class="kt">Greeter.Client</span><span class="o">[</span><span class="kt">Task</span><span class="o">])</span><span class="k">:</span> <span class="kt">Task</span><span class="o">[</span><span class="kt">HelloResponse</span><span class="o">]</span> <span class="k">=</span>
-    <span class="n">C</span><span class="o">.</span><span class="n">sayHello</span><span class="o">(</span><span class="nc">HelloRequest</span><span class="o">(</span><span class="s">"foo"</span><span class="o">))</span>
 
   <span class="k">def</span> <span class="n">main</span><span class="o">(</span><span class="n">args</span><span class="k">:</span> <span class="kt">Array</span><span class="o">[</span><span class="kt">String</span><span class="o">])</span><span class="k">:</span> <span class="kt">Unit</span> <span class="o">=</span> <span class="o">{</span>
 
-    <span class="k">val</span> <span class="n">result</span><span class="k">:</span> <span class="kt">HelloResponse</span> <span class="o">=</span>
-      <span class="nc">Await</span><span class="o">.</span><span class="n">result</span><span class="o">(</span><span class="n">clientProgram</span><span class="o">.</span><span class="n">runAsync</span><span class="o">,</span> <span class="nc">Duration</span><span class="o">.</span><span class="nc">Inf</span><span class="o">)</span>
+    <span class="k">val</span> <span class="n">result</span><span class="k">:</span> <span class="kt">HelloResponse</span> <span class="o">=</span> <span class="n">serviceClient</span><span class="o">.</span><span class="n">sayHello</span><span class="o">(</span><span class="nc">HelloRequest</span><span class="o">(</span><span class="s">"foo"</span><span class="o">)).</span><span class="n">unsafeRunSync</span>
 
     <span class="n">println</span><span class="o">(</span><span class="n">s</span><span class="s">"Result = $result"</span><span class="o">)</span>
 
