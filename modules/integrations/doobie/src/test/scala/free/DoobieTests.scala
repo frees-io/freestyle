@@ -34,7 +34,7 @@ class DoobieTests extends AsyncWordSpec with Matchers {
   import algebras._
 
   implicit val xa: Transactor[IO] =
-    H2Transactor[IO]("jdbc:h2:mem:test;DB_CLOSE_DELAY=-1", "sa", "").unsafeRunSync
+    H2Transactor.newH2Transactor[IO]("jdbc:h2:mem:test;DB_CLOSE_DELAY=-1", "sa", "").unsafeRunSync
 
   val query: ConnectionIO[Int] = sql"SELECT 1 + 1".query[Int].unique
 

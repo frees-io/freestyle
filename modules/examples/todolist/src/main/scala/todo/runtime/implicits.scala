@@ -27,7 +27,6 @@ import doobie._
 import doobie.implicits._
 import doobie.hikari._
 import doobie.hikari.implicits._
-import doobie.hikari.imports.HikariTransactor
 import todo.runtime.handlers._
 import todo.persistence._
 

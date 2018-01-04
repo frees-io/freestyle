@@ -17,7 +17,8 @@
 package todo
 package runtime.handlers
 
-import doobie.imports._
+import doobie._
+import doobie.implicits._
 import todo.model.TodoList
 import todo.persistence.TodoListRepository
 

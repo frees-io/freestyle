@@ -30,36 +30,33 @@ import todo.services._
 
 class AppApi[F[_]](implicit service: AppServices[F], handler: F ~> Future) {
 
-  val reset: Endpoint[Int] =
-    post("reset") {
-      service.reset.map(Ok(_))
-    }
+  import io.finch.syntax._
 
-  val list: Endpoint[List[TodoForm]] =
-    get("list") {
-      service.list.map(Ok(_))
-    }
+  val reset = post("reset") {
+    service.reset.map(Ok)
+  }
 
-  val insert: Endpoint[TodoForm] =
-    post("insert" :: jsonBody[TodoForm]) { form: TodoForm =>
-      service.insert(form).map(Ok(_))
-    } handle {
-      case nse: NoSuchElementException => InternalServerError(nse)
-    }
+  val list = get("list") {
+    service.list.map(Ok)
+  }
 
-  val update: Endpoint[TodoForm] =
-    put("update" :: jsonBody[TodoForm]) { form: TodoForm =>
-      service.update(form).map(Ok(_))
-    } handle {
-      case nse: NoSuchElementException => BadRequest(nse)
-    }
+  val insert = post("insert" :: jsonBody[TodoForm]) { form: TodoForm =>
+    service.insert(form).map(Ok)
+  } handle {
+    case nse: NoSuchElementException => InternalServerError(nse)
+  }
 
-  val destroy: Endpoint[Int] =
-    delete("delete" :: jsonBody[TodoForm]) { form: TodoForm =>
-      service.destroy(form).map(Ok(_))
-    } handle {
-      case nse: NoSuchElementException => BadRequest(nse)
-    }
+  val update = put("update" :: jsonBody[TodoForm]) { form: TodoForm =>
+    service.update(form).map(Ok)
+  } handle {
+    case nse: NoSuchElementException => BadRequest(nse)
+  }
+
+  val destroy = delete("delete" :: jsonBody[TodoForm]) { form: TodoForm =>
+    service.destroy(form).map(Ok)
+  } handle {
+    case nse: NoSuchElementException => BadRequest(nse)
+  }
 
   val endpoints = reset :+: list :+: insert :+: update :+: destroy
 }

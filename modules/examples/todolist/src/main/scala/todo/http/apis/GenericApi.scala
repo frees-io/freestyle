@@ -28,23 +28,23 @@ import todo.model.Pong
 
 class GenericApi[F[_]](implicit log: LoggingM[F], handler: F ~> Future) {
 
-  val ping: Endpoint[Pong] =
-    get("ping") {
-      for {
-        _ <- log.error("Not really an error")
-        _ <- log.warn("Not really a warn")
-        _ <- log.debug("GET /ping")
-      } yield Ok(Pong.current)
-    }
+  import io.finch.syntax._
 
-  val hello: Endpoint[String] =
-    get("hello") {
-      for {
-        _ <- log.error("Not really an error")
-        _ <- log.warn("Not really a warn")
-        _ <- log.debug("GET /Hello")
-      } yield Ok("Hello World")
-    }
+  val ping = get("ping") {
+    for {
+      _ <- log.error("Not really an error")
+      _ <- log.warn("Not really a warn")
+      _ <- log.debug("GET /ping")
+    } yield Ok(Pong.current)
+  }
+
+  val hello = get("hello") {
+    for {
+      _ <- log.error("Not really an error")
+      _ <- log.warn("Not really a warn")
+      _ <- log.debug("GET /Hello")
+    } yield Ok("Hello World")
+  }
 
   val endpoints = hello :+: ping
 }

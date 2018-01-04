@@ -34,39 +34,35 @@ import todo.services._
 class TodoItemApi[F[_]](implicit service: TodoItemService[F], handler: F ~> Future)
     extends CRUDApi[TodoItem] {
 
-  val reset: Endpoint[Int] =
-    post(service.prefix :: "reset") {
-      service.reset.map(Ok(_))
-    }
+  import io.finch.syntax._
 
-  val retrieve: Endpoint[TodoItem] =
-    get(service.prefix :: int) { id: Int =>
-      service.retrieve(id) map (item =>
-        item.fold[Output[TodoItem]](
-          NotFound(new NoSuchElementException(s"Could not find ${service.model} with $id")))(Ok(_)))
-    } handle {
-      case nse: NoSuchElementException => NotFound(nse)
-    }
+  val reset = post(service.prefix :: "reset") {
+    service.reset.map(Ok)
+  }
 
-  val list: Endpoint[List[TodoItem]] =
-    get(service.prefix) {
-      service.list.map(Ok(_))
-    }
+  val retrieve = get(service.prefix :: path[Int]) { id: Int =>
+    service.retrieve(id) map (item =>
+      item.fold[Output[TodoItem]](
+        NotFound(new NoSuchElementException(s"Could not find ${service.model} with $id")))(Ok))
+  } handle {
+    case nse: NoSuchElementException => NotFound(nse)
+  }
 
-  val insert: Endpoint[Option[TodoItem]] =
-    post(service.prefix :: jsonBody[TodoItem]) { item: TodoItem =>
-      service.insert(item).map(Ok(_))
-    }
+  val list = get(service.prefix) {
+    service.list.map(Ok)
+  }
 
-  val update: Endpoint[Option[TodoItem]] =
-    put(service.prefix :: int :: jsonBody[TodoItem]) { (id: Int, item: TodoItem) =>
-      service.update(item.copy(id = Some(id))).map(Ok(_))
-    }
+  val insert = post(service.prefix :: jsonBody[TodoItem]) { item: TodoItem =>
+    service.insert(item).map(Ok)
+  }
 
-  val destroy: Endpoint[Int] =
-    delete(service.prefix :: int) { id: Int =>
-      service.destroy(id).map(Ok(_))
-    }
+  val update = put(service.prefix :: path[Int] :: jsonBody[TodoItem]) { (id: Int, item: TodoItem) =>
+    service.update(item.copy(id = Some(id))).map(Ok)
+  }
+
+  val destroy = delete(service.prefix :: path[Int]) { id: Int =>
+    service.destroy(id).map(Ok)
+  }
 }
 
 object TodoItemApi {

@@ -117,6 +117,8 @@ class ClientTests extends WordSpec with Matchers {
 
 object stuff {
 
+  import freestyle.free.http.client.implicits._
+
   @free
   trait NonHammock {
     def x: FS[Int]
