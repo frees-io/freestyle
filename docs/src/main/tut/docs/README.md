@@ -97,7 +97,7 @@ Learn more about [modules](./core/modules) in the extended documentation.
 
 ## Running programs
 
-In order to run programs, we need interpreters. We define interpreters providing implementations for the operations defined in our algebras:
+In order to run programs, we need interpreters. We define interpreters by providing implementations for the operations defined in our algebras:
 
 ```tut:book
 import cats.effect.IO
