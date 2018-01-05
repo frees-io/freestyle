@@ -113,7 +113,7 @@ If you were to create this by hand, in the case of the example above, it will lo
 ```tut:book
 import iota._
 import TListK.:::
-type ManualAppCoproduct[A] = CopK[IdValidation.Op ::: Presenter.Op ::: Cache ::: Database ::: TNilK, A]
+type ManualAppCoproduct[A] = CopK[IdValidation.Op ::: Presenter.Op ::: Cache.StackSafe.Op ::: Database.StackSafe.Op ::: TNilK, A]
 ```
 
 Things get more complicated once the number of Algebras grows.
