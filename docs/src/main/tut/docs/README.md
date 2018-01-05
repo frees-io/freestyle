@@ -100,17 +100,16 @@ Learn more about [modules](./core/modules) in the extended documentation.
 In order to run programs, we need interpreters. We define interpreters providing implementations for the operations defined in our algebras:
 
 ```tut:book
-import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
+import cats.effect.IO
 
-implicit val validationHandler = new Validation.Handler[Future] {
-  override def minSize(s: String, n: Int): Future[Boolean] = Future(s.size >= n)
-  override def hasNumber(s: String): Future[Boolean] = Future(s.exists(c => "0123456789".contains(c)))
+implicit val validationHandler = new Validation.Handler[IO] {
+  override def minSize(s: String, n: Int): IO[Boolean] = IO{s.size >= n}
+  override def hasNumber(s: String): IO[Boolean] = IO{s.exists(c => "0123456789".contains(c))}
 }
 
-implicit val interactionHandler = new Interaction.Handler[Future] {
-  override def tell(s: String): Future[Unit] = Future.successful(println(s))
-  override def ask(s: String): Future[String] = Future.successful { println(s); "This could have been user input 1" }
+implicit val interactionHandler = new Interaction.Handler[IO] {
+  override def tell(s: String): IO[Unit] = IO{println(s)}
+  override def ask(s: String): IO[String] = IO { println(s); "This could have been user input 1" }
 }
 ```
 
@@ -120,11 +119,10 @@ At this point, we can run our pure programs at the edge of the world:
 
 ```tut:book
 import cats.implicits._
-import scala.concurrent.duration.Duration
-import scala.concurrent.Await
+import cats.effect.IO
+import cats.effect.IO._
 
-val futureValue = Application.instance.program.interpret[Future]
-Await.result(futureValue, Duration.Inf) //blocking only for demo purposes. Don't do this at home.
+Application.instance.program.interpret[IO].unsafeRunSync
 ```
 
 ## There is more
