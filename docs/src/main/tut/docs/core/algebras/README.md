@@ -10,7 +10,7 @@ Algebraic Data Types are the foundation used to define `Free` based applications
 
 When you build an algebra with Freestyle, you only need to concentrate on the API that you want to be exposed as abstract smart constructors, without worrying how they will be implemented.
 
-A trait or abstract class annotated with `@free` or [`@tagless`](../tagless/) is all you need to create your first algebra with Freestyle:
+A trait or abstract class annotated with `@free` or `@tagless` is all you need to create your first algebra with Freestyle:
 
 ```tut:book
 import freestyle.free._
@@ -23,6 +23,23 @@ case class User(id: Long, name: String)
   def list: FS[List[User]]
 }
 ```
+
+ or 
+
+```tut:book
+import freestyle.tagless._
+
+@tagless trait Validation {
+  def minSize(s: String, n: Int): FS[Boolean]
+  def hasNumber(s: String): FS[Boolean]
+}
+
+@tagless trait Interaction {
+  def tell(msg: String): FS[Unit]
+  def ask(prompt: String): FS[String]
+}
+```
+
 
 This is similar to the simplified manual encoding below:
 
@@ -134,6 +151,46 @@ type Module[A] = EitherK[Service3.Op, C1, A]
 
 This is obviously far from ideal, as building `EitherK` types by hand often results in bizarre compile errors
 when the types don't align properly from being placed in the wrong order.
+
+### Combining `@tagless` and `@free` algebras
+
+Freestyle comes with built-in support to compose `@free` and `@tagless` algebras.
+
+For every `@tagless` algebra, there is also a free-based representation that is stack-safe by nature, and that can be used
+to lift `@tagless` algebras to the context of application where `@free` and `@tagless` algebras coexist.
+
+Let's redefine `program` to support `LoggingM` which is a `@free` defined algebra of logging operations:
+
+```tut:silent
+import freestyle.free._
+import freestyle.free.implicits._
+
+import freestyle.free.logging._
+import freestyle.free.loggingJVM.implicits._
+```
+
+```tut:book
+def program[F[_]]
+   (implicit log: LoggingM[F], 
+             validation : Validation.StackSafe[F], 
+             interaction: Interaction.StackSafe[F]) = {
+
+  import cats.implicits._
+
+  for {
+    userInput <- interaction.ask("Give me something with at least 3 chars and a number on it")
+    valid <- (validation.minSize(userInput, 3), validation.hasNumber(userInput)).mapN(_ && _)
+    _ <- if (valid)
+            interaction.tell("awesomesauce!") 
+         else
+            interaction.tell(s"$userInput is not valid")
+    _ <- log.debug("Program finished")
+  } yield ()
+}
+```
+
+Since `Validation` and `Interaction` were `@tagless` algebras, we need their `StackSafe` representation in order to combine
+them with `@free` algebras.
 
 Fear not. Freestyle provides a [modular system](../modules/) to achieve Onion-style architectures
 and removes all the complexity from building `EitherK` types by hand and compose arbitrarily nested Modules containing Algebras.

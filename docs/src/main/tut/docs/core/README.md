@@ -10,4 +10,3 @@ permalink: /docs/core/
 * [Modules](./modules/)
 * [Handlers](handlers/)
 * [Parallelism](./parallelism/)
-* [Tagless Final](./tagless/)
