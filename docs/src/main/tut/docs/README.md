@@ -12,7 +12,7 @@ permalink: /docs/
 
 Freestyle is compatible with both Scala JVM and Scala.js.
 
-This project supports Scala 2.11 and 2.12. The project is based on [scalameta](http://scalameta.org/).
+This project supports Scala 2.11 and 2.12 and is based on [scalameta](http://scalameta.org/).
 
 To use the project, add the following to your build.sbt:
 
@@ -97,7 +97,7 @@ Learn more about [modules](./core/modules) in the extended documentation.
 
 ## Running programs
 
-In order to run programs, we need interpreters. We define interpreters providing implementations for the operations defined in our algebras:
+In order to run programs, we need interpreters. We define interpreters by providing implementations for the operations defined in our algebras:
 
 ```tut:book
 import cats.effect.IO
@@ -127,7 +127,7 @@ Application.instance.program.interpret[IO].unsafeRunSync
 
 ## There is more
 
-You may want to consider using Freestyle if among your concerns are:
+You may want to consider using Freestyle you have any of the following concerns:
 
 - Decoupling program declaration from runtime interpretation.
 - Automatic composition of dispair monadic/applicative style actions originating from independent ADTs.
@@ -140,5 +140,5 @@ Freestyle includes ready to go Algebras and Integrations for the most common app
 - Ready to use integrations that cover most of the commons applications concerns such as [logging](), [configuration](), [dependency injection](), [persistence](), etc.
 - Traditional effects stacks (reader, writer, state, error, option, either)
 
-Learn more about how Freestyle works behind the scenes in the extended [documentation](./core/algebras) and check out a the [reference application](../TODO) with examples
+Learn more about how Freestyle works behind the scenes in the extended [documentation](./core/algebras) and check out the [reference application](../TODO) with examples
 of multiple algebras in use.

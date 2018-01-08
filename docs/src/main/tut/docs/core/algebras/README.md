@@ -154,7 +154,7 @@ when the types don't align properly from being placed in the wrong order.
 
 ### Combining `@tagless` and `@free` algebras
 
-Freestyle comes with built in support to compose `@free` and `@tagless` algebras.
+Freestyle comes with built-in support to compose `@free` and `@tagless` algebras.
 
 For every `@tagless` algebra, there is also a free-based representation that is stack-safe by nature, and that can be used
 to lift `@tagless` algebras to the context of application where `@free` and `@tagless` algebras coexist.

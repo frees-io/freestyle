@@ -181,7 +181,7 @@ def taglessProgram[F[_]: Monad](implicit validation : Validation[F], interaction
   } yield ()
 ```
 
-Note that unlike in `@free`, `F[_]` here it refers to the target runtime monad. This is to provide an allocation free model where your
+Note that unlike in `@free`, `F[_]` here refers to the target runtime monad. This is to provide an allocation free model where your
 ops are not being reified and then interpreted. This allocation step in Free monads is what allows them to be stack-safe.
 The tagless final encoding with direct style syntax is as stack-safe as the target `F[_]` you are interpreting to.
 
@@ -217,7 +217,7 @@ The handlers above are not stack safe because `Try` is not stack-safe. Luckily, 
 our program stack safe with Freestyle by interpreting to `Free[Try, ?]` instead of `Try` directly. 
 This small penalty and a few extra allocations will make our programs stack safe.
 
-We can safely invoke our program in a stack safe way, running it to `Free[Try, ?]` first then to `Try` with `Free#runTailRec`:
+We can safely invoke our program in a stack safe way, running it first to `Free[Try, ?]` then to `Try` with `Free#runTailRec`:
 
 ```tut.book
 import cats.free.Free
@@ -228,7 +228,7 @@ taglessProgram[Free[Try, ?]].runTailRec
 ### Interpreting combined `@tagless` and `@free` algebras
 
 When combining `@tagless` and `@free` algebras, we need all algebras to be considered in the final Coproduct we are interpreting to.
-We can simply use tagless's `.StackSafe` representation in modules so they are considered for the final Coproduct.
+We can simply use tagless' `.StackSafe` representation in modules so they are considered for the final Coproduct.
 
 ```tut:silent
 import freestyle.free._
@@ -266,7 +266,7 @@ def taglessProgram[F[_]]
 }
 ```
 
-Once all of our algebras are considered, we can execute our programs
+Once all of our algebras are considered, we can execute our programs:
 
 ```tut:book
 taglessProgram[App.Op].interpret[Try]
