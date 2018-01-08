@@ -120,7 +120,6 @@ At this point, we can run our pure programs at the edge of the world:
 ```tut:book
 import cats.implicits._
 import cats.effect.IO
-import cats.effect.IO._
 
 Application.instance.program.interpret[IO].unsafeRunSync
 ```
