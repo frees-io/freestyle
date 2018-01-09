@@ -72,9 +72,14 @@ object ScalametaUtil {
     def term: Term.Name = Term.Name(typeName.value)
   }
 
+  implicit class TermParamOps(val termParam: Term.Param) extends AnyVal {
+    def addMod(mod: Mod): Term.Param = termParam.copy(mods = termParam.mods :+ mod)
+  }
+
   implicit class TermNameOps(val termName: Term.Name) extends AnyVal {
     def toVar = Pat.Var.Term.apply(termName)
     def param: Term.Param = Term.Param( Nil, termName, None, None)
+    def ctor: Ctor.Ref.Name = Ctor.Ref.Name(termName.value)
   }
 
   implicit class TypeParamOps(val typeParam: Type.Param) extends AnyVal {
@@ -94,5 +99,12 @@ object ScalametaUtil {
       Defn.Def(mods, name, tparams, paramss, Some(decltpe), body)
     }
 
+    def hasImplicitParams: Boolean =
+      declDef.paramss.lastOption.exists( _.exists { (param: Term.Param) =>
+        param.mods.exists {
+          case Mod.Implicit() => true
+          case _ => false
+        }
+      })
   }
 }

@@ -238,26 +238,35 @@ private[internal] class Request(reqDef: Decl.Def, indexValue: Int) {
       Some(Type.Apply(cbound, Seq(Type.Name(tps.name.value)))),
       None)
 
-  val tparams: Seq[Param] = reqDef.tparams.map {
-    case p if p.cbounds.nonEmpty => p.copy(cbounds = Nil)
-    case p                       => p
-  }
+  val tparams: Seq[Param] = reqDef.tparams.map( _.copy(cbounds = Nil) )
 
-  val params: Seq[Term.Param] = reqDef.paramss.flatten.map {
-    case p @ param"..$mods $paramname: $atpeopt = $expropt" /* if p.hasMod(mod"implicit")*/ =>
-      p.copy(mods = Nil)
-    case p => p
-  } ++ cbtparams
+  val paramss: Seq[Seq[Term.Param]] =
+    if (cbtparams.isEmpty)
+      reqDef.paramss
+    else if (reqDef.hasImplicitParams)
+      reqDef.paramss.init ++ Seq( reqDef.paramss.last ++ cbtparams)
+    else {
+      val impCbtParams = Seq(cbtparams.head.addMod(Mod.Implicit())) ++ cbtparams.tail
+      reqDef.paramss ++ Seq(impCbtParams)
+    }
 
   def reqClass(OP: Type.Name, effTTs: Seq[Type.Param], indexName: Term.Name): Class = {
     val tts                 = effTTs ++ tparams
     val sup: Term.ApplyType = Term.ApplyType(Ctor.Ref.Name(OP.value), Seq(res)) // this means $OP[$res]
     val ix                  = Pat.Var.Term(indexName)
-    q"""
-      final case class $req[..$tts](..$params) extends _root_.scala.AnyRef with $sup {
-        override val $ix: _root_.scala.Int = $indexValue
-      }
-    """
+    val cparamss = paramss.map(_.map( _.addMod(Mod.ValParam())))
+    if(cparamss.isEmpty)
+      q"""
+        final case class $req[..$tts]() extends _root_.scala.AnyRef with $sup {
+          override val $ix: _root_.scala.Int = $indexValue
+        }
+      """
+    else
+      q"""
+        final case class $req[..$tts](...$cparamss) extends _root_.scala.AnyRef with $sup {
+          override val $ix: _root_.scala.Int = $indexValue
+        }
+      """
   }
 
   private[this] def nameOrImplicitly(param: Term.Param): Term.Name = param match {
@@ -269,10 +278,16 @@ private[internal] class Request(reqDef: Decl.Def, indexValue: Int) {
 
   def toDef(inj: Term.Name): Defn.Def = {
     val body: Term =
-      if (tparams.isEmpty)
-        q"$reqC(..${params.map(toName)})"
-      else {
-        q"$reqC[..${tparams.map(toType)} ](..${params.map(nameOrImplicitly)})"
+      if (tparams.isEmpty) {
+        if (paramss.isEmpty)
+          q"$reqC()"
+        else
+          q"$reqC(...${paramss.map(_.map(toName))})"
+      } else {
+        if (paramss.isEmpty)
+          q"$reqC[..${tparams.map(toType)} ]()"
+        else
+          q"$reqC[..${tparams.map(toType)} ](...${paramss.map(_.map(nameOrImplicitly))})"
       }
 
     addBody(reqDef, q"$inj($body)").copy(mods = Seq(Mod.Override()))
@@ -281,7 +296,7 @@ private[internal] class Request(reqDef: Decl.Def, indexValue: Int) {
   def handlerCase(fa: Term.Name, requestParams: Seq[Decl.Type]): Case = {
 
     val mexp: Term =
-      if (params.isEmpty)
+      if (paramss.flatten.isEmpty)
         q"$reqImpl"
       else {
         val tt: Type =
@@ -293,10 +308,10 @@ private[internal] class Request(reqDef: Decl.Def, indexValue: Int) {
           }
 
         val alias = Term.fresh()
-        val ffs   = params.map(v => q"$alias.${toName(v)}")
+        val ffs   = paramss.map(_.map(v => q"$alias.${toName(v)}"))
         q"""
           val ${toVar(alias)}: $tt = $fa.asInstanceOf[$tt]
-          $reqImpl(..$ffs)
+          $reqImpl(...$ffs)
         """
       }
 
@@ -304,10 +319,10 @@ private[internal] class Request(reqDef: Decl.Def, indexValue: Int) {
   }
 
   def handlerDef(mm: Type.Name): Decl.Def =
-    if (params.isEmpty)
+    if (paramss.flatten.isEmpty)
       q"protected[this] def $reqImpl[..$tparams]: $mm[$res]"
     else
-      q"protected[this] def $reqImpl[..$tparams](..$params): $mm[$res]"
+      q"protected[this] def $reqImpl[..$tparams](...$paramss): $mm[$res]"
 
 }
 
