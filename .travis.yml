@@ -89,9 +89,9 @@ jobs:
                 git pull origin master;
                 sbt release;
                 git clone https://github.com/frees-io/freestyle-rpc.git;
-                cd freestyle-rpc && sbt docs/tut;
+                cd freestyle-rpc && sbt docs/tut && cd ..;
                 git clone https://github.com/frees-io/freestyle-cassandra.git;
-                cd freestyle-cassandra && sbt docs/tut;
+                cd freestyle-cassandra && sbt docs/tut && cd ..;
                 sbt docs/publishMicrosite;
               fi
             fi
