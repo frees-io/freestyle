@@ -18,6 +18,7 @@ package freestyle
 package free
 
 import cats.{Id, Monoid}
+import cats.kernel.instances.int._
 import cats.instances.option._
 import cats.instances.list._
 import cats.syntax.apply._
@@ -128,14 +129,23 @@ class freeTests extends WordSpec with Matchers {
       res shouldEqual 42
     }
 
-    "there is one type parameter with a type-class bound"  in {
+    "there is one type parameter with a type-class bound, and no arguments"  in {
+      @free trait X {
+        def g[T: Monoid]: FS[T]
+      }
+      object Y extends X.Handler[Id]{
+        def g[T]()(implicit x: Monoid[T]): T = x.empty
+      }
+      Y.g[Int] shouldEqual 0
+    }
+
+    "there is one type parameter with a type-class bound, with arguments"  in {
       @free trait X {
         def f[T: Monoid](a: T): FS[T]
       }
       object Y extends X.Handler[Id]{
         def f[T](a: T)(implicit x: Monoid[T]): T = a
       }
-      import cats.kernel.instances.int._
       Y.f[Int](42) shouldEqual 42
     }
 

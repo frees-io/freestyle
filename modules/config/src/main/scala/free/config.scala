@@ -85,9 +85,9 @@ object config {
         def empty: M[Config] = ME.pure(loadConfig(ConfigFactory.empty()))
         def parseString(s: String): M[Config] =
           ME.catchNonFatal(loadConfig(ConfigFactory.parseString(s)))
-        def loadAs[T](decoder: ConfigDecoder[T]): M[T] =
+        def loadAs[T]()(implicit decoder: ConfigDecoder[T]): M[T] =
           toConfigError(decoder.load()).fold(ME.raiseError, ME.pure)
-        def parseStringAs[T](s: String, decoder: ConfigDecoder[T]): M[T] =
+        def parseStringAs[T](s: String)(implicit decoder: ConfigDecoder[T]): M[T] =
           toConfigError(decoder.fromString(s)).fold(ME.raiseError, ME.pure)
       }
   }

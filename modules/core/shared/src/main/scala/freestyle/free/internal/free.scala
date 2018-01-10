@@ -228,15 +228,10 @@ private[internal] class Request(reqDef: Decl.Def, indexValue: Int) {
   private[this] val reqC    = Term.Name(req.value)
   private[this] val reqImpl = Term.Name(reqName)
 
-  val cbtparams: Seq[Term.Param] = for {
-    tps    <- reqDef.tparams.filter(_.cbounds.nonEmpty)
-    cbound <- tps.cbounds
-  } yield
-    Term.Param(
-      Nil,
-      Term.fresh(cboundPrefix),
-      Some(Type.Apply(cbound, Seq(Type.Name(tps.name.value)))),
-      None)
+  val cbtparams: Seq[Term.Param] =
+    (reqDef.tparams.flatMap( _.classBoundsToParamTypes).map { tyApp =>
+      Term.Param( Nil, Term.fresh(cboundPrefix), Some(tyApp), None)
+    }).toImplicit
 
   val tparams: Seq[Param] = reqDef.tparams.map( _.copy(cbounds = Nil) )
 
@@ -245,10 +240,10 @@ private[internal] class Request(reqDef: Decl.Def, indexValue: Int) {
       reqDef.paramss
     else if (reqDef.hasImplicitParams)
       reqDef.paramss.init ++ Seq( reqDef.paramss.last ++ cbtparams)
-    else {
-      val impCbtParams = Seq(cbtparams.head.addMod(Mod.Implicit())) ++ cbtparams.tail
-      reqDef.paramss ++ Seq(impCbtParams)
-    }
+    else if (reqDef.paramss.isEmpty) {
+      Seq( Seq(), cbtparams)
+    } else
+      reqDef.paramss ++ Seq(cbtparams)
 
   def reqClass(OP: Type.Name, effTTs: Seq[Type.Param], indexName: Term.Name): Class = {
     val tts                 = effTTs ++ tparams
@@ -319,7 +314,7 @@ private[internal] class Request(reqDef: Decl.Def, indexValue: Int) {
   }
 
   def handlerDef(mm: Type.Name): Decl.Def =
-    if (paramss.flatten.isEmpty)
+    if (paramss.isEmpty)
       q"protected[this] def $reqImpl[..$tparams]: $mm[$res]"
     else
       q"protected[this] def $reqImpl[..$tparams](...$paramss): $mm[$res]"
