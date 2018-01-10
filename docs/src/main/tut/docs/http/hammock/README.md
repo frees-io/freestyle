@@ -33,7 +33,7 @@ import cats.effect.{Sync, IO}
 import _root_.hammock._
 import _root_.hammock.Uri._
 import _root_.hammock.hi._
-import _root_.hammock.jvm.free.Interpreter
+import _root_.hammock.jvm.Interpreter
 
 ```
 
@@ -71,7 +71,7 @@ Also, you can lift any arbitrary `HttpRequestIO[F]` program to
 
 ```tut
 implicit val interp = Interpreter[IO]
-val response = Hammock.getWithOpts(Uri.unsafeParse("https://jsonplaceholder.typicode.com/posts/1"), Opts.default)
+val response = Hammock.getWithOpts(Uri.unsafeParse("https://jsonplaceholder.typicode.com/posts/1"), Opts.empty)
   
 HammockM[HammockM.Op].run(response).interpret[IO].unsafeRunSync
 ```
