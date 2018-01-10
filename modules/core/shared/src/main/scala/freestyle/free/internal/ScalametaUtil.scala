@@ -72,13 +72,28 @@ object ScalametaUtil {
     def term: Term.Name = Term.Name(typeName.value)
   }
 
+  implicit class TermParamOps(val termParam: Term.Param) extends AnyVal {
+    def addMod(mod: Mod): Term.Param = termParam.copy(mods = termParam.mods :+ mod)
+
+    def isImplicit: Boolean = termParam.mods.exists {
+      case Mod.Implicit() => true
+      case _ => false
+    }
+
+  }
+
   implicit class TermNameOps(val termName: Term.Name) extends AnyVal {
     def toVar = Pat.Var.Term.apply(termName)
     def param: Term.Param = Term.Param( Nil, termName, None, None)
+    def ctor: Ctor.Ref.Name = Ctor.Ref.Name(termName.value)
   }
 
   implicit class TypeParamOps(val typeParam: Type.Param) extends AnyVal {
     def toName: Type.Name = Type.Name(typeParam.name.value)
+
+    def classBoundsToParamTypes: Seq[Type.Apply] = typeParam.cbounds.map { cbound =>
+      Type.Apply(cbound, Seq(Type.Name(typeParam.name.value)))
+    }
   }
 
   implicit class DeclDefOps(val declDef: Decl.Def) extends AnyVal {
@@ -94,5 +109,21 @@ object ScalametaUtil {
       Defn.Def(mods, name, tparams, paramss, Some(decltpe), body)
     }
 
+    def hasImplicitParams: Boolean =
+      declDef.paramss.lastOption.exists( _.exists { (param: Term.Param) =>
+        param.mods.exists {
+          case Mod.Implicit() => true
+          case _ => false
+        }
+      })
+  }
+
+  implicit class TermParamListOps(val termParams: Seq[Term.Param]) extends AnyVal {
+    def hasImplicit: Boolean = termParams.exists(_.isImplicit)
+
+    def toImplicit: Seq[Term.Param] = termParams.toList match {
+      case Nil => Nil
+      case headParam :: tailParams => headParam.addMod( Mod.Implicit() ) :: tailParams
+    }
   }
 }

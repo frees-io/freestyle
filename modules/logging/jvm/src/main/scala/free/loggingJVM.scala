@@ -44,46 +44,38 @@ object loggingJVM {
         private def withLogger[A](f: Logger => A): KL[A] =
           Kleisli.ask[M, Logger].map(f)
 
-        def debug(msg: String, srcInfo: Boolean, line: Line, file: File): KL[Unit] =
+        def debug(msg: String, srcInfo: Boolean)(implicit line: Line, file: File): KL[Unit] =
           withLogger(_.debug(formatMessage(msg, srcInfo, line, file)))
 
-        def debugWithCause(
-            msg: String,
-            cause: Throwable,
-            srcInfo: Boolean,
+        def debugWithCause(msg: String, cause: Throwable, srcInfo: Boolean)(
+            implicit
             line: Line,
             file: File): KL[Unit] =
           withLogger(_.debug(formatMessage(msg, srcInfo, line, file), cause))
 
-        def error(msg: String, srcInfo: Boolean, line: Line, file: File): KL[Unit] =
+        def error(msg: String, srcInfo: Boolean)(implicit line: Line, file: File): KL[Unit] =
           withLogger(_.error(formatMessage(msg, srcInfo, line, file)))
 
-        def errorWithCause(
-            msg: String,
-            cause: Throwable,
-            srcInfo: Boolean,
+        def errorWithCause(msg: String, cause: Throwable, srcInfo: Boolean)(
+            implicit
             line: Line,
             file: File): KL[Unit] =
           withLogger(_.error(formatMessage(msg, srcInfo, line, file), cause))
 
-        def info(msg: String, srcInfo: Boolean, line: Line, file: File): KL[Unit] =
+        def info(msg: String, srcInfo: Boolean)(implicit line: Line, file: File): KL[Unit] =
           withLogger(_.info(formatMessage(msg, srcInfo, line, file)))
 
-        def infoWithCause(
-            msg: String,
-            cause: Throwable,
-            srcInfo: Boolean,
+        def infoWithCause(msg: String, cause: Throwable, srcInfo: Boolean)(
+            implicit
             line: Line,
             file: File): KL[Unit] =
           withLogger(_.info(formatMessage(msg, srcInfo, line, file), cause))
 
-        def warn(msg: String, srcInfo: Boolean, line: Line, file: File): KL[Unit] =
+        def warn(msg: String, srcInfo: Boolean)(implicit line: Line, file: File): KL[Unit] =
           withLogger(_.warn(formatMessage(msg, srcInfo, line, file)))
 
-        def warnWithCause(
-            msg: String,
-            cause: Throwable,
-            srcInfo: Boolean,
+        def warnWithCause(msg: String, cause: Throwable, srcInfo: Boolean)(
+            implicit
             line: Line,
             file: File): KL[Unit] =
           withLogger(_.warn(formatMessage(msg, srcInfo, line, file), cause))

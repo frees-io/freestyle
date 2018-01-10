@@ -38,46 +38,46 @@ object loggingJS {
         private def withLogger[A](f: Logger => A): M[A] =
           M.pure(f(logger))
 
-        def debug(msg: String, sourceAndLineInfo: Boolean, line: Line, file: File): M[Unit] =
+        def debug(msg: String, sourceAndLineInfo: Boolean)(
+            implicit line: Line,
+            file: File): M[Unit] =
           withLogger(_.debug(formatMessage(msg, sourceAndLineInfo, line, file)))
 
-        def debugWithCause(
-            msg: String,
-            cause: Throwable,
-            sourceAndLineInfo: Boolean,
+        def debugWithCause(msg: String, cause: Throwable, sourceAndLineInfo: Boolean)(
+            implicit
             line: Line,
             file: File): M[Unit] =
           withLogger(_.debug(formatMessage(msg, sourceAndLineInfo, line, file), cause))
 
-        def error(msg: String, sourceAndLineInfo: Boolean, line: Line, file: File): M[Unit] =
+        def error(msg: String, sourceAndLineInfo: Boolean)(
+            implicit line: Line,
+            file: File): M[Unit] =
           withLogger(_.error(formatMessage(msg, sourceAndLineInfo, line, file)))
 
-        def errorWithCause(
-            msg: String,
-            cause: Throwable,
-            sourceAndLineInfo: Boolean,
+        def errorWithCause(msg: String, cause: Throwable, sourceAndLineInfo: Boolean)(
+            implicit
             line: Line,
             file: File): M[Unit] =
           withLogger(_.error(formatMessage(msg, sourceAndLineInfo, line, file), cause))
 
-        def info(msg: String, sourceAndLineInfo: Boolean, line: Line, file: File): M[Unit] =
+        def info(msg: String, sourceAndLineInfo: Boolean)(
+            implicit line: Line,
+            file: File): M[Unit] =
           withLogger(_.info(formatMessage(msg, sourceAndLineInfo, line, file)))
 
-        def infoWithCause(
-            msg: String,
-            cause: Throwable,
-            sourceAndLineInfo: Boolean,
+        def infoWithCause(msg: String, cause: Throwable, sourceAndLineInfo: Boolean)(
+            implicit
             line: Line,
             file: File): M[Unit] =
           withLogger(_.info(formatMessage(msg, sourceAndLineInfo, line, file), cause))
 
-        def warn(msg: String, sourceAndLineInfo: Boolean, line: Line, file: File): M[Unit] =
+        def warn(msg: String, sourceAndLineInfo: Boolean)(
+            implicit line: Line,
+            file: File): M[Unit] =
           withLogger(_.warn(formatMessage(msg, sourceAndLineInfo, line, file)))
 
-        def warnWithCause(
-            msg: String,
-            cause: Throwable,
-            sourceAndLineInfo: Boolean,
+        def warnWithCause(msg: String, cause: Throwable, sourceAndLineInfo: Boolean)(
+            implicit
             line: Line,
             file: File): M[Unit] =
           withLogger(_.warn(formatMessage(msg, sourceAndLineInfo, line, file), cause))

@@ -20,7 +20,7 @@ import org.scalatest.{Matchers, WordSpec}
 
 import freestyle.free._
 
-import cats.{~>, Monad}
+import cats.{~>, Id, Monad, Monoid, Eq}
 import cats.arrow.FunctionK
 import cats.free.Free
 import cats.instances.either._
@@ -69,22 +69,6 @@ class TaglessTests extends WordSpec with Matchers {
       }""" should compile
     }
 
-    "a trait with a request with multiple params" in {
-      "@tagless trait X { def f(a: Int, b: Int): FS[Int] }" should compile
-    }
-
-    "a trait with a currified request, with multiple params lists" ignore {
-      "@tagless trait X { def f(a: Int)(b: Int): FS[Int] }" should compile
-    }
-
-    "a trait with some implicit parameters, with many params lists" ignore {
-      "@tagless trait X { def f(a: Int)(implicit b: Int): FS[Int] }" should compile
-    }
-
-    "a trait with a request with no args" ignore {
-      "@tagless @debug trait X { def f: FS[Int] }" should compile
-    }
-
     "a trait with a method with type parameters" in {
       "@tagless trait WiX { def ix[A](a: A) : FS[A] }" should compile
     }
@@ -106,6 +90,62 @@ class TaglessTests extends WordSpec with Matchers {
         trait X[A]
         @tagless trait Y { def ix[A <: Int : X](a: A) : FS[A] }
       """ should compile
+    }
+
+  }
+
+  "the @tagless macro should preserve the shape of the parameters of the request" when {
+
+    "there are no parameters" in {
+      @tagless trait X { def f: FS[Int] }
+      object Y extends X.Handler[Id] { def f: Int = 42 }
+
+      Y.f shouldEqual 42
+    }
+
+    "there is one list with multiple params" in {
+      @tagless trait X {
+        def f(a: Int, b: Int): FS[Int]
+      }
+      object Y extends X.Handler[Id] {
+        override def f(a: Int, b: Int): Int = 42
+      }
+      Y.f(2,3) shouldEqual 42
+    }
+
+    "there are multiple lists of parameters" ignore {
+      @tagless trait X {
+        def f(a: Int)(b: Int): FS[Int]
+      }
+      object Y extends X.Handler[Id] {
+        override def f(a: Int)(b: Int): Int = 42
+      }
+      Y.f(2)(3) shouldEqual 42
+    }
+
+    "there are multiple lists of parameters, with the last being implicit" ignore {
+      @tagless trait X {
+        def f(a: Int)(implicit b: Int): FS[Int]
+      }
+      object Y extends X.Handler[Id] {
+        override def f(a: Int)(implicit b: Int): Int = 42
+      }
+      implicit val x: Int = 3
+      Y.f(4) shouldEqual 42
+    }
+
+    "there is one type parameter with a type-class bound, and one parameter" ignore {
+      @tagless trait X {
+        def f[T: Monoid](a: T): FS[T]
+        def g[S: Eq](a: S, b: S): FS[Boolean]
+      }
+      object Y extends X.Handler[Id]{
+        def f[T: Monoid](a: T): T = a
+        def g[S: Eq](a: S, b: S): Boolean = Eq[S].eqv(a,b)
+      }
+      import cats.kernel.instances.int._
+      Y.f[Int](42)
+      Y.g[Int](42, 42)
     }
 
   }
@@ -137,8 +177,6 @@ class TaglessTests extends WordSpec with Matchers {
     }
 
   }
-
-
 
   "Tagless final algebras" should {
 

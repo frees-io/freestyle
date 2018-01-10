@@ -17,7 +17,8 @@
 package freestyle
 package free
 
-import cats.Id
+import cats.{Id, Monoid}
+import cats.kernel.instances.int._
 import cats.instances.option._
 import cats.instances.list._
 import cats.syntax.apply._
@@ -26,77 +27,8 @@ import org.scalatest.{Matchers, WordSpec}
 
 class freeTests extends WordSpec with Matchers {
 
-  "the @free macro annotation should be accepted if it is applied to" when {
-
-    "a trait with at least one request" in {
-      "@free trait X { def bar(x:Int): FS[Int] }" should compile
-    }
-
-    "a trait with an F[_] bound type param" in {
-      "@free @debug trait FBound[F[_]] { def bar(x:Int): FS[Int] }" should compile
-    }
-
-    "an abstract class with at least one request" in {
-      "@free abstract class X { def bar(x:Int): FS[Int] }" should compile
-    }
-
-    "a trait with an abstact method of type FS" in {
-      "@free trait X { def f(a: Char) : FS[Int] }" should compile
-    }
-
-    "a trait with type parameters" ignore {
-      "@free trait X[A] { def ix(a: A) : FS[A] }" should compile
-    }
-
-    "a trait with some concrete non-FS members" in {
-      """@free trait X {
-        def x: FS[Int]
-        def y: Int = 5
-        val z: Int = 6
-      }""" should compile
-    }
-
-    "a trait with a request with multiple params" in {
-      "@free trait X { def f(a: Int, b: Int): FS[Int] }" should compile
-    }
-
-    "a trait with a curridied request, with multiple params lists" in {
-      "@free trait X { def f(a: Int)(b: Int): FS[Int] }" should compile
-    }
-
-    "a trait with some implicit parameters, with many params lists" ignore {
-      "@free trait X { def f(a: Int)(implicit b: Int): FS[Int] }" should compile
-    }
-
-    "a trait with a request with no argsd" in {
-      "@free trait X { def f: FS[Int] }" should compile
-    }
-
-    "a trait with type parameters in the method" in {
-      "@free trait X { def ix[A](a: A) : FS[A] }" should compile
-    }
-
-    "a trait with high bounded type parameters in the method" in {
-      "@free trait X { def ix[A <: Int](a: A) : FS[A] }" should compile
-    }
-
-    "a trait with lower bounded type parameters in the method" in {
-      "@free trait X { def ix[A >: Int](a: A) : FS[A] }" should compile
-    }
-
-    "a trait with different type parameters in the method" in {
-      "@free trait X { def ix[A <: Int, B, C >: Int](a: A, b: B, c: C) : FS[A] }" should compile
-    }
-
-    "a trait with high bounded type parameters and implicits in the method" in {
-      """
-        trait X[A]
-        @free trait Y { def ix[A <: Int : X](a: A) : FS[A] }
-      """ should compile
-    }
-
-  }
-
+  /* Note that in many tests we can not use the "should compile" or "shouldNot compile", 
+   *  due to the bag reported in https://github.com/scalatest/scalatest/issues/1150 */
   "the @free macro annotation should be rejected, and the compilation fail, if it is applied to" when {
 
     "an empty trait" in (
@@ -125,6 +57,140 @@ class freeTests extends WordSpec with Matchers {
 
   }
 
+  "the @free macro annotation should be accepted if it is applied to" when {
+
+    "a trait with at least one request" in {
+      @free trait X { def bar(x:Int): FS[Int] }
+    }
+
+    "a trait with an F[_] bound type param" in {
+      @free @debug trait FBound[F[_]] { def bar(x:Int): FS[Int] }
+    }
+
+    "an abstract class with at least one request" in {
+      @free abstract class X { def bar(x:Int): FS[Int] }
+    }
+
+    "a trait with an abstact method of type FS" in {
+      @free trait X { def f(a: Char) : FS[Int] }
+    }
+
+    "a trait with type parameters" ignore {
+      "@free trait X[A] { def ix(a: A) : FS[A] }" should compile
+    }
+
+    "a trait with some concrete non-FS members" in {
+      """@free trait X {
+        def x: FS[Int]
+        def y: Int = 5
+        val z: Int = 6
+      }""" should compile
+    }
+
+  }
+
+  "the @free macro should preserve the shape of the parameters of the request" when {
+
+    "there are no parameters" in {
+      @free trait X { def f: FS[Int] }
+      object Y extends X.Handler[Id] { def f: Int = 42 }
+      Y.f shouldEqual 42
+    }
+
+    "there is one list with multiple params" in {
+      @free trait X {
+        def f(a: Int, b: Int): FS[Int]
+      }
+      object Y extends X.Handler[Id] {
+        override def f(a: Int, b: Int): Int = 42
+      }
+      Y.f(2,3) shouldEqual 42
+    }
+
+    "there are multiple lists of parameters" in {
+      @free trait X {
+        def f(a: Int)(b: Int): FS[Int]
+      }
+      object Y extends X.Handler[Id] {
+        override def f(a: Int)(b: Int): Int = 42
+      }
+      Y.f(2)(3) shouldEqual 42
+    }
+
+    "there are multiple lists of parameters, with the last one being implicit" in {
+      @free trait X {
+        def f(a: Int)(implicit b: Int): FS[Int]
+      }
+      object Y extends X.Handler[Id] {
+        override def f(a: Int)(implicit b: Int): Int = 42
+      }
+      implicit val x: Int = 3
+      val res: Int = Y.f(2)
+      res shouldEqual 42
+    }
+
+    "there is one type parameter with a type-class bound, and no arguments"  in {
+      @free trait X {
+        def g[T: Monoid]: FS[T]
+      }
+      object Y extends X.Handler[Id]{
+        def g[T]()(implicit x: Monoid[T]): T = x.empty
+      }
+      Y.g[Int] shouldEqual 0
+    }
+
+    "there is one type parameter with a type-class bound, with arguments"  in {
+      @free trait X {
+        def f[T: Monoid](a: T): FS[T]
+      }
+      object Y extends X.Handler[Id]{
+        def f[T](a: T)(implicit x: Monoid[T]): T = a
+      }
+      Y.f[Int](42) shouldEqual 42
+    }
+
+  }
+
+  "the @free macro should handle type parameters in the request" when {
+
+    "there is one type parameter in the method" in {
+      @free trait X {
+        def ix[A](a: A): FS[A]
+      }
+      object Y extends X.Handler[Id] {
+        def ix[A](a: A): A = a
+      }
+      Y.ix[Int](5) shouldEqual 5
+    }
+
+    "there are one upper-bounds or one lower bound in the method" in {
+      @free trait X {
+        def f[A <: Int](a: A) : FS[A]
+        def g[A >: Int](a: A) : FS[A]
+      }
+      object Y extends X.Handler[Id] {
+        def f[A <: Int](a: A): A = a
+        def g[A >: Int](a: A): A = a
+      }
+      Y.f[Int](5) shouldEqual 5
+      Y.g[Int](5) shouldEqual 5
+    }
+
+    "a trait with different type parameters in the method" in {
+      @free trait X {
+        def ix[A <: Int, B, C >: Int](a: A, b: B, c: C) : FS[A]
+      }
+    }
+
+    "a trait with high bounded type parameters in the method" in {
+      """
+        trait X[A]
+        @free trait Y { def ix[A <: Int : X](a: A) : FS[A] }
+      """ should compile
+    }
+
+  }
+
   "a @free trait can define methods of type FS.Par and FS.Seq by combining FS through" when {
 
     "the use of the `map` operation from Functor, to derive a  FS.Par" in {
@@ -132,13 +198,15 @@ class freeTests extends WordSpec with Matchers {
     }
 
     "using the Applicative instance to combine operations into a FS.Par" in {
-      """
-        import cats.syntax.apply._
-        @free trait X {
-          def a: FS[Int]
-          def b: FS.Par[Int] = (a, a).mapN(_+_)
-        }
-      """ should compile
+      import cats.syntax.apply._
+      @free trait X {
+        def a: FS[Int]
+        def b: FS.Par[Int] = (a, a).mapN(_+_)
+      }
+      object Y extends X.Handler[Id] {
+        def a: Int = 5
+      }
+      //X[X.Op].b.interpret[Id] shouldEqual 10
     }
 
   }
@@ -163,34 +231,19 @@ class freeTests extends WordSpec with Matchers {
         a <- s.x(1)
         b <- s.y(1)
       } yield a + b
-      "(program: FreeS[SCtors1.Op, Int])" should compile
+      (program: FreeS[SCtors1.Op, Int])
     }
 
     "generate ADTs with friendly names and expose them as dependent types" in {
-      """
-        @free
-        trait FriendlyFreeS {
-          def sc1(a: Int, b: Int, c: Int): FS[Int]
-          def sc2(a: Int, b: Int, c: Int): FS[Int]
-        }
-        implicitly[FriendlyFreeS.Op[_] =:= FriendlyFreeS.Op[_]]
-        implicitly[FriendlyFreeS.Sc1Op <:< FriendlyFreeS.Op[Int]]
-        implicitly[FriendlyFreeS.Sc2Op <:< FriendlyFreeS.Op[Int]]
-      """ should compile
-    }
-
-    "allow smart constructors with type arguments" in {
-      """@free
-      trait KVStore {
-        def put[A](key: String, value: A): FS[Unit]
-        def get[A](key: String): FS[Option[A]]
-        def delete(key: String): FS[Unit]
+      @free
+      trait FriendlyFreeS {
+        def sc1(a: Int, b: Int, c: Int): FS[Int]
+        def sc2(a: Int, b: Int, c: Int): FS[Int]
       }
-      val interpreter = new KVStore.Handler[List] {
-        def put[A](key: String, value: A): List[Unit] = Nil
-        def get[A](key: String): List[Option[A]]      = Nil
-        def delete(key: String): List[Unit]           = Nil
-      }""" should compile
+      implicitly[FriendlyFreeS.Op[_] =:= FriendlyFreeS.Op[_]]
+      implicitly[FriendlyFreeS.Sc1Op <:< FriendlyFreeS.Op[Int]]
+      implicitly[FriendlyFreeS.Sc2Op <:< FriendlyFreeS.Op[Int]]
+      1 shouldEqual 1
     }
 
   }
@@ -234,7 +287,7 @@ class freeTests extends WordSpec with Matchers {
       }
       implicit val h: AlgWithImplicits.Handler[Id] =
         new AlgWithImplicits.Handler[Id] {
-          def x(a: Int, ev: X): Id[X] = ev.toString + a.toString
+          def x(a: Int)(implicit ev: X): Id[X] = ev.toString + a.toString
         }
       AlgWithImplicits[AlgWithImplicits.Op].x(1).interpret[Id] shouldBe ("x1")
     }
@@ -250,7 +303,7 @@ class freeTests extends WordSpec with Matchers {
         def z = "a"
       }
       implicit val h: AlgWithImplicits.Handler[Id] = new AlgWithImplicits.Handler[Id] {
-        def x[A](a: A, ev: X[A]): Id[X[A]] = ev
+        def x[A](a: A)(implicit ev: X[A]): Id[X[A]] = ev
       }
       AlgWithImplicits[AlgWithImplicits.Op].x(1).interpret[Id].z shouldBe (xa.z)
     }
@@ -272,7 +325,7 @@ class freeTests extends WordSpec with Matchers {
         def z = "ya"
       }
       implicit val h: AlgWithImplicits.Handler[Id] = new AlgWithImplicits.Handler[Id] {
-        def x[A](a: A, x: X[A], y: Y[A]): Id[(X[A], Y[A])] = (x, y)
+        def x[A](a: A)(implicit x: X[A], y: Y[A]): Id[(X[A], Y[A])] = (x, y)
       }
       val (x, y) = AlgWithImplicits[AlgWithImplicits.Op].x(1).interpret[Id]
       (x.z, y.z) shouldBe (("xa", "ya"))
@@ -289,9 +342,9 @@ class freeTests extends WordSpec with Matchers {
       implicit val s: S        = "s"
       implicit def xa[A]: X[A] = new X[A] {}
       implicit val h: AlgWithImplicits.Handler[Id] = new AlgWithImplicits.Handler[Id] {
-        def x[A](a: A, s: S, ev: X[A]): Id[String] = ev.y + s
+        def x[A](a: A)(implicit s: S, ev: X[A]): Id[String] = ev.y + s
       }
-      AlgWithImplicits[AlgWithImplicits.Op].x(1).interpret[Id] shouldBe (xa.y + s)
+      AlgWithImplicits[AlgWithImplicits.Op].x(1).interpret[Id] shouldBe "xs"
     }
 
     "respond to implicit evidences with compilable runtimes" in {
@@ -406,7 +459,7 @@ class freeTests extends WordSpec with Matchers {
       val v = Algebra[Algebra.Op]
       implicit val interpreter: Algebra.Handler[Id] =
         new Algebra.Handler[Id] {
-          override def x[A <: String](a: A, x: X[A]): Int = 4
+          override def x[A <: String](a: A)(implicit x: X[A]): Int = 4
         }
       implicit def x[A]: X[A] = new X[A] {}
       v.x("").interpret[Id] shouldBe 4
