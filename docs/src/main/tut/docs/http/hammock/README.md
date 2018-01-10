@@ -15,7 +15,7 @@ First of all, include the _frees-http-client_ as follows:
 [comment]: # (Start Replace)
 
 ```scala
-libraryDependencies += "io.frees" %% "frees-http-client" % "0.5.1"
+libraryDependencies += "io.frees" %% "frees-http-client" % "0.5.2"
 ```
 
 [comment]: # (End Replace)
