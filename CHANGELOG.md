@@ -1,5 +1,16 @@
 # Changelog
 
+## 01/10/2018 - Version 0.5.2
+
+Release changes:
+
+* FS-478 Simplify Tagless ([#491](https://github.com/frees-io/freestyle/pull/491))
+* Update .travis.yml ([#494](https://github.com/frees-io/freestyle/pull/494))
+* Equality for tagless and update Quick Start ([#488](https://github.com/frees-io/freestyle/pull/488))
+* FS-495 Avoid flattening lists of parameters ([#496](https://github.com/frees-io/freestyle/pull/496))
+* Updates freestyle Build ([#499](https://github.com/frees-io/freestyle/pull/499))
+
+
 ## 01/04/2018 - Version 0.5.1
 
 Release changes:
