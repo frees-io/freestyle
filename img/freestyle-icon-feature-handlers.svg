@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="96px" height="96px" viewBox="0 0 96 96" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 44.1 (41455) - http://www.bohemiancoding.com/sketch -->
+    <title>freestyle-icon-feature-handlers</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <circle id="path-1" cx="37" cy="27" r="3"></circle>
+        <circle id="path-2" cx="61" cy="69" r="3"></circle>
+        <linearGradient x1="0%" y1="0%" x2="100%" y2="100%" id="linearGradient-3">
+            <stop stop-color="#077783" stop-opacity="0" offset="0%"></stop>
+            <stop stop-color="#077783" offset="100%"></stop>
+        </linearGradient>
+        <linearGradient x1="0%" y1="6.24143346%" x2="34.0731132%" y2="100%" id="linearGradient-4">
+            <stop stop-color="#167B86" offset="0%"></stop>
+            <stop stop-color="#077783" stop-opacity="0" offset="100%"></stop>
+        </linearGradient>
+    </defs>
+    <g id="freestyle-ui" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="freestyle-icon-feature-handlers">
+            <polygon id="hexagon" fill="#01C2C2" points="37 3 57.7846097 15 57.7846097 39 37 51 16.2153903 39 16.2153903 15"></polygon>
+            <polygon id="hexagon" fill="#01C2C2" points="61 45 81.7846097 57 81.7846097 81 61 93 40.2153903 81 40.2153903 57"></polygon>
+            <polyline id="opacity" fill="#FFFFFF" opacity="0.3" points="61 93 40.2153903 81 40.2153903 57 61 45 61 45"></polyline>
+            <polyline id="opacity" fill="#FFFFFF" opacity="0.3" points="37 51 16.2153903 39 16.2153903 15 37 3 37 3"></polyline>
+            <g id="point">
+                <use fill="#FFFFFF" fill-rule="evenodd" xlink:href="#path-1"></use>
+                <circle stroke="#077783" stroke-width="3" cx="37" cy="27" r="4.5"></circle>
+            </g>
+            <g id="point">
+                <use fill="#FFFFFF" fill-rule="evenodd" xlink:href="#path-2"></use>
+                <circle stroke="#077783" stroke-width="3" cx="61" cy="69" r="4.5"></circle>
+            </g>
+            <path d="M90.6363633,49.7193787 C90.6664118,49.083349 90.6816056,48.4434315 90.6816056,47.7999652 C90.6816056,28.8472741 77.5003263,12.9732358 59.8050341,8.84511646" id="line" stroke="url(#linearGradient-3)" stroke-width="2" stroke-dasharray="3,3,3,3"></path>
+            <polygon id="arrow" fill="#177B86" transform="translate(90.383579, 53.746898) rotate(8.000000) translate(-90.383579, -53.746898) " points="90.3835788 56.4611836 86.5835788 51.0326122 94.1835787 51.0326122"></polygon>
+            <path d="M7.31168627,39.3926097 C6.87837481,41.7512772 6.65196326,44.1823376 6.65196326,46.6662792 C6.65196326,64.9908422 18.9740155,80.4374356 35.784358,85.1722977" id="line" stroke="url(#linearGradient-4)" stroke-width="2" stroke-dasharray="3,3,3,3"></path>
+            <polygon id="arrow" fill="#177B86" transform="translate(7.755793, 38.199869) rotate(-165.000000) translate(-7.755793, -38.199869) " points="7.75579327 40.9146489 3.9551018 35.4850897 11.5564847 35.4850897"></polygon>
+        </g>
+    </g>
+</svg>

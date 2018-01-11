@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="52px" height="52px" viewBox="0 0 52 52" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 44.1 (41455) - http://www.bohemiancoding.com/sketch -->
+    <title>freestyle-icon-library-rpc-line</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="freestyle-ui" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="freestyle-icon-library-rpc-line" stroke="#01C2C2">
+            <path d="M26,3.15470054 L6.21539031,14.5773503 L6.21539031,37.4226497 L26,48.8452995 L45.7846097,37.4226497 L45.7846097,14.5773503 L26,3.15470054 Z" id="hexagon" stroke-width="2"></path>
+            <path d="M26,8 L26,44.5" id="line" stroke-width="2" stroke-dasharray="2,2,2,2"></path>
+            <path d="M46.0102539,13.9960938 L6.05175781,37.1054688" id="line" stroke-width="2" stroke-dasharray="2,2,2,2"></path>
+            <path d="M46.0246582,37.0974121 L6.10644531,14.1508789" id="line" stroke-width="2" stroke-dasharray="2,2,2,2"></path>
+            <circle id="point" fill="#01C2C2" cx="26" cy="4" r="3"></circle>
+            <circle id="point" fill="#01C2C2" cx="26" cy="26" r="3"></circle>
+            <circle id="point" fill="#01C2C2" cx="46" cy="14" r="3"></circle>
+            <circle id="point" fill="#01C2C2" cx="6" cy="14" r="3"></circle>
+            <circle id="point" fill="#01C2C2" cx="46" cy="37" r="3"></circle>
+            <circle id="point" fill="#01C2C2" cx="6" cy="37" r="3"></circle>
+            <circle id="point" fill="#01C2C2" cx="26" cy="48" r="3"></circle>
+        </g>
+    </g>
+</svg>
