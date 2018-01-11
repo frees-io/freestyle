@@ -36,7 +36,7 @@ class ConfigTests extends WordSpec with Matchers {
 
   implicit val executionContext = ExecutionContext.Implicits.global
 
-  "Config integration" should {
+  "Config integration for @free" should {
 
     "allow configuration to be interleaved inside a program monadic flow" in {
       val program = for {

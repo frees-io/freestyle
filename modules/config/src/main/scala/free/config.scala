@@ -16,37 +16,12 @@
 
 package freestyle.free
 
-import cats.MonadError
-import classy.config._
-import com.typesafe.config.ConfigFactory
-import freestyle.config._
-
 object config {
 
-  @free sealed trait ConfigM {
-    def load: FS[Config]
-    def empty: FS[Config]
-    def parseString(s: String): FS[Config]
-    def loadAs[T: ConfigDecoder]: FS[T]
-    def parseStringAs[T: ConfigDecoder](s: String): FS[T]
-  }
+  type ConfigM[F[_]] = freestyle.tagless.config.ConfigM.StackSafe[F]
 
-  object implicits {
+  val ConfigM = freestyle.tagless.config.ConfigM.StackSafe
 
-    private[config] lazy val underlying = loadConfig(ConfigFactory.load())
-
-    implicit def freestyleConfigHandler[M[_]](
-        implicit ME: MonadError[M, Throwable]): ConfigM.Handler[M] =
-      new ConfigM.Handler[M] {
-        def load: M[Config]  = ME.pure(underlying)
-        def empty: M[Config] = ME.pure(loadConfig(ConfigFactory.empty()))
-        def parseString(s: String): M[Config] =
-          ME.catchNonFatal(loadConfig(ConfigFactory.parseString(s)))
-        def loadAs[T]()(implicit decoder: ConfigDecoder[T]): M[T] =
-          toConfigError(decoder.load()).fold(ME.raiseError, ME.pure)
-        def parseStringAs[T](s: String)(implicit decoder: ConfigDecoder[T]): M[T] =
-          toConfigError(decoder.fromString(s)).fold(ME.raiseError, ME.pure)
-      }
-  }
+  object implicits extends freestyle.tagless.config.Implicits
 
 }

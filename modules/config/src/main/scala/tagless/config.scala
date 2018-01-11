@@ -31,7 +31,7 @@ object config {
     def parseStringAs[T: ConfigDecoder](s: String): FS[T]
   }
 
-  object implicits {
+  trait Implicits {
 
     private[config] lazy val underlying = loadConfig(ConfigFactory.load())
 
@@ -48,5 +48,7 @@ object config {
           toConfigError(decoder.fromString(s)).fold(ME.raiseError, ME.pure)
       }
   }
+
+  object implicits extends Implicits
 
 }
