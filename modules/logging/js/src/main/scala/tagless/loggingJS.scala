@@ -14,17 +14,17 @@
  * limitations under the License.
  */
 
-package freestyle.free
+package freestyle.tagless
 
 import cats.Applicative
 import cats.effect.Sync
 import freestyle.logging._
-import freestyle.free.logging._
+import freestyle.tagless.logging._
 import slogging._
 
 object loggingJS {
 
-  sealed abstract class FreeSLoggingMHandler[M[_]] extends LoggingM.Handler[M] with LazyLogging {
+  sealed abstract class LoggingMHandler[M[_]] extends LoggingM.Handler[M] with LazyLogging {
     import sourcecode.{File, Line}
 
     implicit val _ = logger
@@ -70,7 +70,7 @@ object loggingJS {
 
   trait Implicits {
     implicit def freeStyleLoggingHandler[M[_]: Applicative]: LoggingM.Handler[M] =
-      new FreeSLoggingMHandler[M] {
+      new LoggingMHandler[M] {
         protected def withLogger[A](f: Logger => A)(implicit logger: Logger): M[A] =
           Applicative[M].pure(f(logger))
       }
@@ -78,7 +78,7 @@ object loggingJS {
 
   trait SyncImplicits {
     implicit def freeStyleLoggingHandler[M[_]: Sync]: LoggingM.Handler[M] =
-      new FreeSLoggingMHandler[M] {
+      new LoggingMHandler[M] {
         protected def withLogger[A](f: Logger => A)(implicit logger: Logger): M[A] =
           Sync[M].delay(f(logger))
       }

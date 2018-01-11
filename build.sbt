@@ -145,7 +145,7 @@ lazy val logging = module("logging")
     libraryDependencies += %%%("slogging")
   )
   .jsSettings(sharedJsSettings: _*)
-  .crossDepSettings(commonDeps ++ Seq(%%("sourcecode")): _*)
+  .crossDepSettings(commonDeps ++ Seq(%%("sourcecode"), %%("cats-effect")): _*)
 
 lazy val loggingJVM = logging.jvm
 lazy val loggingJS  = logging.js

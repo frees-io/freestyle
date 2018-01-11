@@ -14,18 +14,18 @@
  * limitations under the License.
  */
 
-package freestyle.free
+package freestyle.tagless
 
-import cats.{Applicative, Id}
+import cats.Id
 import cats.data.Kleisli
 import cats.effect.IO
-import freestyle.free.logging.LoggingM
+import freestyle.tagless.logging.LoggingM
 
 import scala.concurrent.Future
 
 object algebras {
 
-  @free
+  @tagless
   trait NonLogging {
     def x: FS[Int]
   }
@@ -52,6 +52,4 @@ object algebras {
     val nonLogging: NonLogging
     val loggingM: LoggingM
   }
-
-  val app = App[App.Op]
 }

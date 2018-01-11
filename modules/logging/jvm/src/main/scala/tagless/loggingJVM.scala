@@ -14,19 +14,17 @@
  * limitations under the License.
  */
 
-package freestyle.free
+package freestyle.tagless
 
-import cats.arrow.FunctionK
-import cats.data.Kleisli
-import cats.{Applicative, Monad}
+import cats.Applicative
 import cats.effect.Sync
 import freestyle.logging._
-import freestyle.free.logging._
+import freestyle.tagless.logging._
 import journal._
 
 object loggingJVM {
 
-  sealed abstract class FreeSLoggingMHandler[M[_]] extends LoggingM.Handler[M] {
+  sealed abstract class TaglessLoggingMHandler[M[_]] extends LoggingM.Handler[M] {
 
     import sourcecode.{File, Line}
 
@@ -67,44 +65,30 @@ object loggingJVM {
         line: Line,
         file: File): M[Unit] =
       withLogger(_.warn(formatMessage(msg, srcInfo, line, file), cause))
+
   }
 
   trait Implicits {
+    implicit def taglessLoggingApplicative[M[_]: Applicative](
+        implicit log: Logger = Logger("")): LoggingM.Handler[M] = new TaglessLoggingMHandler[M] {
 
-    implicit def freeStyleLoggingKleisli[M[_]: Applicative](
-        implicit log: Logger = Logger("")): LoggingM.Handler[Kleisli[M, Logger, ?]] =
-      new FreeSLoggingMHandler[Kleisli[M, Logger, ?]] {
+      protected def withLogger[A](f: Logger => A): M[A] = Applicative[M].pure(f(log))
 
-        protected def withLogger[A](f: Logger => A): Kleisli[M, Logger, A] =
-          Kleisli.ask[M, Logger].map(f)
-      }
-
-    implicit def freeStyleLoggingKleisliRunner[M[_]](
-        log: Logger): FSHandler[Kleisli[M, Logger, ?], M] =
-      λ[FunctionK[Kleisli[M, Logger, ?], M]](_.run(log))
-
-    implicit def freeStyleLoggingToM[M[_]: Monad](
-        implicit log: Logger = Logger("")): FSHandler[LoggingM.Op, M] =
-      freeStyleLoggingKleisli andThen freeStyleLoggingKleisliRunner(log)
+    }
   }
 
   trait SyncImplicits {
+    implicit def taglessLoggingSync[M[_]: Sync](
+        implicit log: Logger = Logger("")): LoggingM.Handler[M] = new TaglessLoggingMHandler[M] {
 
-    implicit def freeStyleLoggingSync[M[_]: Sync](
-        implicit log: Logger = Logger("")): LoggingM.Handler[M] =
-      new FreeSLoggingMHandler[M] {
+      protected def withLogger[A](f: Logger => A): M[A] = Sync[M].delay(f(log))
 
-        protected def withLogger[A](f: Logger => A): M[A] =
-          Sync[M].delay(f(log))
-      }
-
+    }
   }
 
   object implicits extends Implicits
 
   object sync {
-
     object implicits extends SyncImplicits
-
   }
 }
