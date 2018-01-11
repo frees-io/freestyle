@@ -16,7 +16,10 @@
 
 package freestyle.free
 
+import cats.instances.future._
+import cats.{Id, Monad}
 import freestyle.free.implicits._
+import freestyle.free.loggingJVM.implicits._
 import org.scalatest.{AsyncWordSpec, Matchers}
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -26,14 +29,11 @@ class LoggingTests extends AsyncWordSpec with Matchers {
 
   implicit override def executionContext = ExecutionContext.Implicits.global
 
-  case object Cause extends Exception("kaboom") with NoStackTrace
-
   import algebras._
 
   "Logging Freestyle free integration" should {
 
-    import freestyle.free.loggingJVM.implicits._
-    import cats.instances.future._
+    case object Cause extends Exception("kaboom") with NoStackTrace
 
     "allow a log message to be interleaved inside a program monadic flow" in {
       val program = for {
