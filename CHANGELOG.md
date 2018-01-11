@@ -1,5 +1,15 @@
 # Changelog
 
+## 01/11/2018 - Version 0.5.3
+
+Release changes:
+
+* Adds the Async tagless algebra ([#500](https://github.com/frees-io/freestyle/pull/500))
+* Adds the tagless algebras for logging ([#501](https://github.com/frees-io/freestyle/pull/501))
+* Adds the tagless algebra for config ([#502](https://github.com/frees-io/freestyle/pull/502))
+* Releases Freestyle 0.5.3 ([#504](https://github.com/frees-io/freestyle/pull/504))
+
+
 ## 01/10/2018 - Version 0.5.2
 
 Release changes:
