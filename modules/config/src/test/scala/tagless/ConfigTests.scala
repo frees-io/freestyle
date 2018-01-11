@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package freestyle.free
+package freestyle.tagless
 
 import cats.instances.either._
 import cats.instances.future._
@@ -23,11 +23,13 @@ import cats.syntax.either._
 import classy.config._
 import com.typesafe.config.{Config => TypesafeConfig}
 import freestyle.config._
-import freestyle.free.implicits._
-import freestyle.free.config._
-import freestyle.free.config.implicits._
+import freestyle.tagless.config._
+import freestyle.tagless.config.implicits._
 import java.util.concurrent.TimeUnit
+
+import classy.Decoder
 import org.scalatest.{Matchers, WordSpec}
+
 import scala.concurrent.{ExecutionContext, Future}
 
 class ConfigTests extends WordSpec with Matchers {
@@ -36,41 +38,47 @@ class ConfigTests extends WordSpec with Matchers {
 
   implicit val executionContext = ExecutionContext.Implicits.global
 
-  "Config integration for @free" should {
+  "Config integration for @tagless" should {
 
     "allow configuration to be interleaved inside a program monadic flow" in {
-      val program = for {
-        _      <- app.nonConfig.x
-        config <- app.configM.empty
-      } yield config
-      program.interpret[Future] map { _ shouldBe a[Config] }
+      def program(implicit app: App[Future]) =
+        for {
+          _      <- app.nonConfig.x
+          config <- app.configM.empty
+        } yield config
+      program map (_ shouldBe a[Config])
     }
 
     "allow configuration to parse strings" in {
-      val program = for {
-        a   <- app.nonConfig.x
-        cfg <- app.configM.parseString("{n = 1}")
-      } yield cfg.int("n").map(_ + a)
-      program.interpret[Future] map { _ shouldBe Right(1 + 1) }
+      def program(implicit app: App[Future]) =
+        for {
+          a   <- app.nonConfig.x
+          cfg <- app.configM.parseString("{n = 1}")
+        } yield cfg.int("n").map(_ + a)
+      program map (_ shouldBe Right(1 + 1))
     }
 
     "allow configuration to load classpath files" in {
-      app.configM.load.interpret[Future] map { _.int("s") shouldBe Right(3) }
+      def program(implicit app: App[Future]) =
+        app.configM.load
+
+      program map (_.int("s") shouldBe Right(3))
     }
 
     "allow values to be read from a parsed config" in {
       val config = """{n = 1, s = "foo", b = true, xs = ["a", "b"], delay = "1000ms"}"""
-      val program = app.configM.parseString(config) map { cfg =>
-        (
-          cfg.hasPath("n"),
-          cfg.int("n"),
-          cfg.double("n"),
-          cfg.string("s"),
-          cfg.boolean("b"),
-          cfg.stringList("xs"),
-          cfg.duration("delay", TimeUnit.SECONDS)).tupled
-      }
-      program.interpret[Future] map {
+      def program(implicit app: App[Future]) =
+        app.configM.parseString(config) map { cfg =>
+          (
+            cfg.hasPath("n"),
+            cfg.int("n"),
+            cfg.double("n"),
+            cfg.string("s"),
+            cfg.boolean("b"),
+            cfg.stringList("xs"),
+            cfg.duration("delay", TimeUnit.SECONDS)).tupled
+        }
+      program map {
         _ shouldBe Right((true, 1, 1d, "foo", true, List("a", "b"), 1L))
       }
     }
@@ -78,21 +86,24 @@ class ConfigTests extends WordSpec with Matchers {
     "allow nested config to be read from a parsed config" in {
       val config1 =
         """{n = 1, config2: {n2 = 2, s = "bar"}, s = "foo", b = true, xs = ["a", "b"], delay = "1000ms"}"""
-      val program = app.configM.parseString(config1) map { cfg =>
-        (cfg.hasPath("n"), cfg.int("n"), cfg.config("config2").map { cfg2 =>
-          (cfg2.int("n2"), cfg2.string("s")).tupled
-        }, cfg.double("n"), cfg.string("s"), cfg.boolean("b"), cfg.stringList("xs"), cfg.duration("delay", TimeUnit.SECONDS)).tupled
-      }
+      def program(implicit app: App[Future]) =
+        app.configM.parseString(config1) map { cfg =>
+          (cfg.hasPath("n"), cfg.int("n"), cfg.config("config2").map { cfg2 =>
+            (cfg2.int("n2"), cfg2.string("s")).tupled
+          }, cfg.double("n"), cfg.string("s"), cfg.boolean("b"), cfg.stringList("xs"), cfg.duration("delay", TimeUnit.SECONDS)).tupled
+        }
 
-      program.interpret[Future] map {
+      program map {
         _ shouldBe Right((true, 1, Right((2, "bar")), 1d, "foo", true, List("a", "b"), 1L))
       }
     }
 
     "allow configuration to load classpath files and convert into case class" in {
       case class MyConfig(s: Int)
-      implicit val decoder = readConfig[Int]("s") map MyConfig.apply
-      app.configM.loadAs[MyConfig].interpret[Future] map { _ shouldBe MyConfig(3) }
+      implicit val decoder: Decoder[TypesafeConfig, MyConfig] = readConfig[Int]("s") map MyConfig.apply
+      def program(implicit app: App[Future]) =
+        app.configM.loadAs[MyConfig]
+      program map (_ shouldBe MyConfig(3))
     }
 
     "allow configuration to parse strings and convert into case class" in {
@@ -105,16 +116,17 @@ class ConfigTests extends WordSpec with Matchers {
 
       val config = """{n = 1, s = "foo", b = true}"""
 
-      app.configM.parseStringAs[MyConfig](config).interpret[Future] map {
-        _ shouldBe MyConfig(1, "foo", true)
-      }
+      def program(implicit app: App[Future]) =
+        app.configM.parseStringAs[MyConfig](config) map {
+          _ shouldBe MyConfig(1, "foo", true)
+        }
     }
   }
 
 }
 
 object algebras {
-  @free
+  @tagless
   trait NonConfig {
     def x: FS[Int]
   }
@@ -129,7 +141,5 @@ object algebras {
     val nonConfig: NonConfig
     val configM: ConfigM
   }
-
-  val app = App[App.Op]
 
 }

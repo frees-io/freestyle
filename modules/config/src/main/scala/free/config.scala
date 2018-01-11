@@ -16,80 +16,12 @@
 
 package freestyle.free
 
-import cats.MonadError
-import cats.syntax.either._
-import classy._
-import classy.config._
-import com.typesafe.config.{ConfigException, ConfigFactory}
-
-import scala.collection.JavaConverters._
-import scala.concurrent.duration._
-
 object config {
 
-  case class ConfigError(msg: String, underlying: Option[Throwable] = None) extends Throwable(msg) {
-    underlying foreach initCause
-  }
+  type ConfigM[F[_]] = freestyle.tagless.config.ConfigM.StackSafe[F]
 
-  sealed abstract class Config {
-    def hasPath(path: String): Config.Result[Boolean]
-    def config(path: String): Config.Result[Config]
-    def string(path: String): Config.Result[String]
-    def boolean(path: String): Config.Result[Boolean]
-    def int(path: String): Config.Result[Int]
-    def double(path: String): Config.Result[Double]
-    def stringList(path: String): Config.Result[List[String]]
-    def duration(path: String, unit: TimeUnit): Config.Result[Long]
-  }
+  val ConfigM = freestyle.tagless.config.ConfigM.StackSafe
 
-  object Config {
-    type Result[A] = Either[ConfigError, A]
-  }
-
-  @free sealed trait ConfigM {
-    def load: FS[Config]
-    def empty: FS[Config]
-    def parseString(s: String): FS[Config]
-    def loadAs[T: ConfigDecoder]: FS[T]
-    def parseStringAs[T: ConfigDecoder](s: String): FS[T]
-  }
-
-  object implicits {
-
-    private[config] def loadConfig(c: com.typesafe.config.Config): Config = new Config {
-
-      def hasPath(path: String): Config.Result[Boolean] = catchConfig(c.hasPath(path))
-      def config(path: String): Config.Result[Config]   = catchConfig(loadConfig(c.getConfig(path)))
-      def string(path: String): Config.Result[String]   = catchConfig(c.getString(path))
-      def boolean(path: String): Config.Result[Boolean] = catchConfig(c.getBoolean(path))
-      def int(path: String): Config.Result[Int]         = catchConfig(c.getInt(path))
-      def double(path: String): Config.Result[Double]   = catchConfig(c.getDouble(path))
-      def stringList(path: String): Config.Result[List[String]] =
-        catchConfig(c.getStringList(path).asScala.toList)
-      def duration(path: String, unit: TimeUnit): Config.Result[Long] =
-        catchConfig(c.getDuration(path, unit))
-    }
-
-    private[config] def catchConfig[A](a: => A): Config.Result[A] =
-      Either.catchOnly[ConfigException](a).leftMap(e => ConfigError(e.getMessage, Option(e)))
-
-    private[config] def toConfigError[A](a: => Either[DecodeError, A]): Either[ConfigError, A] =
-      a.leftMap(e => ConfigError(e.toPrettyString))
-
-    private[config] lazy val underlying = loadConfig(ConfigFactory.load())
-
-    implicit def freestyleConfigHandler[M[_]](
-        implicit ME: MonadError[M, Throwable]): ConfigM.Handler[M] =
-      new ConfigM.Handler[M] {
-        def load: M[Config]  = ME.pure(underlying)
-        def empty: M[Config] = ME.pure(loadConfig(ConfigFactory.empty()))
-        def parseString(s: String): M[Config] =
-          ME.catchNonFatal(loadConfig(ConfigFactory.parseString(s)))
-        def loadAs[T]()(implicit decoder: ConfigDecoder[T]): M[T] =
-          toConfigError(decoder.load()).fold(ME.raiseError, ME.pure)
-        def parseStringAs[T](s: String)(implicit decoder: ConfigDecoder[T]): M[T] =
-          toConfigError(decoder.fromString(s)).fold(ME.raiseError, ME.pure)
-      }
-  }
+  object implicits extends freestyle.tagless.config.Implicits
 
 }
