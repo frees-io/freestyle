@@ -18,7 +18,7 @@ package freestyle
 
 import sourcecode.{File, Line}
 
-object logging {
+private[freestyle] object logging {
 
   private[freestyle] def formatMessage(
       msg: String,

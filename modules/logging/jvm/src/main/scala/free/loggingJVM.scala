@@ -16,76 +16,8 @@
 
 package freestyle.free
 
-import cats.arrow.FunctionK
-import cats.data.Kleisli
-import cats.{Applicative, Monad}
-import freestyle.logging._
-import freestyle.free.logging._
-import journal._
-
 object loggingJVM {
 
-  sealed abstract class FreeSLoggingMHandler[M[_]] extends LoggingM.Handler[M] {
+  object implicits extends freestyle.tagless.loggingJVM.Implicits
 
-    import sourcecode.{File, Line}
-
-    protected def withLogger[A](f: Logger => A): M[A]
-
-    def debug(msg: String, srcInfo: Boolean)(implicit line: Line, file: File): M[Unit] =
-      withLogger(_.debug(formatMessage(msg, srcInfo, line, file)))
-
-    def debugWithCause(msg: String, cause: Throwable, srcInfo: Boolean)(
-        implicit
-        line: Line,
-        file: File): M[Unit] =
-      withLogger(_.debug(formatMessage(msg, srcInfo, line, file), cause))
-
-    def error(msg: String, srcInfo: Boolean)(implicit line: Line, file: File): M[Unit] =
-      withLogger(_.error(formatMessage(msg, srcInfo, line, file)))
-
-    def errorWithCause(msg: String, cause: Throwable, srcInfo: Boolean)(
-        implicit
-        line: Line,
-        file: File): M[Unit] =
-      withLogger(_.error(formatMessage(msg, srcInfo, line, file), cause))
-
-    def info(msg: String, srcInfo: Boolean)(implicit line: Line, file: File): M[Unit] =
-      withLogger(_.info(formatMessage(msg, srcInfo, line, file)))
-
-    def infoWithCause(msg: String, cause: Throwable, srcInfo: Boolean)(
-        implicit
-        line: Line,
-        file: File): M[Unit] =
-      withLogger(_.info(formatMessage(msg, srcInfo, line, file), cause))
-
-    def warn(msg: String, srcInfo: Boolean)(implicit line: Line, file: File): M[Unit] =
-      withLogger(_.warn(formatMessage(msg, srcInfo, line, file)))
-
-    def warnWithCause(msg: String, cause: Throwable, srcInfo: Boolean)(
-        implicit
-        line: Line,
-        file: File): M[Unit] =
-      withLogger(_.warn(formatMessage(msg, srcInfo, line, file), cause))
-  }
-
-  trait Implicits {
-
-    implicit def freeStyleLoggingKleisli[M[_]: Applicative](
-        implicit log: Logger = Logger("")): LoggingM.Handler[Kleisli[M, Logger, ?]] =
-      new FreeSLoggingMHandler[Kleisli[M, Logger, ?]] {
-
-        protected def withLogger[A](f: Logger => A): Kleisli[M, Logger, A] =
-          Kleisli.ask[M, Logger].map(f)
-      }
-
-    implicit def freeStyleLoggingKleisliRunner[M[_]](
-        log: Logger): FSHandler[Kleisli[M, Logger, ?], M] =
-      λ[FunctionK[Kleisli[M, Logger, ?], M]](_.run(log))
-
-    implicit def freeStyleLoggingToM[M[_]: Monad](
-        implicit log: Logger = Logger("")): FSHandler[LoggingM.Op, M] =
-      freeStyleLoggingKleisli andThen freeStyleLoggingKleisliRunner(log)
-  }
-
-  object implicits extends Implicits
 }

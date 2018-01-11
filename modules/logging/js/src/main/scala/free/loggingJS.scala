@@ -16,64 +16,8 @@
 
 package freestyle.free
 
-import cats.Applicative
-import freestyle.logging._
-import freestyle.free.logging._
-import slogging._
-
 object loggingJS {
 
-  sealed abstract class FreeSLoggingMHandler[M[_]] extends LoggingM.Handler[M] with LazyLogging {
-    import sourcecode.{File, Line}
+  object implicits extends freestyle.tagless.loggingJS.Implicits
 
-    implicit val _ = logger
-
-    protected def withLogger[A](f: Logger => A)(implicit logger: Logger): M[A]
-
-    def debug(msg: String, sourceAndLineInfo: Boolean)(implicit line: Line, file: File): M[Unit] =
-      withLogger(_.debug(formatMessage(msg, sourceAndLineInfo, line, file)))
-
-    def debugWithCause(msg: String, cause: Throwable, sourceAndLineInfo: Boolean)(
-        implicit
-        line: Line,
-        file: File): M[Unit] =
-      withLogger(_.debug(formatMessage(msg, sourceAndLineInfo, line, file), cause))
-
-    def error(msg: String, sourceAndLineInfo: Boolean)(implicit line: Line, file: File): M[Unit] =
-      withLogger(_.error(formatMessage(msg, sourceAndLineInfo, line, file)))
-
-    def errorWithCause(msg: String, cause: Throwable, sourceAndLineInfo: Boolean)(
-        implicit
-        line: Line,
-        file: File): M[Unit] =
-      withLogger(_.error(formatMessage(msg, sourceAndLineInfo, line, file), cause))
-
-    def info(msg: String, sourceAndLineInfo: Boolean)(implicit line: Line, file: File): M[Unit] =
-      withLogger(_.info(formatMessage(msg, sourceAndLineInfo, line, file)))
-
-    def infoWithCause(msg: String, cause: Throwable, sourceAndLineInfo: Boolean)(
-        implicit
-        line: Line,
-        file: File): M[Unit] =
-      withLogger(_.info(formatMessage(msg, sourceAndLineInfo, line, file), cause))
-
-    def warn(msg: String, sourceAndLineInfo: Boolean)(implicit line: Line, file: File): M[Unit] =
-      withLogger(_.warn(formatMessage(msg, sourceAndLineInfo, line, file)))
-
-    def warnWithCause(msg: String, cause: Throwable, sourceAndLineInfo: Boolean)(
-        implicit
-        line: Line,
-        file: File): M[Unit] =
-      withLogger(_.warn(formatMessage(msg, sourceAndLineInfo, line, file), cause))
-  }
-
-  trait Implicits {
-    implicit def freeStyleLoggingHandler[M[_]: Applicative]: LoggingM.Handler[M] =
-      new FreeSLoggingMHandler[M] {
-        protected def withLogger[A](f: Logger => A)(implicit logger: Logger): M[A] =
-          Applicative[M].pure(f(logger))
-      }
-  }
-
-  object implicits extends Implicits
 }
