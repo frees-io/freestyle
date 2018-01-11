@@ -66,7 +66,7 @@ def loadUser[F[_]]
                 .query[User]
                 .unique
                 .liftFS[F])
-      - <- logging.debug(s"Loaded User: ${user.userId}")
+      _ <- logging.debug(s"Loaded User: ${user.userId}")
     } yield user
 }
 ```
