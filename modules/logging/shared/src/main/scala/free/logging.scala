@@ -18,24 +18,8 @@ package freestyle.free
 
 object logging {
 
-  @free
-  trait LoggingM {
+  type LoggingM[F[_]] = freestyle.tagless.logging.LoggingM.StackSafe[F]
 
-    def debug(msg: String, sourceAndLineInfo: Boolean = false)(implicit line: sourcecode.Line, file: sourcecode.File): FS[Unit]
-
-    def debugWithCause(msg: String, cause: Throwable, sourceAndLineInfo: Boolean = false)(implicit line: sourcecode.Line, file: sourcecode.File): FS[Unit]
-
-    def error(msg: String, sourceAndLineInfo: Boolean = false)(implicit line: sourcecode.Line, file: sourcecode.File): FS[Unit]
-
-    def errorWithCause(msg: String, cause: Throwable, sourceAndLineInfo: Boolean = false)(implicit line: sourcecode.Line, file: sourcecode.File): FS[Unit]
-
-    def info(msg: String, sourceAndLineInfo: Boolean = false)(implicit line: sourcecode.Line, file: sourcecode.File): FS[Unit]
-
-    def infoWithCause(msg: String, cause: Throwable, sourceAndLineInfo: Boolean = false)(implicit line: sourcecode.Line, file: sourcecode.File): FS[Unit]
-
-    def warn(msg: String, sourceAndLineInfo: Boolean = false)(implicit line: sourcecode.Line, file: sourcecode.File): FS[Unit]
-
-    def warnWithCause(msg: String, cause: Throwable, sourceAndLineInfo: Boolean = false)(implicit line: sourcecode.Line, file: sourcecode.File): FS[Unit]
-  }
+  val LoggingM = freestyle.tagless.logging.LoggingM.StackSafe
 
 }
