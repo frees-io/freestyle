@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package freestyle.free
+package freestyle.tagless
 
 import cats.MonadError
 import classy.config._
@@ -23,11 +23,11 @@ import freestyle.config._
 
 object config {
 
-  @free sealed trait ConfigM {
+  @tagless sealed trait ConfigM {
     def load: FS[Config]
     def empty: FS[Config]
     def parseString(s: String): FS[Config]
-    def loadAs[T: ConfigDecoder]: FS[T]
+    def loadAs[T]()(implicit D: ConfigDecoder[T]): FS[T]
     def parseStringAs[T: ConfigDecoder](s: String): FS[T]
   }
 
@@ -42,8 +42,8 @@ object config {
         def empty: M[Config] = ME.pure(loadConfig(ConfigFactory.empty()))
         def parseString(s: String): M[Config] =
           ME.catchNonFatal(loadConfig(ConfigFactory.parseString(s)))
-        def loadAs[T]()(implicit decoder: ConfigDecoder[T]): M[T] =
-          toConfigError(decoder.load()).fold(ME.raiseError, ME.pure)
+        def loadAs[T]()(implicit D: ConfigDecoder[T]): M[T] =
+          toConfigError(D.load()).fold(ME.raiseError, ME.pure)
         def parseStringAs[T](s: String)(implicit decoder: ConfigDecoder[T]): M[T] =
           toConfigError(decoder.fromString(s)).fold(ME.raiseError, ME.pure)
       }
