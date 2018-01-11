@@ -17,7 +17,6 @@
 package freestyle.tagless
 
 import cats.Applicative
-import cats.effect.Sync
 import freestyle.logging._
 import freestyle.tagless.logging._
 import slogging._
@@ -76,19 +75,5 @@ object loggingJS {
       }
   }
 
-  trait SyncImplicits {
-    implicit def freeStyleLoggingHandler[M[_]: Sync]: LoggingM.Handler[M] =
-      new LoggingMHandler[M] {
-        protected def withLogger[A](f: Logger => A)(implicit logger: Logger): M[A] =
-          Sync[M].delay(f(logger))
-      }
-  }
-
   object implicits extends Implicits
-
-  object sync {
-
-    object implicits extends SyncImplicits
-
-  }
 }

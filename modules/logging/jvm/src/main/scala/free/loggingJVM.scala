@@ -19,7 +19,6 @@ package freestyle.free
 import cats.arrow.FunctionK
 import cats.data.Kleisli
 import cats.{Applicative, Monad}
-import cats.effect.Sync
 import freestyle.logging._
 import freestyle.free.logging._
 import journal._
@@ -88,23 +87,5 @@ object loggingJVM {
       freeStyleLoggingKleisli andThen freeStyleLoggingKleisliRunner(log)
   }
 
-  trait SyncImplicits {
-
-    implicit def freeStyleLoggingSync[M[_]: Sync](
-        implicit log: Logger = Logger("")): LoggingM.Handler[M] =
-      new FreeSLoggingMHandler[M] {
-
-        protected def withLogger[A](f: Logger => A): M[A] =
-          Sync[M].delay(f(log))
-      }
-
-  }
-
   object implicits extends Implicits
-
-  object sync {
-
-    object implicits extends SyncImplicits
-
-  }
 }

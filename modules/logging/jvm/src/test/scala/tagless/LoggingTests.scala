@@ -34,7 +34,7 @@ class LoggingTests extends AsyncWordSpec with Matchers {
 
   case object Cause extends Exception("kaboom") with NoStackTrace
 
-  "Logging Freestyle integration" should {
+  "Logging Freestyle tagless integration" should {
 
     import cats.instances.future._
     import freestyle.tagless.loggingJVM.implicits._
@@ -71,46 +71,6 @@ class LoggingTests extends AsyncWordSpec with Matchers {
       implicit val logger: Logger = journal.Logger("Potatoes")
 
       program[Future] map { _ shouldBe 2 }
-    }
-  }
-
-  "Logging Freestyle Sync integration" should {
-
-    import cats.effect.{IO, Sync}
-    import freestyle.tagless.loggingJVM.sync.implicits._
-
-    "allow a log message to be interleaved inside a program monadic flow" in {
-
-      def program[F[_]: Sync](implicit app: App[F]) =
-        for {
-          a <- app.nonLogging.x
-          _ <- app.loggingM.debug("Debug Message", sourceAndLineInfo = true)
-          _ <- app.loggingM.debugWithCause("Debug Message", Cause)
-          _ <- app.loggingM.error("Error Message")
-          _ <- app.loggingM.errorWithCause("Error Message", Cause)
-          _ <- app.loggingM.info("Info Message")
-          _ <- app.loggingM.infoWithCause("Info Message", Cause)
-          _ <- app.loggingM.warn("Warning Message")
-          _ <- app.loggingM.warnWithCause("Warning Message", Cause)
-          b <- Sync[F].pure(1)
-        } yield a + b
-
-      program[IO].unsafeToFuture() map { _ shouldBe 2 }
-
-    }
-
-    "allow injecting a Logger instance" in {
-      def program[F[_]: Sync](implicit app: App[F]) =
-        for {
-          a <- Sync[F].pure(1)
-          _ <- app.loggingM.info("Info Message")
-          _ <- app.loggingM.error("Error Message")
-          b <- Sync[F].pure(1)
-        } yield a + b
-
-      implicit val logger: Logger = journal.Logger("Potatoes")
-
-      program[IO].unsafeRunSync() shouldEqual 2
     }
   }
 }

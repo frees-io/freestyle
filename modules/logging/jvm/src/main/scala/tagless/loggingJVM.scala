@@ -17,7 +17,6 @@
 package freestyle.tagless
 
 import cats.Applicative
-import cats.effect.Sync
 import freestyle.logging._
 import freestyle.tagless.logging._
 import journal._
@@ -77,18 +76,5 @@ object loggingJVM {
     }
   }
 
-  trait SyncImplicits {
-    implicit def taglessLoggingSync[M[_]: Sync](
-        implicit log: Logger = Logger("")): LoggingM.Handler[M] = new TaglessLoggingMHandler[M] {
-
-      protected def withLogger[A](f: Logger => A): M[A] = Sync[M].delay(f(log))
-
-    }
-  }
-
   object implicits extends Implicits
-
-  object sync {
-    object implicits extends SyncImplicits
-  }
 }
