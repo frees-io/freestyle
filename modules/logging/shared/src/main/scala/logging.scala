@@ -14,10 +14,15 @@
  * limitations under the License.
  */
 
-package freestyle.free
+package freestyle
 
-object loggingJS {
+import sourcecode.{File, Line}
 
-  object implicits extends freestyle.tagless.loggingJS.Implicits
+private[freestyle] object logging {
 
+  private[freestyle] def formatMessage(
+      msg: String,
+      sourceAndLineInfo: Boolean,
+      line: Line,
+      file: File): String = if (sourceAndLineInfo) s"$file:$line: $msg" else msg
 }

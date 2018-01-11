@@ -31,7 +31,7 @@ class LoggingTests extends AsyncWordSpec with Matchers {
 
   import algebras._
 
-  "Logging Freestyle integration" should {
+  "Logging Freestyle free integration" should {
 
     case object Cause extends Exception("kaboom") with NoStackTrace
 
