@@ -17,7 +17,6 @@
 package freestyle.async
 package guava
 
-import cats.~>
 import com.google.common.util.concurrent._
 import java.util.concurrent.{Executor => JavaExecutor}
 
@@ -25,33 +24,26 @@ import scala.concurrent.ExecutionContext
 
 trait AsyncGuavaImplicits {
 
-  class ListenableFuture2AsyncM[F[_]](implicit AC: AsyncContext[F], E: ExecutionContext)
-      extends (ListenableFuture ~> F) {
-    override def apply[A](fa: ListenableFuture[A]): F[A] =
-      AC.runAsync { cb =>
-        Futures.addCallback(
-          fa,
-          new FutureCallback[A] {
-            override def onSuccess(result: A): Unit = cb(Right(result))
+  implicit def listenableFuture2Async[F[_], A](
+      fa: => ListenableFuture[A])(implicit AC: AsyncContext[F], E: ExecutionContext): F[A] =
+    AC.runAsync { cb =>
+      Futures.addCallback(
+        fa,
+        new FutureCallback[A] {
+          override def onSuccess(result: A): Unit = cb(Right(result))
 
-            override def onFailure(t: Throwable): Unit = cb(Left(t))
-          },
-          new JavaExecutor {
-            override def execute(command: Runnable): Unit = E.execute(command)
-          }
-        )
-      }
-  }
+          override def onFailure(t: Throwable): Unit = cb(Left(t))
+        },
+        new JavaExecutor {
+          override def execute(command: Runnable): Unit = E.execute(command)
+        }
+      )
+    }
 
-  implicit def listenableFuture2Async[F[_]](
-      implicit AC: AsyncContext[F],
-      E: ExecutionContext): ListenableFuture ~> F =
-    new ListenableFuture2AsyncM[F]
-
-  implicit def listenableVoidToListenableUnit(future: ListenableFuture[Void])(
+  def listenableVoidToListenableUnit(fa: => ListenableFuture[Void])(
       implicit E: ExecutionContext): ListenableFuture[Unit] =
     Futures.transformAsync(
-      future,
+      fa,
       new AsyncFunction[Void, Unit] {
         override def apply(input: Void): ListenableFuture[Unit] =
           Futures.immediateFuture((): Unit)

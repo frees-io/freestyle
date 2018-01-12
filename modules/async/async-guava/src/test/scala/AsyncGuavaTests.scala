@@ -19,16 +19,16 @@ package guava
 
 import java.util.concurrent.{Callable, Executors}
 
-import cats.~>
 import com.google.common.util.concurrent.{ListenableFuture, ListeningExecutorService, MoreExecutors}
 import org.scalatest._
 
 import scala.concurrent.duration.Duration
-import scala.concurrent.{Await, ExecutionContext, Future}
+import scala.concurrent.{Await, ExecutionContext}
 
 class AsyncGuavaTests extends WordSpec with Matchers with Implicits {
 
   import ExecutionContext.Implicits.global
+  import implicits._
 
   val exception: Throwable = new RuntimeException("Test exception")
 
@@ -45,29 +45,28 @@ class AsyncGuavaTests extends WordSpec with Matchers with Implicits {
       override def call(): T = value
     })
 
-  val handler: ListenableFuture ~> Future = implicits.listenableFuture2Async[Future]
-
-  val conv: ListenableFuture[Void] => ListenableFuture[Unit] =
-    implicits.listenableVoidToListenableUnit
-
   val foo = "Bar"
 
   "Guava ListenableFuture Freestyle integration" should {
 
     "transform guava ListenableFutures into scala.concurrent.Future successfully" in {
-      Await.result(handler(successfulFuture(foo)), Duration.Inf) shouldBe foo
+      Await.result(listenableFuture2Async(successfulFuture(foo)), Duration.Inf) shouldBe foo
     }
 
     "recover from failed guava ListenableFutures wrapping them into scala.concurrent.Future" in {
-      Await.result(handler(failedFuture[String]).failed, Duration.Inf) shouldBe exception
+      Await.result(listenableFuture2Async(failedFuture[String]).failed, Duration.Inf) shouldBe exception
     }
 
     "transform guava ListenableFuture[Void] into scala.concurrent.Future successfully through an implicit conversion" in {
-      Await.result(handler(conv(successfulFuture[Void](None.orNull))), Duration.Inf) shouldBe ((): Unit)
+      Await.result(
+        listenableFuture2Async(listenableVoidToListenableUnit(successfulFuture[Void](None.orNull))),
+        Duration.Inf) shouldBe ((): Unit)
     }
 
     "recover from failed guava ListenableFuture[Void] wrapping them into scala.concurrent.Future through an implicit conversion" in {
-      Await.result(handler(conv(failedFuture[Void])).failed, Duration.Inf) shouldBe exception
+      Await.result(
+        listenableFuture2Async(listenableVoidToListenableUnit(failedFuture[Void])).failed,
+        Duration.Inf) shouldBe exception
     }
 
   }
