@@ -19,7 +19,6 @@ package freestyle.tagless
 import scala.concurrent._
 import scala.util._
 import freestyle.async._
-import freestyle.async.implicits._
 
 object async {
 

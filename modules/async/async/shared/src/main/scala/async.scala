@@ -66,5 +66,4 @@ object async {
 
   }
 
-  object implicits extends Implicits
 }

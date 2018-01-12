@@ -20,8 +20,9 @@ import java.util.concurrent.{Callable, Executors}
 
 import cats.~>
 import com.google.common.util.concurrent.{ListenableFuture, ListeningExecutorService, MoreExecutors}
+import freestyle.async
+import freestyle.async.Proc
 import org.scalatest._
-import freestyle.async.implicits._
 import freestyle.free.async.implicits._
 
 import scala.concurrent.duration.Duration
@@ -31,7 +32,8 @@ class AsyncGuavaTests extends WordSpec with Matchers {
 
   import ExecutionContext.Implicits.global
 
-  val exception: Throwable = new RuntimeException("Test exception")
+  val aa: async.AsyncContext[Future] = futureAsyncContext
+  val exception: Throwable           = new RuntimeException("Test exception")
 
   val service: ListeningExecutorService =
     MoreExecutors.listeningDecorator(Executors.newFixedThreadPool(10))
@@ -47,6 +49,7 @@ class AsyncGuavaTests extends WordSpec with Matchers {
     })
 
   val handler: ListenableFuture ~> Future = implicits.listenableFuture2Async[Future]
+
   val conv: ListenableFuture[Void] => ListenableFuture[Unit] =
     implicits.listenableVoidToListenableUnit
 
