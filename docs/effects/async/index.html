@@ -87,7 +87,7 @@ ga('send', 'pageview');
 
 <div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">val</span> <span class="n">getSorted</span><span class="k">:</span> <span class="kt">Author</span> <span class="o">=&gt;</span> <span class="nc">FreeS</span><span class="o">[</span><span class="kt">AsyncM.Op</span>, <span class="kt">List</span><span class="o">[</span><span class="kt">Book</span><span class="o">]]</span> <span class="k">=</span>
   <span class="n">sortedBooks</span><span class="o">[</span><span class="kt">AsyncM.Op</span><span class="o">](</span><span class="nc">Library</span><span class="o">)</span> <span class="k">_</span>
-<span class="c1">// getSorted: Author =&gt; freestyle.free.FreeS[freestyle.free.async.AsyncM.Op,List[Book]] = $$Lambda$10284/1966505465@56c4d44b
+<span class="c1">// getSorted: Author =&gt; freestyle.free.FreeS[freestyle.free.async.AsyncM.Op,List[Book]] = $$Lambda$8083/1955215125@82884ba
 </span>
 <span class="k">val</span> <span class="n">dickensBooks</span> <span class="k">=</span> <span class="n">getSorted</span><span class="o">(</span><span class="nc">Author</span><span class="o">(</span><span class="s">"Dickens"</span><span class="o">))</span>
 <span class="c1">// dickensBooks: freestyle.free.FreeS[freestyle.free.async.AsyncM.Op,List[Book]] = Free(...)
@@ -116,10 +116,10 @@ ga('send', 'pageview');
 <span class="c1">// import cats.effect.IO
 </span>
 <span class="k">val</span> <span class="n">io1</span> <span class="k">=</span> <span class="n">dickensBooks</span><span class="o">.</span><span class="n">interpret</span><span class="o">[</span><span class="kt">IO</span><span class="o">]</span>
-<span class="c1">// io1: cats.effect.IO[List[Book]] = IO$178335403
+<span class="c1">// io1: cats.effect.IO[List[Book]] = IO$1911192769
 </span>
 <span class="k">val</span> <span class="n">io2</span> <span class="k">=</span> <span class="n">otherBooks</span><span class="o">.</span><span class="n">interpret</span><span class="o">[</span><span class="kt">IO</span><span class="o">]</span>
-<span class="c1">// io2: cats.effect.IO[List[Book]] = IO$258720456
+<span class="c1">// io2: cats.effect.IO[List[Book]] = IO$1070677404
 </span></code></pre>
 </div>
 
@@ -154,13 +154,13 @@ ga('send', 'pageview');
 <span class="c1">// import monix.execution.Scheduler
 </span>
 <span class="k">implicit</span> <span class="k">val</span> <span class="n">executionContext</span> <span class="k">=</span> <span class="nc">Scheduler</span><span class="o">.</span><span class="nc">Implicits</span><span class="o">.</span><span class="n">global</span>
-<span class="c1">// executionContext: monix.execution.Scheduler = monix.execution.schedulers.AsyncScheduler@1942c401
+<span class="c1">// executionContext: monix.execution.Scheduler = monix.execution.schedulers.AsyncScheduler@5bb17d32
 </span>
 <span class="k">val</span> <span class="n">monixTask1</span> <span class="k">=</span> <span class="n">dickensBooks</span><span class="o">.</span><span class="n">interpret</span><span class="o">[</span><span class="kt">Task</span><span class="o">]</span>
-<span class="c1">// monixTask1: monix.eval.Task[List[Book]] = Task.FlatMap$1634856657
+<span class="c1">// monixTask1: monix.eval.Task[List[Book]] = Task.FlatMap$584033909
 </span>
 <span class="k">val</span> <span class="n">monixTask2</span> <span class="k">=</span> <span class="n">otherBooks</span><span class="o">.</span><span class="n">interpret</span><span class="o">[</span><span class="kt">Task</span><span class="o">]</span>
-<span class="c1">// monixTask2: monix.eval.Task[List[Book]] = Task.FlatMap$1465689948
+<span class="c1">// monixTask2: monix.eval.Task[List[Book]] = Task.FlatMap$367022482
 </span></code></pre>
 </div>
 

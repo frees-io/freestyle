@@ -65,7 +65,7 @@ The JVM handler interpreter is based on the <a href="https://github.com/Verizon/
 <span class="k">implicit</span> <span class="k">val</span> <span class="n">customerServiceHandler</span><span class="k">:</span> <span class="kt">CustomerService.Handler</span><span class="o">[</span><span class="kt">Try</span><span class="o">]</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">CustomerService</span><span class="o">.</span><span class="nc">Handler</span><span class="o">[</span><span class="kt">Try</span><span class="o">]</span> <span class="o">{</span>
   <span class="k">def</span> <span class="n">customers</span><span class="k">:</span> <span class="kt">Try</span><span class="o">[</span><span class="kt">List</span><span class="o">[</span><span class="kt">String</span><span class="o">]]</span> <span class="k">=</span> <span class="nc">Try</span><span class="o">(</span><span class="nc">List</span><span class="o">(</span><span class="s">"John"</span><span class="o">,</span> <span class="s">"Jane"</span><span class="o">,</span> <span class="s">"Luis"</span><span class="o">))</span>
 <span class="o">}</span>
-<span class="c1">// customerServiceHandler: CustomerService.Handler[scala.util.Try] = $anon$1@17101b24
+<span class="c1">// customerServiceHandler: CustomerService.Handler[scala.util.Try] = $anon$1@58f1c04
 </span></code></pre>
 </div>
 

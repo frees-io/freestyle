@@ -71,18 +71,18 @@ ga('send', 'pageview');
 <p><code class="highlighter-rouge">frees-rpc</code> is cross-built for Scala <code class="highlighter-rouge">2.11.x</code> and <code class="highlighter-rouge">2.12.x</code>:</p>
 
 <div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="c1">// required for the RPC Server:
-</span><span class="n">libraryDependencies</span> <span class="o">+=</span> <span class="s">"io.frees"</span> <span class="o">%%</span> <span class="s">"frees-rpc-server"</span>        <span class="o">%</span> <span class="s">"0.7.0"</span>
+</span><span class="n">libraryDependencies</span> <span class="o">+=</span> <span class="s">"io.frees"</span> <span class="o">%%</span> <span class="s">"frees-rpc-server"</span>        <span class="o">%</span> <span class="s">"0.9.0"</span>
 
 <span class="c1">// required for a protocol definition:
-</span><span class="n">libraryDependencies</span> <span class="o">+=</span> <span class="s">"io.frees"</span> <span class="o">%%</span> <span class="s">"frees-rpc-client-core"</span>   <span class="o">%</span> <span class="s">"0.7.0"</span>
+</span><span class="n">libraryDependencies</span> <span class="o">+=</span> <span class="s">"io.frees"</span> <span class="o">%%</span> <span class="s">"frees-rpc-client-core"</span>   <span class="o">%</span> <span class="s">"0.9.0"</span>
 
 <span class="c1">// required for the use of the derived RPC Client/s, using either Netty or OkHttp as transport layer:
-</span><span class="n">libraryDependencies</span> <span class="o">+=</span> <span class="s">"io.frees"</span> <span class="o">%%</span> <span class="s">"frees-rpc-client-netty"</span>  <span class="o">%</span> <span class="s">"0.7.0"</span>
+</span><span class="n">libraryDependencies</span> <span class="o">+=</span> <span class="s">"io.frees"</span> <span class="o">%%</span> <span class="s">"frees-rpc-client-netty"</span>  <span class="o">%</span> <span class="s">"0.9.0"</span>
 <span class="c1">// or:
-</span><span class="n">libraryDependencies</span> <span class="o">+=</span> <span class="s">"io.frees"</span> <span class="o">%%</span> <span class="s">"frees-rpc-client-okhttp"</span> <span class="o">%</span> <span class="s">"0.7.0"</span>
+</span><span class="n">libraryDependencies</span> <span class="o">+=</span> <span class="s">"io.frees"</span> <span class="o">%%</span> <span class="s">"frees-rpc-client-okhttp"</span> <span class="o">%</span> <span class="s">"0.9.0"</span>
 
 <span class="c1">// optional - for both server and client configuration.
-</span><span class="n">libraryDependencies</span> <span class="o">+=</span> <span class="s">"io.frees"</span> <span class="o">%%</span> <span class="s">"frees-rpc-config"</span>        <span class="o">%</span> <span class="s">"0.7.0"</span>
+</span><span class="n">libraryDependencies</span> <span class="o">+=</span> <span class="s">"io.frees"</span> <span class="o">%%</span> <span class="s">"frees-rpc-config"</span>        <span class="o">%</span> <span class="s">"0.9.0"</span>
 </code></pre>
 </div>
 
@@ -547,7 +547,7 @@ service Greeter {
 <span class="k">import</span> <span class="nn">freestyle.rpc.server._</span>
 <span class="k">import</span> <span class="nn">freestyle.rpc.server.handlers._</span>
 <span class="k">import</span> <span class="nn">freestyle.rpc.server.implicits._</span>
-<span class="k">import</span> <span class="nn">freestyle.free.asyncCatsEffect.implicits._</span>
+<span class="k">import</span> <span class="nn">freestyle.async.catsEffect.implicits._</span>
 <span class="k">import</span> <span class="nn">service._</span>
 
 <span class="k">object</span> <span class="nc">gserver</span> <span class="o">{</span>
@@ -637,7 +637,7 @@ service Greeter {
 <div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">cats.implicits._</span>
 <span class="k">import</span> <span class="nn">cats.effect.IO</span>
 <span class="k">import</span> <span class="nn">freestyle.free.config.implicits._</span>
-<span class="k">import</span> <span class="nn">freestyle.free.asyncCatsEffect.implicits._</span>
+<span class="k">import</span> <span class="nn">freestyle.async.catsEffect.implicits._</span>
 <span class="k">import</span> <span class="nn">freestyle.rpc.client._</span>
 <span class="k">import</span> <span class="nn">freestyle.rpc.client.config._</span>
 <span class="k">import</span> <span class="nn">freestyle.rpc.client.implicits._</span>
