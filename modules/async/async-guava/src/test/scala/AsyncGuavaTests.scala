@@ -15,7 +15,7 @@
  */
 
 package freestyle.async
-package asyncGuava
+package guava
 
 import java.util.concurrent.{Callable, Executors}
 

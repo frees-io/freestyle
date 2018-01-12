@@ -93,7 +93,7 @@ We can run these programs using:
 - Cats' `IO` as target effect type:
 
 ```tut:book
-import freestyle.free.asyncCatsEffect.implicits._
+import freestyle.async.catsEffect.implicits._
 
 import scala.concurrent.{Await, ExecutionContext}
 import scala.concurrent.duration.Duration

@@ -15,7 +15,7 @@
  */
 
 package freestyle.async
-package asyncGuava
+package guava
 
 import cats.~>
 import com.google.common.util.concurrent._

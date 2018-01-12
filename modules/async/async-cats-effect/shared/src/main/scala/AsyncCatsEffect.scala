@@ -15,7 +15,7 @@
  */
 
 package freestyle.async
-package asyncCatsEffect
+package catsEffect
 
 import cats.effect.Effect
 

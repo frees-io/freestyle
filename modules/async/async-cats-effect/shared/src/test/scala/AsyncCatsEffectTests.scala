@@ -15,14 +15,14 @@
  */
 
 package freestyle.async
-package asyncCatsEffect
+package catsEffect
 
 import cats.effect.IO
 import freestyle.free._
 import freestyle.free.implicits._
 import freestyle.free.async._
 import freestyle.free.async.implicits._
-import freestyle.async.asyncCatsEffect.implicits._
+import freestyle.async.catsEffect.implicits._
 import org.scalatest.{AsyncWordSpec, Matchers}
 import scala.concurrent.ExecutionContext
 
