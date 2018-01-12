@@ -14,7 +14,34 @@
  * limitations under the License.
  */
 
-package freestyle.free
+package freestyle.tagless
 package effects
 
-object implicits extends option.FreeImplicits with error.FreeImplicits
+import cats.mtl.FunctorTell
+
+object writer {
+
+  final class AccumulatorProvider[W] {
+
+    @tagless sealed abstract class WriterM {
+      def writer[A](aw: (W, A)): FS[A]
+      def tell(w: W): FS[Unit]
+    }
+
+    trait Implicits {
+
+      implicit def freestyleWriterMHandler[M[_]](
+          implicit FT: FunctorTell[M, W]): WriterM.Handler[M] =
+        new WriterM.Handler[M] {
+          def writer[A](aw: (W, A)): M[A] = FT.tuple(aw)
+          def tell(w: W): M[Unit]         = FT.tell(w)
+        }
+
+    }
+
+    object implicits extends Implicits
+  }
+
+  def apply[W] = new AccumulatorProvider[W]
+
+}

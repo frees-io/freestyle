@@ -17,23 +17,13 @@
 package freestyle.free
 package effects
 
-import cats.Applicative
-import cats.mtl.FunctorEmpty
-
 object option {
 
-  @free sealed trait OptionM {
-    def option[A](fa: Option[A]): FS[A]
-    def none[A]: FS[A]
-  }
+  type OptionM[F[_]] = freestyle.tagless.effects.option.OptionM.StackSafe[F]
 
-  trait Implicits {
-    implicit def freeStyleOptionMHandler[M[_]](
-        implicit FE: FunctorEmpty[M], A: Applicative[M]): OptionM.Handler[M] =
-      new OptionM.Handler[M] {
-        def option[A](fa: Option[A]): M[A] = FE.flattenOption(A.pure(fa))
-        def none[A]: M[A]                  = option(Option.empty[A])
-      }
+  val OptionM = freestyle.tagless.effects.option.OptionM.StackSafe
+
+  trait FreeImplicits extends freestyle.tagless.effects.option.Implicits {
 
     class OptionFreeSLift[F[_]: OptionM] extends FreeSLift[F, Option] {
       def liftFSPar[A](fa: Option[A]): FreeS.Par[F, A] = OptionM[F].option(fa)
@@ -42,5 +32,5 @@ object option {
     implicit def freeSLiftOption[F[_]: OptionM]: FreeSLift[F, Option] = new OptionFreeSLift[F]
   }
 
-  object implicits extends Implicits
+  object implicits extends FreeImplicits
 }

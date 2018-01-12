@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package freestyle.free
+package freestyle.tagless
 package effects
 
-object implicits extends option.FreeImplicits with error.FreeImplicits
+object implicits extends option.Implicits with error.Implicits

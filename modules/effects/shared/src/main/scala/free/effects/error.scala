@@ -17,24 +17,13 @@
 package freestyle.free
 package effects
 
-import cats.{Eval, MonadError}
-
 object error {
 
-  @free sealed trait ErrorM {
-    def either[A](fa: Either[Throwable, A]): FS[A]
-    def error[A](e: Throwable): FS[A]
-    def catchNonFatal[A](a: Eval[A]): FS[A]
-  }
+  type ErrorM[F[_]] = freestyle.tagless.effects.error.ErrorM.StackSafe[F]
 
-  trait Implicits {
+  val ErrorM = freestyle.tagless.effects.error.ErrorM.StackSafe
 
-    implicit def freeStyleErrorMHandler[M[_]](
-        implicit ME: MonadError[M, Throwable]): ErrorM.Handler[M] = new ErrorM.Handler[M] {
-      def either[A](fa: Either[Throwable, A]): M[A] = fa.fold(ME.raiseError[A], ME.pure[A])
-      def error[A](e: Throwable): M[A]              = ME.raiseError[A](e)
-      def catchNonFatal[A](a: Eval[A]): M[A]        = ME.catchNonFatal[A](a.value)
-    }
+  trait FreeImplicits extends freestyle.tagless.effects.error.Implicits {
 
     class ErrorFreeSLift[F[_]: ErrorM] extends FreeSLift[F, Either[Throwable, ?]] {
       def liftFSPar[A](fa: Either[Throwable, A]): FreeS.Par[F, A] = ErrorM[F].either(fa)
@@ -45,5 +34,5 @@ object error {
 
   }
 
-  object implicits extends Implicits
+  object implicits extends FreeImplicits
 }
