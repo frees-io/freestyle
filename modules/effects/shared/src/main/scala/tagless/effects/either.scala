@@ -34,7 +34,7 @@ object either {
     trait Implicits {
       implicit def freeStyleEitherMHandler[M[_]](
           implicit ME: MonadError[M, E]): EitherM.Handler[M] = new EitherM.Handler[M] {
-        def either[A](fa: Either[E, A]): M[A] = fa.fold(ME.raiseError[A], ME.pure[A])
+        def either[A](fa: Either[E, A]): M[A] = ME.fromEither(fa)
         def error[A](e: E): M[A]              = ME.raiseError[A](e)
         def catchNonFatal[A](a: Eval[A], f: Throwable => E): M[A] =
           try ME.pure(a.value)

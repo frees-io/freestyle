@@ -31,7 +31,7 @@ object error {
 
     implicit def freeStyleErrorMHandler[M[_]](
         implicit ME: MonadError[M, Throwable]): ErrorM.Handler[M] = new ErrorM.Handler[M] {
-      def either[A](fa: Either[Throwable, A]): M[A] = fa.fold(ME.raiseError[A], ME.pure[A])
+      def either[A](fa: Either[Throwable, A]): M[A] = ME.fromEither(fa)
       def error[A](e: Throwable): M[A]              = ME.raiseError[A](e)
       def catchNonFatal[A](a: Eval[A]): M[A]        = ME.catchNonFatal[A](a.value)
     }
