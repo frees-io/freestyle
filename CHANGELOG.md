@@ -1,5 +1,13 @@
 # Changelog
 
+## 01/12/2018 - Version 0.6.0
+
+Release changes:
+
+* Fix hyphen misspell in for-comprehension inside README ([#505](https://github.com/frees-io/freestyle/pull/505))
+* Freestyle Effects for @tagless ([#507](https://github.com/frees-io/freestyle/pull/507))
+
+
 ## 01/11/2018 - Version 0.5.3
 
 Release changes:
