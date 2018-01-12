@@ -14,12 +14,11 @@
  * limitations under the License.
  */
 
-package freestyle.free.asyncGuava
+package freestyle.async
+package asyncGuava
 
 import cats.~>
 import com.google.common.util.concurrent._
-import freestyle.free._
-import freestyle.async.AsyncContext
 import java.util.concurrent.{Executor => JavaExecutor}
 
 import scala.concurrent.ExecutionContext
@@ -27,11 +26,11 @@ import scala.concurrent.ExecutionContext
 trait AsyncGuavaImplicits {
 
   class ListenableFuture2AsyncM[F[_]](implicit AC: AsyncContext[F], E: ExecutionContext)
-      extends FSHandler[ListenableFuture, F] {
-    override def apply[A](listenableFuture: ListenableFuture[A]): F[A] =
+      extends (ListenableFuture ~> F) {
+    override def apply[A](fa: ListenableFuture[A]): F[A] =
       AC.runAsync { cb =>
         Futures.addCallback(
-          listenableFuture,
+          fa,
           new FutureCallback[A] {
             override def onSuccess(result: A): Unit = cb(Right(result))
 

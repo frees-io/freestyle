@@ -14,20 +14,21 @@
  * limitations under the License.
  */
 
-package freestyle.free.asyncCatsEffect
+package freestyle.async
+package asyncCatsEffect
 
 import cats.effect.IO
 import freestyle.free._
 import freestyle.free.implicits._
 import freestyle.free.async._
 import freestyle.free.async.implicits._
-import freestyle.free.asyncCatsEffect.implicits._
+import freestyle.async.asyncCatsEffect.implicits._
 import org.scalatest.{AsyncWordSpec, Matchers}
 import scala.concurrent.ExecutionContext
 
-class AsyncFs2Tests extends AsyncWordSpec with Matchers {
+class AsyncCatsEffectTests extends AsyncWordSpec with Matchers {
 
-  implicit override def executionContext = ExecutionContext.Implicits.global
+  implicit override def executionContext: ExecutionContext = ExecutionContext.Implicits.global
 
   "Async Cats Effect Freestyle integration" should {
     "support IO as the target runtime" in {

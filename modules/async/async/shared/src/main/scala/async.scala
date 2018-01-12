@@ -19,7 +19,7 @@ package freestyle
 import scala.util._
 import scala.concurrent._
 
-object async {
+package object async {
 
   /** An asynchronous computation that might fail. **/
   type Proc[A] = (Either[Throwable, A] => Unit) => Unit

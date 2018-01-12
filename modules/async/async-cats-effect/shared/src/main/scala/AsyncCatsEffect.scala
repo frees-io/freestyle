@@ -14,10 +14,9 @@
  * limitations under the License.
  */
 
-package freestyle.free.asyncCatsEffect
+package freestyle.async
+package asyncCatsEffect
 
-import freestyle.async._
-import freestyle.free.async._
 import cats.effect.Effect
 
 trait AsyncCatsEffectImplicits {
