@@ -60,7 +60,10 @@ object async {
 
     final class FutureOps[A](f: Future[A]) {
 
+      @deprecated("Use unsafeTo instead.", "0.5.4")
       def to[F[_]](implicit AC: AsyncContext[F], E: ExecutionContext): F[A] = future2AsyncM[F, A](f)
+
+      def unsafeTo[F[_]](implicit AC: AsyncContext[F], E: ExecutionContext): F[A] = future2AsyncM[F, A](f)
 
     }
 
