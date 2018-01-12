@@ -1,5 +1,12 @@
 # Changelog
 
+## 01/12/2018 - Version 0.6.1
+
+Release changes:
+
+* Guava Async refactor ([#511](https://github.com/frees-io/freestyle/pull/511))
+
+
 ## 01/12/2018 - Version 0.6.0
 
 Release changes:
