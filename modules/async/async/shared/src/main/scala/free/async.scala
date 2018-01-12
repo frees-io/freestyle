@@ -30,18 +30,11 @@ object async {
 
   class Future2AsyncM[F[_]](implicit AC: AsyncContext[F], E: ExecutionContext)
     extends FSHandler[Future, F] {
-    override def apply[A](future: Future[A]): F[A] =
-      AC.runAsync { cb =>
-        E.execute(new Runnable {
-          def run(): Unit = future.onComplete {
-            case Failure(e) => cb(Left(e))
-            case Success(r) => cb(Right(r))
-          }
-        })
-      }
+    override def apply[A](future: Future[A]): F[A] = future2AsyncM[F, A](future)
+
   }
 
-  trait Implicits {
+  trait FreeImplicits extends Implicits with Syntax {
 
     implicit def freeStyleAsyncMHandler[M[_]](
         implicit MA: AsyncContext[M]
@@ -52,18 +45,5 @@ object async {
       }
   }
 
-  trait Syntax {
-
-    implicit def futureOps[A](f: Future[A]): FutureOps[A] = new FutureOps(f)
-
-    final class FutureOps[A](f: Future[A]) {
-
-      def to[F[_]](implicit AC: AsyncContext[F], E: ExecutionContext): F[A] =
-        new Future2AsyncM[F].apply(f)
-
-    }
-
-  }
-
-  object implicits extends Implicits with Syntax
+  object implicits extends FreeImplicits
 }

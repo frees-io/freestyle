@@ -28,7 +28,7 @@ object async {
     def async[A](fa: Proc[A]): FS[A]
   }
 
-  trait Implicits {
+  trait AsyncImplicits extends Implicits with Syntax {
 
     implicit def taglessAsyncMHandler[M[_]](implicit MA: AsyncContext[M]): AsyncM.Handler[M] =
       new AsyncM.Handler[M] {
@@ -36,5 +36,5 @@ object async {
       }
   }
 
-  object implicits extends Implicits
+  object implicits extends AsyncImplicits
 }

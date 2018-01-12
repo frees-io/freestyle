@@ -21,7 +21,6 @@ import cats.instances.future._
 import cats.syntax.flatMap._
 import cats.syntax.functor._
 import freestyle.async.AsyncContext
-import freestyle.async.implicits._
 import freestyle.tagless._
 import freestyle.tagless.async._
 import freestyle.tagless.async.implicits._

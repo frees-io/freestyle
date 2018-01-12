@@ -29,6 +29,17 @@ object async {
     def runAsync[A](fa: Proc[A]): M[A]
   }
 
+  def future2AsyncM[F[_], A](
+      future: Future[A])(implicit AC: AsyncContext[F], E: ExecutionContext): F[A] =
+    AC.runAsync { cb =>
+      E.execute(new Runnable {
+        def run(): Unit = future.onComplete {
+          case Failure(e) => cb(Left(e))
+          case Success(r) => cb(Right(r))
+        }
+      })
+    }
+
   trait Implicits {
     implicit def futureAsyncContext(implicit ec: ExecutionContext) = new AsyncContext[Future] {
       def runAsync[A](fa: Proc[A]): Future[A] = {
@@ -42,5 +53,18 @@ object async {
       }
     }
   }
+
+  trait Syntax {
+
+    implicit def futureOps[A](f: Future[A]): FutureOps[A] = new FutureOps(f)
+
+    final class FutureOps[A](f: Future[A]) {
+
+      def to[F[_]](implicit AC: AsyncContext[F], E: ExecutionContext): F[A] = future2AsyncM[F, A](f)
+
+    }
+
+  }
+
   object implicits extends Implicits
 }
