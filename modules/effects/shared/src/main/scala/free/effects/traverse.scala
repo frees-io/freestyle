@@ -17,41 +17,30 @@
 package freestyle.free
 package effects
 
-import cats.{~>, Alternative, Foldable, Monad}
-
 object traverse {
 
   final class TraverseProvider[G[_]] {
 
-    /** Acts as a generator providing traversable semantics to programs
-     */
-    @free sealed abstract class TraverseM {
-      def empty[A]: FS[A]
-      def fromTraversable[A](ta: G[A]): FS[A]
+    val taglessV: freestyle.tagless.effects.traverse.TraverseProvider[G] =
+      freestyle.tagless.effects.traverse[G]
+
+    type TraverseM[F[_]] = taglessV.TraverseM.StackSafe[F]
+
+    val TraverseM = taglessV.TraverseM.StackSafe
+
+    trait FreeImplicits extends taglessV.Implicits {
+
+      class TraverseFreeSLift[F[_]: TraverseM] extends FreeSLift[F, G] {
+        def liftFSPar[A](fa: G[A]): FreeS.Par[F, A] = TraverseM[F].fromTraversable(fa)
+      }
+
+      implicit def freeSLiftTraverse[F[_]: TraverseM]: FreeSLift[F, G] =
+        new TraverseFreeSLift[F]
+
     }
 
-    /** Interpretable as long as a `Foldable` instance for G[_] and a `Monad` and
-     * an `Alternative` instnace for M[_] exists in scope.
-     */
-    trait Implicits {
-      implicit def freestyleTraverseMHandler[F[_], M[_]](
-          implicit M: Monad[M],
-          MA: Alternative[M],
-          FT: Foldable[G]): TraverseM.Handler[M] =
-        new TraverseM.Handler[M] {
-          def empty[A]: M[A]                     = MA.empty[A]
-          def fromTraversable[A](ta: G[A]): M[A] = FT.foldMap(ta)(MA.pure)(MA.algebra[A])
-        }
-    }
+    object implicits extends FreeImplicits
 
-    class TraverseFreeSLift[F[_]: TraverseM] extends FreeSLift[F, G] {
-      def liftFSPar[A](fa: G[A]): FreeS.Par[F, A] = TraverseM[F].fromTraversable(fa)
-    }
-
-    implicit def freeSLiftTraverse[F[_]: TraverseM]: FreeSLift[F, G] =
-      new TraverseFreeSLift[F]
-
-    object implicits extends Implicits
   }
 
   def apply[T[_]] = new TraverseProvider[T]

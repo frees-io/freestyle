@@ -19,7 +19,7 @@ package freestyle
 import scala.util._
 import scala.concurrent._
 
-object async {
+package object async {
 
   /** An asynchronous computation that might fail. **/
   type Proc[A] = (Either[Throwable, A] => Unit) => Unit
@@ -28,6 +28,17 @@ object async {
   trait AsyncContext[M[_]] {
     def runAsync[A](fa: Proc[A]): M[A]
   }
+
+  def future2AsyncM[F[_], A](
+      future: Future[A])(implicit AC: AsyncContext[F], E: ExecutionContext): F[A] =
+    AC.runAsync { cb =>
+      E.execute(new Runnable {
+        def run(): Unit = future.onComplete {
+          case Failure(e) => cb(Left(e))
+          case Success(r) => cb(Right(r))
+        }
+      })
+    }
 
   trait Implicits {
     implicit def futureAsyncContext(implicit ec: ExecutionContext) = new AsyncContext[Future] {
@@ -42,5 +53,20 @@ object async {
       }
     }
   }
-  object implicits extends Implicits
+
+  trait Syntax {
+
+    implicit def futureOps[A](f: Future[A]): FutureOps[A] = new FutureOps(f)
+
+    final class FutureOps[A](f: Future[A]) {
+
+      @deprecated("Use unsafeTo instead.", "0.6.0")
+      def to[F[_]](implicit AC: AsyncContext[F], E: ExecutionContext): F[A] = future2AsyncM[F, A](f)
+
+      def unsafeTo[F[_]](implicit AC: AsyncContext[F], E: ExecutionContext): F[A] = future2AsyncM[F, A](f)
+
+    }
+
+  }
+
 }

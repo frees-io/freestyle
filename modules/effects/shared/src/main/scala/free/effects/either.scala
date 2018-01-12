@@ -17,30 +17,17 @@
 package freestyle.free
 package effects
 
-import cats.{Eval, MonadError}
-import scala.util.control.NonFatal
-
 object either {
 
   final class ErrorProvider[E] {
 
-    @free sealed trait EitherM {
-      def either[A](fa: Either[E, A]): FS[A]
-      def error[A](e: E): FS[A]
-      def catchNonFatal[A](a: Eval[A], f: Throwable => E): FS[A]
-    }
+    val taglessV: freestyle.tagless.effects.either.ErrorProvider[E] = freestyle.tagless.effects.either[E]
 
-    trait Implicits {
-      implicit def freeStyleEitherMHandler[M[_]](
-          implicit ME: MonadError[M, E]): EitherM.Handler[M] = new EitherM.Handler[M] {
-        def either[A](fa: Either[E, A]): M[A] = fa.fold(ME.raiseError[A], ME.pure[A])
-        def error[A](e: E): M[A]              = ME.raiseError[A](e)
-        def catchNonFatal[A](a: Eval[A], f: Throwable => E): M[A] =
-          try ME.pure(a.value)
-          catch {
-            case NonFatal(e) => ME.raiseError(f(e))
-          }
-      }
+    type EitherM[F[_]] = taglessV.EitherM.StackSafe[F]
+
+    val EitherM = taglessV.EitherM.StackSafe
+
+    trait FreeImplicits extends taglessV.Implicits {
 
       class EitherFreeSLift[F[_]: EitherM] extends FreeSLift[F, Either[E, ?]] {
         def liftFSPar[A](fa: Either[E, A]): FreeS.Par[F, A] = EitherM[F].either(fa)
@@ -48,9 +35,10 @@ object either {
 
       implicit def freeSLiftEither[F[_]: EitherM]: FreeSLift[F, Either[E, ?]] =
         new EitherFreeSLift[F]
+
     }
 
-    object implicits extends Implicits
+    object implicits extends FreeImplicits
   }
 
   def apply[E]: ErrorProvider[E] = new ErrorProvider

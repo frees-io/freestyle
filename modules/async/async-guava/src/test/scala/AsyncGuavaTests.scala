@@ -14,20 +14,19 @@
  * limitations under the License.
  */
 
-package freestyle.free.asyncGuava
+package freestyle.async
+package guava
 
 import java.util.concurrent.{Callable, Executors}
 
 import cats.~>
 import com.google.common.util.concurrent.{ListenableFuture, ListeningExecutorService, MoreExecutors}
 import org.scalatest._
-import freestyle.async.implicits._
-import freestyle.free.async.implicits._
 
 import scala.concurrent.duration.Duration
 import scala.concurrent.{Await, ExecutionContext, Future}
 
-class AsyncGuavaTests extends WordSpec with Matchers {
+class AsyncGuavaTests extends WordSpec with Matchers with Implicits {
 
   import ExecutionContext.Implicits.global
 
@@ -47,6 +46,7 @@ class AsyncGuavaTests extends WordSpec with Matchers {
     })
 
   val handler: ListenableFuture ~> Future = implicits.listenableFuture2Async[Future]
+
   val conv: ListenableFuture[Void] => ListenableFuture[Unit] =
     implicits.listenableVoidToListenableUnit
 

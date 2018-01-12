@@ -17,29 +17,18 @@
 package freestyle.free
 package effects
 
-import cats.mtl.FunctorTell
-
 object writer {
 
-  final class AccumulatorProvider[W] {
+  final class AccumulatorProvider[E] {
 
-    @free sealed abstract class WriterM {
-      def writer[A](aw: (W, A)): FS[A]
-      def tell(w: W): FS[Unit]
-    }
+    val taglessV: freestyle.tagless.effects.writer.AccumulatorProvider[E] =
+      freestyle.tagless.effects.writer[E]
 
-    trait Implicits {
+    type WriterM[F[_]] = taglessV.WriterM.StackSafe[F]
 
-      implicit def freestyleWriterMHandler[M[_]](
-          implicit FT: FunctorTell[M, W]): WriterM.Handler[M] =
-        new WriterM.Handler[M] {
-          def writer[A](aw: (W, A)): M[A] = FT.tuple(aw)
-          def tell(w: W): M[Unit]         = FT.tell(w)
-        }
+    val WriterM = taglessV.WriterM.StackSafe
 
-    }
-
-    object implicits extends Implicits
+    object implicits extends taglessV.Implicits
   }
 
   def apply[W] = new AccumulatorProvider[W]

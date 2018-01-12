@@ -15,25 +15,31 @@
  */
 
 package freestyle.tagless
+package effects
 
-import scala.concurrent._
-import scala.util._
-import freestyle.async._
+import cats.Applicative
+import cats.mtl.FunctorEmpty
 
-object async {
+object option {
 
-  /** Async computation algebra. **/
-  @tagless trait AsyncM {
-    def async[A](fa: Proc[A]): FS[A]
+  @tagless sealed trait OptionM {
+    def option[A](fa: Option[A]): FS[A]
+    def none[A]: FS[A]
   }
 
-  trait AsyncImplicits extends Implicits with Syntax {
-
-    implicit def taglessAsyncMHandler[M[_]](implicit MA: AsyncContext[M]): AsyncM.Handler[M] =
-      new AsyncM.Handler[M] {
-        def async[A](fa: Proc[A]): M[A] = MA.runAsync(fa)
+  trait Implicits {
+    implicit def freeStyleOptionMHandler[M[_]](
+        implicit FE: FunctorEmpty[M], A: Applicative[M]): OptionM.Handler[M] =
+      new OptionM.Handler[M] {
+        def option[A](fa: Option[A]): M[A] = FE.flattenOption(A.pure(fa))
+        def none[A]: M[A]                  = option(Option.empty[A])
       }
+
+    implicit class OptionFSLift[F[_]: OptionM, A](fa: Option[A])  {
+      def liftF: F[A] = OptionM[F].option(fa)
+    }
+
   }
 
-  object implicits extends AsyncImplicits
+  object implicits extends Implicits
 }

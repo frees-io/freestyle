@@ -14,7 +14,33 @@
  * limitations under the License.
  */
 
-package freestyle.free
+package freestyle.tagless
 package effects
 
-object implicits extends option.FreeImplicits with error.FreeImplicits
+import cats.mtl.ApplicativeAsk
+
+object reader {
+
+  final class EnvironmentProvider[R] {
+
+    @tagless abstract class ReaderM {
+      def ask: FS[R]
+      def reader[B](f: R => B): FS[B]
+    }
+
+    trait Implicits {
+
+      implicit def freestyleReaderMHandler[M[_]](
+          implicit AL: ApplicativeAsk[M, R]): ReaderM.Handler[M] =
+        new ReaderM.Handler[M] {
+          def ask: M[R]                  = AL.ask
+          def reader[B](f: R => B): M[B] = AL.reader(f)
+        }
+    }
+
+    object implicits extends Implicits
+  }
+
+  def apply[R] = new EnvironmentProvider[R]
+
+}

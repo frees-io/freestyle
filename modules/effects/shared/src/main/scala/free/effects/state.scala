@@ -17,28 +17,18 @@
 package freestyle.free
 package effects
 
-import cats.mtl.MonadState
-
 object state {
 
   final class StateSeedProvider[S] {
 
-    @free sealed abstract class StateM {
-      def get: FS[S]
-      def set(s: S): FS[Unit]
-      def modify(f: S => S): FS[Unit]
-      def inspect[A](f: S => A): FS[A]
-    }
+    val taglessV: freestyle.tagless.effects.state.StateSeedProvider[S] =
+      freestyle.tagless.effects.state[S]
 
-    trait Implicits {
+    type StateM[F[_]] = taglessV.StateM.StackSafe[F]
 
-      implicit def freestyleStateMHandler[M[_]](implicit MS: MonadState[M, S]): StateM.Handler[M] =
-        new StateM.Handler[M] {
-          def get: M[S]                   = MS.get
-          def set(s: S): M[Unit]          = MS.set(s)
-          def modify(f: S => S): M[Unit]  = MS.modify(f)
-          def inspect[A](f: S => A): M[A] = MS.inspect(f)
-        }
+    val StateM = taglessV.StateM.StackSafe
+
+    trait FreeImplicits extends taglessV.Implicits {
 
       class StateInspectFreeSLift[F[_]: StateM] extends FreeSLift[F, Function1[S, ?]] {
         def liftFSPar[A](fa: S => A): FreeS.Par[F, A] = StateM[F].inspect(fa)
@@ -49,7 +39,8 @@ object state {
 
     }
 
-    object implicits extends Implicits
+    object implicits extends FreeImplicits
+
   }
 
   def apply[S] = new StateSeedProvider[S]
