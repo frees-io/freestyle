@@ -1,0 +1,778 @@
+<html><head><title>Freestyle</title><meta charset="utf-8" /><meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" /><meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="author" content="47 Degrees" /><meta name="description" content="A Cohesive &amp; Pragmatic Framework of FP centric Scala libraries" /><meta name="og:image" content="/img/poster.png" /><meta name="og:title" content="Freestyle" /><meta name="og:site_name" content="Freestyle" /><meta name="og:url" content="https://frees-io.github.io/freestyle/" /><meta name="og:type" content="website" /><meta name="og:description" content="A Cohesive &amp; Pragmatic Framework of FP centric Scala libraries" /><link rel="icon" type="image/png" href="/img/favicon.png" /><meta name="twitter:title" content="Freestyle" /><meta name="twitter:image" content="https://frees-io.github.io/freestyle/img/poster.png" /><meta name="twitter:description" content="A Cohesive &amp; Pragmatic Framework of FP centric Scala libraries" /><meta name="twitter:card" content="summary_large_image" /><link rel="icon" type="image/png" sizes="16x16" href="/img/favicon16x16.png" /><link rel="icon" type="image/png" sizes="24x24" href="/img/favicon24x24.png" /><link rel="icon" type="image/png" sizes="32x32" href="/img/favicon32x32.png" /><link rel="icon" type="image/png" sizes="48x48" href="/img/favicon48x48.png" /><link rel="icon" type="image/png" sizes="57x57" href="/img/favicon57x57.png" /><link rel="icon" type="image/png" sizes="60x60" href="/img/favicon60x60.png" /><link rel="icon" type="image/png" sizes="64x64" href="/img/favicon64x64.png" /><link rel="icon" type="image/png" sizes="70x70" href="/img/favicon70x70.png" /><link rel="icon" type="image/png" sizes="72x72" href="/img/favicon72x72.png" /><link rel="icon" type="image/png" sizes="76x76" href="/img/favicon76x76.png" /><link rel="icon" type="image/png" sizes="96x96" href="/img/favicon96x96.png" /><link rel="icon" type="image/png" sizes="114x114" href="/img/favicon114x114.png" /><link rel="icon" type="image/png" sizes="120x120" href="/img/favicon120x120.png" /><link rel="icon" type="image/png" sizes="128x128" href="/img/favicon128x128.png" /><link rel="icon" type="image/png" sizes="144x144" href="/img/favicon144x144.png" /><link rel="icon" type="image/png" sizes="150x150" href="/img/favicon150x150.png" /><link rel="icon" type="image/png" sizes="152x152" href="/img/favicon152x152.png" /><link rel="icon" type="image/png" sizes="196x196" href="/img/favicon196x196.png" /><link rel="icon" type="image/png" sizes="310x310" href="/img/favicon310x310.png" /><link rel="icon" type="image/png" sizes="310x150" href="/img/favicon310x150.png" /><link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" /><link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" /><link rel="stylesheet" href="/highlight/styles/dracula.css" /><link rel="stylesheet" href="/css/style.css" /><link rel="stylesheet" href="/css/palette.css" /><link rel="stylesheet" href="/css/codemirror.css" /><link rel="stylesheet" href="/css/custom.css" /><link rel="stylesheet" href="/css/theme-code.css" /><script async="async">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+ga('create', 'UA-18433785-14' , 'auto');
+ga('send', 'pageview');
+      </script></head><body class="docs"><div id="wrapper"><div id="sidebar-wrapper"><ul id="sidebar" class="sidebar-nav"><li class="sidebar-brand"><a href="/" class="brand"><div class="brand-wrapper"><span>Freestyle</span></div></a></li> <li><a href="/docs/" class="">Quick Start</a></li> <li><a href="/docs/core/" class="">Core Concepts</a> <ul class="sub_section"> <li><a href="/docs/core/algebras/" class="">Algebras</a></li> <li><a href="/docs/core/modules/" class="">Modules</a></li> <li><a href="/docs/core/handlers/" class="">Handlers</a></li> <li><a href="/docs/core/parallelism/" class="">Parallelism</a></li> <li><a href="/docs/core/tagless/" class="">Tagless Final</a></li></ul></li> <li><a href="/docs/effects/" class="">Effects</a> <ul class="sub_section"> <li><a href="/docs/effects/error" class="">Error</a></li> <li><a href="/docs/effects/either" class="">Either</a></li> <li><a href="/docs/effects/option" class="">Option</a></li> <li><a href="/docs/effects/reader" class="">Reader</a></li> <li><a href="/docs/effects/writer" class="">Writer</a></li> <li><a href="/docs/effects/state" class="">State</a></li> <li><a href="/docs/effects/traverse" class="">Traverse</a></li> <li><a href="/docs/effects/validation" class="">Validation</a></li> <li><a href="/docs/effects/async" class="">Async Callbacks</a></li></ul></li> <li><a href="/docs/optimizations/" class="">Optimizations</a></li> <li><a href="/docs/stack/" class="">Example Target Stack</a></li> <li><a href="/TODO.html" class="">Patterns</a> <ul class="sub_section"> <li><a href="/docs/effects/Cache/" class="">Cache</a></li> <li><a href="/TODO.html" class="">Dependency Injection</a></li> <li><a href="/docs/patterns/config" class="">Configuration</a></li> <li><a href="/docs/patterns/logging" class="">Logging</a></li></ul></li> <li><a href="/docs/integrations" class="">Integrations</a> <ul class="sub_section"> <li><a href="/docs/integrations/cats" class="">Cats</a></li> <li><a href="/docs/integrations/play" class="">Play Framework</a></li> <li><a href="/docs/integrations/monix" class="">Monix</a></li> <li><a href="/docs/integrations/fetch" class="">Fetch</a></li> <li><a href="/docs/integrations/doobie" class="">Doobie</a></li> <li><a href="/docs/integrations/slick" class="">Slick</a></li> <li><a href="/docs/integrations/akkahttp" class="">Akka HTTP</a></li> <li><a href="/docs/integrations/finch" class="">Finch</a></li> <li><a href="/docs/integrations/http4s" class="">http4s</a></li> <li><a href="/docs/integrations/hammock" class="">Hammock</a></li></ul></li> <li><a href="/docs/rpc" class="">Libraries</a> <ul class="sub_section"> <li><a href="/docs/rpc" class="">Microservices</a></li> <li><a href="/docs/effects" class="">Effects</a></li> <li><a href="/docs/cassandra" class="">Cassandra</a></li> <li><a href="/docs/kafka" class="">Kafka</a></li></ul></li> <li><a href="/docs/related/" class="">Related Work</a> <ul class="sub_section"> <li><a href="/docs/related/#bibliography" class="">Bibliography</a></li> <li><a href="/docs/related/#Scala" class="">Scala Libraries</a></li></ul></li></ul></div><div id="page-content-wrapper"><div class="nav"><div class="container-fluid"><div class="row"><div class="col-lg-12"><div class="action-menu pull-left clearfix"><a href="#menu-toggle" id="menu-toggle"><i class="fa fa-bars" aria-hidden="true"></i></a></div><ul class="pull-right"><li id="gh-eyes-item" class="hidden-xs"><a href="https://github.com/frees-io/freestyle"><i class="fa fa-eye"></i><span>WATCH<span id="eyes" class="label label-default">--</span></span></a></li><li id="gh-stars-item" class="hidden-xs"><a href="https://github.com/frees-io/freestyle"><i class="fa fa-star-o"></i><span>STARS<span id="stars" class="label label-default">--</span></span></a></li><li><a href="#" onclick="shareSiteTwitter('Freestyle A Cohesive &amp; Pragmatic Framework of FP centric Scala libraries');"><i class="fa fa-twitter"></i></a></li><li><a href="#" onclick="shareSiteFacebook('Freestyle A Cohesive &amp; Pragmatic Framework of FP centric Scala libraries');"><i class="fa fa-facebook"></i></a></li><li><a href="#" onclick="shareSiteGoogle();"><i class="fa fa-google-plus"></i></a></li></ul></div></div></div></div><div id="content" data-github-owner="frees-io" data-github-repo="freestyle"><div class="content-wrapper"><section><h1 id="freestyle-rpc">Freestyle-RPC</h1>
+
+<p><a href="https://en.wikipedia.org/wiki/Remote_procedure_call">RPC</a> atop <strong>Freestyle</strong> is <strong><code class="highlighter-rouge">frees-rpc</code></strong>.</p>
+
+<p>Freestyle RPC is a purely functional library for building RPC endpoint based services with support for <a href="https://en.wikipedia.org/wiki/Remote_procedure_call">RPC</a> and <a href="https://http2.github.io/">HTTP/2</a>.</p>
+
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+<p><strong>Table of Contents</strong>  <em>generated with <a href="https://github.com/thlorenz/doctoc">DocToc</a></em></p>
+
+<ul>
+  <li><a href="#whats-frees-rpc">What’s frees-rpc</a></li>
+  <li><a href="#installation">Installation</a></li>
+  <li><a href="#about-grpc">About gRPC</a></li>
+  <li><a href="#messages-and-services">Messages and Services</a>
+    <ul>
+      <li><a href="#grpc">gRPC</a></li>
+      <li><a href="#frees-rpc">frees-rpc</a></li>
+    </ul>
+  </li>
+  <li><a href="#service-methods">Service Methods</a></li>
+  <li><a href="#generating-a-proto-file">Generating a .proto file</a>
+    <ul>
+      <li><a href="#plugin-installation">Plugin Installation</a></li>
+      <li><a href="#plugin-settings">Plugin Settings</a></li>
+      <li><a href="#generation-with-protogen">Generation with protoGen</a></li>
+    </ul>
+  </li>
+  <li><a href="#rpc-service-implementations">RPC Service Implementations</a>
+    <ul>
+      <li><a href="#server">Server</a></li>
+      <li><a href="#server-runtime">Server Runtime</a>
+        <ul>
+          <li><a href="#execution-context">Execution Context</a></li>
+          <li><a href="#runtime-implicits">Runtime Implicits</a></li>
+        </ul>
+      </li>
+      <li><a href="#server-bootstrap">Server Bootstrap</a></li>
+      <li><a href="#client">Client</a></li>
+      <li><a href="#client-runtime">Client Runtime</a>
+        <ul>
+          <li><a href="#execution-context-1">Execution Context</a></li>
+          <li><a href="#runtime-implicits-1">Runtime Implicits</a></li>
+        </ul>
+      </li>
+      <li><a href="#client-program">Client Program</a></li>
+    </ul>
+  </li>
+  <li><a href="#frees-rpc-annotations">frees-rpc annotations</a></li>
+  <li><a href="#next-steps">Next Steps</a></li>
+  <li><a href="#comparing-http-and-rpc">Comparing HTTP and RPC</a></li>
+  <li><a href="#references">References</a></li>
+</ul>
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
+<h2 id="whats-frees-rpc">What’s frees-rpc</h2>
+
+<p><a href="https://github.com/frees-io/freestyle-rpc">frees-rpc</a> provides the ability to combine <a href="https://en.wikipedia.org/wiki/Remote_procedure_call">RPC</a> protocols, services, and clients in your <code class="highlighter-rouge">Freestyle</code> program, thanks to <a href="https://grpc.io/">gRPC</a>. Although it’s fully integrated with <a href="https://grpc.io/">gRPC</a>, there are some important differences when defining the protocols, as we’ll see later on, since <a href="https://github.com/frees-io/freestyle-rpc">frees-rpc</a> follows the same philosophy as <code class="highlighter-rouge">Freestyle</code> core, being macro-powered.</p>
+
+<h2 id="installation">Installation</h2>
+
+<p><code class="highlighter-rouge">frees-rpc</code> is cross-built for Scala <code class="highlighter-rouge">2.11.x</code> and <code class="highlighter-rouge">2.12.x</code>:</p>
+
+<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="c1">// required for the RPC Server:
+</span><span class="n">libraryDependencies</span> <span class="o">+=</span> <span class="s">"io.frees"</span> <span class="o">%%</span> <span class="s">"frees-rpc-server"</span>        <span class="o">%</span> <span class="s">"0.7.0"</span>
+
+<span class="c1">// required for a protocol definition:
+</span><span class="n">libraryDependencies</span> <span class="o">+=</span> <span class="s">"io.frees"</span> <span class="o">%%</span> <span class="s">"frees-rpc-client-core"</span>   <span class="o">%</span> <span class="s">"0.7.0"</span>
+
+<span class="c1">// required for the use of the derived RPC Client/s, using either Netty or OkHttp as transport layer:
+</span><span class="n">libraryDependencies</span> <span class="o">+=</span> <span class="s">"io.frees"</span> <span class="o">%%</span> <span class="s">"frees-rpc-client-netty"</span>  <span class="o">%</span> <span class="s">"0.7.0"</span>
+<span class="c1">// or:
+</span><span class="n">libraryDependencies</span> <span class="o">+=</span> <span class="s">"io.frees"</span> <span class="o">%%</span> <span class="s">"frees-rpc-client-okhttp"</span> <span class="o">%</span> <span class="s">"0.7.0"</span>
+
+<span class="c1">// optional - for both server and client configuration.
+</span><span class="n">libraryDependencies</span> <span class="o">+=</span> <span class="s">"io.frees"</span> <span class="o">%%</span> <span class="s">"frees-rpc-config"</span>        <span class="o">%</span> <span class="s">"0.7.0"</span>
+</code></pre>
+</div>
+
+<p>Note: <code class="highlighter-rouge">frees-rpc-config</code> provides some configuration helpers using <a href="http://frees.io/docs/patterns/config/">frees-config</a> to load the application configuration values.</p>
+
+<h2 id="about-grpc">About gRPC</h2>
+
+<blockquote>
+  <p><a href="https://grpc.io/about/">gRPC</a> is a modern, open source, and high-performance RPC framework that can run in any environment. It can efficiently connect services in and across data centers with pluggable support for load balancing, tracing, health checking, and authentication. It’s also applicable in the last mile of distributed computing to connect devices, mobile applications, and browsers to backend services.</p>
+</blockquote>
+
+<p>In this project, we are focusing on the <a href="https://github.com/grpc/grpc-java">Java gRPC</a> implementation.</p>
+
+<p>In the upcoming sections, we’ll take a look at how we can implement RPC protocols (Messages and Services) in both <em>gRPC</em> and <em>frees-rpc</em>.</p>
+
+<h2 id="messages-and-services">Messages and Services</h2>
+
+<h3 id="grpc">gRPC</h3>
+
+<p>As you might know, <a href="https://grpc.io/">gRPC</a> uses protocol buffers (a.k.a. <em>protobuf</em>) by default:</p>
+
+<ul>
+  <li>As the Interface Definition Language (IDL) - for describing both the service interface and the structure of the payload messages. It is possible to use other alternatives if desired.</li>
+  <li>For serializing/deserializing structure data - similarly, as you do with <a href="https://en.wikipedia.org/wiki/JSON">JSON</a> data, defining files <code class="highlighter-rouge">.json</code> extension, with protobuf you have to define proto files with <code class="highlighter-rouge">.proto</code> as an extension.</li>
+</ul>
+
+<p>In the example given in the <a href="https://grpc.io/docs/guides/">gRPC guide</a>, you might have a proto file like this:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>message Person {
+  string name = 1;
+  int32 id = 2;
+  bool has_ponycopter = 3;
+}
+</code></pre>
+</div>
+
+<p>Then, once you’ve specified your data structures, you can use the protobuf compiler <code class="highlighter-rouge">protoc</code> to generate data access classes in your preferred language(s) from your proto definition.</p>
+
+<p>Likewise, you can define <a href="https://grpc.io/">gRPC</a> services in your proto files, with RPC method parameters and return types specified as protocol buffer messages:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>// The greeter service definition.
+service Greeter {
+  // Sends a greeting
+  rpc SayHello (HelloRequest) returns (HelloReply) {}
+}
+
+// The request message containing the user's name.
+message HelloRequest {
+  string name = 1;
+}
+
+// The response message containing the greetings
+message HelloReply {
+  string message = 1;
+}
+</code></pre>
+</div>
+
+<p>Correspondingly, <a href="https://grpc.io/">gRPC</a> also uses protoc with a special <a href="https://grpc.io/">gRPC</a> plugin to generate code from your proto file for this <code class="highlighter-rouge">Greeter</code> RPC service.</p>
+
+<p>You can find more information about Protocol Buffers in the <a href="https://developers.google.com/protocol-buffers/docs/overview">Protocol Buffers’ documentation</a>.</p>
+
+<h3 id="frees-rpc">frees-rpc</h3>
+
+<p>In the previous section, we’ve seen an overview of what <a href="https://grpc.io/">gRPC</a> offers for defining protocols and generating code (compiling protocol buffers). Now, we’ll show how <a href="https://github.com/frees-io/freestyle-rpc">frees-rpc</a> offers the same, but in the <strong>Freestyle</strong> fashion, following the FP principles.</p>
+
+<p>First things first, the main difference in respect to <a href="https://grpc.io/">gRPC</a> is that <a href="https://github.com/frees-io/freestyle-rpc">frees-rpc</a> doesn’t need <code class="highlighter-rouge">.proto</code> files, but it still uses protobuf, thanks to the <a href="https://github.com/btlines/pbdirect">PBDirect</a> library, which allows to read and write Scala objects directly to protobuf with no <code class="highlighter-rouge">.proto</code> file definitions. Therefore, in summary, we have:</p>
+
+<ul>
+  <li>Your protocols, both messages, and services, will reside with your business-logic in your Scala files using <a href="https://github.com/scalameta/scalameta">scalameta</a> annotations to set them up. We’ll see more details on this shortly.</li>
+  <li>Instead of reading <code class="highlighter-rouge">.proto</code> files to set up the <a href="https://en.wikipedia.org/wiki/Remote_procedure_call">RPC</a> messages and services, <a href="https://github.com/frees-io/freestyle-rpc">frees-rpc</a> offers (as an optional feature) to generate them, based on your protocols defined in your Scala code. This feature is offered to maintain compatibility with other languages and systems outside of Scala. We’ll check out this feature further in <a href="#generating-a-proto-file">this section</a>.</li>
+</ul>
+
+<p>Let’s start looking at how to define the <code class="highlighter-rouge">Person</code> message that we saw previously.
+Before starting, these are the Scala imports we need:</p>
+
+<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">freestyle.free._</span>
+<span class="k">import</span> <span class="nn">freestyle.rpc.protocol._</span>
+</code></pre>
+</div>
+
+<p><code class="highlighter-rouge">Person</code> definition would be defined as follows:</p>
+
+<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="cm">/**
+  * Message Example.
+  *
+  * @param name Person name.
+  * @param id Person Id.
+  * @param has_ponycopter Has Ponycopter check.
+  */</span>
+<span class="nd">@message</span>
+<span class="k">case</span> <span class="k">class</span> <span class="nc">Person</span><span class="o">(</span><span class="n">name</span><span class="k">:</span> <span class="kt">String</span><span class="o">,</span> <span class="n">id</span><span class="k">:</span> <span class="kt">Int</span><span class="o">,</span> <span class="n">has_ponycopter</span><span class="k">:</span> <span class="kt">Boolean</span><span class="o">)</span>
+</code></pre>
+</div>
+
+<p>As we can see, it’s quite simple since it’s just a Scala case class preceded by the <code class="highlighter-rouge">@message</code> annotation (<code class="highlighter-rouge">@message</code> is optional though and used exclusively by <a href="https://github.com/frees-io/sbt-freestyle-protogen">sbt-freestyle-protogen</a>):</p>
+
+<p>By the same token, let’s see now how the <code class="highlighter-rouge">Greeter</code> service would be translated to the <a href="https://github.com/frees-io/freestyle-rpc">frees-rpc</a> style (in your <code class="highlighter-rouge">.scala</code> file):</p>
+
+<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="nd">@option</span><span class="o">(</span><span class="n">name</span> <span class="k">=</span> <span class="s">"java_package"</span><span class="o">,</span> <span class="n">value</span> <span class="k">=</span> <span class="s">"quickstart"</span><span class="o">,</span> <span class="n">quote</span> <span class="k">=</span> <span class="kc">true</span><span class="o">)</span>
+<span class="nd">@option</span><span class="o">(</span><span class="n">name</span> <span class="k">=</span> <span class="s">"java_multiple_files"</span><span class="o">,</span> <span class="n">value</span> <span class="k">=</span> <span class="s">"true"</span><span class="o">,</span> <span class="n">quote</span> <span class="k">=</span> <span class="kc">false</span><span class="o">)</span>
+<span class="nd">@option</span><span class="o">(</span><span class="n">name</span> <span class="k">=</span> <span class="s">"java_outer_classname"</span><span class="o">,</span> <span class="n">value</span> <span class="k">=</span> <span class="s">"Quickstart"</span><span class="o">,</span> <span class="n">quote</span> <span class="k">=</span> <span class="kc">true</span><span class="o">)</span>
+<span class="k">object</span> <span class="nc">protocols</span> <span class="o">{</span>
+
+  <span class="cm">/**
+   * The request message containing the user's name.
+   * @param name User's name.
+   */</span>
+  <span class="nd">@message</span>
+  <span class="k">case</span> <span class="k">class</span> <span class="nc">HelloRequest</span><span class="o">(</span><span class="n">name</span><span class="k">:</span> <span class="kt">String</span><span class="o">)</span>
+
+  <span class="cm">/**
+   * The response message,
+   * @param message Message containing the greetings.
+   */</span>
+  <span class="nd">@message</span>
+  <span class="k">case</span> <span class="k">class</span> <span class="nc">HelloReply</span><span class="o">(</span><span class="n">message</span><span class="k">:</span> <span class="kt">String</span><span class="o">)</span>
+
+  <span class="nd">@service</span>
+  <span class="k">trait</span> <span class="nc">Greeter</span><span class="o">[</span><span class="kt">F</span><span class="o">[</span><span class="k">_</span><span class="o">]]</span> <span class="o">{</span>
+
+    <span class="cm">/**
+     * The greeter service definition.
+     *
+     * @param request Say Hello Request.
+     * @return HelloReply.
+     */</span>
+    <span class="nd">@rpc</span><span class="o">(</span><span class="nc">Protobuf</span><span class="o">)</span> <span class="k">def</span> <span class="n">sayHello</span><span class="o">(</span><span class="n">request</span><span class="k">:</span> <span class="kt">HelloRequest</span><span class="o">)</span><span class="k">:</span> <span class="kt">F</span><span class="o">[</span><span class="kt">HelloReply</span><span class="o">]</span>
+
+  <span class="o">}</span>
+<span class="o">}</span>
+</code></pre>
+</div>
+
+<p>Naturally, the <a href="https://en.wikipedia.org/wiki/Remote_procedure_call">RPC</a> services are grouped in a <a href="http://frees.io/docs/core/algebras/">@tagless algebra</a>. Therefore, we are following one of the primary principles of Freestyle; you only need to concentrate on the API that you want to expose as abstract smart constructors, without worrying how they will be implemented.</p>
+
+<p>In the above example, we can see that <code class="highlighter-rouge">sayHello</code> returns a <code class="highlighter-rouge">FS[HelloReply]</code>. However, very often the services might:</p>
+
+<ul>
+  <li>Return an empty response.</li>
+  <li>Receive an empty request.</li>
+  <li>A combination of both.</li>
+</ul>
+
+<p><code class="highlighter-rouge">frees-rpc</code> provides an <code class="highlighter-rouge">Empty</code> object, defined at <code class="highlighter-rouge">freestyle.rpc.protocol</code>, that you might want to use for these purposes.</p>
+
+<p>For instance:</p>
+
+<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="nd">@option</span><span class="o">(</span><span class="n">name</span> <span class="k">=</span> <span class="s">"java_package"</span><span class="o">,</span> <span class="n">value</span> <span class="k">=</span> <span class="s">"quickstart"</span><span class="o">,</span> <span class="n">quote</span> <span class="k">=</span> <span class="kc">true</span><span class="o">)</span>
+<span class="nd">@option</span><span class="o">(</span><span class="n">name</span> <span class="k">=</span> <span class="s">"java_multiple_files"</span><span class="o">,</span> <span class="n">value</span> <span class="k">=</span> <span class="s">"true"</span><span class="o">,</span> <span class="n">quote</span> <span class="k">=</span> <span class="kc">false</span><span class="o">)</span>
+<span class="nd">@option</span><span class="o">(</span><span class="n">name</span> <span class="k">=</span> <span class="s">"java_outer_classname"</span><span class="o">,</span> <span class="n">value</span> <span class="k">=</span> <span class="s">"Quickstart"</span><span class="o">,</span> <span class="n">quote</span> <span class="k">=</span> <span class="kc">true</span><span class="o">)</span>
+<span class="k">object</span> <span class="nc">protocol</span> <span class="o">{</span>
+
+  <span class="cm">/**
+   * The request message containing the user's name.
+   * @param name User's name.
+   */</span>
+  <span class="nd">@message</span>
+  <span class="k">case</span> <span class="k">class</span> <span class="nc">HelloRequest</span><span class="o">(</span><span class="n">name</span><span class="k">:</span> <span class="kt">String</span><span class="o">)</span>
+
+  <span class="cm">/**
+   * The response message,
+   * @param message Message containing the greetings.
+   */</span>
+  <span class="nd">@message</span>
+  <span class="k">case</span> <span class="k">class</span> <span class="nc">HelloReply</span><span class="o">(</span><span class="n">message</span><span class="k">:</span> <span class="kt">String</span><span class="o">)</span>
+
+  <span class="nd">@service</span>
+  <span class="k">trait</span> <span class="nc">Greeter</span><span class="o">[</span><span class="kt">F</span><span class="o">[</span><span class="k">_</span><span class="o">]]</span> <span class="o">{</span>
+
+    <span class="cm">/**
+     * The greeter service definition.
+     *
+     * @param request Say Hello Request.
+     * @return HelloReply.
+     */</span>
+    <span class="nd">@rpc</span><span class="o">(</span><span class="nc">Protobuf</span><span class="o">)</span> <span class="k">def</span> <span class="n">sayHello</span><span class="o">(</span><span class="n">request</span><span class="k">:</span> <span class="kt">HelloRequest</span><span class="o">)</span><span class="k">:</span> <span class="kt">F</span><span class="o">[</span><span class="kt">HelloReply</span><span class="o">]</span>
+
+    <span class="nd">@rpc</span><span class="o">(</span><span class="nc">Protobuf</span><span class="o">)</span> <span class="k">def</span> <span class="n">emptyResponse</span><span class="o">(</span><span class="n">request</span><span class="k">:</span> <span class="kt">HelloRequest</span><span class="o">)</span><span class="k">:</span> <span class="kt">F</span><span class="o">[</span><span class="kt">Empty.</span><span class="k">type</span><span class="o">]</span>
+
+    <span class="nd">@rpc</span><span class="o">(</span><span class="nc">Protobuf</span><span class="o">)</span> <span class="k">def</span> <span class="n">emptyRequest</span><span class="o">(</span><span class="n">request</span><span class="k">:</span> <span class="kt">Empty.</span><span class="k">type</span><span class="o">)</span><span class="k">:</span> <span class="kt">F</span><span class="o">[</span><span class="kt">HelloReply</span><span class="o">]</span>
+
+    <span class="nd">@rpc</span><span class="o">(</span><span class="nc">Protobuf</span><span class="o">)</span> <span class="k">def</span> <span class="n">emptyRequestRespose</span><span class="o">(</span><span class="n">request</span><span class="k">:</span> <span class="kt">Empty.</span><span class="k">type</span><span class="o">)</span><span class="k">:</span> <span class="kt">F</span><span class="o">[</span><span class="kt">Empty.</span><span class="k">type</span><span class="o">]</span>
+  <span class="o">}</span>
+<span class="o">}</span>
+</code></pre>
+</div>
+
+<p>We are also using some additional annotations:</p>
+
+<ul>
+  <li><code class="highlighter-rouge">@option</code>: used to define the equivalent headers in <code class="highlighter-rouge">.proto</code> files.</li>
+  <li><code class="highlighter-rouge">@service</code>: it tags the <code class="highlighter-rouge">@free</code> algebra as an <a href="https://en.wikipedia.org/wiki/Remote_procedure_call">RPC</a> service, in order to derive server and client code (macro expansion). <strong>Important</strong>: <code class="highlighter-rouge">@free</code> annotation should go first, followed by <code class="highlighter-rouge">@service</code> annotation, and not inversely.</li>
+  <li><code class="highlighter-rouge">@rpc(Protobuf)</code>: this annotation indicates that the method is an RPC service. It receives as argument the type of serialization that will be used to encode/decode data, <code class="highlighter-rouge">Protocol Buffers</code> in the example. <code class="highlighter-rouge">Avro</code> is also supported as the another type of serialization.</li>
+</ul>
+
+<p>We’ll see more details about these and other annotations in the following sections.</p>
+
+<h2 id="service-methods">Service Methods</h2>
+
+<p>As <a href="https://grpc.io/">gRPC</a>, <a href="https://github.com/frees-io/freestyle-rpc">frees-rpc</a> allows you to define four kinds of service methods:</p>
+
+<ul>
+  <li><strong>Unary RPC</strong>: the simplest way of communication, one client request, and one server response.</li>
+  <li><strong>Server streaming RPC</strong>: similar to the unary, but in this case, the server will send back a stream of responses for a client request.</li>
+  <li><strong>Client streaming RPC</strong>: in this case is the client who sends a stream of requests. The server will respond with a single response.</li>
+  <li><strong>Bidirectional streaming RPC</strong>: it would be a mix of server and client streaming since both sides will be sending a stream of data.</li>
+</ul>
+
+<p>Let’s complete our protocol’s example with these four kinds of service methods:</p>
+
+<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="nd">@option</span><span class="o">(</span><span class="n">name</span> <span class="k">=</span> <span class="s">"java_package"</span><span class="o">,</span> <span class="n">value</span> <span class="k">=</span> <span class="s">"quickstart"</span><span class="o">,</span> <span class="n">quote</span> <span class="k">=</span> <span class="kc">true</span><span class="o">)</span>
+<span class="nd">@option</span><span class="o">(</span><span class="n">name</span> <span class="k">=</span> <span class="s">"java_multiple_files"</span><span class="o">,</span> <span class="n">value</span> <span class="k">=</span> <span class="s">"true"</span><span class="o">,</span> <span class="n">quote</span> <span class="k">=</span> <span class="kc">false</span><span class="o">)</span>
+<span class="nd">@option</span><span class="o">(</span><span class="n">name</span> <span class="k">=</span> <span class="s">"java_outer_classname"</span><span class="o">,</span> <span class="n">value</span> <span class="k">=</span> <span class="s">"Quickstart"</span><span class="o">,</span> <span class="n">quote</span> <span class="k">=</span> <span class="kc">true</span><span class="o">)</span>
+<span class="k">object</span> <span class="nc">service</span> <span class="o">{</span>
+
+  <span class="k">import</span> <span class="nn">monix.reactive.Observable</span>
+
+  <span class="nd">@message</span>
+  <span class="k">case</span> <span class="k">class</span> <span class="nc">HelloRequest</span><span class="o">(</span><span class="n">greeting</span><span class="k">:</span> <span class="kt">String</span><span class="o">)</span>
+
+  <span class="nd">@message</span>
+  <span class="k">case</span> <span class="k">class</span> <span class="nc">HelloResponse</span><span class="o">(</span><span class="n">reply</span><span class="k">:</span> <span class="kt">String</span><span class="o">)</span>
+
+  <span class="nd">@service</span>
+  <span class="k">trait</span> <span class="nc">Greeter</span><span class="o">[</span><span class="kt">F</span><span class="o">[</span><span class="k">_</span><span class="o">]]</span> <span class="o">{</span>
+
+    <span class="cm">/**
+     * Unary RPCs where the client sends a single request to the server and gets a single response back,
+     * just like a normal function call.
+     *
+     * https://grpc.io/docs/guides/concepts.html
+     *
+     * @param request Client Request.
+     * @return Server Response.
+     */</span>
+    <span class="nd">@rpc</span><span class="o">(</span><span class="nc">Protobuf</span><span class="o">)</span>
+    <span class="k">def</span> <span class="n">sayHello</span><span class="o">(</span><span class="n">request</span><span class="k">:</span> <span class="kt">HelloRequest</span><span class="o">)</span><span class="k">:</span> <span class="kt">F</span><span class="o">[</span><span class="kt">HelloResponse</span><span class="o">]</span>
+
+    <span class="cm">/**
+     * Server streaming RPCs where the client sends a request to the server and gets a stream to read a
+     * sequence of messages back. The client reads from the returned stream until there are no more messages.
+     *
+     * https://grpc.io/docs/guides/concepts.html
+     *
+     * @param request Client Request.
+     * @return Stream of server responses.
+     */</span>
+    <span class="nd">@rpc</span><span class="o">(</span><span class="nc">Protobuf</span><span class="o">)</span>
+    <span class="nd">@stream</span><span class="o">[</span><span class="kt">ResponseStreaming.</span><span class="k">type</span><span class="o">]</span>
+    <span class="k">def</span> <span class="n">lotsOfReplies</span><span class="o">(</span><span class="n">request</span><span class="k">:</span> <span class="kt">HelloRequest</span><span class="o">)</span><span class="k">:</span> <span class="kt">F</span><span class="o">[</span><span class="kt">Observable</span><span class="o">[</span><span class="kt">HelloResponse</span><span class="o">]]</span>
+
+    <span class="cm">/**
+     * Client streaming RPCs where the client writes a sequence of messages and sends them to the server,
+     * again using a provided stream. Once the client has finished writing the messages, it waits for
+     * the server to read them and return its response.
+     *
+     * https://grpc.io/docs/guides/concepts.html
+     *
+     * @param request Stream of requests.
+     * @return Single Server Response.
+     */</span>
+    <span class="nd">@rpc</span><span class="o">(</span><span class="nc">Protobuf</span><span class="o">)</span>
+    <span class="nd">@stream</span><span class="o">[</span><span class="kt">RequestStreaming.</span><span class="k">type</span><span class="o">]</span>
+    <span class="k">def</span> <span class="n">lotsOfGreetings</span><span class="o">(</span><span class="n">request</span><span class="k">:</span> <span class="kt">Observable</span><span class="o">[</span><span class="kt">HelloRequest</span><span class="o">])</span><span class="k">:</span> <span class="kt">F</span><span class="o">[</span><span class="kt">HelloResponse</span><span class="o">]</span>
+
+    <span class="cm">/**
+     * Bidirectional streaming RPCs where both sides send a sequence of messages using a read-write stream.
+     * The two streams operate independently, so clients and servers can read and write in whatever order
+     * they like: for example, the server could wait to receive all the client messages before writing its
+     * responses, or it could alternately read a message then write a message, or some other combination of
+     * reads and writes. The order of messages in each stream is preserved.
+     *
+     * https://grpc.io/docs/guides/concepts.html
+     *
+     * @param request Stream of requests.
+     * @return Stream of server responses.
+     */</span>
+    <span class="nd">@rpc</span><span class="o">(</span><span class="nc">Protobuf</span><span class="o">)</span>
+    <span class="nd">@stream</span><span class="o">[</span><span class="kt">BidirectionalStreaming.</span><span class="k">type</span><span class="o">]</span>
+    <span class="k">def</span> <span class="n">bidiHello</span><span class="o">(</span><span class="n">request</span><span class="k">:</span> <span class="kt">Observable</span><span class="o">[</span><span class="kt">HelloRequest</span><span class="o">])</span><span class="k">:</span> <span class="kt">F</span><span class="o">[</span><span class="kt">Observable</span><span class="o">[</span><span class="kt">HelloResponse</span><span class="o">]]</span>
+
+  <span class="o">}</span>
+
+<span class="o">}</span>
+</code></pre>
+</div>
+
+<p>The code might be explanatory by itself but let’s review the different services one by one:</p>
+
+<ul>
+  <li><code class="highlighter-rouge">sayHello</code>: unary RPC, only the <code class="highlighter-rouge">@rpc</code> annotation would be needed in this case.</li>
+  <li><code class="highlighter-rouge">lotsOfReplies </code>: Server streaming RPC, where <code class="highlighter-rouge">@rpc</code> and <code class="highlighter-rouge">@stream</code> annotations are needed here. However, there are three different types of streaming (server, client and bidirectional), that are specified by the type parameter required in the <code class="highlighter-rouge">@stream</code> annotation, <code class="highlighter-rouge">@stream[ResponseStreaming.type]</code> in this particular definition.</li>
+  <li><code class="highlighter-rouge">lotsOfGreetings </code>: Client streaming RPC, <code class="highlighter-rouge">@rpc</code> should be sorted by the <code class="highlighter-rouge">@stream[RequestStreaming.type]</code> annotation.</li>
+  <li><code class="highlighter-rouge">bidiHello </code>: Bidirectional streaming RPC, where <code class="highlighter-rouge">@rpc</code> is accompanied by the <code class="highlighter-rouge">@stream[BidirectionalStreaming.type]</code> annotation.</li>
+</ul>
+
+<p><strong>Note</strong>: in <a href="https://github.com/frees-io/freestyle-rpc">frees-rpc</a>, the streaming features have been implemented with <code class="highlighter-rouge">monix.reactive.Observable</code>, see the <a href="https://monix.io/docs/2x/reactive/observable.html">Monix Docs</a> for a wider explanation. These monix extensions have been implemented on top of the <a href="https://grpc.io/grpc-java/javadoc/">gRPC Java API</a> and the <code class="highlighter-rouge">StreamObserver</code> interface.</p>
+
+<h2 id="generating-a-proto-file">Generating a .proto file</h2>
+
+<p>Before entering implementation details, we mentioned that the <a href="https://github.com/frees-io/freestyle-rpc">frees-rpc</a> ecosystem brings the ability to generate <code class="highlighter-rouge">.proto</code> files from the Scala definition, in order to maintain compatibility with other languages and systems outside of Scala.</p>
+
+<p>This responsibility relies on <a href="https://github.com/frees-io/sbt-freestyle-protogen">sbt-freestyle-protogen</a>, an Sbt plugin to generate <code class="highlighter-rouge">.proto</code> files from the <a href="https://github.com/frees-io/freestyle-rpc">frees-rpc</a> service definitions.</p>
+
+<h3 id="plugin-installation">Plugin Installation</h3>
+
+<p>Add the following line to <em>project/plugins.sbt</em>:</p>
+
+<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="n">addSbtPlugin</span><span class="o">(</span><span class="s">"io.frees"</span> <span class="o">%</span> <span class="s">"sbt-frees-protogen"</span> <span class="o">%</span> <span class="s">"0.0.14"</span><span class="o">)</span>
+</code></pre>
+</div>
+
+<h3 id="plugin-settings">Plugin Settings</h3>
+
+<p>There are a couple key settings that can be configured according to various needs:</p>
+
+<ul>
+  <li><strong><code class="highlighter-rouge">protoGenSourceDir</code></strong>: the Scala source directory, where your <a href="https://github.com/frees-io/freestyle-rpc">frees-rpc</a> definitions are placed. By default: <code class="highlighter-rouge">baseDirectory.value / "src" / "main" / "scala"</code>.</li>
+  <li><strong><code class="highlighter-rouge">protoGenTargetDir</code></strong>: The protobuf target directory, where the <code class="highlighter-rouge">protoGen</code> task will write the <code class="highlighter-rouge">.proto</code> files, based on <a href="https://github.com/frees-io/freestyle-rpc">frees-rpc</a> service definitions. By default: <code class="highlighter-rouge">baseDirectory.value / "src" / "main" / "proto"</code>.</li>
+</ul>
+
+<p>Directories must exist; otherwise, the <code class="highlighter-rouge">protoGen</code> task will fail.</p>
+
+<h3 id="generation-with-protogen">Generation with protoGen</h3>
+
+<p>At this point, each time you want to update your <code class="highlighter-rouge">.proto</code> files from the scala definition, you have to run the following sbt task:</p>
+
+<div class="language-bash highlighter-rouge"><pre class="highlight"><code>sbt protoGen
+</code></pre>
+</div>
+
+<p>Using the example above, the result would be placed at <code class="highlighter-rouge">/src/main/proto/service.proto</code>, in the case that the scala file is named as <code class="highlighter-rouge">service.scala</code>. The content should be similar to:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>// This file has been automatically generated for use by
+// sbt-frees-protogen plugin, from freestyle-rpc service definitions
+
+syntax = "proto3";
+
+option java_package = "quickstart";
+option java_multiple_files = true;
+option java_outer_classname = "Quickstart";
+
+message HelloRequest {
+   string greeting = 1;
+}
+
+message HelloResponse {
+   string reply = 1;
+}
+
+service Greeter {
+   rpc sayHello (HelloRequest) returns (HelloResponse) {}
+   rpc lotsOfReplies (HelloRequest) returns (stream HelloResponse) {}
+   rpc lotsOfGreetings (stream HelloRequest) returns (HelloResponse) {}
+   rpc bidiHello (stream HelloRequest) returns (stream HelloResponse) {}
+}
+</code></pre>
+</div>
+
+<h2 id="rpc-service-implementations">RPC Service Implementations</h2>
+
+<p>So far so good, not too much code, no business logic, just a protocol definition with Scala annotations. Conversely, in this section, we are going to see how to complete our quickstart example. We’ll take a look at both sides, the server and the client.</p>
+
+<h3 id="server">Server</h3>
+
+<p>Predictably, generating the server code is just implementing a service <a href="http://frees.io/docs/core/interpreters/">Handler</a>.</p>
+
+<p>Next, our dummy <code class="highlighter-rouge">Greeter</code> server implementation:</p>
+
+<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">cats.</span><span class="o">{~&gt;,</span> <span class="nc">Applicative</span><span class="o">}</span>
+<span class="k">import</span> <span class="nn">freestyle.free._</span>
+<span class="k">import</span> <span class="nn">monix.eval.Task</span>
+<span class="k">import</span> <span class="nn">monix.reactive.Observable</span>
+<span class="k">import</span> <span class="nn">service._</span>
+
+<span class="k">class</span> <span class="nc">ServiceHandler</span><span class="o">[</span><span class="kt">F</span><span class="o">[</span><span class="k">_</span><span class="o">]](</span><span class="k">implicit</span> <span class="n">F</span><span class="k">:</span> <span class="kt">Applicative</span><span class="o">[</span><span class="kt">F</span><span class="o">],</span> <span class="n">T2F</span><span class="k">:</span> <span class="kt">Task</span> <span class="kt">~&gt;</span> <span class="kt">F</span><span class="o">)</span> <span class="k">extends</span> <span class="nc">Greeter</span><span class="o">[</span><span class="kt">F</span><span class="o">]</span> <span class="o">{</span>
+
+  <span class="k">private</span><span class="o">[</span><span class="kt">this</span><span class="o">]</span> <span class="k">val</span> <span class="n">dummyObservableResponse</span><span class="k">:</span> <span class="kt">Observable</span><span class="o">[</span><span class="kt">HelloResponse</span><span class="o">]</span> <span class="k">=</span>
+    <span class="nc">Observable</span><span class="o">.</span><span class="n">fromIterable</span><span class="o">(</span><span class="mi">1</span> <span class="n">to</span> <span class="mi">5</span> <span class="n">map</span> <span class="o">(</span><span class="n">i</span> <span class="k">=&gt;</span> <span class="nc">HelloResponse</span><span class="o">(</span><span class="n">s</span><span class="s">"Reply $i"</span><span class="o">)))</span>
+
+  <span class="k">override</span> <span class="k">def</span> <span class="n">sayHello</span><span class="o">(</span><span class="n">request</span><span class="k">:</span> <span class="kt">HelloRequest</span><span class="o">)</span><span class="k">:</span> <span class="kt">F</span><span class="o">[</span><span class="kt">HelloResponse</span><span class="o">]</span> <span class="k">=</span>
+    <span class="n">F</span><span class="o">.</span><span class="n">pure</span><span class="o">(</span><span class="nc">HelloResponse</span><span class="o">(</span><span class="n">reply</span> <span class="k">=</span> <span class="s">"Good bye!"</span><span class="o">))</span>
+
+  <span class="k">override</span> <span class="k">def</span> <span class="n">lotsOfReplies</span><span class="o">(</span><span class="n">request</span><span class="k">:</span> <span class="kt">HelloRequest</span><span class="o">)</span><span class="k">:</span> <span class="kt">F</span><span class="o">[</span><span class="kt">Observable</span><span class="o">[</span><span class="kt">HelloResponse</span><span class="o">]]</span> <span class="k">=</span>
+    <span class="n">F</span><span class="o">.</span><span class="n">pure</span><span class="o">(</span><span class="n">dummyObservableResponse</span><span class="o">)</span>
+
+  <span class="k">override</span> <span class="k">def</span> <span class="n">lotsOfGreetings</span><span class="o">(</span><span class="n">request</span><span class="k">:</span> <span class="kt">Observable</span><span class="o">[</span><span class="kt">HelloRequest</span><span class="o">])</span><span class="k">:</span> <span class="kt">F</span><span class="o">[</span><span class="kt">HelloResponse</span><span class="o">]</span> <span class="k">=</span> <span class="n">T2F</span> <span class="o">{</span>
+    <span class="n">request</span>
+      <span class="o">.</span><span class="n">foldLeftL</span><span class="o">((</span><span class="mi">0</span><span class="o">,</span> <span class="nc">HelloResponse</span><span class="o">(</span><span class="s">""</span><span class="o">)))</span> <span class="o">{</span>
+        <span class="k">case</span> <span class="o">((</span><span class="n">i</span><span class="o">,</span> <span class="n">response</span><span class="o">),</span> <span class="n">currentRequest</span><span class="o">)</span> <span class="k">=&gt;</span>
+          <span class="k">val</span> <span class="n">currentReply</span><span class="k">:</span> <span class="kt">String</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">reply</span>
+          <span class="o">(</span>
+            <span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="o">,</span>
+            <span class="n">response</span><span class="o">.</span><span class="n">copy</span><span class="o">(</span>
+              <span class="n">reply</span> <span class="k">=</span> <span class="n">s</span><span class="s">"$currentReply\nRequest ${currentRequest.greeting} -&gt; Response: Reply $i"</span><span class="o">))</span>
+      <span class="o">}</span>
+      <span class="o">.</span><span class="n">map</span><span class="o">(</span><span class="k">_</span><span class="o">.</span><span class="n">_2</span><span class="o">)</span>
+  <span class="o">}</span>
+
+  <span class="k">override</span> <span class="k">def</span> <span class="n">bidiHello</span><span class="o">(</span><span class="n">request</span><span class="k">:</span> <span class="kt">Observable</span><span class="o">[</span><span class="kt">HelloRequest</span><span class="o">])</span><span class="k">:</span> <span class="kt">F</span><span class="o">[</span><span class="kt">Observable</span><span class="o">[</span><span class="kt">HelloResponse</span><span class="o">]]</span> <span class="k">=</span>
+    <span class="n">F</span><span class="o">.</span><span class="n">pure</span> <span class="o">{</span>
+      <span class="n">request</span>
+        <span class="o">.</span><span class="n">flatMap</span> <span class="o">{</span> <span class="n">request</span><span class="k">:</span> <span class="kt">HelloRequest</span> <span class="o">=&gt;</span>
+          <span class="n">println</span><span class="o">(</span><span class="n">s</span><span class="s">"Saving $request..."</span><span class="o">)</span>
+          <span class="n">dummyObservableResponse</span>
+        <span class="o">}</span>
+        <span class="o">.</span><span class="n">onErrorHandle</span> <span class="o">{</span> <span class="n">e</span> <span class="k">=&gt;</span>
+          <span class="k">throw</span> <span class="n">e</span>
+        <span class="o">}</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre>
+</div>
+
+<p>That’s all. We have exposed a potential implementation on the server side.</p>
+
+<h3 id="server-runtime">Server Runtime</h3>
+
+<p>As you can see, the generic handler above requires <code class="highlighter-rouge">F</code> as the type parameter, which corresponds with our target <code class="highlighter-rouge">Monad</code> when interpreting our program. In this section, we will satisfy all the runtime requirements, in order to make our server runnable.</p>
+
+<h4 id="execution-context">Execution Context</h4>
+
+<p>In <a href="https://github.com/frees-io/freestyle-rpc">frees-rpc</a> programs, we’ll at least need an implicit evidence related to the <a href="https://monix.io/">Monix</a> Execution Context: <code class="highlighter-rouge">monix.execution.Scheduler</code>.</p>
+
+<blockquote>
+  <p>The <code class="highlighter-rouge">monix.execution.Scheduler</code> is inspired by <code class="highlighter-rouge">ReactiveX</code>, being an enhanced Scala <code class="highlighter-rouge">ExecutionContext</code> and also a replacement for Java’s <code class="highlighter-rouge">ScheduledExecutorService</code>, but also for Javascript’s <code class="highlighter-rouge">setTimeout</code>.</p>
+</blockquote>
+
+<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">monix.execution.Scheduler</span>
+
+<span class="k">trait</span> <span class="nc">CommonRuntime</span> <span class="o">{</span>
+
+  <span class="k">implicit</span> <span class="k">val</span> <span class="n">S</span><span class="k">:</span> <span class="kt">Scheduler</span> <span class="o">=</span> <span class="n">monix</span><span class="o">.</span><span class="n">execution</span><span class="o">.</span><span class="nc">Scheduler</span><span class="o">.</span><span class="nc">Implicits</span><span class="o">.</span><span class="n">global</span>
+
+<span class="o">}</span>
+</code></pre>
+</div>
+
+<p>As a side note, <code class="highlighter-rouge">CommonRuntime</code> will also be used later on for the client program.</p>
+
+<h4 id="runtime-implicits">Runtime Implicits</h4>
+
+<p>For the server bootstrapping, remember adding <code class="highlighter-rouge">frees-rpc-server</code> dependency to your build.</p>
+
+<p>Now, we need to implicitly provide two things:</p>
+
+<ul>
+  <li>A runtime interpreter of our <code class="highlighter-rouge">ServiceHandler</code> tied to a specific type. In our case, we’ll use <code class="highlighter-rouge">cats.effects.IO</code>.</li>
+  <li>A <code class="highlighter-rouge">ServerW</code> implicit evidence, compounded by:
+    <ul>
+      <li>RPC port where the server will bootstrap.</li>
+      <li>The set of configurations we want to add to our <a href="https://grpc.io/">gRPC</a> server, like our <code class="highlighter-rouge">Greeter</code> service definition. All these configurations are aggregated in a <code class="highlighter-rouge">List[GrpcConfig]</code>. Later on, an internal builder will build the final server based on this list. The full available list of settings are exposed in <a href="https://github.com/frees-io/freestyle-rpc/blob/master/rpc/src/main/scala/server/GrpcConfig.scala">this file</a>.</li>
+    </ul>
+  </li>
+</ul>
+
+<p>In summary, the result would be as follows:</p>
+
+<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">cats.</span><span class="o">~&gt;</span>
+<span class="k">import</span> <span class="nn">cats.effect.IO</span>
+<span class="k">import</span> <span class="nn">freestyle.rpc.server._</span>
+<span class="k">import</span> <span class="nn">freestyle.rpc.server.handlers._</span>
+<span class="k">import</span> <span class="nn">freestyle.rpc.server.implicits._</span>
+<span class="k">import</span> <span class="nn">freestyle.free.asyncCatsEffect.implicits._</span>
+<span class="k">import</span> <span class="nn">service._</span>
+
+<span class="k">object</span> <span class="nc">gserver</span> <span class="o">{</span>
+
+  <span class="k">trait</span> <span class="nc">Implicits</span> <span class="k">extends</span> <span class="nc">CommonRuntime</span> <span class="o">{</span>
+
+    <span class="k">implicit</span> <span class="k">val</span> <span class="n">greeterServiceHandler</span><span class="k">:</span> <span class="kt">ServiceHandler</span><span class="o">[</span><span class="kt">IO</span><span class="o">]</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">ServiceHandler</span><span class="o">[</span><span class="kt">IO</span><span class="o">]</span>
+
+    <span class="k">val</span> <span class="n">grpcConfigs</span><span class="k">:</span> <span class="kt">List</span><span class="o">[</span><span class="kt">GrpcConfig</span><span class="o">]</span> <span class="k">=</span> <span class="nc">List</span><span class="o">(</span>
+      <span class="nc">AddService</span><span class="o">(</span><span class="nc">Greeter</span><span class="o">.</span><span class="n">bindService</span><span class="o">[</span><span class="kt">IO</span><span class="o">])</span>
+    <span class="o">)</span>
+
+    <span class="k">implicit</span> <span class="k">val</span> <span class="n">serverW</span><span class="k">:</span> <span class="kt">ServerW</span> <span class="o">=</span> <span class="nc">ServerW</span><span class="o">(</span><span class="mi">8080</span><span class="o">,</span> <span class="n">grpcConfigs</span><span class="o">)</span>
+  <span class="o">}</span>
+
+  <span class="k">object</span> <span class="nc">implicits</span> <span class="k">extends</span> <span class="nc">Implicits</span>
+
+<span class="o">}</span>
+</code></pre>
+</div>
+
+<p>Here are a few additional notes related to the previous snippet of code:</p>
+
+<ul>
+  <li>The Server will bootstrap on port <code class="highlighter-rouge">8080</code>.</li>
+  <li><code class="highlighter-rouge">Greeter.bindService</code> is an auto-derived method which creates, behind the scenes, the binding service for <a href="https://grpc.io/">gRPC</a>. It requires two type parameters, <code class="highlighter-rouge">F[_]</code> and <code class="highlighter-rouge">M[_]</code>.
+    <ul>
+      <li><code class="highlighter-rouge">F[_]</code> would be our algebra, which matches with our <code class="highlighter-rouge">Greeter</code> service definition.</li>
+      <li><code class="highlighter-rouge">M[_]</code>, the target monad, in our example: <code class="highlighter-rouge">cats.effects.IO</code>.</li>
+    </ul>
+  </li>
+</ul>
+
+<h3 id="server-bootstrap">Server Bootstrap</h3>
+
+<p>What else is needed? We just need to define a <code class="highlighter-rouge">main</code> method:</p>
+
+<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">cats.effect.IO</span>
+<span class="k">import</span> <span class="nn">cats.effect.IO._</span>
+<span class="k">import</span> <span class="nn">freestyle.rpc.server.GrpcServer</span>
+<span class="k">import</span> <span class="nn">freestyle.rpc.server.implicits._</span>
+
+<span class="k">object</span> <span class="nc">RPCServer</span> <span class="o">{</span>
+
+  <span class="k">import</span> <span class="nn">gserver.implicits._</span>
+
+  <span class="k">def</span> <span class="n">main</span><span class="o">(</span><span class="n">args</span><span class="k">:</span> <span class="kt">Array</span><span class="o">[</span><span class="kt">String</span><span class="o">])</span><span class="k">:</span> <span class="kt">Unit</span> <span class="o">=</span>
+    <span class="n">server</span><span class="o">[</span><span class="kt">IO</span><span class="o">].</span><span class="n">unsafeRunSync</span><span class="o">()</span>
+
+<span class="o">}</span>
+</code></pre>
+</div>
+
+<p>Fortunately, once all the runtime requirements are in place (<strong><code class="highlighter-rouge">import gserver.implicits._</code></strong>), we only have to write the previous piece of code, which primarily, should be the same in all cases (except if your target Monad is different from <code class="highlighter-rouge">cats.effects.IO</code>).</p>
+
+<h3 id="client">Client</h3>
+
+<p><a href="https://github.com/frees-io/freestyle-rpc">frees-rpc</a> derives a client automatically based on the protocol. This is especially useful because you can distribute it depending on the protocol/service definitions. If you change something in your protocol definition, you will get a new client for free without having to write anything.</p>
+
+<p>You will need to add either <code class="highlighter-rouge">frees-rpc-client-netty</code> or <code class="highlighter-rouge">frees-rpc-client-okhttp</code> to your build.</p>
+
+<h3 id="client-runtime">Client Runtime</h3>
+
+<p>Similarly in this section, as we saw for the server case, we are defining all the client runtime configurations needed for communication with the server.</p>
+
+<h4 id="execution-context-1">Execution Context</h4>
+
+<p>In our example, we are going to use the same Execution Context described for the Server. However, for the sake of observing a slightly different runtime configuration, our client will be interpreting to <code class="highlighter-rouge">monix.eval.Task</code>. Hence, in this case, we would only need the <code class="highlighter-rouge">monix.execution.Scheduler</code> implicit evidence.</p>
+
+<p>We are going to interpret to <code class="highlighter-rouge">monix.eval.Task</code>, however, behind the scenes, we will use the <a href="https://github.com/typelevel/cats-effect">cats-effect</a> <code class="highlighter-rouge">IO</code> monad as an abstraction. Concretely, Freestyle has an integration with <code class="highlighter-rouge">cats-effect</code> that is included transitively in the classpath through <code class="highlighter-rouge">frees-async-cats-effect</code> dependency.</p>
+
+<h4 id="runtime-implicits-1">Runtime Implicits</h4>
+
+<p>First of all, we need to configure how the client will reach the server in terms of the transport layer. There are two supported methods:</p>
+
+<ul>
+  <li>By Address (host/port): brings the ability to create a channel with the target’s address and port number.</li>
+  <li>By Target: it can create a channel with a target string, which can be either a valid <a href="https://grpc.io/grpc-java/javadoc/io/grpc/NameResolver.html">NameResolver</a>-compliant URI or an authority string.</li>
+</ul>
+
+<p>Additionally, we can add more optional configurations that can be used when the connection is occurring. All the options are available <a href="https://github.com/frees-io/freestyle-rpc/blob/6b0e926a5a14fbe3d9282e8c78340f2d9a0421f3/rpc/src/main/scala/client/ChannelConfig.scala#L33-L46">here</a>. As we will see shortly in our example, we are going to skip the negotiation (<code class="highlighter-rouge">UsePlaintext(true)</code>).</p>
+
+<p>Given the transport settings and a list of optional configurations, we can create the <a href="https://grpc.io/grpc-java/javadoc/io/grpc/ManagedChannel.html">ManagedChannel.html</a> object, using the <code class="highlighter-rouge">ManagedChannelInterpreter</code> builder.</p>
+
+<p>So, taking into account all we have just said, how would our code look?</p>
+
+<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">cats.implicits._</span>
+<span class="k">import</span> <span class="nn">cats.effect.IO</span>
+<span class="k">import</span> <span class="nn">freestyle.free.config.implicits._</span>
+<span class="k">import</span> <span class="nn">freestyle.free.asyncCatsEffect.implicits._</span>
+<span class="k">import</span> <span class="nn">freestyle.rpc.client._</span>
+<span class="k">import</span> <span class="nn">freestyle.rpc.client.config._</span>
+<span class="k">import</span> <span class="nn">freestyle.rpc.client.implicits._</span>
+<span class="k">import</span> <span class="nn">monix.eval.Task</span>
+<span class="k">import</span> <span class="nn">io.grpc.ManagedChannel</span>
+<span class="k">import</span> <span class="nn">service._</span>
+
+<span class="k">import</span> <span class="nn">scala.util.</span><span class="o">{</span><span class="nc">Failure</span><span class="o">,</span> <span class="nc">Success</span><span class="o">,</span> <span class="nc">Try</span><span class="o">}</span>
+
+<span class="k">object</span> <span class="nc">gclient</span> <span class="o">{</span>
+
+  <span class="k">trait</span> <span class="nc">Implicits</span> <span class="k">extends</span> <span class="nc">CommonRuntime</span> <span class="o">{</span>
+
+    <span class="k">val</span> <span class="n">channelFor</span><span class="k">:</span> <span class="kt">ManagedChannelFor</span> <span class="o">=</span>
+      <span class="nc">ConfigForAddress</span><span class="o">[</span><span class="kt">ChannelConfig.Op</span><span class="o">](</span><span class="s">"rpc.host"</span><span class="o">,</span> <span class="s">"rpc.port"</span><span class="o">)</span>
+        <span class="o">.</span><span class="n">interpret</span><span class="o">[</span><span class="kt">Try</span><span class="o">]</span> <span class="k">match</span> <span class="o">{</span>
+        <span class="k">case</span> <span class="nc">Success</span><span class="o">(</span><span class="n">c</span><span class="o">)</span> <span class="k">=&gt;</span> <span class="n">c</span>
+        <span class="k">case</span> <span class="nc">Failure</span><span class="o">(</span><span class="n">e</span><span class="o">)</span> <span class="k">=&gt;</span>
+          <span class="n">e</span><span class="o">.</span><span class="n">printStackTrace</span><span class="o">()</span>
+          <span class="k">throw</span> <span class="k">new</span> <span class="nc">RuntimeException</span><span class="o">(</span><span class="s">"Unable to load the client configuration"</span><span class="o">,</span> <span class="n">e</span><span class="o">)</span>
+
+    <span class="k">implicit</span> <span class="k">val</span> <span class="n">serviceClient</span><span class="k">:</span> <span class="kt">Greeter.Client</span><span class="o">[</span><span class="kt">Task</span><span class="o">]</span> <span class="k">=</span>
+      <span class="nc">Greeter</span><span class="o">.</span><span class="n">client</span><span class="o">[</span><span class="kt">Task</span><span class="o">](</span><span class="n">channelFor</span><span class="o">)</span>
+  <span class="o">}</span>
+
+  <span class="k">object</span> <span class="nc">implicits</span> <span class="k">extends</span> <span class="nc">Implicits</span>
+
+<span class="o">}</span>
+</code></pre>
+</div>
+
+<p><strong>Notes</strong>:</p>
+
+<ul>
+  <li><code class="highlighter-rouge">host</code> and <code class="highlighter-rouge">port</code> would be read from the application configuration file.</li>
+  <li>To be able to use the <code class="highlighter-rouge">ConfigForAddress</code> helper, you need to add the <code class="highlighter-rouge">frees-rpc-config</code> dependency to your build.</li>
+</ul>
+
+<h3 id="client-program">Client Program</h3>
+
+<p>Once we have our runtime configuration defined as above, everything gets easier. This is an example of a client application, following our dummy quickstart:</p>
+
+<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">service._</span>
+<span class="k">import</span> <span class="nn">gclient.implicits._</span>
+<span class="k">import</span> <span class="nn">monix.eval.Task</span>
+
+<span class="k">object</span> <span class="nc">RPCDemoApp</span> <span class="o">{</span>
+
+  <span class="k">def</span> <span class="n">main</span><span class="o">(</span><span class="n">args</span><span class="k">:</span> <span class="kt">Array</span><span class="o">[</span><span class="kt">String</span><span class="o">])</span><span class="k">:</span> <span class="kt">Unit</span> <span class="o">=</span> <span class="o">{</span>
+
+    <span class="k">val</span> <span class="n">result</span><span class="k">:</span> <span class="kt">HelloResponse</span> <span class="o">=</span> <span class="n">serviceClient</span><span class="o">.</span><span class="n">sayHello</span><span class="o">(</span><span class="nc">HelloRequest</span><span class="o">(</span><span class="s">"foo"</span><span class="o">)).</span><span class="n">unsafeRunSync</span>
+
+    <span class="n">println</span><span class="o">(</span><span class="n">s</span><span class="s">"Result = $result"</span><span class="o">)</span>
+
+  <span class="o">}</span>
+
+<span class="o">}</span>
+</code></pre>
+</div>
+
+<h2 id="frees-rpc-annotations">frees-rpc annotations</h2>
+
+<p>Provided below is a summary of all the current annotations that <a href="https://github.com/frees-io/freestyle-rpc">frees-rpc</a> provides:</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Annotation</th>
+      <th>Scope</th>
+      <th>Arguments</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>@service</td>
+      <td><a href="http://frees.io/docs/core/algebras/">@tagless algebra</a></td>
+      <td>-</td>
+      <td>Tags the <code class="highlighter-rouge">@free</code> algebra as <a href="https://en.wikipedia.org/wiki/Remote_procedure_call">RPC</a> service, in order to derive server and client code (macro expansion). <strong>Important</strong>: <code class="highlighter-rouge">@free</code> annotation should go first, followed by the <code class="highlighter-rouge">@service</code> annotation, and not inversely.</td>
+    </tr>
+    <tr>
+      <td>@rpc</td>
+      <td><code class="highlighter-rouge">Method</code></td>
+      <td>(<code class="highlighter-rouge">SerializationType</code>)</td>
+      <td>Indicates the method is an RPC service. As <code class="highlighter-rouge">SerializationType</code> parameter value, <code class="highlighter-rouge">Protobuf</code> and <code class="highlighter-rouge">Avro</code> are the current supported serialization methods.</td>
+    </tr>
+    <tr>
+      <td>@stream</td>
+      <td><code class="highlighter-rouge">Method</code></td>
+      <td>[<code class="highlighter-rouge">S &lt;: StreamingType</code>]</td>
+      <td>There are three different types of streaming: server, client, and bidirectional. Hence, the <code class="highlighter-rouge">S</code> type parameter can be <code class="highlighter-rouge">ResponseStreaming</code>, <code class="highlighter-rouge">RequestStreaming</code>, or <code class="highlighter-rouge">BidirectionalStreaming</code>, respectively.</td>
+    </tr>
+    <tr>
+      <td>@message</td>
+      <td><code class="highlighter-rouge">Case Class</code></td>
+      <td>-</td>
+      <td>Tags a case class a protobuf message.</td>
+    </tr>
+    <tr>
+      <td>@option</td>
+      <td><code class="highlighter-rouge">Object</code></td>
+      <td>[name: String, value: String, quote: Boolean]</td>
+      <td>used to define the equivalent headers in <code class="highlighter-rouge">.proto</code> files</td>
+    </tr>
+  </tbody>
+</table>
+
+<h2 id="next-steps">Next Steps</h2>
+
+<p>If you want to delve deeper into <a href="https://github.com/frees-io/freestyle-rpc">frees-rpc</a>, we have a complete example at the <a href="https://github.com/frees-io/freestyle-rpc-examples">freestyle-rpc-examples</a> repository, which is based on the <a href="https://grpc.io/docs/tutorials/basic/java.html#generating-client-and-server-code">Route Guide Demo</a> originally shared by the <a href="https://github.com/grpc/grpc-java/tree/6ea2b8aacb0a193ac727e061bc228b40121460e3/examples/src/main/java/io/grpc/examples/routeguide">gRPC Java Project</a>.</p>
+
+<h2 id="comparing-http-and-rpc">Comparing HTTP and RPC</h2>
+
+<p>This extra section is not specifically about <a href="https://github.com/frees-io/freestyle-rpc">frees-rpc</a>. Very often our microservices architectures are based on <code class="highlighter-rouge">HTTP</code> where perhaps, it is not the best glue to connect them, and <a href="https://en.wikipedia.org/wiki/Remote_procedure_call">RPC</a> services might fit better.</p>
+
+<p><a href="https://github.com/47deg/metrifier">Metrifier</a> is a project where we compare, in different bounded ecosystems, <code class="highlighter-rouge">HTTP</code> and<code class="highlighter-rouge"> RPC</code>. And it turns out RPC is usually faster than HTTP. If you’re interested in learning more, we encourage to take a look at the documentation.</p>
+
+<h1 id="references">References</h1>
+
+<ul>
+  <li><a href="http://frees.io/">Freestyle</a></li>
+  <li><a href="https://en.wikipedia.org/wiki/Remote_procedure_call">RPC</a></li>
+  <li><a href="https://grpc.io/">gRPC</a></li>
+  <li><a href="https://developers.google.com/protocol-buffers/docs/overview">Protocol Buffers Docs</a></li>
+  <li><a href="https://github.com/scalameta/scalameta">scalameta</a></li>
+  <li><a href="https://github.com/btlines/pbdirect">PBDirect</a></li>
+  <li><a href="https://scalapb.github.io/">ScalaPB</a></li>
+  <li><a href="https://monix.io">Monix</a></li>
+  <li><a href="https://grpc.io/grpc-java/javadoc/">gRPC Java API</a></li>
+  <li><a href="https://github.com/47deg/metrifier">Metrifier</a></li>
+</ul>
+
+</section></div></div></div></div><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script><script src="/highlight/highlight.pack.js"></script><script>hljs.configure({
+languages:['scala','java','bash']
+});
+hljs.initHighlighting();
+             </script><script src="/js/animations.js"></script><script src="/js/anime.min.js"></script><script>((window.gitter = {}).chat = {}).options = {
+room: '47deg/freestyle'};</script><script src="https://sidecar.gitter.im/dist/sidecar.v1.js"></script><script src="/js/main.js"></script></body></html>
