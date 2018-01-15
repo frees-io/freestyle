@@ -191,25 +191,29 @@ class TaglessTests extends WordSpec with Matchers {
       IdX.b shouldEqual 42
     }
 
-    "using the Applicative instance to combine operations into a FS.Par" in {
+    "using the Applicative instance of FS to combine operations" in {
       @tagless trait X {
         def a: FS[Int]
-        def b(implicit f: Applicative[FS]): FS[Int] = (a, a).mapN(_+_)
+        def b(implicit A: Applicative[FS]): FS[Int] = (a, A.pure(1)).mapN(_+_)
       }
       object IdX extends X.Handler[Id] {
         def a: Int = 5
       }
-      IdX.b shouldEqual 10
+      IdX.b shouldEqual 6
     }
 
-    "using the Monad instance to combine operations into a FS.Seq" in {
+    "using the Monad instance of FS to combine operations" in {
       @tagless trait X {
         def a: FS[Int]
         def b(x: Int): FS[Int]
-        def c(implicit m: Monad[FS]): FS[Int] = a.flatMap(b)
+        def c(implicit M: Monad[FS]): FS[Int] = for {
+          x <- a
+          y <- b(x)
+          z <- M.pure(10)
+        } yield y+z
       }
       object IdX extends X.Handler[Id] {
-        def a: Int = 41
+        def a: Int = 31
         def b(x: Int) = x+1
       }
       IdX.c shouldEqual 42
@@ -218,14 +222,18 @@ class TaglessTests extends WordSpec with Matchers {
     "mixing all of the above" in {
       @tagless trait X {
         def a: FS[Int]
-        def b(i: Int)(implicit f: Functor[FS]): FS[Int] = a.map(x => x+i)
-        def c(implicit ap: Applicative[FS]): FS[Int] = (a,a).mapN(_+_)
-        def d(implicit m: Monad[FS]): FS[Int] = c.flatMap(b)
+        def b(i: Int)(implicit F: Functor[FS]): FS[Int] = a.map(x => x+i)
+        def c(implicit A: Applicative[FS]): FS[Int] = (a,A.pure(3)).mapN(_+_)
+        def d(implicit M: Monad[FS]): FS[Int] = for {
+          x <- M.pure(10)
+          y <- b(x)
+        } yield x+y
       }
       object IdX extends X.Handler[Id] {
         def a: Int = 5
       }
-        
+      IdX.c shouldEqual 8
+      IdX.d shouldEqual(25)
     }
 
   }

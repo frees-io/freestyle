@@ -22,6 +22,7 @@ import cats.kernel.instances.int._
 import cats.instances.option._
 import cats.instances.list._
 import cats.syntax.apply._
+import cats.syntax.flatMap._
 import freestyle.free.implicits._
 import org.scalatest.{Matchers, WordSpec}
 
@@ -209,7 +210,6 @@ class freeTests extends WordSpec with Matchers {
     }
 
     "using the Applicative instance to combine operations into a FS.Par" in {
-      import cats.syntax.apply._
       @free trait X {
         def a: FS[Int]
         def b: FS.Par[Int] = (a, a).mapN(_+_)
@@ -221,7 +221,6 @@ class freeTests extends WordSpec with Matchers {
     }
 
     "using the Monad instance to combine operations into a FS.Seq" in {
-      import cats.syntax.monad._
       @free trait X {
         def a: FS[Int]
         def b(x: Int): FS[Int]
@@ -238,7 +237,6 @@ class freeTests extends WordSpec with Matchers {
     }
 
     "mixing all of the above" in {
-      import cats.syntax.apply._
       @free trait X {
         def a: FS[Int]
         def b(i: Int): FS.Par[Int] = a.map(x => x+i)
