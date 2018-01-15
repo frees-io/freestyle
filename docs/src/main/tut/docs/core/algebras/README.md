@@ -47,19 +47,16 @@ object Users {
   import _root_.freestyle.free.FreeS
 
   sealed trait Op[A] extends Product with Serializable
-  final case class Get(id: Long) extends Op[User]
-  final case class Save(user: User) extends Op[User]
-  final case class GetAll(filter: String) extends Op[List[User]]
+  final case class GetOp(id: Long) extends Op[User]
+  final case class SaveOp(user: User) extends Op[User]
+  final case class GetAllOp(filter: String) extends Op[List[User]]
 
   class To[L[_]](implicit ii: InjK[Op, L]) extends Users[L] {
-
     private[this] val inj = FreeS.inject[Op, L](ii)
 
-    def get(id: Long): FS[User] = inj( Get(id) )
-
-    def save(user: User): FS[User] = inj( Save(user) )
-
-    def getAll(filter: String): FS[List[User]] = inj( GetAll(filter) )
+    def get(id: Long): FS[User] = inj( GetOp(id) )
+    def save(user: User): FS[User] = inj( SaveOp(user) )
+    def getAll(filter: String): FS[List[User]] = inj( GetAllOp(filter) )
   }
 
   implicit def to[L[_]](implicit I: InjK[Op, L]): Users[L] =
@@ -73,9 +70,9 @@ object Users {
     protected[this] def getAll(filter: String): M[List[User]]
 
     override def apply[A](fa: Op[A]): M[A] = fa match {
-      case l @ Get(_) => get(l.id)
-      case l @ Save(_) => save(l.user)
-      case l @ GetAll(_) => getAll(l.filter)
+      case l @ GetOp(_) => get(l.id)
+      case l @ SaveOp(_) => save(l.user)
+      case l @ GetAllOp(_) => getAll(l.filter)
     }
   }
 
@@ -109,9 +106,9 @@ This Algebraic data type contains the shape needed to implement the abstract met
 ```Scala
   sealed trait Op[A] extends Product with Serializable
 
-  final case class Get(id: Long) extends Op[User]
-  final case class Save(user: User) extends Op[User]
-  final case class GetAll(filter: String) extends Op[List[User]]
+  final case class GetOp(id: Long) extends Op[User]
+  final case class SaveOp(user: User) extends Op[User]
+  final case class GetAllOp(filter: String) extends Op[List[User]]
 ```
 Some important features of this ADT are the following ones:
 * The root of the ADT is a sealed trait `Op[A]`. Note that this name `Op` is the same in _every_ `@free`-generated algebra.
