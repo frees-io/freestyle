@@ -15,13 +15,14 @@
  */
 
 package freestyle.tagless
+package loggingJVM
 
 import cats.Applicative
 import freestyle.logging._
 import freestyle.tagless.logging._
-import journal._
+import org.log4s._
 
-object loggingJVM {
+object log4s {
 
   sealed abstract class TaglessLoggingMHandler[M[_]] extends LoggingM.Handler[M] {
 
@@ -36,7 +37,7 @@ object loggingJVM {
         implicit
         line: Line,
         file: File): M[Unit] =
-      withLogger(_.debug(formatMessage(msg, srcInfo, line, file), cause))
+      withLogger(_.debug(cause)(formatMessage(msg, srcInfo, line, file)))
 
     def error(msg: String, srcInfo: Boolean)(implicit line: Line, file: File): M[Unit] =
       withLogger(_.error(formatMessage(msg, srcInfo, line, file)))
@@ -45,7 +46,7 @@ object loggingJVM {
         implicit
         line: Line,
         file: File): M[Unit] =
-      withLogger(_.error(formatMessage(msg, srcInfo, line, file), cause))
+      withLogger(_.error(cause)(formatMessage(msg, srcInfo, line, file)))
 
     def info(msg: String, srcInfo: Boolean)(implicit line: Line, file: File): M[Unit] =
       withLogger(_.info(formatMessage(msg, srcInfo, line, file)))
@@ -54,7 +55,7 @@ object loggingJVM {
         implicit
         line: Line,
         file: File): M[Unit] =
-      withLogger(_.info(formatMessage(msg, srcInfo, line, file), cause))
+      withLogger(_.info(cause)(formatMessage(msg, srcInfo, line, file)))
 
     def warn(msg: String, srcInfo: Boolean)(implicit line: Line, file: File): M[Unit] =
       withLogger(_.warn(formatMessage(msg, srcInfo, line, file)))
@@ -63,13 +64,13 @@ object loggingJVM {
         implicit
         line: Line,
         file: File): M[Unit] =
-      withLogger(_.warn(formatMessage(msg, srcInfo, line, file), cause))
+      withLogger(_.warn(cause)(formatMessage(msg, srcInfo, line, file)))
 
   }
 
   trait Implicits {
     implicit def taglessLoggingApplicative[M[_]: Applicative](
-        implicit log: Logger = Logger("")): LoggingM.Handler[M] = new TaglessLoggingMHandler[M] {
+        implicit log: Logger = getLogger("")): LoggingM.Handler[M] = new TaglessLoggingMHandler[M] {
 
       protected def withLogger[A](f: Logger => A): M[A] = Applicative[M].pure(f(log))
 

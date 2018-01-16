@@ -139,7 +139,8 @@ lazy val config = jvmModule("config")
 lazy val logging = module("logging")
   .dependsOn(core)
   .jvmSettings(
-    libraryDependencies += %%("journal-core")
+    libraryDependencies += %%("journal-core"),
+    libraryDependencies += %%("log4s")
   )
   .jsSettings(
     libraryDependencies += %%%("slogging")

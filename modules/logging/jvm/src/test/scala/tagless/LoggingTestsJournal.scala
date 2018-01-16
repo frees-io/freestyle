@@ -28,16 +28,16 @@ import org.scalatest.{AsyncWordSpec, Matchers}
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.control.NoStackTrace
 
-class LoggingTests extends AsyncWordSpec with Matchers {
+class LoggingTestsJournal extends AsyncWordSpec with Matchers {
 
   implicit override def executionContext = ExecutionContext.Implicits.global
 
   case object Cause extends Exception("kaboom") with NoStackTrace
 
-  "Logging Freestyle tagless integration" should {
+  "Logging Freestyle tagless integration journal" should {
 
     import cats.instances.future._
-    import freestyle.tagless.loggingJVM.implicits._
+    import freestyle.tagless.loggingJVM.loggingJVMJournal.implicits._
 
     "allow a log message to be interleaved inside a program monadic flow" in {
 
