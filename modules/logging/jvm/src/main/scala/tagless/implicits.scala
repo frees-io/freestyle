@@ -17,4 +17,5 @@
 package freestyle.tagless
 package loggingJVM
 
+@deprecated("Use freestyle.tagless.loggingJVM.journal.implicits or freestyle.tagless.loggingJVM.log4s.implicits instead", "0.6.2")
 object implicits extends freestyle.tagless.loggingJVM.journal.Implicits
