@@ -16,9 +16,6 @@
 
 package freestyle.free
 package loggingJVM
+package journal
 
-object journal {
-
-  object implicits extends freestyle.tagless.loggingJVM.journal.Implicits
-
-}
+object implicits extends freestyle.tagless.loggingJVM.journal.Implicits

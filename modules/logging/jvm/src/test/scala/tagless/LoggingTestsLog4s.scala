@@ -37,7 +37,7 @@ class LoggingTestsLog4s extends AsyncWordSpec with Matchers {
   "Logging Freestyle tagless integration log4s" should {
 
     import cats.instances.future._
-    import freestyle.tagless.loggingJVM.loggingJVMLog4s.implicits._
+    import freestyle.tagless.loggingJVM.log4s.implicits._
 
     "allow a log message to be interleaved inside a program monadic flow" in {
 

@@ -17,6 +17,4 @@
 package freestyle.tagless
 package loggingJVM
 
-import freestyle.tagless.loggingJVM.journal.Implicits
-
-object implicits extends Implicits
+object implicits extends freestyle.tagless.loggingJVM.journal.Implicits
