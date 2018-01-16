@@ -41,6 +41,34 @@ Each one of the operations corresponds to variations of `debug`, `error`, `info`
 The _frees-logging_ module contains built-in interpreters for both Scala.jvm and Scala.js which you may use out of the box.
 The JVM handler interpreter is based on the [Verizon's Journal Library](https://github.com/Verizon/journal) and the JS handler in [slogging](https://github.com/jokade/slogging).
 
+### Wrappers available
+
+Freestyle logging supports two wrappers for logging the messages, `SLF4J` and `log4s`. These wrappers are available in `free` and `tagless`.
+
+You can use one of them depends on your requirements but whatever you choose, the usage will be the same.
+
+To use `log4s`:
+
+```tut:book
+import freestyle.free.logging._
+import freestyle.free.loggingJVM.log4s.implicits._
+
+@module trait App {
+  val log: LoggingM
+}
+```
+
+To use `SLF4J`:
+
+```tut:book
+import freestyle.free.logging._
+import freestyle.free.loggingJVM.journal.implicits._
+
+@module trait App {
+  val log: LoggingM
+}
+```
+
 ### Example
 
 In the following example, we will show how easy it is to add the logging algebra and use it in a pure program.
