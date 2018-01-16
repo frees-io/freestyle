@@ -14,8 +14,7 @@
  * limitations under the License.
  */
 
-package freestyle.free
-package loggingJVM
+package freestyle.free.loggingJVM
 
 @deprecated("Use freestyle.free.loggingJVM.journal.implicits or freestyle.free.loggingJVM.log4s.implicits instead", "0.6.2")
 object implicits extends freestyle.tagless.loggingJVM.journal.Implicits

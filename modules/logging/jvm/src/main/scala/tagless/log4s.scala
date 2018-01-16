@@ -14,8 +14,7 @@
  * limitations under the License.
  */
 
-package freestyle.tagless
-package loggingJVM
+package freestyle.tagless.loggingJVM
 
 import cats.Applicative
 import freestyle.logging._

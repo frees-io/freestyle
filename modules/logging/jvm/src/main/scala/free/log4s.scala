@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-package freestyle.free
-package loggingJVM
-package log4s
+package freestyle.free.loggingJVM.log4s
 
 object implicits extends freestyle.tagless.loggingJVM.log4s.Implicits
