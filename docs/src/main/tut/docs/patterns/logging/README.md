@@ -51,6 +51,8 @@ You could use either both, depending on your requirements, and the usage would b
 To use `log4s`:
 
 ```tut:book
+import freestyle.free._
+import freestyle.free.implicits._
 import freestyle.free.logging._
 import freestyle.free.loggingJVM.log4s.implicits._
 
@@ -62,6 +64,8 @@ import freestyle.free.loggingJVM.log4s.implicits._
 To use `journal`:
 
 ```tut:book
+import freestyle.free._
+import freestyle.free.implicits._
 import freestyle.free.logging._
 import freestyle.free.loggingJVM.journal.implicits._
 
