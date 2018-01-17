@@ -1,5 +1,12 @@
 # Changelog
 
+## 01/17/2018 - Version 0.6.2
+
+Release changes:
+
+* Adds log4s logging to free and tagless ([#512](https://github.com/frees-io/freestyle/pull/512))
+
+
 ## 01/12/2018 - Version 0.6.1
 
 Release changes:
