@@ -1,0 +1,98 @@
+/*
+
+  Orginal Style from ethanschoonover.com/solarized (c) Jeremy Hull <sourdrums@gmail.com>
+
+  */
+
+  #page-content-wrapper section pre  .hljs {
+    display: block;
+    overflow-x: auto;
+    background: #fff;
+    color: #707F8F;
+  }
+
+  #page-content-wrapper section pre  .hljs-comment,
+  #page-content-wrapper section pre  .hljs-quote {
+    color: #AEB7C0;
+  }
+
+  /* Solarized Green */
+  #page-content-wrapper section pre  .hljs-keyword,
+  #page-content-wrapper section pre  .hljs-selector-tag,
+  #page-content-wrapper section pre  .hljs-addition,
+  #page-content-wrapper section pre  .hljs-function .hljs-keyword {
+    color: #058F97;
+  }
+
+  /* Solarized Cyan */
+  #page-content-wrapper section pre  .hljs-number,
+  #page-content-wrapper section pre  .hljs-string,
+  #page-content-wrapper section pre  .hljs-meta .hljs-meta-string,
+  #page-content-wrapper section pre  .hljs-literal,
+  #page-content-wrapper section pre  .hljs-doctag,
+  #page-content-wrapper section pre  .hljs-regexp {
+    color: #273F56;
+  }
+
+  /* Solarized Blue */
+  #page-content-wrapper section pre  .hljs-title,
+  #page-content-wrapper section pre  .hljs-section,
+  #page-content-wrapper section pre  .hljs-name,
+  #page-content-wrapper section pre  .hljs-selector-id,
+  #page-content-wrapper section pre  .hljs-selector-class {
+    color: #46A7CA;
+  }
+
+  /* Solarized Yellow */
+  #page-content-wrapper section pre  .hljs-attribute,
+  #page-content-wrapper section pre  .hljs-attr,
+  #page-content-wrapper section pre  .hljs-variable,
+  #page-content-wrapper section pre  .hljs-template-variable,
+  #page-content-wrapper section pre  .hljs-class .hljs-title,
+  #page-content-wrapper section pre  .hljs-type {
+    color: #57697C;
+  }
+
+  #page-content-wrapper section pre .hljs-keyword,
+  #page-content-wrapper section pre .hljs-selector-tag,
+  #page-content-wrapper section pre .hljs-literal,
+  #page-content-wrapper section pre .hljs-title,
+  #page-content-wrapper section pre .hljs-section,
+  #page-content-wrapper section pre .hljs-doctag,
+  #page-content-wrapper section pre .hljs-type,
+  #page-content-wrapper section pre .hljs-name,
+  #page-content-wrapper section pre .hljs-strong {
+  font-weight: normal;
+}
+
+  /* Solarized Orange */
+  #page-content-wrapper section pre  .hljs-symbol,
+  #page-content-wrapper section pre  .hljs-bullet,
+  #page-content-wrapper section pre  .hljs-subst,
+  #page-content-wrapper section pre  .hljs-meta,
+  #page-content-wrapper section pre  .hljs-meta .hljs-keyword,
+  #page-content-wrapper section pre  .hljs-selector-attr,
+  #page-content-wrapper section pre  .hljs-selector-pseudo,
+  #page-content-wrapper section pre  .hljs-link {
+    color: #D7A16D;
+  }
+
+  /* Solarized Red */
+  .hljs-built_in,
+  .hljs-deletion {
+    color: #EC5D5A;
+  }
+
+  .hljs-formula {
+    background: #eee8d5;
+  }
+
+  .hljs-emphasis {
+    font-style: italic;
+  }
+
+  .hljs-strong {
+    font-weight: bold;
+  }
+
+}
