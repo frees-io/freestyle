@@ -25,13 +25,13 @@ import org.scalatest.{AsyncWordSpec, Matchers}
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.control.NoStackTrace
 
-class LoggingTests extends AsyncWordSpec with Matchers {
+class LoggingTestsLog4s extends AsyncWordSpec with Matchers {
 
   implicit override def executionContext = ExecutionContext.Implicits.global
 
   import algebras._
 
-  "Logging Freestyle free integration" should {
+  "Logging Freestyle free integration log4s" should {
 
     case object Cause extends Exception("kaboom") with NoStackTrace
 

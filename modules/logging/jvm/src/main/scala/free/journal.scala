@@ -14,10 +14,6 @@
  * limitations under the License.
  */
 
-package freestyle.free
+package freestyle.free.loggingJVM.journal
 
-object loggingJVM {
-
-  object implicits extends freestyle.tagless.loggingJVM.Implicits
-
-}
+object implicits extends freestyle.tagless.loggingJVM.journal.Implicits

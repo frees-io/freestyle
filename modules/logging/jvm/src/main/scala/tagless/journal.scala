@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package freestyle.tagless
+package freestyle.tagless.loggingJVM
 
 import cats.Applicative
 import freestyle.logging._
 import freestyle.tagless.logging._
-import journal._
+import _root_.journal._
 
-object loggingJVM {
+object journal {
 
   sealed abstract class TaglessLoggingMHandler[M[_]] extends LoggingM.Handler[M] {
 
