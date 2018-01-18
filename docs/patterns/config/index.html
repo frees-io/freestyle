@@ -81,7 +81,7 @@ The current implementation exposes the most important combinators found in <a hr
 </span>
 <span class="k">implicit</span> <span class="k">val</span> <span class="n">configDecoder</span><span class="k">:</span> <span class="kt">ConfigDecoder</span><span class="o">[</span><span class="kt">AppConfig</span><span class="o">]</span> <span class="k">=</span>
   <span class="n">readConfig</span><span class="o">[</span><span class="kt">List</span><span class="o">[</span><span class="kt">String</span><span class="o">]](</span><span class="s">"disallowedStates"</span><span class="o">).</span><span class="n">map</span><span class="o">(</span><span class="nc">AppConfig</span><span class="o">.</span><span class="n">apply</span><span class="o">)</span>
-<span class="c1">// configDecoder: classy.config.ConfigDecoder[AppConfig] = Instance(classy.Decoder$$Lambda$17783/194467012@7d9f075d)
+<span class="c1">// configDecoder: classy.config.ConfigDecoder[AppConfig] = Instance(classy.Decoder$$Lambda$17807/1611786024@63fad46c)
 </span></code></pre>
 </div>
 
@@ -96,7 +96,7 @@ The current implementation exposes the most important combinators found in <a hr
 <span class="k">implicit</span> <span class="k">val</span> <span class="n">issuesServiceHandler</span><span class="k">:</span> <span class="kt">IssuesService.Handler</span><span class="o">[</span><span class="kt">Try</span><span class="o">]</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">IssuesService</span><span class="o">.</span><span class="nc">Handler</span><span class="o">[</span><span class="kt">Try</span><span class="o">]</span> <span class="o">{</span>
   <span class="k">def</span> <span class="n">states</span><span class="k">:</span> <span class="kt">Try</span><span class="o">[</span><span class="kt">List</span><span class="o">[</span><span class="kt">String</span><span class="o">]]</span> <span class="k">=</span> <span class="nc">Try</span><span class="o">(</span><span class="nc">List</span><span class="o">(</span><span class="s">"open"</span><span class="o">,</span> <span class="s">"reverted"</span><span class="o">,</span> <span class="s">"in progress"</span><span class="o">,</span> <span class="s">"closed"</span><span class="o">))</span>
 <span class="o">}</span>
-<span class="c1">// issuesServiceHandler: IssuesService.Handler[scala.util.Try] = $anon$1@790821b6
+<span class="c1">// issuesServiceHandler: IssuesService.Handler[scala.util.Try] = $anon$1@2d1fc5f
 </span></code></pre>
 </div>
 

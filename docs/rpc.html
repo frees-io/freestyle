@@ -10,7 +10,7 @@ ga('send', 'pageview');
 
 <p><a href="https://en.wikipedia.org/wiki/Remote_procedure_call">RPC</a> atop <strong>Freestyle</strong> is <strong><code class="highlighter-rouge">frees-rpc</code></strong>.</p>
 
-<p>Freestyle RPC is a purely functional library for building RPC endpoint based services with support for <a href="https://en.wikipedia.org/wiki/Remote_procedure_call">RPC</a> and <a href="https://http2.github.io/">HTTP/2</a>.</p>
+<p>Freestyle RPC is a purely functional library for building RPC endpoint-based services with support for <a href="https://en.wikipedia.org/wiki/Remote_procedure_call">RPC</a> and <a href="https://http2.github.io/">HTTP/2</a>.</p>
 
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
@@ -55,6 +55,13 @@ ga('send', 'pageview');
     </ul>
   </li>
   <li><a href="#frees-rpc-annotations">frees-rpc annotations</a></li>
+  <li><a href="#metrics-reporting">Metrics Reporting</a>
+    <ul>
+      <li><a href="#monitor-server-calls">Monitor Server Calls</a></li>
+      <li><a href="#monitor-client-calls">Monitor Client Calls</a></li>
+      <li><a href="#dropwizard-metrics">Dropwizard Metrics</a></li>
+    </ul>
+  </li>
   <li><a href="#next-steps">Next Steps</a></li>
   <li><a href="#comparing-http-and-rpc">Comparing HTTP and RPC</a></li>
   <li><a href="#references">References</a></li>
@@ -68,25 +75,150 @@ ga('send', 'pageview');
 
 <h2 id="installation">Installation</h2>
 
-<p><code class="highlighter-rouge">frees-rpc</code> is cross-built for Scala <code class="highlighter-rouge">2.11.x</code> and <code class="highlighter-rouge">2.12.x</code>:</p>
+<p><code class="highlighter-rouge">frees-rpc</code> is cross-built for Scala <code class="highlighter-rouge">2.11.x</code> and <code class="highlighter-rouge">2.12.x</code>.</p>
+
+<p>It’s divided into multiple and different artifacts, grouped by scope:</p>
+
+<ul>
+  <li><code class="highlighter-rouge">Server</code>: specifically for the RPC server.</li>
+  <li><code class="highlighter-rouge">Client</code>: focused on the RPC auto-derived clients by <code class="highlighter-rouge">frees-rpc</code>.</li>
+  <li><code class="highlighter-rouge">Server/Client</code>: used from other artifacts for both Server and Client.</li>
+  <li><code class="highlighter-rouge">Test</code>: useful to test <code class="highlighter-rouge">frees-rpc</code> applications.</li>
+</ul>
+
+<table>
+  <thead>
+    <tr>
+      <th><em>Artifact Name</em></th>
+      <th><em>Scope</em></th>
+      <th><em>Mandatory</em></th>
+      <th><em>Description</em></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code class="highlighter-rouge">frees-rpc-server</code></td>
+      <td>Server</td>
+      <td>Yes</td>
+      <td>Needed to attach RPC Services and spin-up an RPC Server.</td>
+    </tr>
+    <tr>
+      <td><code class="highlighter-rouge">frees-rpc-client-core</code></td>
+      <td>Client</td>
+      <td>Yes</td>
+      <td>Mandatory to define protocols and auto-derived clients.</td>
+    </tr>
+    <tr>
+      <td><code class="highlighter-rouge">frees-rpc-client-netty</code></td>
+      <td>Client</td>
+      <td>Yes*</td>
+      <td>Optional if you use <code class="highlighter-rouge">OkHttp</code>, required from the client perspective.</td>
+    </tr>
+    <tr>
+      <td><code class="highlighter-rouge">frees-rpc-client-okhttp</code></td>
+      <td>Client</td>
+      <td>Yes*</td>
+      <td>Optional if you use <code class="highlighter-rouge">Netty</code>, required from the client perspective.</td>
+    </tr>
+    <tr>
+      <td><code class="highlighter-rouge">frees-rpc-config</code></td>
+      <td>Server/Client</td>
+      <td>No</td>
+      <td>It provides configuration helpers using <a href="http://frees.io/docs/patterns/config/">frees-config</a> to load the application configuration values.</td>
+    </tr>
+    <tr>
+      <td><code class="highlighter-rouge">frees-rpc-prometheus-server</code></td>
+      <td>Server</td>
+      <td>No</td>
+      <td>Scala interceptors which can be used to monitor gRPC services using Prometheus, on the <em>Server</em> side.</td>
+    </tr>
+    <tr>
+      <td><code class="highlighter-rouge">frees-rpc-prometheus-client</code></td>
+      <td>Client</td>
+      <td>No</td>
+      <td>Scala interceptors which can be used to monitor gRPC services using Prometheus, on the <em>Client</em> side.</td>
+    </tr>
+    <tr>
+      <td><code class="highlighter-rouge">frees-rpc-prometheus-shared</code></td>
+      <td>Server/Client</td>
+      <td>No</td>
+      <td>Common code for both the client and the server in the prometheus scope.</td>
+    </tr>
+    <tr>
+      <td><code class="highlighter-rouge">frees-rpc-dropwizard-server</code></td>
+      <td>Server</td>
+      <td>No</td>
+      <td>Scala interceptors which can be used to monitor gRPC services using Dropwizard metrics, on the <em>Server</em> side.</td>
+    </tr>
+    <tr>
+      <td><code class="highlighter-rouge">frees-rpc-dropwizard-client</code></td>
+      <td>Client</td>
+      <td>No</td>
+      <td>Scala interceptors which can be used to monitor gRPC services using Dropwizard metrics, on the <em>Client</em> side.</td>
+    </tr>
+    <tr>
+      <td><code class="highlighter-rouge">frees-rpc-interceptors</code></td>
+      <td>Server/Client</td>
+      <td>No</td>
+      <td>Commons related to gRPC interceptors.</td>
+    </tr>
+    <tr>
+      <td><code class="highlighter-rouge">frees-rpc-testing</code></td>
+      <td>Test</td>
+      <td>No</td>
+      <td>Utilities to test out <code class="highlighter-rouge">frees-rpc</code> applications. It provides the <code class="highlighter-rouge">grpc-testing</code> library as the transitive dependency.</td>
+    </tr>
+    <tr>
+      <td><code class="highlighter-rouge">frees-rpc-common</code></td>
+      <td>Server/Client</td>
+      <td>Provided*</td>
+      <td>Common things that are used throughout the project.</td>
+    </tr>
+    <tr>
+      <td><code class="highlighter-rouge">frees-rpc-internal</code></td>
+      <td>Server/Client</td>
+      <td>Provided*</td>
+      <td>Macros.</td>
+    </tr>
+    <tr>
+      <td><code class="highlighter-rouge">frees-rpc-async</code></td>
+      <td>Server/Client</td>
+      <td>Provided*</td>
+      <td>Async instances useful for interacting with the RPC services on both sides, server and the client.</td>
+    </tr>
+  </tbody>
+</table>
+
+<ul>
+  <li><code class="highlighter-rouge">Yes*</code>: on the client-side, you must choose either <code class="highlighter-rouge">Netty</code> or <code class="highlighter-rouge">OkHttp</code> as the transport layer.</li>
+  <li><code class="highlighter-rouge">Provided*</code>: you don’t need to add it to your build, it’ll be transitively provided when using other dependencies.</li>
+</ul>
+
+<p>You can install any of these dependencies in your build as follows:</p>
 
 <div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="c1">// required for the RPC Server:
-</span><span class="n">libraryDependencies</span> <span class="o">+=</span> <span class="s">"io.frees"</span> <span class="o">%%</span> <span class="s">"frees-rpc-server"</span>        <span class="o">%</span> <span class="s">"0.9.0"</span>
+</span><span class="n">libraryDependencies</span> <span class="o">+=</span> <span class="s">"io.frees"</span> <span class="o">%%</span> <span class="s">"frees-rpc-server"</span>            <span class="o">%</span> <span class="s">"0.10.0"</span>
 
 <span class="c1">// required for a protocol definition:
-</span><span class="n">libraryDependencies</span> <span class="o">+=</span> <span class="s">"io.frees"</span> <span class="o">%%</span> <span class="s">"frees-rpc-client-core"</span>   <span class="o">%</span> <span class="s">"0.9.0"</span>
+</span><span class="n">libraryDependencies</span> <span class="o">+=</span> <span class="s">"io.frees"</span> <span class="o">%%</span> <span class="s">"frees-rpc-client-core"</span>       <span class="o">%</span> <span class="s">"0.10.0"</span>
 
 <span class="c1">// required for the use of the derived RPC Client/s, using either Netty or OkHttp as transport layer:
-</span><span class="n">libraryDependencies</span> <span class="o">+=</span> <span class="s">"io.frees"</span> <span class="o">%%</span> <span class="s">"frees-rpc-client-netty"</span>  <span class="o">%</span> <span class="s">"0.9.0"</span>
+</span><span class="n">libraryDependencies</span> <span class="o">+=</span> <span class="s">"io.frees"</span> <span class="o">%%</span> <span class="s">"frees-rpc-client-netty"</span>      <span class="o">%</span> <span class="s">"0.10.0"</span>
 <span class="c1">// or:
-</span><span class="n">libraryDependencies</span> <span class="o">+=</span> <span class="s">"io.frees"</span> <span class="o">%%</span> <span class="s">"frees-rpc-client-okhttp"</span> <span class="o">%</span> <span class="s">"0.9.0"</span>
+</span><span class="n">libraryDependencies</span> <span class="o">+=</span> <span class="s">"io.frees"</span> <span class="o">%%</span> <span class="s">"frees-rpc-client-okhttp"</span>     <span class="o">%</span> <span class="s">"0.10.0"</span>
 
 <span class="c1">// optional - for both server and client configuration.
-</span><span class="n">libraryDependencies</span> <span class="o">+=</span> <span class="s">"io.frees"</span> <span class="o">%%</span> <span class="s">"frees-rpc-config"</span>        <span class="o">%</span> <span class="s">"0.9.0"</span>
+</span><span class="n">libraryDependencies</span> <span class="o">+=</span> <span class="s">"io.frees"</span> <span class="o">%%</span> <span class="s">"frees-rpc-config"</span>            <span class="o">%</span> <span class="s">"0.10.0"</span>
+
+<span class="c1">// optional - for both server and client metrics reporting, using Prometheus.
+</span><span class="n">libraryDependencies</span> <span class="o">+=</span> <span class="s">"io.frees"</span> <span class="o">%%</span> <span class="s">"frees-rpc-prometheus-server"</span> <span class="o">%</span> <span class="s">"0.10.0"</span>
+<span class="n">libraryDependencies</span> <span class="o">+=</span> <span class="s">"io.frees"</span> <span class="o">%%</span> <span class="s">"frees-rpc-prometheus-client"</span> <span class="o">%</span> <span class="s">"0.10.0"</span>
+
+<span class="c1">// optional - for both server and client metrics reporting, using Dropwizard.
+</span><span class="n">libraryDependencies</span> <span class="o">+=</span> <span class="s">"io.frees"</span> <span class="o">%%</span> <span class="s">"frees-rpc-dropwizard-server"</span> <span class="o">%</span> <span class="s">"0.10.0"</span>
+<span class="n">libraryDependencies</span> <span class="o">+=</span> <span class="s">"io.frees"</span> <span class="o">%%</span> <span class="s">"frees-rpc-dropwizard-client"</span> <span class="o">%</span> <span class="s">"0.10.0"</span>
 </code></pre>
 </div>
-
-<p>Note: <code class="highlighter-rouge">frees-rpc-config</code> provides some configuration helpers using <a href="http://frees.io/docs/patterns/config/">frees-config</a> to load the application configuration values.</p>
 
 <h2 id="about-grpc">About gRPC</h2>
 
@@ -652,19 +784,18 @@ service Greeter {
   <span class="k">trait</span> <span class="nc">Implicits</span> <span class="k">extends</span> <span class="nc">CommonRuntime</span> <span class="o">{</span>
 
     <span class="k">val</span> <span class="n">channelFor</span><span class="k">:</span> <span class="kt">ManagedChannelFor</span> <span class="o">=</span>
-      <span class="nc">ConfigForAddress</span><span class="o">[</span><span class="kt">ChannelConfig.Op</span><span class="o">](</span><span class="s">"rpc.host"</span><span class="o">,</span> <span class="s">"rpc.port"</span><span class="o">)</span>
-        <span class="o">.</span><span class="n">interpret</span><span class="o">[</span><span class="kt">Try</span><span class="o">]</span> <span class="k">match</span> <span class="o">{</span>
+      <span class="nc">ConfigForAddress</span><span class="o">[</span><span class="kt">Try</span><span class="o">](</span><span class="s">"rpc.host"</span><span class="o">,</span> <span class="s">"rpc.port"</span><span class="o">)</span> <span class="k">match</span> <span class="o">{</span>
         <span class="k">case</span> <span class="nc">Success</span><span class="o">(</span><span class="n">c</span><span class="o">)</span> <span class="k">=&gt;</span> <span class="n">c</span>
         <span class="k">case</span> <span class="nc">Failure</span><span class="o">(</span><span class="n">e</span><span class="o">)</span> <span class="k">=&gt;</span>
           <span class="n">e</span><span class="o">.</span><span class="n">printStackTrace</span><span class="o">()</span>
           <span class="k">throw</span> <span class="k">new</span> <span class="nc">RuntimeException</span><span class="o">(</span><span class="s">"Unable to load the client configuration"</span><span class="o">,</span> <span class="n">e</span><span class="o">)</span>
+    <span class="o">}</span>
 
     <span class="k">implicit</span> <span class="k">val</span> <span class="n">serviceClient</span><span class="k">:</span> <span class="kt">Greeter.Client</span><span class="o">[</span><span class="kt">Task</span><span class="o">]</span> <span class="k">=</span>
       <span class="nc">Greeter</span><span class="o">.</span><span class="n">client</span><span class="o">[</span><span class="kt">Task</span><span class="o">](</span><span class="n">channelFor</span><span class="o">)</span>
   <span class="o">}</span>
 
   <span class="k">object</span> <span class="nc">implicits</span> <span class="k">extends</span> <span class="nc">Implicits</span>
-
 <span class="o">}</span>
 </code></pre>
 </div>
@@ -684,11 +815,14 @@ service Greeter {
 <span class="k">import</span> <span class="nn">gclient.implicits._</span>
 <span class="k">import</span> <span class="nn">monix.eval.Task</span>
 
+<span class="k">import</span> <span class="nn">scala.concurrent.Await</span>
+<span class="k">import</span> <span class="nn">scala.concurrent.duration.Duration</span>
+
 <span class="k">object</span> <span class="nc">RPCDemoApp</span> <span class="o">{</span>
 
   <span class="k">def</span> <span class="n">main</span><span class="o">(</span><span class="n">args</span><span class="k">:</span> <span class="kt">Array</span><span class="o">[</span><span class="kt">String</span><span class="o">])</span><span class="k">:</span> <span class="kt">Unit</span> <span class="o">=</span> <span class="o">{</span>
 
-    <span class="k">val</span> <span class="n">result</span><span class="k">:</span> <span class="kt">HelloResponse</span> <span class="o">=</span> <span class="n">serviceClient</span><span class="o">.</span><span class="n">sayHello</span><span class="o">(</span><span class="nc">HelloRequest</span><span class="o">(</span><span class="s">"foo"</span><span class="o">)).</span><span class="n">unsafeRunSync</span>
+    <span class="k">val</span> <span class="n">result</span> <span class="k">=</span> <span class="nc">Await</span><span class="o">.</span><span class="n">result</span><span class="o">(</span><span class="n">serviceClient</span><span class="o">.</span><span class="n">sayHello</span><span class="o">(</span><span class="nc">HelloRequest</span><span class="o">(</span><span class="s">"foo"</span><span class="o">)).</span><span class="n">runAsync</span><span class="o">,</span> <span class="nc">Duration</span><span class="o">.</span><span class="nc">Inf</span><span class="o">)</span>
 
     <span class="n">println</span><span class="o">(</span><span class="n">s</span><span class="s">"Result = $result"</span><span class="o">)</span>
 
@@ -744,6 +878,108 @@ service Greeter {
     </tr>
   </tbody>
 </table>
+
+<h2 id="metrics-reporting">Metrics Reporting</h2>
+
+<p><a href="https://github.com/frees-io/freestyle-rpc">frees-rpc</a> currently provides two different ways to monitor <a href="https://grpc.io/">gRPC</a> services: <code class="highlighter-rouge">Prometheus</code> and <code class="highlighter-rouge">Dropwizard</code> (using the <code class="highlighter-rouge">Prometheus</code> extension). The usage is quite similar for both.</p>
+
+<h3 id="monitor-server-calls">Monitor Server Calls</h3>
+
+<p>In order to monitor the RPC calls on the server side, it’s necessary to intercept them. We’ll see how to do this in the next code fragment:</p>
+
+<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">cats.</span><span class="o">~&gt;</span>
+<span class="k">import</span> <span class="nn">cats.effect.IO</span>
+<span class="k">import</span> <span class="nn">freestyle.rpc.server._</span>
+<span class="k">import</span> <span class="nn">freestyle.rpc.server.handlers._</span>
+<span class="k">import</span> <span class="nn">freestyle.rpc.server.implicits._</span>
+<span class="k">import</span> <span class="nn">freestyle.async.catsEffect.implicits._</span>
+<span class="k">import</span> <span class="nn">service._</span>
+
+<span class="k">import</span> <span class="nn">io.prometheus.client.CollectorRegistry</span>
+<span class="k">import</span> <span class="nn">freestyle.rpc.prometheus.shared.Configuration</span>
+<span class="k">import</span> <span class="nn">freestyle.rpc.prometheus.server.MonitoringServerInterceptor</span>
+
+<span class="k">object</span> <span class="nc">InterceptingServerCalls</span> <span class="k">extends</span> <span class="nc">CommonRuntime</span> <span class="o">{</span>
+
+  <span class="k">import</span> <span class="nn">freestyle.rpc.interceptors.implicits._</span>
+
+  <span class="k">lazy</span> <span class="k">val</span> <span class="n">cr</span><span class="k">:</span> <span class="kt">CollectorRegistry</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">CollectorRegistry</span><span class="o">()</span>
+  <span class="k">lazy</span> <span class="k">val</span> <span class="n">monitorInterceptor</span> <span class="k">=</span> <span class="nc">MonitoringServerInterceptor</span><span class="o">(</span>
+    <span class="nc">Configuration</span><span class="o">.</span><span class="n">defaultBasicMetrics</span><span class="o">.</span><span class="n">withCollectorRegistry</span><span class="o">(</span><span class="n">cr</span><span class="o">)</span>
+  <span class="o">)</span>
+
+  <span class="k">implicit</span> <span class="k">val</span> <span class="n">greeterServiceHandler</span><span class="k">:</span> <span class="kt">ServiceHandler</span><span class="o">[</span><span class="kt">IO</span><span class="o">]</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">ServiceHandler</span><span class="o">[</span><span class="kt">IO</span><span class="o">]</span>
+
+  <span class="k">val</span> <span class="n">grpcConfigs</span><span class="k">:</span> <span class="kt">List</span><span class="o">[</span><span class="kt">GrpcConfig</span><span class="o">]</span> <span class="k">=</span> <span class="nc">List</span><span class="o">(</span>
+    <span class="nc">AddService</span><span class="o">(</span><span class="nc">Greeter</span><span class="o">.</span><span class="n">bindService</span><span class="o">[</span><span class="kt">IO</span><span class="o">].</span><span class="n">interceptWith</span><span class="o">(</span><span class="n">monitorInterceptor</span><span class="o">))</span>
+  <span class="o">)</span>
+
+  <span class="k">implicit</span> <span class="k">val</span> <span class="n">serverW</span><span class="k">:</span> <span class="kt">ServerW</span> <span class="o">=</span> <span class="nc">ServerW</span><span class="o">(</span><span class="mi">8080</span><span class="o">,</span> <span class="n">grpcConfigs</span><span class="o">)</span>
+
+<span class="o">}</span>
+</code></pre>
+</div>
+
+<h3 id="monitor-client-calls">Monitor Client Calls</h3>
+
+<p>In this case, in order to intercept the client calls we need additional configuration settings (by using <code class="highlighter-rouge">AddInterceptor</code>):</p>
+
+<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">cats.implicits._</span>
+<span class="k">import</span> <span class="nn">cats.effect.IO</span>
+<span class="k">import</span> <span class="nn">freestyle.free.config.implicits._</span>
+<span class="k">import</span> <span class="nn">freestyle.async.catsEffect.implicits._</span>
+<span class="k">import</span> <span class="nn">freestyle.rpc.client._</span>
+<span class="k">import</span> <span class="nn">freestyle.rpc.client.config._</span>
+<span class="k">import</span> <span class="nn">freestyle.rpc.client.implicits._</span>
+<span class="k">import</span> <span class="nn">monix.eval.Task</span>
+<span class="k">import</span> <span class="nn">io.grpc.ManagedChannel</span>
+<span class="k">import</span> <span class="nn">service._</span>
+
+<span class="k">import</span> <span class="nn">scala.util.</span><span class="o">{</span><span class="nc">Failure</span><span class="o">,</span> <span class="nc">Success</span><span class="o">,</span> <span class="nc">Try</span><span class="o">}</span>
+
+<span class="k">import</span> <span class="nn">freestyle.rpc.prometheus.shared.Configuration</span>
+<span class="k">import</span> <span class="nn">freestyle.rpc.prometheus.client.MonitoringClientInterceptor</span>
+
+<span class="k">object</span> <span class="nc">InterceptingClientCalls</span> <span class="k">extends</span> <span class="nc">CommonRuntime</span> <span class="o">{</span>
+
+  <span class="k">val</span> <span class="n">channelFor</span><span class="k">:</span> <span class="kt">ManagedChannelFor</span> <span class="o">=</span>
+    <span class="nc">ConfigForAddress</span><span class="o">[</span><span class="kt">Try</span><span class="o">](</span><span class="s">"rpc.host"</span><span class="o">,</span> <span class="s">"rpc.port"</span><span class="o">)</span> <span class="k">match</span> <span class="o">{</span>
+      <span class="k">case</span> <span class="nc">Success</span><span class="o">(</span><span class="n">c</span><span class="o">)</span> <span class="k">=&gt;</span> <span class="n">c</span>
+      <span class="k">case</span> <span class="nc">Failure</span><span class="o">(</span><span class="n">e</span><span class="o">)</span> <span class="k">=&gt;</span>
+        <span class="n">e</span><span class="o">.</span><span class="n">printStackTrace</span><span class="o">()</span>
+        <span class="k">throw</span> <span class="k">new</span> <span class="nc">RuntimeException</span><span class="o">(</span><span class="s">"Unable to load the client configuration"</span><span class="o">,</span> <span class="n">e</span><span class="o">)</span>
+      <span class="o">}</span>
+
+  <span class="k">implicit</span> <span class="k">val</span> <span class="n">serviceClient</span><span class="k">:</span> <span class="kt">Greeter.Client</span><span class="o">[</span><span class="kt">Task</span><span class="o">]</span> <span class="k">=</span>
+    <span class="nc">Greeter</span><span class="o">.</span><span class="n">client</span><span class="o">[</span><span class="kt">Task</span><span class="o">](</span>
+      <span class="n">channelFor</span> <span class="k">=</span> <span class="n">channelFor</span><span class="o">,</span>
+      <span class="n">channelConfigList</span> <span class="k">=</span> <span class="nc">List</span><span class="o">(</span>
+        <span class="nc">UsePlaintext</span><span class="o">(</span><span class="kc">true</span><span class="o">),</span>
+        <span class="nc">AddInterceptor</span><span class="o">(</span>
+          <span class="nc">MonitoringClientInterceptor</span><span class="o">(</span>
+            <span class="nc">Configuration</span><span class="o">.</span><span class="n">defaultBasicMetrics</span>
+          <span class="o">)</span>
+        <span class="o">)</span>
+      <span class="o">)</span>
+    <span class="o">)</span>
+<span class="o">}</span>
+</code></pre>
+</div>
+
+<p>That’s using <code class="highlighter-rouge">Prometheus</code> to monitor both <a href="https://grpc.io/">gRPC</a> ends.</p>
+
+<h3 id="dropwizard-metrics">Dropwizard Metrics</h3>
+
+<p>The usage is equivalent, however, in this case, we need to put an instance of <code class="highlighter-rouge">com.codahale.metrics.MetricRegistry</code> on the scene, then, using the <em>Dropwizard</em> integration that <em>Prometheus</em> already provides (<code class="highlighter-rouge">DropwizardExports</code>) you can associate it with the collector registry:</p>
+
+<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">com.codahale.metrics.MetricRegistry</span>
+<span class="k">import</span> <span class="nn">io.prometheus.client.dropwizard.DropwizardExports</span>
+
+<span class="k">val</span> <span class="n">metrics</span><span class="k">:</span> <span class="kt">MetricRegistry</span>      <span class="o">=</span> <span class="k">new</span> <span class="nc">MetricRegistry</span>
+<span class="k">val</span> <span class="n">configuration</span><span class="k">:</span> <span class="kt">Configuration</span> <span class="o">=</span> <span class="nc">Configuration</span><span class="o">.</span><span class="n">defaultBasicMetrics</span>
+<span class="n">configuration</span><span class="o">.</span><span class="n">collectorRegistry</span><span class="o">.</span><span class="n">register</span><span class="o">(</span><span class="k">new</span> <span class="nc">DropwizardExports</span><span class="o">(</span><span class="n">metrics</span><span class="o">))</span>
+</code></pre>
+</div>
 
 <h2 id="next-steps">Next Steps</h2>
 
