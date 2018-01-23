@@ -17,10 +17,10 @@
 package freestyle.async
 package catsEffect
 
-import cats.effect.Effect
+import cats.effect.Async
 
 trait AsyncCatsEffectImplicits {
-  implicit def catsEffectAsyncContext[F[_]](implicit F: Effect[F]): AsyncContext[F] =
+  implicit def catsEffectAsyncContext[F[_]](implicit F: Async[F]): AsyncContext[F] =
     new AsyncContext[F] {
       def runAsync[A](fa: Proc[A]): F[A] = F.async(fa)
     }
