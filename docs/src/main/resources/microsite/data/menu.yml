@@ -19,9 +19,6 @@ options:
      - title: Parallelism
        url: docs/core/parallelism/
 
-     - title: Tagless Final
-       url: docs/core/tagless/
-
   - title: Effects
     url: docs/effects/
 
