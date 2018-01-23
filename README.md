@@ -75,8 +75,6 @@ def loadUser[F[_]]
 
 + [freestyle](http://frees.io/docs/) - Core module including building blocks for boilerplate free FP programs and apps over Free monads and cats.
 
-+ [tagless](http://frees.io/docs/core/tagless/) - An alternative encoding to Free based on Tagless Final.
-
 + [effects](http://frees.io/docs/effects/) - MTL style effects such as reader, writer, state, error, and more modeled as free algebras.
 
 + [logging](http://frees.io/docs/patterns/logging/) - A purely functional logging algebra over Verizon's Journal.
