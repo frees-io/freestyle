@@ -1,5 +1,14 @@
 # Changelog
 
+## 01/23/2018 - Version 0.6.3
+
+Release changes:
+
+* Remove Tagless doc. link from menu ([#514](https://github.com/frees-io/freestyle/pull/514))
+* Remote tagless link from Readme ([#515](https://github.com/frees-io/freestyle/pull/515))
+* AsyncContext implicit now requires Async instead of Effect ([#516](https://github.com/frees-io/freestyle/pull/516))
+
+
 ## 01/17/2018 - Version 0.6.2
 
 Release changes:
