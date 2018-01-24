@@ -23,7 +23,7 @@ object state {
 
   final class StateSeedProvider[S] {
 
-    @tagless sealed abstract class StateM {
+    @tagless @stacksafe sealed abstract class StateM {
       def get: FS[S]
       def set(s: S): FS[Unit]
       def modify(f: S => S): FS[Unit]

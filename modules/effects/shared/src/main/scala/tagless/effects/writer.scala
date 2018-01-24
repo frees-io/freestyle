@@ -23,7 +23,7 @@ object writer {
 
   final class AccumulatorProvider[W] {
 
-    @tagless sealed abstract class WriterM {
+    @tagless @stacksafe sealed abstract class WriterM {
       def writer[A](aw: (W, A)): FS[A]
       def tell(w: W): FS[Unit]
     }

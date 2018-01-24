@@ -24,7 +24,7 @@ import scala.concurrent.Future
 
 object algebras {
 
-  @tagless
+  @tagless @stacksafe
   trait NonLogging {
     def x: FS[Int]
   }

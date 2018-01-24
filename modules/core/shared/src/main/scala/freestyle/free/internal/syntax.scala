@@ -38,10 +38,15 @@ object syntax {
   }
 
   final class ModOps(mods: Seq[Mod]) {
-
     def filtered: Seq[Mod] = mods.filter {
       case mod"@debug" => false
+      case mod"@stacksafe" => false
       case _           => true
+    }
+
+    def isStackSafe: Boolean = mods.exists {
+      case mod"@stacksafe" => true
+      case _ => false
     }
   }
 

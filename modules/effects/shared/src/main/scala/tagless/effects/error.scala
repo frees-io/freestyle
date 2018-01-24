@@ -21,7 +21,7 @@ import cats.{Eval, MonadError}
 
 object error {
 
-  @tagless sealed trait ErrorM {
+  @tagless @stacksafe sealed trait ErrorM {
     def either[A](fa: Either[Throwable, A]): FS[A]
     def error[A](e: Throwable): FS[A]
     def catchNonFatal[A](a: Eval[A]): FS[A]

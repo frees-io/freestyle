@@ -17,8 +17,8 @@
 package freestyle
 package free
 
-@debug
 @free
+@debug
 trait SCtors1 {
   def x(a: Int): FS[Int]
   def y(a: Int): FS[Int]
