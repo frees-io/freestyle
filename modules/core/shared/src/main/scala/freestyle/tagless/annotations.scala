@@ -25,7 +25,14 @@ import scala.annotation.{StaticAnnotation, compileTimeOnly}
 class tagless extends StaticAnnotation {
   import scala.meta._
 
-  inline def apply(defn: Any): Any = meta { taglessImpl.tagless(defn) }
+  inline def apply(defn: Any): Any = meta { taglessImpl.tagless(defn, false) }
+}
+
+@compileTimeOnly("enable macro paradise to expand @tagless macro annotations")
+class taglessStackSafe extends StaticAnnotation {
+  import scala.meta._
+
+  inline def apply(defn: Any): Any = meta { taglessImpl.tagless(defn, true) }
 }
 
 @compileTimeOnly("enable macro paradise to expand @module macro annotations")

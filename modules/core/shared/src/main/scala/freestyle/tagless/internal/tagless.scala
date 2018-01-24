@@ -32,12 +32,12 @@ object taglessImpl {
 
   import freestyle.free.internal.syntax._
 
-  def tagless(defn: Any): Stat = defn match {
+  def tagless(defn: Any, isStackSafe: Boolean): Stat = defn match {
     case cls: Trait =>
       freeAlg(Algebra(cls.mods.filtered, cls.name, cls.tparams, cls.ctor, cls.templ), isTrait = true)
         .`debug?`(cls.mods)
     case cls: Class if isAbstract(cls) =>
-      freeAlg(Algebra(cls.mods.filtered, cls.name, cls.tparams, cls.ctor, cls.templ), isTrait = false)
+      freeAlg(Algebra(cls.mods.filtered, cls.name, cls.tparams, cls.ctor, cls.templ), isTrait = false, isStackSafe = isStackSafe)
         .`debug?`(cls.mods)
 
     case c: Class /* ! isAbstract */   => abort(s"$invalid in ${c.name}. $abstractOnly")
@@ -60,7 +60,8 @@ case class Algebra(
     name: Type.Name,
     tparams: Seq[Type.Param],
     ctor: Ctor.Primary,
-    templ: Template
+    templ: Template,
+    isStackSafe: Boolean
 ) {
   import Util._
 
@@ -129,13 +130,21 @@ case class Algebra(
     val runTParams: Seq[Type.Param] = tyParamK(mm) +: cleanedTParams
     val runTArgs: Seq[Type]         = mm +: cleanedTParams.map(toType)
 
-    val handlerT: Trait = q"""
-      trait Handler[..$allTParams] extends ${name.ctor}[..$allTNames] with StackSafe.Handler[..$allTNames] {
-        ..${requestDecls.map(_.addMod(Mod.Override()))}
-      }
-    """
+    val handlerT: Trait =
+      if (isStackSafe)
+        q"""
+          trait Handler[..$allTParams] extends ${name.ctor}[..$allTNames] with StackSafe.Handler[..$allTNames] {
+            ..${requestDecls.map(_.addMod(Mod.Override()))}
+          }
+        """
+      else 
+        q"""
+          trait Handler[..$allTParams] extends ${name.ctor}[..$allTNames] {
+            ..${requestDecls.map(_.addMod(Mod.Override()))}
+          }
+        """
 
-    val stackSafeAlg: FreeAlgebra = {
+    lazy val stackSafeAlg: FreeAlgebra = {
       def withFS( req: Decl.Def): Decl.Def =
         req.copy(decltpe = req.decltpe match {
           case Type.Apply(_, targs) => Type.Apply( Type.Name("FS"), targs)
@@ -145,8 +154,8 @@ case class Algebra(
       val t: Trait = q" trait StackSafe { ..${requestDecls.map(withFS)} } "
       FreeAlgebra(Seq.empty[Mod], Type.Name("StackSafe"), allTParams, t.ctor, t.templ)
     }
-    val stackSafeT: Trait = stackSafeAlg.enrich.toTrait
-    val stackSafeD: Object = stackSafeAlg.mkCompanion
+    lazy val stackSafeT: Trait = stackSafeAlg.enrich.toTrait
+    lazy val stackSafeD: Object = stackSafeAlg.mkCompanion
 
     val deriveDef: Defn.Def = {
       val deriveTTs = tyParamK(mm) +: tyParamK(nn) +: cleanedTParams
@@ -183,7 +192,11 @@ case class Algebra(
     prot.copy(
       name = Term.Name(name.value),
       templ = prot.templ.copy(
-        stats = Some(Seq(applyDef, functorKDef, deriveDef, stackSafeT, stackSafeD, handlerT))
+        stats = Some(
+          if (isStackSafe)
+            Seq(applyDef, functorKDef, deriveDef, stackSafeT, stackSafeD, handlerT)
+          else Seq(applyDef, functorKDef, deriveDef, handlerT)
+        )
       ))
   }
 
