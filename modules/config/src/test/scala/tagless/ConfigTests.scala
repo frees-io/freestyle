@@ -126,7 +126,7 @@ class ConfigTests extends WordSpec with Matchers {
 }
 
 object algebras {
-  @tagless
+  @tagless @stacksafe
   trait NonConfig {
     def x: FS[Int]
   }

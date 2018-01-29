@@ -41,6 +41,7 @@ object syntax {
 
     def filtered: Seq[Mod] = mods.filter {
       case mod"@debug" => false
+      case mod"@stacksafe" => false
       case _           => true
     }
   }
