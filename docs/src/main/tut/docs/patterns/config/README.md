@@ -131,8 +131,7 @@ If we decide to use the Typesafe Config object instead of the Case Classy librar
 
 So, given the example described above, the required code will be pretty similar except we'll load the Config object and use the methods that it provides:
 
-```
-tut:book
+```tut:book
 def filteredStates[F[_]](implicit app : App[F]): FreeS[F, List[String]] =
   for {
     currentStates <- app.issuesService.states
