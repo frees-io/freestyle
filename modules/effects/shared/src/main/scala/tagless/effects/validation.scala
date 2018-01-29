@@ -25,7 +25,7 @@ object validation {
     type Errors = List[E]
 
     /** An algebra for introducing validation semantics in a program. **/
-    @tagless sealed trait ValidationM {
+    @tagless @stacksafe sealed trait ValidationM {
       def valid[A](x: A): FS[A]
 
       def invalid(err: E): FS[Unit]

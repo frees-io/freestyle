@@ -32,12 +32,14 @@ object taglessImpl {
 
   import freestyle.free.internal.syntax._
 
-  def tagless(defn: Any, isStackSafe: Boolean): Stat = defn match {
+  def tagless(defn: Any): Stat = defn match {
     case cls: Trait =>
-      freeAlg(Algebra(cls.mods.filtered, cls.name, cls.tparams, cls.ctor, cls.templ), isTrait = true)
+      val isStackSafe = cls.mods.hasMod( mod"@stacksafe")
+      freeAlg(Algebra(cls.mods.filtered, cls.name, cls.tparams, cls.ctor, cls.templ, isStackSafe), isTrait = true)
         .`debug?`(cls.mods)
     case cls: Class if isAbstract(cls) =>
-      freeAlg(Algebra(cls.mods.filtered, cls.name, cls.tparams, cls.ctor, cls.templ), isTrait = false, isStackSafe = isStackSafe)
+      val isStackSafe = cls.mods.hasMod( mod"@stacksafe")
+      freeAlg(Algebra(cls.mods.filtered, cls.name, cls.tparams, cls.ctor, cls.templ, isStackSafe), isTrait = false)
         .`debug?`(cls.mods)
 
     case c: Class /* ! isAbstract */   => abort(s"$invalid in ${c.name}. $abstractOnly")
@@ -107,7 +109,7 @@ case class Algebra(
       parents = pat.templ.parents,
       self = self.param,
       stats = templ.stats.map( _ :+ mapKDef(self))
-    ))
+    ), isStackSafe )
   }
 
   def mapKDef(sf: Term.Name): Defn.Def = {
@@ -137,7 +139,7 @@ case class Algebra(
             ..${requestDecls.map(_.addMod(Mod.Override()))}
           }
         """
-      else 
+      else
         q"""
           trait Handler[..$allTParams] extends ${name.ctor}[..$allTNames] {
             ..${requestDecls.map(_.addMod(Mod.Override()))}

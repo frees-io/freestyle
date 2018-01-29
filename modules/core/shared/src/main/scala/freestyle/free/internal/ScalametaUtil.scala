@@ -59,6 +59,20 @@ object ScalametaUtil {
       stats: Seq[Stat]) =
     Object(mods, name, Template(early, parents, self, if (stats.isEmpty) Some(stats) else None))
 
+  implicit class ModsOps(val mods: Seq[Mod]) extends AnyVal {
+
+    def hasMod(mod: Mod): Boolean = mods.exists {
+      case `mod` => true
+      case _ => false 
+    }
+
+    def removeMod(mod: Mod): Seq[Mod] = mods.filter {
+      case `mod` => false
+      case _ => true
+    }
+
+  }
+
   implicit class TypeNameOps(val typeName: Type.Name) extends AnyVal {
 
     // take Y, replace Y name with tyn
@@ -75,11 +89,7 @@ object ScalametaUtil {
   implicit class TermParamOps(val termParam: Term.Param) extends AnyVal {
     def addMod(mod: Mod): Term.Param = termParam.copy(mods = termParam.mods :+ mod)
 
-    def isImplicit: Boolean = termParam.mods.exists {
-      case Mod.Implicit() => true
-      case _ => false
-    }
-
+    def isImplicit: Boolean = termParam.mods.contains(Mod.Implicit() )
   }
 
   implicit class TermNameOps(val termName: Term.Name) extends AnyVal {
@@ -111,10 +121,7 @@ object ScalametaUtil {
 
     def hasImplicitParams: Boolean =
       declDef.paramss.lastOption.exists( _.exists { (param: Term.Param) =>
-        param.mods.exists {
-          case Mod.Implicit() => true
-          case _ => false
-        }
+        param.mods.contains( Mod.Implicit() )
       })
   }
 

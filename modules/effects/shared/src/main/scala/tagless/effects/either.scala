@@ -25,7 +25,7 @@ object either {
 
   final class ErrorProvider[E] {
 
-    @tagless sealed trait EitherM {
+    @tagless @stacksafe sealed trait EitherM {
       def either[A](fa: Either[E, A]): FS[A]
       def error[A](e: E): FS[A]
       def catchNonFatal[A](a: Eval[A], f: Throwable => E): FS[A]
