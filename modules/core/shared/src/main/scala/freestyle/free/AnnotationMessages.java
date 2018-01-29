@@ -25,7 +25,7 @@ interface AnnotationMessages {
   "\nUber handlers considered for evaluating grouped algebras in `@module` or `Coproduct` are automatically derived and implicitly provided" +
   "\nthere is a handler for each one of the `@free` algebras available in the implicit scope. Ensure you have imported `freestyle.free.implicits._`." +
   "\n\n To learn more about `handlers` and how they relate to `@free` algebras visit:" +
-  "\n\n http://frees.io/docs/core/interpreters/\n\n" +
+  "\n\n http://frees.io/docs/core/handlers/\n\n" +
   "\n-------";
 
  public static final String freeSLiftInstanceNotFoundMsg = "\n-------" +
