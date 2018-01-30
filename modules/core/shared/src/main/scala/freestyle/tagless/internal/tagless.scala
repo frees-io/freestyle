@@ -88,8 +88,6 @@ case class Algebra(
   val tailTParams: Seq[Type.Param] = allTParams.tail
   val tailTNames: Seq[Type.Name] = tailTParams.map(_.toName)
 
-  val cleanedTParams = tailTParams
-
   val requestDecls: Seq[Decl.Def] = templ.stats.get.collect {
     case dd: Decl.Def =>
       dd.decltpe match {
@@ -129,8 +127,8 @@ case class Algebra(
   def mkObject: Object = {
     val mm = Type.fresh("MM$")
     val nn = Type.fresh("NN$")
-    val runTParams: Seq[Type.Param] = tyParamK(mm) +: cleanedTParams
-    val runTArgs: Seq[Type]         = mm +: cleanedTParams.map(toType)
+    val runTParams: Seq[Type.Param] = tyParamK(mm) +: tailTParams
+    val runTArgs: Seq[Type]         = mm +: tailTNames
 
     val handlerT: Trait =
       if (isStackSafe)
@@ -160,8 +158,8 @@ case class Algebra(
     lazy val stackSafeD: Object = stackSafeAlg.mkCompanion
 
     val deriveDef: Defn.Def = {
-      val deriveTTs = tyParamK(mm) +: tyParamK(nn) +: cleanedTParams
-      val nnTTs     = nn +: cleanedTParams.map(toType)
+      val deriveTTs = tyParamK(mm) +: tyParamK(nn) +: tailTParams
+      val nnTTs     = nn +: tailTNames
       q"""
         implicit def derive[..$deriveTTs](
           implicit h: $name[..$runTArgs],
@@ -175,19 +173,28 @@ case class Algebra(
       q"def apply[..$runTParams](implicit $ev: $name[..$runTArgs]): $name[..$runTArgs] = $ev"
     }
 
-    val functorKDef: Defn.Val = {
-      val functorK       = Pat.Var.Term.apply(Term.fresh("functorKInstance$"))
-      val mapKTTs        = tyParamK(mm) +: tyParamK(nn) +: cleanedTParams
-      val tParamsAsTypes = cleanedTParams.map(toType)
+    val functorKDef: Stat = {
       val hh = Term.fresh("hh$")
+      val functorK = Term.fresh("functorKInstance$")
 
-      q"""
-      implicit val $functorK: _root_.mainecoon.FunctorK[({ type λ[α[_]] = $name[α, ..$tParamsAsTypes] })#λ] =
-        new _root_.mainecoon.FunctorK[({ type λ[α[_]] = $name[α, ..$tParamsAsTypes] })#λ] {
-          def mapK[..$mapKTTs]($hh: $name[$mm, ..$tParamsAsTypes])(
-            fk: _root_.cats.arrow.FunctionK[$mm, $nn]): $name[$nn, ..$tailTNames] =
-              $hh.mapK(fk)
-        }"""
+      val mapkdef: Defn.Def = q"""
+        def mapK[${mm.paramK}, ${nn.paramK}]($hh: $name[$mm, ..$tailTNames])(
+          fk: _root_.cats.arrow.FunctionK[$mm, $nn]): $name[$nn, ..$tailTNames] =
+            $hh.mapK(fk)
+      """
+
+      if (tailTParams.isEmpty)
+        q"""
+          implicit val ${functorK.toVar}: _root_.mainecoon.FunctorK[$name] =
+            new _root_.mainecoon.FunctorK[$name] {
+              $mapkdef
+            }"""
+      else
+        q"""
+          implicit def $functorK[..$tailTParams]: _root_.mainecoon.FunctorK[({ type λ[α[_]] = $name[α, ..$tailTNames] })#λ] =
+            new _root_.mainecoon.FunctorK[({ type λ[α[_]] = $name[α, ..$tailTNames] })#λ] {
+              $mapkdef
+            }"""
     }
 
     val prot = q"object X {}"
