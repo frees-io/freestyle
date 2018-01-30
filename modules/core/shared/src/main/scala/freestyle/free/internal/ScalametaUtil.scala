@@ -59,6 +59,20 @@ object ScalametaUtil {
       stats: Seq[Stat]) =
     Object(mods, name, Template(early, parents, self, if (stats.isEmpty) Some(stats) else None))
 
+  implicit class ModsOps(val mods: Seq[Mod]) extends AnyVal {
+
+    def hasMod(mod: Mod): Boolean = mods.exists {
+      case `mod` => true
+      case _ => false
+    }
+
+    def removeMod(mod: Mod): Seq[Mod] = mods.filter {
+      case `mod` => false
+      case _ => true
+    }
+
+  }
+
   implicit class TypeNameOps(val typeName: Type.Name) extends AnyVal {
 
     // take Y, replace Y name with tyn

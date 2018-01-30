@@ -201,12 +201,12 @@ Freestyle allows us to compose `@free` and `@tagless` algebras. Let us consider 
 ```tut:book
 import freestyle.tagless._
 
-@tagless trait Validation {
+@tagless @stacksafe trait Validation {
   def minSize(s: String, n: Int): FS[Boolean]
   def hasNumber(s: String): FS[Boolean]
 }
 
-@tagless trait Interaction {
+@tagless @stacksafe trait Interaction {
   def tell(msg: String): FS[Unit]
   def ask(prompt: String): FS[String]
 }
