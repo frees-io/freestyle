@@ -72,14 +72,12 @@ class TaglessTests extends WordSpec with Matchers {
       0 shouldEqual 0
     }
 
-    /*
     "a trait with type parameters" ignore {
       @tagless trait X[A] {
         def ix(a: A) : FS[A]
       }
       0 shouldEqual 0
     }
-     */
 
     "a trait with some concrete non-FS members" ignore {
       @tagless trait X {
@@ -90,6 +88,57 @@ class TaglessTests extends WordSpec with Matchers {
       0 shouldEqual 0
     }
 
+  }
+
+  "The @tagless macro should be able to support type parameters in the trait" when {
+
+    "there is one, kind-0 parameter" in {
+      @tagless trait X[A] {
+        def f(x: A): FS[A]
+      }
+      class Y[A] extends X.Handler[Id, A] {
+        def f(x: A): A = x
+      }
+      new Y[Int].f(42) shouldEqual 42
+      new Y[String].f("42") shouldEqual "42"
+
+      object Z extends X.Handler[Option, Double]{
+        def f(x: Double): Option[Double] = Some(42.0)
+      }
+      Z.f(0.0) shouldEqual Some(42.0)
+    }
+
+    "there are several kind-0 parameters" in {
+      @tagless trait X[A, B] {
+        def f(x: A): FS[B]
+      }
+
+      object Y extends X.Handler[Option, Int, String] {
+        def f(x: Int): Option[String] = if (x==0) None else Some("yes")
+      }
+      Y.f(13) shouldEqual(Some("yes"))
+    }
+
+    "there is a kind-0 parameter followed by a kind-1 parameter" in {
+      @tagless trait X[A, G[_]] {
+        def f(x: A): FS[G[A]]
+      }
+      // we interpret the algebra FS ~> List, and the parameters to 
+      object Y extends X.Handler[List, Int, Option] {
+        def f(x: Int): List[Option[Int]] = if (x <= 10) Nil else List(None)
+      }
+      Y.f(42) shouldEqual List(None)
+    }
+
+    "there are two kind-1 parameters, the first one being the algebra's carrier FS" in {
+      @tagless trait X[F[_], G[_]] {
+        def f(x: Int => G[String]): F[G[String]]
+      }
+      object Y extends X.Handler[Id, Option] {
+        def f(foo: Int => Option[String]): Option[String] = foo(13)
+      }
+      Y.f( x => Some("42") ) shouldEqual Some( "42")
+    }
   }
 
   "The @tagless macro should be able to support type parameters in the request methods" when {
