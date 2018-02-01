@@ -10,7 +10,6 @@ permalink: /docs/integrations/
 * [Play Framework](./play/)
 * [Monix](/TODO)
 * [Fetch](./fetch/)
-* [FS2](./fs2)
 * [Doobie](./doobie/)
 * [Slick](./slick)
 * [Akka HTTP](./akkahttp/)
