@@ -106,19 +106,19 @@ case class Algebra(
     Algebra(mods, name, allTParams, ctor, templ.copy(
       parents = pat.templ.parents,
       self = self.param,
-      stats = templ.stats.map( _ :+ mapKDef(self))
+      stats = templ.stats.map( _ :+ mapKDef(name, self))
     ), isStackSafe )
   }
 
-  def mapKDef(sf: Term.Name): Defn.Def = {
+  def mapKDef(tyName: Type.Name, sf: Term.Name): Defn.Def = {
     val mm = Type.fresh("MM$")
     val fk = Term.fresh("fk$")
 
     q"""
       def mapK[${mm.paramK}](
         $fk: _root_.cats.arrow.FunctionK[${fs.toName}, $mm]
-      ): $name[$mm, ..$tailTNames] =
-        new ${name.ctor}[$mm, ..$tailTNames] {
+      ): $tyName[$mm, ..$tailTNames] =
+        new ${tyName.ctor}[$mm, ..$tailTNames] {
           ..${requests.map(_.mapKDef(fk, sf, mm))}
         }
     """
@@ -127,22 +127,26 @@ case class Algebra(
   def mkObject: Object = {
     val mm = Type.fresh("MM$")
     val nn = Type.fresh("NN$")
-    val runTParams: Seq[Type.Param] = tyParamK(mm) +: tailTParams
-    val runTArgs: Seq[Type]         = mm +: tailTNames
 
-    val handlerT: Trait =
+    val handlerT: Trait = {
+      val sf = Term.fresh("self$")
+      val handlerMapk: Defn.Def = mapKDef( Type.Name("Handler"), sf).addMod(Mod.Override())
+
       if (isStackSafe)
         q"""
-          trait Handler[..$allTParams] extends ${name.ctor}[..$allTNames] with StackSafe.Handler[..$allTNames] {
+          trait Handler[..$allTParams] extends ${name.ctor}[..$allTNames] with StackSafe.Handler[..$allTNames] { ${sf.param} =>
             ..${requestDecls.map(_.addMod(Mod.Override()))}
+            $handlerMapk
           }
         """
       else
         q"""
-          trait Handler[..$allTParams] extends ${name.ctor}[..$allTNames] {
+          trait Handler[..$allTParams] extends ${name.ctor}[..$allTNames] { ${sf.param} =>
             ..${requestDecls.map(_.addMod(Mod.Override()))}
+            $handlerMapk
           }
         """
+    }
 
     lazy val stackSafeAlg: FreeAlgebra = {
       def withFS( req: Decl.Def): Decl.Def =
@@ -162,15 +166,15 @@ case class Algebra(
       val nnTTs     = nn +: tailTNames
       q"""
         implicit def derive[..$deriveTTs](
-          implicit h: $name[..$runTArgs],
+          implicit h: $name[$mm, ..$tailTNames],
           fk: _root_.cats.arrow.FunctionK[$mm, $nn]
-      ): $name[..$nnTTs] = h.mapK[$nn](fk)
+      ): $name[$nn, ..$tailTNames] = h.mapK[$nn](fk)
       """
     }
 
     val applyDef: Defn.Def = {
       val ev = Term.fresh("ev$")
-      q"def apply[..$runTParams](implicit $ev: $name[..$runTArgs]): $name[..$runTArgs] = $ev"
+      q"def apply[${mm.paramK}, ..$tailTParams](implicit $ev: $name[$mm, ..$tailTNames]): $name[$mm, ..$tailTNames] = $ev"
     }
 
     val functorKDef: Stat = {
