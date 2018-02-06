@@ -81,20 +81,25 @@ private[freestyle] case class Algebra(
   def toTrait: Trait = Trait(mods, name, tparams, ctor, templ)
   def toClass: Class = Class(mods, name, tparams, ctor, templ)
 
-  val cleanedTParams: Seq[Type.Param] = tparams.toList match {
-    case List(f @ tparam"..$mods $name[$tparam]") => Nil
-    case _                                        => tparams
-  }
+  def pickOrGenerateFF( tparams: Seq[Type.Param]): List[Type.Param] =
+    tparams.toList match {
+      case headParam :: tail if headParam.isKind1 => headParam :: tail
+      case _ => Type.fresh("FF$").paramK :: tparams.toList
+    }
+
+  val allTParams: Seq[Type.Param] = pickOrGenerateFF(tparams)
+  val tailTParams: Seq[Type.Param] = allTParams.tail
+  val tailTNames: Seq[Type.Name] = tailTParams.map(_.toName)
 
   /* The enrich method adds a kind-1 type parameter `$ff[_]` to the algebra type,
    * and adds `EffectLike[$ff]` to the parents */
   def enrich: Algebra = {
     val pat = tparams.toList match {
       case List(f @ tparam"..$mods $name[$tparam]") =>
-        q"trait Foo[$f] extends _root_.freestyle.free.internal.EffectLike[${toType(f)}]"
+        q"trait Foo[$f] extends _root_.freestyle.free.internal.EffectLike[${f.toName}]"
       case _ =>
         val ff: Type.Name = Type.fresh("FF$")
-        q"trait Foo[${tyParamK(ff)}] extends _root_.freestyle.free.internal.EffectLike[$ff]"
+        q"trait Foo[${ff.paramK}] extends _root_.freestyle.free.internal.EffectLike[$ff]"
     }
     Algebra(mods, name, pat.tparams, ctor, templ.copy(parents = pat.templ.parents))
   }
@@ -116,11 +121,6 @@ private[freestyle] case class Algebra(
 
   def handlerTrait: Trait = {
 
-    def toDeclType(tp: Type.Param): Decl.Type =
-      Decl.Type(tp.mods, Type.fresh("PP$"), tp.tparams, tp.tbounds)
-
-    val requestParams: Seq[Seq[Decl.Type]] = requests map (_.tparams map toDeclType)
-
     val mm = Type.fresh("MM$")
 
     val applyDef: Defn.Def = {
@@ -135,20 +135,16 @@ private[freestyle] case class Algebra(
       val fa = Term.fresh("fa$")
       val matchE: Term.Match = Term.Match(
         q"$fa.$indexName : @_root_.scala.annotation.switch",
-        requests.zip(requestParams).map {
-          case (request, params) => request.handlerCase(fa, params)
-        } :+ errorCase
+        requests.map(_.handlerCase(fa)) :+ errorCase
       )
 
-      q"override def apply[${tyParam(aa)}]($fa: $OP[$aa]): $mm[$aa] = ($matchE).asInstanceOf[$mm[$aa]]"
+      q"override def apply[${aa.param}]($fa: $OP[$aa]): $mm[$aa] = ($matchE).asInstanceOf[$mm[$aa]]"
     }
 
-    val highBoundTypeDecl: Seq[Decl.Type] = requestParams.flatten
-
     q"""
-      trait Handler[${tyParamK(mm)}, ..$cleanedTParams] extends _root_.freestyle.free.FSHandler[$OP, $mm] {
+      trait Handler[${mm.paramK}, ..$tailTParams] extends _root_.freestyle.free.FSHandler[$OP, $mm] {
         ..${requests.map(_.handlerDef(mm))}
-        ..$highBoundTypeDecl
+        ..${requests flatMap (_.tparamsAsTypeDecls)}
         $applyDef
       }
     """
@@ -156,8 +152,8 @@ private[freestyle] case class Algebra(
 
   def lifterStats: (Class, Defn.Def, Defn.Def, Defn.Def) = {
     val gg: Type.Name               = Type.fresh("LL$") // LL is the target of the Lifter's Injection
-    val injTParams: Seq[Type.Param] = tyParamK(gg) +: cleanedTParams
-    val injTArgs: Seq[Type]         = gg +: cleanedTParams.map(toType)
+    val injTParams: Seq[Type.Param] = gg.paramK +: tailTParams
+    val injTArgs: Seq[Type]         = gg +: tailTNames
     val ii                          = Term.fresh("ii$")
 
     val toClass: Class = {
@@ -166,11 +162,11 @@ private[freestyle] case class Algebra(
 
       val sup: Term.ApplyType = Term.ApplyType(Ctor.Ref.Name(name.value), injTArgs)
       q"""
-          class To[..$injTParams](implicit $ii: _root_.freestyle.free.InjK[$OP, $gg]) extends $sup {
-            private[this] val $injPat = _root_.freestyle.free.FreeS.inject[$OP, $gg]($ii)
-            ..${requests.map(_.toDef(inj))}
-          }
-        """
+        class To[..$injTParams](implicit $ii: _root_.freestyle.free.InjK[$OP, $gg]) extends $sup {
+          private[this] val $injPat = _root_.freestyle.free.FreeS.inject[$OP, $gg]($ii)
+          ..${requests.map(_.toDef(inj))}
+        }
+      """
     }
 
     val toDef: Defn.Def =
@@ -193,7 +189,7 @@ private[freestyle] case class Algebra(
       q"sealed trait $OP[_] extends _root_.scala.Product with _root_.java.io.Serializable { $index }"
     }
     val opTypes                                      = q"type OpTypes = _root_.iota.TConsK[$OP, _root_.iota.TNilK]"
-    val adt: Seq[Stat]                               = opTrait +: requests.map(_.reqClass(OP, cleanedTParams, indexName))
+    val adt: Seq[Stat]                               = opTrait +: requests.map(_.reqClass(OP, tailTParams, indexName))
     val (toClass, toDef, applyDef, applyDefConcrete) = lifterStats
     val prot                                         = q"""@_root_.java.lang.SuppressWarnings(_root_.scala.Array(
                                            "org.wartremover.warts.Any",
@@ -214,10 +210,10 @@ private[freestyle] case class Algebra(
 private[internal] class Request(reqDef: Decl.Def, indexValue: Int) {
 
   import ScalametaUtil._
+  import reqDef.name
 
   // Name of the Request ADT Class
-  private[this] val reqName: String = reqDef.name.value
-  private[this] val req: Type.Name  = Type.Name(reqName.capitalize + "Op")
+  private[this] val req: Type.Name  = Type.Name(name.value.capitalize + "Op")
   private[this] val cboundPrefix    = "__$cbound"
 
   private[this] val res: Type = reqDef.decltpe match {
@@ -225,88 +221,72 @@ private[internal] class Request(reqDef: Decl.Def, indexValue: Int) {
     case _                   => abort("Internal @free failure. Attempted to do request of non-applied type")
   }
 
-  private[this] val reqC    = Term.Name(req.value)
-  private[this] val reqImpl = Term.Name(reqName)
+  val tparamsAsTypeDecls: Seq[Decl.Type] = {
+    def toDeclType(tp: Type.Param): Decl.Type =
+      Decl.Type(tp.mods, Type.fresh("PP$"), tp.tparams.map(_.unboundC), tp.tbounds)
 
-  val cbtparams: Seq[Term.Param] =
-    (reqDef.tparams.flatMap( _.classBoundsToParamTypes).map { tyApp =>
-      Term.Param( Nil, Term.fresh(cboundPrefix), Some(tyApp), None)
-    }).toImplicit
+    reqDef.tparams map toDeclType
+  }
 
-  val tparams: Seq[Param] = reqDef.tparams.map( _.copy(cbounds = Nil) )
+  private[this] val reqC = Term.Name(req.value)
 
-  val paramss: Seq[Seq[Term.Param]] =
-    if (cbtparams.isEmpty)
-      reqDef.paramss
-    else if (reqDef.hasImplicitParams)
-      reqDef.paramss.init ++ Seq( reqDef.paramss.last ++ cbtparams)
-    else if (reqDef.paramss.isEmpty) {
-      Seq( Seq(), cbtparams)
-    } else
-      reqDef.paramss ++ Seq(cbtparams)
+  val tparams: Seq[Param] = reqDef.tparams.map( _.unboundC)
+
+  val cbtparams: Seq[Term.Param] = {
+    def cboundParam(ty: Type): Term.Param =
+      Term.Param( Nil, Term.fresh(cboundPrefix), Some(ty), None)
+    reqDef.tparams.flatMap( _.classBoundsToParamTypes).map(cboundParam)
+  }
+
+  val extendedParamss: Seq[Seq[Term.Param]] = reqDef.paramss.addImplicits(cbtparams)
+  val classParamss: Seq[Seq[Term.Param]] = reqDef.paramss.addImplicits(cbtparams).addEmptyExplicit
 
   def reqClass(OP: Type.Name, effTTs: Seq[Type.Param], indexName: Term.Name): Class = {
-    val tts                 = effTTs ++ tparams
-    val sup: Term.ApplyType = Term.ApplyType(Ctor.Ref.Name(OP.value), Seq(res)) // this means $OP[$res]
-    val ix                  = Pat.Var.Term(indexName)
-    val cparamss = paramss.map(_.map( _.addMod(Mod.ValParam())))
-    if(cparamss.isEmpty)
-      q"""
-        final case class $req[..$tts]() extends _root_.scala.AnyRef with $sup {
-          override val $ix: _root_.scala.Int = $indexValue
-        }
-      """
-    else
-      q"""
-        final case class $req[..$tts](...$cparamss) extends _root_.scala.AnyRef with $sup {
-          override val $ix: _root_.scala.Int = $indexValue
-        }
-      """
-  }
-
-  private[this] def nameOrImplicitly(param: Term.Param): Term.Name = param match {
-    case Term.Param(_, paramname, Some(atpeopt), _) if paramname.value.startsWith(cboundPrefix) =>
-      val targ"${tpe: Type}" = atpeopt
-      Term.Name(s"_root_.scala.Predef.implicitly[$tpe]")
-    case p => toName(p)
-  }
-
-  def toDef(inj: Term.Name): Defn.Def = {
-    val body: Term =
-      if (tparams.isEmpty) {
-        if (paramss.isEmpty)
-          q"$reqC()"
-        else
-          q"$reqC(...${paramss.map(_.map(toName))})"
-      } else {
-        if (paramss.isEmpty)
-          q"$reqC[..${tparams.map(toType)} ]()"
-        else
-          q"$reqC[..${tparams.map(toType)} ](...${paramss.map(_.map(nameOrImplicitly))})"
+    val tts = effTTs ++ tparams
+    val sup = Term.ApplyType(OP.ctor, Seq(res)) // this means $OP[$res]
+    val ix = Pat.Var.Term(indexName)
+    q"""
+      final case class $req[..$tts](...${classParamss.map(_.toVals)}) extends _root_.scala.AnyRef with $sup {
+        override val $ix: _root_.scala.Int = $indexValue
       }
-
-    addBody(reqDef, q"$inj($body)").copy(mods = Seq(Mod.Override()))
+    """
   }
 
-  def handlerCase(fa: Term.Name, requestParams: Seq[Decl.Type]): Case = {
+  def reqClassApply: Term = {
+    def nameOrImplicitly(param: Term.Param): Term.Name = param match {
+      case Term.Param(_, paramname, Some(atpeopt), _) if paramname.value.startsWith(cboundPrefix) =>
+        val targ"${tpe: Type}" = atpeopt
+        Term.Name(s"_root_.scala.Predef.implicitly[$tpe]")
+      case p => p.toName
+    }
+    val ccs = classParamss.map(_.map(nameOrImplicitly))
+    if (reqDef.tparams.isEmpty)
+      q"$reqC(...$ccs)"
+    else
+      q"$reqC[..${reqDef.tparams.map(_.toName)}](...$ccs)"
+  }
+
+  def toDef(inj: Term.Name): Defn.Def =
+    reqDef.addBody( q"$inj($reqClassApply)").addMod(Mod.Override())
+
+  def handlerCase(fa: Term.Name): Case = {
 
     val mexp: Term =
-      if (paramss.flatten.isEmpty)
-        q"$reqImpl"
+      if (extendedParamss.isEmpty)
+        name
       else {
         val tt: Type =
-          if (tparams.isEmpty) req
-          else {
+          if (reqDef.tparams.isEmpty) req
+          else
             // Wildcard types are not working for function params like this f: (B, A) => B
             // val us: Type = Type.Placeholder(Type.Bounds(None, None) )
-            Type.Apply(req, requestParams.map(declType => t"${declType.name}"))
-          }
+            Type.Apply(req, tparamsAsTypeDecls.map(_.name))
 
         val alias = Term.fresh()
-        val ffs   = paramss.map(_.map(v => q"$alias.${toName(v)}"))
+        val ffs   = extendedParamss.map(_.map(v => q"$alias.${v.toName}"))
         q"""
           val ${toVar(alias)}: $tt = $fa.asInstanceOf[$tt]
-          $reqImpl(...$ffs)
+          $name(...$ffs)
         """
       }
 
@@ -314,10 +294,10 @@ private[internal] class Request(reqDef: Decl.Def, indexValue: Int) {
   }
 
   def handlerDef(mm: Type.Name): Decl.Def =
-    if (paramss.isEmpty)
-      q"protected[this] def $reqImpl[..$tparams]: $mm[$res]"
+    if (extendedParamss.isEmpty)
+      q"protected[this] def $name[..$tparams]: $mm[$res]"
     else
-      q"protected[this] def $reqImpl[..$tparams](...$paramss): $mm[$res]"
+      q"protected[this] def $name[..$tparams](...$extendedParamss): $mm[$res]"
 
 }
 

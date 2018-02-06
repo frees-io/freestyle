@@ -89,10 +89,10 @@ private[internal] case class FreeSModule(
       case List(f @ tparam"..$mods $name[$tparam]") =>
         (
           Type.Name(f.name.value),
-          q"trait Foo[$f] extends _root_.freestyle.free.internal.EffectLike[${toType(f)}]")
+          q"trait Foo[$f] extends _root_.freestyle.free.internal.EffectLike[${f.toName}]")
       case _ =>
         val ff: Type.Name = Type.fresh("FF$")
-        (ff, q"trait Foo[${tyParamK(ff)}] extends _root_.freestyle.free.internal.EffectLike[$ff]")
+        (ff, q"trait Foo[${ff.paramK}] extends _root_.freestyle.free.internal.EffectLike[$ff]")
     }
 
     val nstats = templ.stats.map(_.map(stat => enrichStat(ff, stat)))
@@ -109,8 +109,8 @@ private[internal] case class FreeSModule(
 
   def lifterStats: (Class, Defn.Def, Defn.Def, Defn.Def) = {
     val gg: Type.Name              = Type.fresh("GG$")
-    val toTParams: Seq[Type.Param] = tyParamK(gg) +: cleanedTParams
-    val toTArgs: Seq[Type]         = gg +: cleanedTParams.map(toType)
+    val toTParams: Seq[Type.Param] = gg.paramK +: cleanedTParams
+    val toTArgs: Seq[Type]         = gg +: cleanedTParams.map(_.toName)
 
     val sup: Term.ApplyType = Term.ApplyType(Ctor.Ref.Name(name.value), toTArgs)
     val toClass: Class = {
@@ -137,7 +137,7 @@ private[internal] case class FreeSModule(
     val (toClass, toDef, applyDef, applyDefConcreteOp) = lifterStats
     val opType: Defn.Type = {
       val aa: Type.Name = Type.fresh("AA$")
-      q"type Op[${tyParam(aa)}] = _root_.iota.CopK[OpTypes, $aa]"
+      q"type Op[${aa.param}] = _root_.iota.CopK[OpTypes, $aa]"
     }
     val opTypes = q"type OpTypes = T".copy(body = makeOpTypesBody)
 

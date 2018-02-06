@@ -139,7 +139,7 @@ class freeTests extends WordSpec with Matchers {
         def g[T: Monoid]: FS[T]
       }
       object Y extends X.Handler[Id]{
-        def g[T]()(implicit x: Monoid[T]): T = x.empty
+        def g[T: Monoid]: T = Monoid[T].empty
       }
       Y.g[Int] shouldEqual 0
     }

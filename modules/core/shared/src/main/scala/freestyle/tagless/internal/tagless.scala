@@ -70,17 +70,11 @@ case class Algebra(
   def toTrait: Trait = Trait(mods, name, tparams, ctor, templ)
   def toClass: Class = Class(mods, name, tparams, ctor, templ)
 
-  def pickOrGenerateFF( tparams: Seq[Type.Param]): List[Type.Param] = {
-    def isKind1(tparam: Type.Param): Boolean =
-      tparam.tparams.toList match {
-        case List(tp) if tp.tparams.isEmpty => true
-        case _ => false
-      }
+  def pickOrGenerateFF( tparams: Seq[Type.Param]): List[Type.Param] =
     tparams.toList match {
-      case headParam :: tail if isKind1(headParam) => headParam :: tail
+      case headParam :: tail if headParam.isKind1 => headParam :: tail
       case _ => Type.fresh("FF$").paramK :: tparams.toList
     }
-  }
 
   val allTParams: Seq[Type.Param] = pickOrGenerateFF(tparams)
   val allTNames: Seq[Type.Name] = allTParams.map(_.toName)
@@ -162,7 +156,7 @@ case class Algebra(
     lazy val stackSafeD: Object = stackSafeAlg.mkCompanion
 
     val deriveDef: Defn.Def = {
-      val deriveTTs = tyParamK(mm) +: tyParamK(nn) +: tailTParams
+      val deriveTTs = mm.paramK +: nn.paramK +: tailTParams
       val nnTTs     = nn +: tailTNames
       q"""
         implicit def derive[..$deriveTTs](

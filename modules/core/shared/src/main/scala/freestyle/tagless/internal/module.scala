@@ -85,10 +85,10 @@ private[internal] case class TaglessModule(
 
     val (ff, pat)           = tparams.toList match {
       case List(f @ tparam"..$mods $name[$tparam]") =>
-        (Type.Name(f.name.value), q"trait Foo[$f] extends _root_.freestyle.tagless.internal.TaglessEffectLike[${toType(f)}]")
+        (f.toName, q"trait Foo[$f] extends _root_.freestyle.tagless.internal.TaglessEffectLike[${f.toName}]")
       case _ =>
         val ff: Type.Name = Type.fresh("FF$")
-        (ff, q"trait Foo[${tyParamK(ff)}] extends _root_.freestyle.tagless.internal.TaglessEffectLike[$ff]")
+        (ff, q"trait Foo[${ff.paramK}] extends _root_.freestyle.tagless.internal.TaglessEffectLike[$ff]")
     }
 
     val nstats = templ.stats.map(_.map(stat => enrichStat(ff, stat)))
@@ -105,8 +105,8 @@ private[internal] case class TaglessModule(
 
   def lifterStats: (Class, Defn.Def, Defn.Def) = {
     val gg: Type.Name              = Type.fresh("GG$")
-    val toTParams: Seq[Type.Param] = tyParamK(gg) +: cleanedTParams
-    val toTArgs: Seq[Type]         = gg +: cleanedTParams.map(toType)
+    val toTParams: Seq[Type.Param] = gg.paramK +: cleanedTParams
+    val toTArgs: Seq[Type]         = gg +: cleanedTParams.map(_.toName)
 
     val sup: Term.ApplyType = Term.ApplyType(Ctor.Ref.Name(name.value), toTArgs)
     val toClass: Class = {
