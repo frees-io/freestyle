@@ -30,16 +30,16 @@ object moduleImpl {
 
   def module(defn: Any): Term.Block = defn match {
     case cls: Trait =>
-      val fsmod =
-        FreeSModule(cls.mods.filtered, cls.name, cls.tparams, cls.ctor, cls.templ, isTrait = true)
+      val clait = Clait(cls.mods.filtered, cls.name, cls.tparams, cls.ctor, cls.templ)
+      val fsmod = FreeSModule(clait)
       Term
-        .Block(Seq(fsmod.makeClass, fsmod.makeObject))
+        .Block(Seq(fsmod.enrichClait.toTrait, fsmod.makeObject))
         .`debug?`(cls.mods)
     case cls: Class if ScalametaUtil.isAbstract(cls) =>
-      val fsmod =
-        FreeSModule(cls.mods.filtered, cls.name, cls.tparams, cls.ctor, cls.templ, isTrait = false)
+      val clait = Clait(cls.mods.filtered, cls.name, cls.tparams, cls.ctor, cls.templ)
+      val fsmod = FreeSModule(clait)
       Term
-        .Block(Seq(fsmod.makeClass, fsmod.makeObject))
+        .Block(Seq(fsmod.enrichClait.toClass, fsmod.makeObject))
         .`debug?`(cls.mods)
     case c: Class /* ! isAbstract */ =>
       abort(abstractOnly)
@@ -51,21 +51,10 @@ object moduleImpl {
 
 }
 
-private[internal] case class FreeSModule(
-    mods: Seq[Mod],
-    name: Type.Name,
-    tparams: Seq[Type.Param],
-    ctor: Ctor.Primary,
-    templ: Template,
-    isTrait: Boolean
-) {
+private[internal] case class FreeSModule( clait: Clait ) {
   import ModuleUtil._
   import ScalametaUtil._
-
-  val cleanedTParams: Seq[Type.Param] = tparams.toList match {
-    case List(f @ tparam"..$mods $name[$tparam]") => Nil
-    case _                                        => tparams
-  }
+  import clait._
 
   val effects: Seq[ModEffect] =
     templ.stats.getOrElse(Nil).collect {
@@ -74,46 +63,37 @@ private[internal] case class FreeSModule(
       case vdec @ Decl.Val(_, Seq(Pat.Var.Term(_)), _) => ModEffect(vdec)
     }
 
-  def enrichStat(tt: Type.Name, st: Stat): Stat = st match {
+  def enrichStat(st: Stat): Stat = st match {
     case vdec @ Decl.Val(_, Seq(Pat.Var.Term(tname)), Type.Apply(_, Seq(_))) =>
       vdec
     case vdec @ Decl.Val(_, Seq(Pat.Var.Term(tname)), ty) =>
-      vdec.copy(decltpe = Type.Apply(ty, Seq(tt)))
+      vdec.copy(decltpe = Type.Apply(ty, Seq(headTParam.toName)))
     case x => x
   }
 
   /* The effects are Val Declarations (no value definition) */
-  def makeClass: Defn = {
-
-    val (ff, pat) = tparams.toList match {
-      case List(f @ tparam"..$mods $name[$tparam]") =>
-        (
-          Type.Name(f.name.value),
-          q"trait Foo[$f] extends _root_.freestyle.free.internal.EffectLike[${f.toName}]")
-      case _ =>
-        val ff: Type.Name = Type.fresh("FF$")
-        (ff, q"trait Foo[${ff.paramK}] extends _root_.freestyle.free.internal.EffectLike[$ff]")
-    }
-
-    val nstats = templ.stats.map(_.map(stat => enrichStat(ff, stat)))
-    val ntempl = templ.copy(parents = pat.templ.parents, stats = nstats)
-
-    if (isTrait)
-      Trait(mods, name, pat.tparams, ctor, ntempl)
-    else
-      Class(mods, name, pat.tparams, ctor, ntempl)
+  def enrichClait: Clait = {
+    val ff = headTParam
+    val pat = q"trait Foo[$ff] extends _root_.freestyle.free.internal.EffectLike[${ff.toName}]"
+    Clait(mods, name, pat.tparams, ctor, templ.copy(
+      parents = pat.templ.parents,
+      stats = templ.stats.map(_.map(enrichStat))
+    ))
   }
 
   // The effects of a module are those variables declaration (not defined)
   // that are singular, i.e., not a tuple "val (x,y) = (1,2)"
 
-  def lifterStats: (Class, Defn.Def, Defn.Def, Defn.Def) = {
-    val gg: Type.Name              = Type.fresh("GG$")
-    val toTParams: Seq[Type.Param] = gg.paramK +: cleanedTParams
-    val toTArgs: Seq[Type]         = gg +: cleanedTParams.map(_.toName)
+  val applyDefConcreteOp: Defn.Def =
+    q"def instance(implicit ev: $name[Op]): $name[Op] = ev"
 
-    val sup: Term.ApplyType = Term.ApplyType(Ctor.Ref.Name(name.value), toTArgs)
+  def lifterStats: (Class, Defn.Def) = {
+    val gg: Type.Name              = Type.fresh("GG$")
+    val toTParams: Seq[Type.Param] = gg.paramK +: tailTParams
+    val toTArgs: Seq[Type]         = gg +: tailTNames
+
     val toClass: Class = {
+      val sup: Term.ApplyType = Term.ApplyType(name.ctor, toTArgs)
       val args: Seq[Term.Param] = effects.map(_.buildConstParam(gg))
       q"class To[..$toTParams](implicit ..$args) extends $sup { }"
     }
@@ -124,17 +104,12 @@ private[internal] case class FreeSModule(
       else
         q"implicit def to[..$toTParams](..$args): To[..$toTArgs] = new To[..$toTArgs]()"
     }
-    val applyDef: Defn.Def =
-      q"def apply[..$toTParams](implicit ev: $name[..$toTArgs]): $name[..$toTArgs] = ev"
 
-    val applyDefConcreteOp: Defn.Def =
-      q"def instance(implicit ev: $name[Op]): $name[Op] = ev"
-
-    (toClass, toDef, applyDef, applyDefConcreteOp)
+    (toClass, toDef)
   }
 
   def makeObject: Object = {
-    val (toClass, toDef, applyDef, applyDefConcreteOp) = lifterStats
+    val (toClass, toDef) = lifterStats
     val opType: Defn.Type = {
       val aa: Type.Name = Type.fresh("AA$")
       q"type Op[${aa.param}] = _root_.iota.CopK[OpTypes, $aa]"
@@ -145,7 +120,7 @@ private[internal] case class FreeSModule(
     prot.copy(
       name = Term.Name(name.value),
       templ = prot.templ.copy(
-        stats = Some(Seq(opTypes, opType, toClass, toDef, applyDef, applyDefConcreteOp))
+        stats = Some(Seq(opTypes, opType, toClass, toDef, clait.applyDef, applyDefConcreteOp))
       ))
   }
 
