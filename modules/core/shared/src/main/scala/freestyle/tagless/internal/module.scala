@@ -24,7 +24,8 @@ import scala.meta.Defn.{Class, Object, Trait}
 // $COVERAGE-OFF$ScalaJS + coverage = fails with NoClassDef exceptions
 object moduleImpl {
 
-  import ModuleUtil._
+  val errors = new ErrorMessages("@module")
+  import errors._
   import syntax._
 
   def module(defn: Any): Term.Block = defn match {
@@ -49,7 +50,8 @@ object moduleImpl {
 }
 
 private[internal] case class TaglessModule( clait: Clait ) {
-  import ModuleUtil._
+  val errors = new ErrorMessages("@module")
+  import errors._
   import ScalametaUtil._
   import clait._
 
@@ -98,7 +100,7 @@ private[internal] case class TaglessModule( clait: Clait ) {
         q"implicit def to[..$toTParams](..$args): To[..$toTArgs] = new To[..$toTArgs]()"
     }
 
-    (toClass, toDef, clait.applyDef )
+    (toClass, toDef, clait.applyDef)
   }
 
   def makeObject: Object = {
@@ -147,11 +149,4 @@ private[internal] case class ModEffect(effVal: Decl.Val) {
 
 }
 
-private[internal] object ModuleUtil {
-  // Messages of error
-  val invalid = "Invalid use of `@module`"
-  val abstractOnly =
-    "The `@module` annotation can only be applied to a trait or an abstract class."
-  val noCompanion = "The trait or class annotated with `@module` must have no companion object."
-}
 // $COVERAGE-ON$

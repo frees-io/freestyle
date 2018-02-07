@@ -35,6 +35,7 @@ trait EffectLike[F[_]] {
 // $COVERAGE-OFF$ScalaJS + coverage = fails with NoClassDef exceptions
 object freeImpl {
 
+  val errors = new ErrorMessages("@free")
   import errors._
   import syntax._
 
@@ -64,6 +65,7 @@ private[freestyle] case class Algebra( clait: Clait ) {
   //An Algebra has the same members as a Class or Trait in Scalameta: it abstracts on both */
 
   import ScalametaUtil._
+  val errors = new ErrorMessages("@free")
   import errors._
   import clait._
 
@@ -269,13 +271,4 @@ private[internal] class Request(reqDef: Decl.Def, indexValue: Int) {
 
 }
 
-private[internal] object errors {
-  // Messages of error
-  val invalid      = "Invalid use of `@free`"
-  val abstractOnly = "`@free` can only annotate a trait or abstract class"
-  val noCompanion  = "`@free` can only annotate a trait (or class) without companion"
-  val onlyReqs =
-    "In a `@free`-trait (or class), all abstract methods declarations should be of type FS[_]"
-  val nonEmpty = "A `@free` trait or class  must have at least one abstract method of type `FS[_]`"
-}
 // $COVERAGE-ON$

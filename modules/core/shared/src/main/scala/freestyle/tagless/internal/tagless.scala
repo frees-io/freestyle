@@ -20,7 +20,7 @@ import scala.collection.immutable.Seq
 import scala.meta._
 import scala.meta.Defn.{Class, Object, Trait}
 import freestyle.free.internal.ScalametaUtil._
-import freestyle.free.internal.{Algebra => FreeAlgebra, Clait}
+import freestyle.free.internal.{Algebra => FreeAlgebra, Clait, ErrorMessages}
 
 trait TaglessEffectLike[F[_]] {
   final type FS[A] = F[A]
@@ -28,7 +28,8 @@ trait TaglessEffectLike[F[_]] {
 
 // $COVERAGE-OFF$ScalaJS + coverage = fails with NoClassDef exceptions
 object taglessImpl {
-  import Util._
+  val errors = new ErrorMessages("@tagless")
+  import errors._
 
   import freestyle.free.internal.syntax._
 
@@ -56,8 +57,9 @@ object taglessImpl {
 }
 
 case class Algebra( clait: Clait, isStackSafe: Boolean) {
-  import Util._
   import clait._
+  val errors = new ErrorMessages("@tagless")
+  import errors._
 
   val requestDecls: Seq[Decl.Def] = templ.stats.get.collect {
     case dd: Decl.Def =>
@@ -194,15 +196,4 @@ private[freestyle] class Request(reqDef: Decl.Def) {
 
 }
 
-object Util {
-  // Messages of error
-  val invalid = "Invalid use of the `@tagless` annotation"
-  val abstractOnly =
-    "The `@tagless` annotation can only be applied to a trait or to an abstract class."
-  val noCompanion = "The trait (or class) annotated with `@tagless` must have no companion object."
-  val onlyReqs =
-    "In a `@tagless`-annotated trait (or class), all abstract method declarations should be of type FS[_]"
-  val nonEmpty =
-    "A `@tagless`-annotated trait or class  must have at least one abstract method of type `FS[_]`"
-}
 // $COVERAGE-ON$

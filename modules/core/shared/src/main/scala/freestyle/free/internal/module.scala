@@ -25,19 +25,19 @@ import scala.meta.Defn.{Class, Object, Trait}
 // $COVERAGE-OFF$ScalaJS + coverage = fails with NoClassDef exceptions
 object moduleImpl {
 
+  val errors = new ErrorMessages("@module")
+  import errors._
   import ModuleUtil._
   import syntax._
 
   def module(defn: Any): Term.Block = defn match {
     case cls: Trait =>
-      val clait = Clait(cls.mods.filtered, cls.name, cls.tparams, cls.ctor, cls.templ)
-      val fsmod = FreeSModule(clait)
+      val fsmod = FreeSModule(Clait(cls))
       Term
         .Block(Seq(fsmod.enrichClait.toTrait, fsmod.makeObject))
         .`debug?`(cls.mods)
     case cls: Class if ScalametaUtil.isAbstract(cls) =>
-      val clait = Clait(cls.mods.filtered, cls.name, cls.tparams, cls.ctor, cls.templ)
-      val fsmod = FreeSModule(clait)
+      val fsmod = FreeSModule(Clait(cls))
       Term
         .Block(Seq(fsmod.enrichClait.toClass, fsmod.makeObject))
         .`debug?`(cls.mods)
@@ -53,6 +53,8 @@ object moduleImpl {
 
 private[internal] case class FreeSModule( clait: Clait ) {
   import ModuleUtil._
+  val errors = new ErrorMessages("@module")
+  import errors._
   import ScalametaUtil._
   import clait._
 
@@ -97,13 +99,14 @@ private[internal] case class FreeSModule( clait: Clait ) {
       val args: Seq[Term.Param] = effects.map(_.buildConstParam(gg))
       q"class To[..$toTParams](implicit ..$args) extends $sup { }"
     }
-    val toDef: Defn.Def = {
-      val args: Seq[Term.Param] = effects.map(_.buildDefParam(gg))
-      if (args.isEmpty)
+
+    val toDef: Defn.Def =
+      if (effects.isEmpty)
         q"implicit def to[..$toTParams]: To[..$toTArgs] = new To[..$toTArgs]"
-      else
+      else {
+        val args: Seq[Term.Param] = effects.map(_.buildDefParam(gg))
         q"implicit def to[..$toTParams](..$args): To[..$toTArgs] = new To[..$toTArgs]()"
-    }
+      }
 
     (toClass, toDef)
   }
@@ -170,10 +173,6 @@ private[internal] case class ModEffect(effVal: Decl.Val) {
 
 private[internal] object ModuleUtil {
   // Messages of error
-  val invalid = "Invalid use of `@module`"
-  val abstractOnly =
-    "The `@module` annotation can only be applied to a trait or an abstract class."
-  val noCompanion = "The trait or class annotated with `@module` must have no companion object."
 
   val iotaTNilKT: Type  = q"type T = _root_.iota.TNilK".body
   val iotaConcatT: Type = q"type T = _root_.iota.TListK.Op.Concat".body
