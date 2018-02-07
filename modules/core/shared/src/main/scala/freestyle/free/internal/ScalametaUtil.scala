@@ -132,6 +132,11 @@ object ScalametaUtil {
       })
   }
 
+  implicit class DefnDefOps(val defnDef: Defn.Def) extends AnyVal {
+    def addMod(mod: Mod): Defn.Def = defnDef.copy(mods = defnDef.mods :+ mod)
+  }
+
+
   implicit class TermParamListOps(val termParams: Seq[Term.Param]) extends AnyVal {
     def hasImplicit: Boolean = termParams.exists(_.isImplicit)
 

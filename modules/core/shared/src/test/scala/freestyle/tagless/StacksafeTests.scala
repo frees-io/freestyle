@@ -263,28 +263,23 @@ class TaglessStacksafeTests extends WordSpec with Matchers {
 
   }
 
-  "Tagless final algebras" should {
-
-    "Allow a trait with an F[_] bound type param" in {
-      "@tagless @stacksafe trait X[F[_]] { def bar(x:Int): FS[Int] }" should compile
-    }
-
-    "combine with other tagless algebras" in {
-
-      def program[F[_] : Monad : TG1 : TG2: TG3] = {
-        val a1 = TG1[F]
-        val a2 = TG2[F]
-        val a3 = TG3[F]
-        for {
-          a <- a1.x(1)
-          b <- a1.y(1)
-          c <- a2.x2(1)
-          d <- a2.y2(1)
-          e <- a3.y3(1)
-        } yield a + b + c + d + e
+  "A StackSafe Tagless algebra should be able to " when {
+    "mapK its Handler to another Handler of the StackSafe" in {
+      import cats.instances.list._
+      @tagless @stacksafe trait X {
+        def a: FS[Int]
       }
-      program[Option] shouldBe Option(5)
+      object Y extends X.Handler[Option] {
+        def a: Option[Int] = Some(42)
+      }
+      val nt: Option ~> List = λ[Option ~> List](_.toList)
+      implicit val hh: X.Handler[List] = Y.mapK(nt)
+
+      X.StackSafe.to[X.StackSafe.Op].a.interpret[List] shouldEqual List(42)
     }
+  }
+
+  "Tagless final algebras" should {
 
     "combine with FreeS monadic comprehensions" in {
       import freestyle.free._
@@ -306,33 +301,6 @@ class TaglessStacksafeTests extends WordSpec with Matchers {
       }
       import TG1._
       program[App.Op].interpret[Option] shouldBe Option(6)
-    }
-
-    "work with derived handlers" in {
-
-      def program[F[_]: TG1: Monad] =
-        for {
-          x <- TG1[F].x(1)
-          y <- TG1[F].y(2)
-        } yield x + y
-
-      type ErrorOr[A] = Either[String, A]
-
-      implicit val fk: Option ~> ErrorOr =
-        λ[Option ~> ErrorOr](_.toRight("error"))
-
-      program[ErrorOr] shouldBe Right(3)
-    }
-
-    "allow for tagless modules" in {
-
-      def program[F[_]: AppTagless: Monad] =
-        for {
-          x <- AppTagless[F].tg1.x(1)
-          y <- AppTagless[F].tg2.x2(2)
-        } yield x + y
-
-      program[Option] shouldBe Some(3)
     }
 
   }

@@ -338,10 +338,6 @@ class TaglessTests extends WordSpec with Matchers {
     import algebras._
     import handlers._
 
-    "Allow a trait with an F[_] bound type param" in {
-      "@tagless trait X[F[_]] { def bar(x:Int): FS[Int] }" should compile
-    }
-
     "combine with other tagless algebras" in {
 
       def program[F[_] : Monad : TG1 : TG2: TG3] = {
