@@ -176,4 +176,12 @@ object ScalametaUtil {
     }
 
   }
+
+  implicit class TemplateOps(val templ: Template) extends AnyVal {
+
+    def addParent( ctorCall: Ctor.Call): Template =
+      templ.copy( parents = templ.parents ++ Seq(ctorCall) )
+
+  }
+
 }

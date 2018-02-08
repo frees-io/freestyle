@@ -31,9 +31,10 @@ case class Clait(
 ) {
 
   import ScalametaUtil._
+  import syntax._
 
-  def toTrait: Trait = Trait(mods, name, tparams, ctor, templ)
-  def toClass: Class = Class(mods, name, tparams, ctor, templ)
+  def toTrait: Trait = Trait(mods.filtered, name, tparams, ctor, templ)
+  def toClass: Class = Class(mods.filtered, name, tparams, ctor, templ)
 
   val allTParams: Seq[Type.Param] = tparams.toList match {
     case headParam :: tail if headParam.isKind1 => tparams
@@ -41,6 +42,7 @@ case class Clait(
   }
   val allTNames: Seq[Type.Name] = allTParams.map(_.toName)
   val headTParam: Type.Param = allTParams.head
+  val headTName: Type.Name = allTNames.head
   val tailTParams: Seq[Type.Param] = allTParams.tail
   val tailTNames: Seq[Type.Name] = tailTParams.map(_.toName)
 
@@ -53,8 +55,8 @@ case class Clait(
 }
 
 object Clait {
-  import syntax._
 
-  def apply(cls: Class): Clait = Clait(cls.mods.filtered, cls.name, cls.tparams, cls.ctor, cls.templ)
-  def apply(cls: Trait): Clait = Clait(cls.mods.filtered, cls.name, cls.tparams, cls.ctor, cls.templ)
+  def apply(cls: Class): Clait = Clait(cls.mods, cls.name, cls.tparams, cls.ctor, cls.templ)
+  def apply(cls: Trait): Clait = Clait(cls.mods, cls.name, cls.tparams, cls.ctor, cls.templ)
+
 }

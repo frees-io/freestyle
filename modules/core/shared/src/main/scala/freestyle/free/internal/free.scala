@@ -38,26 +38,26 @@ object freeImpl {
   val errors = new ErrorMessages("@free")
   import errors._
   import syntax._
+  import ScalametaUtil.isAbstract
 
-  def free(defn: Any): Stat = defn match {
-
-    case cls: Trait =>
-      freeAlg( Algebra(Clait(cls)), isTrait = true).`debug?`(cls.mods)
-    case cls: Class if ScalametaUtil.isAbstract(cls) =>
-      freeAlg( Algebra(Clait(cls)), isTrait = false).`debug?`(cls.mods)
-
-    case c: Class /* ! isAbstract */   => abort(s"$invalid in ${c.name}. $abstractOnly")
-    case Term.Block(Seq(_, c: Object)) => abort(s"$invalid in ${c.name}. $noCompanion")
-    case _                             => abort(s"$invalid. $abstractOnly")
-  }
-
-  def freeAlg(alg: Algebra, isTrait: Boolean): Term.Block =
+  def free(defn: Any): Stat = {
+    val (clait, isTrait) = parseClait(defn)
+    val alg = Algebra(clait)
     if (alg.requestDecls.isEmpty)
       abort(s"$invalid in ${alg.clait.name}. $nonEmpty")
     else {
       val enriched = if (isTrait) alg.enrich.toTrait else alg.enrich.toClass
-      Term.Block(Seq(enriched, alg.mkCompanion))
+      Term.Block(Seq(enriched, alg.mkCompanion)).`debug?`(clait.mods)
     }
+  }
+
+  def parseClait(defn: Any): (Clait, Boolean) = defn match {
+    case cls: Trait => (Clait(cls), true)
+    case cls: Class if isAbstract(cls) => (Clait(cls), false)
+    case c: Class /* ! isAbstract */   => abort(s"$invalid in ${c.name}. $abstractOnly")
+    case Term.Block(Seq(_, c: Object)) => abort(s"$invalid in ${c.name}. $noCompanion")
+    case _                             => abort(s"$invalid. $abstractOnly")
+  }
 
 }
 

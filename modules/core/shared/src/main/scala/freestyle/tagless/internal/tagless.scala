@@ -33,33 +33,34 @@ object taglessImpl {
 
   import freestyle.free.internal.syntax._
 
-  def tagless(defn: Any): Stat = defn match {
-    case cls: Trait =>
-      val alg = Algebra( Clait(cls), isStackSafe = cls.mods.isStackSafe)
-      freeAlg(alg, isTrait = true).`debug?`(cls.mods)
-    case cls: Class if isAbstract(cls) =>
-      val alg = Algebra( Clait(cls), isStackSafe = cls.mods.isStackSafe)
-      freeAlg(alg, isTrait = false).`debug?`(cls.mods)
+  def tagless(defn: Any): Stat = {
+    val (clait, isTrait) = parseClait(defn)
+    val alg = Algebra(clait)
+    if (alg.requestDecls.isEmpty)
+      abort(s"$invalid in ${alg.clait.name}. $nonEmpty")
+    else {
+      val enriched = if (isTrait) alg.enrich.toTrait else alg.enrich.toClass
+      Term.Block(Seq(enriched, alg.mkObject)).`debug?`(clait.mods)
+    }
+  }
 
+  def parseClait(defn: Any): (Clait, Boolean) = defn match {
+    case cls: Trait => (Clait(cls), true)
+    case cls: Class if isAbstract(cls) => (Clait(cls), false)
     case c: Class /* ! isAbstract */   => abort(s"$invalid in ${c.name}. $abstractOnly")
     case Term.Block(Seq(_, c: Object)) => abort(s"$invalid in ${c.name}. $noCompanion")
     case _                             => abort(s"$invalid. $abstractOnly")
   }
 
-  def freeAlg(alg: Algebra, isTrait: Boolean): Term.Block =
-    if (alg.requestDecls.isEmpty)
-      abort(s"$invalid in ${alg.clait.name}. $nonEmpty")
-    else {
-      val enriched = if (isTrait) alg.enrich.toTrait else alg.enrich.toClass
-      Term.Block(Seq(enriched, alg.mkObject))
-    }
-
 }
 
-case class Algebra( clait: Clait, isStackSafe: Boolean) {
+case class Algebra( clait: Clait) {
   import clait._
   val errors = new ErrorMessages("@tagless")
   import errors._
+  import freestyle.free.internal.syntax._
+
+  val isStackSafe = clait.mods.isStackSafe
 
   val requestDecls: Seq[Decl.Def] = templ.stats.get.collect {
     case dd: Decl.Def =>
@@ -105,20 +106,16 @@ case class Algebra( clait: Clait, isStackSafe: Boolean) {
       val sf = Term.fresh("self$")
       val handlerMapk: Defn.Def = mapKDef( Type.Name("Handler"), sf).addMod(Mod.Override())
 
-      if (isStackSafe)
-        q"""
-          trait Handler[..$allTParams] extends ${name.ctor}[..$allTNames] with StackSafe.Handler[..$allTNames] { ${sf.param} =>
-            ..${requestDecls.map(_.addMod(Mod.Override()))}
-            $handlerMapk
-          }
-        """
-      else
-        q"""
-          trait Handler[..$allTParams] extends ${name.ctor}[..$allTNames] { ${sf.param} =>
-            ..${requestDecls.map(_.addMod(Mod.Override()))}
-            $handlerMapk
-          }
-        """
+      val tr = q"""
+        trait Handler[..$allTParams] extends ${name.ctor}[..$allTNames] { ${sf.param} =>
+          ..${requestDecls.map(_.addMod(Mod.Override()))}
+          $handlerMapk
+        }
+      """
+      if (isStackSafe) {
+        val par = q"trait X extends StackSafe.Handler[..$allTNames]".templ.parents.last
+        tr.copy( templ = tr.templ.addParent(par))
+      } else tr
     }
 
     lazy val stackSafeAlg: FreeAlgebra = {
