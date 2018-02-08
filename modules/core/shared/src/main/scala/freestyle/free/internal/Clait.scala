@@ -31,7 +31,6 @@ case class Clait(
 ) {
 
   import ScalametaUtil._
-  import syntax._
 
   def toTrait: Trait = Trait(mods.filtered, name, tparams, ctor, templ)
   def toClass: Class = Class(mods.filtered, name, tparams, ctor, templ)

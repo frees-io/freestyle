@@ -22,7 +22,7 @@ import freestyle.free.FreeS
 import scala.collection.immutable.Seq
 import scala.meta._
 import scala.meta.Defn.{Class, Object, Trait}
-import scala.meta.Type.Param
+import ScalametaUtil._
 
 trait EffectLike[F[_]] {
   final type FS[A] = FreeS.Par[F, A]
@@ -37,8 +37,6 @@ object freeImpl {
 
   val errors = new ErrorMessages("@free")
   import errors._
-  import syntax._
-  import ScalametaUtil.isAbstract
 
   def free(defn: Any): Stat = {
     val (clait, isTrait) = parseClait(defn)
@@ -47,7 +45,9 @@ object freeImpl {
       abort(s"$invalid in ${alg.clait.name}. $nonEmpty")
     else {
       val enriched = if (isTrait) alg.enrich.toTrait else alg.enrich.toClass
-      Term.Block(Seq(enriched, alg.mkCompanion)).`debug?`(clait.mods)
+      val block = Term.Block(Seq(enriched, alg.mkCompanion))
+      if (clait.mods.isDebug) println(block)
+      block
     }
   }
 
@@ -72,9 +72,8 @@ private[freestyle] case class Algebra( clait: Clait ) {
   /* The enrich method adds a kind-1 type parameter `$ff[_]` to the algebra type,
    * and adds `EffectLike[$ff]` to the parents */
   def enrich: Clait = {
-    val ff = headTParam
-    val pat = q"trait Foo[$ff] extends _root_.freestyle.free.internal.EffectLike[${ff.toName}]"
-    Clait(mods, name, pat.tparams, ctor, templ.copy(parents = pat.templ.parents))
+    val pat = q"trait Foo[$headTParam] extends _root_.freestyle.free.internal.EffectLike[${headTParam.toName}]"
+    Clait(mods, name, Seq(headTParam), ctor, templ.copy(parents = pat.templ.parents))
   }
 
   val requestDecls: Seq[Decl.Def] = templ.stats.get.collect {
@@ -179,7 +178,6 @@ private[freestyle] case class Algebra( clait: Clait ) {
 
 private[internal] class Request(reqDef: Decl.Def, indexValue: Int) {
 
-  import ScalametaUtil._
   import reqDef.name
 
   // Name of the Request ADT Class
@@ -261,7 +259,7 @@ private[internal] class Request(reqDef: Decl.Def, indexValue: Int) {
     Case(Lit.Int(indexValue), None, mexp) // case ix => mexp
   }
 
-  val unboundTparams: Seq[Param] = reqDef.tparams.map( _.unboundC)
+  val unboundTparams: Seq[Type.Param] = reqDef.tparams.map( _.unboundC)
 
   def handlerDef(mm: Type.Name): Decl.Def =
     if (extendedParamss.isEmpty)

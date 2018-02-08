@@ -16,24 +16,25 @@
 
 package freestyle.tagless.internal
 
-import freestyle.free.internal._
 import scala.collection.immutable.Seq
 import scala.meta._
 import scala.meta.Defn.{Class, Object, Trait}
+import freestyle.free.internal._
+import freestyle.free.internal.ScalametaUtil._
 
 // $COVERAGE-OFF$ScalaJS + coverage = fails with NoClassDef exceptions
 object moduleImpl {
 
   val errors = new ErrorMessages("@module")
   import errors._
-  import syntax._
-  import freestyle.free.internal.ScalametaUtil._
 
   def module(defn: Any): Term.Block = {
     val (clait, isTrait) = Clait.parse("@module", defn)
     val alg = TaglessModule(clait)
     val enriched = if (isTrait) alg.enrichClait.toTrait else alg.enrichClait.toClass
-    Term.Block(Seq(enriched, alg.makeObject)).`debug?`(clait.mods)
+    val block = Term.Block(Seq(enriched, alg.makeObject))
+    if (clait.mods.isDebug) println(block)
+    block
   }
 
 }
@@ -41,7 +42,6 @@ object moduleImpl {
 private[internal] case class TaglessModule( clait: Clait ) {
   val errors = new ErrorMessages("@module")
   import errors._
-  import ScalametaUtil._
   import clait._
 
   val effects: Seq[ModEffect] =
@@ -60,9 +60,8 @@ private[internal] case class TaglessModule( clait: Clait ) {
 
   /* The effects are Val Declarations (no value definition) */
   def enrichClait: Clait = {
-    val ff = headTParam
-    val pat = q"trait Foo[$ff] extends _root_.freestyle.tagless.internal.TaglessEffectLike[${ff.toName}]"
-    Clait(mods, name, pat.tparams, ctor, templ.copy(
+    val pat = q"trait Foo[$headTParam] extends _root_.freestyle.tagless.internal.TaglessEffectLike[${headTParam.toName}]"
+    Clait(mods, name, Seq(headTParam), ctor, templ.copy(
       parents = pat.templ.parents,
       stats = templ.stats.map(_.map(enrichStat))
     ))
@@ -71,7 +70,7 @@ private[internal] case class TaglessModule( clait: Clait ) {
   // The effects of a module are those variables declaration (not defined)
   // that are singular, i.e., not a tuple "val (x,y) = (1,2)"
 
-  def lifterStats: (Class, Defn.Def, Defn.Def) = {
+  def lifterStats: (Class, Defn.Def) = {
     val gg: Type.Name              = Type.fresh("GG$")
     val toTParams: Seq[Type.Param] = gg.paramK +: tailTParams
     val toTArgs: Seq[Type]         = gg +: tailTNames
@@ -89,17 +88,17 @@ private[internal] case class TaglessModule( clait: Clait ) {
         q"implicit def to[..$toTParams](..$args): To[..$toTArgs] = new To[..$toTArgs]()"
     }
 
-    (toClass, toDef, clait.applyDef)
+    (toClass, toDef)
   }
 
   def makeObject: Object = {
-    val (toClass, toDef, applyDef) = lifterStats
+    val (toClass, toDef) = lifterStats
 
     val prot = q"object X {}"
     prot.copy(
       name = Term.Name(name.value),
       templ = prot.templ.copy(
-        stats = Some(Seq(toClass, toDef, applyDef))
+        stats = Some(Seq(toClass, toDef, clait.applyDef))
       ))
   }
 
