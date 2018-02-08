@@ -29,24 +29,13 @@ object moduleImpl {
   import errors._
   import ModuleUtil._
   import syntax._
+  import ScalametaUtil.isAbstract
 
-  def module(defn: Any): Term.Block = defn match {
-    case cls: Trait =>
-      val fsmod = FreeSModule(Clait(cls))
-      Term
-        .Block(Seq(fsmod.enrichClait.toTrait, fsmod.makeObject))
-        .`debug?`(cls.mods)
-    case cls: Class if ScalametaUtil.isAbstract(cls) =>
-      val fsmod = FreeSModule(Clait(cls))
-      Term
-        .Block(Seq(fsmod.enrichClait.toClass, fsmod.makeObject))
-        .`debug?`(cls.mods)
-    case c: Class /* ! isAbstract */ =>
-      abort(abstractOnly)
-    case Term.Block(Seq(_, c: Object)) =>
-      abort(noCompanion)
-    case _ =>
-      abort("Unexpected trees $trees encountered for `@module` annotation")
+  def module(defn: Any): Term.Block = {
+    val (clait, isTrait) = Clait.parse("@module", defn)
+    val alg = FreeSModule(clait)
+    val enriched = if (isTrait) alg.enrichClait.toTrait else alg.enrichClait.toClass
+    Term.Block(Seq(enriched, alg.makeObject)).`debug?`(clait.mods)
   }
 
 }

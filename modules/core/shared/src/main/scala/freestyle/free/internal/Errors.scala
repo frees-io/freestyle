@@ -21,12 +21,10 @@ class ErrorMessages(annotation: String){
   // Messages of error
   val invalid = s"Invalid use of `$annotation`"
   val abstractOnly = s"The `$annotation` annotation can only be applied to a trait or an abstract class."
-  val noCompanion = "The trait or class annotated with `$annotation` must have no companion object."
-
-  val onlyReqs =
-    s"In a `$annotation`-annotated trait (or class), all abstract method declarations should be of type FS[_]"
-  val nonEmpty =
-    s"A `$annotation`-annotated trait or class  must have at least one abstract method of type `FS[_]`"
+  val noCompanion = s"The trait or class annotated with `$annotation` must have no companion object."
+  val onlyReqs = s"In a `$annotation`-annotated trait (or class), all abstract method declarations should be of type FS[_]"
+  val nonEmpty = s"A `$annotation`-annotated trait or class  must have at least one abstract method of type `FS[_]`"
+  val unexpected = s"Unexpected tree encountered for the `$annotation` annotation."
 
 }
 

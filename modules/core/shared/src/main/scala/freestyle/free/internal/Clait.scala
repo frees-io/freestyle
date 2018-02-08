@@ -18,7 +18,7 @@ package freestyle.free.internal
 
 import scala.collection.immutable.Seq
 import scala.meta._
-import scala.meta.Defn.{Class, Trait}
+import scala.meta.Defn.{Class, Trait, Object}
 
 /* A Clait in this context generalises the shared elements of a Class or a Trait
  */
@@ -58,5 +58,19 @@ object Clait {
 
   def apply(cls: Class): Clait = Clait(cls.mods, cls.name, cls.tparams, cls.ctor, cls.templ)
   def apply(cls: Trait): Clait = Clait(cls.mods, cls.name, cls.tparams, cls.ctor, cls.templ)
+
+  def parse(annotation: String, defn: Any): (Clait, Boolean) = {
+    val errors = new ErrorMessages(annotation)
+    import errors._
+    import ScalametaUtil.isAbstract
+
+    defn match {
+      case cls: Trait => (Clait(cls), true)
+      case cls: Class if isAbstract(cls) => (Clait(cls), false)
+      case c: Class /* ! isAbstract */   => abort(s"$invalid in ${c.name}. $abstractOnly")
+      case Term.Block(Seq(_, c: Object)) => abort(s"$invalid in ${c.name}. $noCompanion")
+      case _                             => abort(s"$unexpected. $abstractOnly")
+    }
+  }
 
 }

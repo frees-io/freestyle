@@ -34,7 +34,7 @@ object taglessImpl {
   import freestyle.free.internal.syntax._
 
   def tagless(defn: Any): Stat = {
-    val (clait, isTrait) = parseClait(defn)
+    val (clait, isTrait) = Clait.parse("@tagless", defn)
     val alg = Algebra(clait)
     if (alg.requestDecls.isEmpty)
       abort(s"$invalid in ${alg.clait.name}. $nonEmpty")
@@ -42,14 +42,6 @@ object taglessImpl {
       val enriched = if (isTrait) alg.enrich.toTrait else alg.enrich.toClass
       Term.Block(Seq(enriched, alg.mkObject)).`debug?`(clait.mods)
     }
-  }
-
-  def parseClait(defn: Any): (Clait, Boolean) = defn match {
-    case cls: Trait => (Clait(cls), true)
-    case cls: Class if isAbstract(cls) => (Clait(cls), false)
-    case c: Class /* ! isAbstract */   => abort(s"$invalid in ${c.name}. $abstractOnly")
-    case Term.Block(Seq(_, c: Object)) => abort(s"$invalid in ${c.name}. $noCompanion")
-    case _                             => abort(s"$invalid. $abstractOnly")
   }
 
 }
