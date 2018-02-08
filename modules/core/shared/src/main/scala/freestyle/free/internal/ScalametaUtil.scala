@@ -59,6 +59,22 @@ object ScalametaUtil {
       case _ => true
     }
 
+    def filtered: Seq[Mod] = mods.filter {
+      case mod"@debug" => false
+      case mod"@stacksafe" => false
+      case _           => true
+    }
+
+    def isStackSafe: Boolean = mods.exists {
+      case mod"@stacksafe" => true
+      case _ => false
+    }
+
+    def isDebug: Boolean = mods exists {
+      case mod"@debug" => true
+      case _           => false
+    }
+
   }
 
   implicit class TypeOps(val theType: Type) extends AnyVal {

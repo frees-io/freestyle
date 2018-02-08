@@ -31,8 +31,6 @@ object taglessImpl {
   val errors = new ErrorMessages("@tagless")
   import errors._
 
-  import freestyle.free.internal.syntax._
-
   def tagless(defn: Any): Stat = {
     val (clait, isTrait) = Clait.parse("@tagless", defn)
     val alg = Algebra(clait)
@@ -40,7 +38,9 @@ object taglessImpl {
       abort(s"$invalid in ${alg.clait.name}. $nonEmpty")
     else {
       val enriched = if (isTrait) alg.enrich.toTrait else alg.enrich.toClass
-      Term.Block(Seq(enriched, alg.mkObject)).`debug?`(clait.mods)
+      val block = Term.Block(Seq(enriched, alg.mkObject))
+      if (clait.mods.isDebug) println(block)
+      block
     }
   }
 
@@ -50,7 +50,6 @@ case class Algebra( clait: Clait) {
   import clait._
   val errors = new ErrorMessages("@tagless")
   import errors._
-  import freestyle.free.internal.syntax._
 
   val isStackSafe = clait.mods.isStackSafe
 

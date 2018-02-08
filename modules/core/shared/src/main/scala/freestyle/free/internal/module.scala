@@ -21,6 +21,7 @@ import freestyle.free.FreeS
 import scala.collection.immutable.Seq
 import scala.meta._
 import scala.meta.Defn.{Class, Object, Trait}
+import ScalametaUtil._
 
 // $COVERAGE-OFF$ScalaJS + coverage = fails with NoClassDef exceptions
 object moduleImpl {
@@ -28,14 +29,14 @@ object moduleImpl {
   val errors = new ErrorMessages("@module")
   import errors._
   import ModuleUtil._
-  import syntax._
-  import ScalametaUtil.isAbstract
 
   def module(defn: Any): Term.Block = {
     val (clait, isTrait) = Clait.parse("@module", defn)
     val alg = FreeSModule(clait)
     val enriched = if (isTrait) alg.enrichClait.toTrait else alg.enrichClait.toClass
-    Term.Block(Seq(enriched, alg.makeObject)).`debug?`(clait.mods)
+    val block = Term.Block(Seq(enriched, alg.makeObject))
+    if (clait.mods.isDebug) println(block)
+    block
   }
 
 }
@@ -44,7 +45,6 @@ private[internal] case class FreeSModule( clait: Clait ) {
   import ModuleUtil._
   val errors = new ErrorMessages("@module")
   import errors._
-  import ScalametaUtil._
   import clait._
 
   val effects: Seq[ModEffect] =
@@ -64,9 +64,8 @@ private[internal] case class FreeSModule( clait: Clait ) {
 
   /* The effects are Val Declarations (no value definition) */
   def enrichClait: Clait = {
-    val ff = headTParam
-    val pat = q"trait Foo[$ff] extends _root_.freestyle.free.internal.EffectLike[${ff.toName}]"
-    Clait(mods, name, pat.tparams, ctor, templ.copy(
+    val pat = q"trait Foo[$headTParam] extends _root_.freestyle.free.internal.EffectLike[${headTParam.toName}]"
+    Clait(mods, name, Seq(headTParam), ctor, templ.copy(
       parents = pat.templ.parents,
       stats = templ.stats.map(_.map(enrichStat))
     ))
