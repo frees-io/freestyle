@@ -29,14 +29,6 @@ object ScalametaUtil {
   }
 
   def toVar(name: Term.Name)             = Pat.Var.Term(name)
-  def toName(par: Term.Param): Term.Name = Term.Name(par.name.value)
-  def toType(par: Type.Param): Type      = Type.Name(par.name.value)
-
-  def tyParam(ty: Type.Name): Type.Param =
-    q"type X[Y]".tparams.head.copy(name = ty) // take Y, replace Y name with tyn
-
-  def tyParamK(ty: Type.Name): Type.Param =
-    q"type X[Y[_]]".tparams.head.copy(name = ty) // take Y[_], replace Y name with Tyn
 
   def tyApply(tyFun: Type, tyArg: Type): Type.Apply = Type.Apply(tyFun, Seq(tyArg))
 
@@ -45,10 +37,6 @@ object ScalametaUtil {
     case ty                        => Type.Apply(ty, Seq(tyArg))
   }
 
-  /* Given a Decl.Def, that represents an abstract method, make a concrete method Defn.Def
-   *   by giving it a Term that serves as its body */
-  def addBody(decl: Decl.Def, body: Term): Defn.Def =
-    Defn.Def(decl.mods, decl.name, decl.tparams, decl.paramss, Some(decl.decltpe), body)
 
   def mkObject(
       mods: Seq[Mod] = Nil,
@@ -71,6 +59,27 @@ object ScalametaUtil {
       case _ => true
     }
 
+    def filtered: Seq[Mod] = mods.filter {
+      case mod"@debug" => false
+      case mod"@stacksafe" => false
+      case _           => true
+    }
+
+    def isStackSafe: Boolean = mods.exists {
+      case mod"@stacksafe" => true
+      case _ => false
+    }
+
+    def isDebug: Boolean = mods exists {
+      case mod"@debug" => true
+      case _           => false
+    }
+
+  }
+
+  implicit class TypeOps(val theType: Type) extends AnyVal {
+    def applyTo(tparams: Seq[Type]): Type =
+      if (tparams.isEmpty) theType else Type.Apply(theType, tparams)
   }
 
   implicit class TypeNameOps(val typeName: Type.Name) extends AnyVal {
@@ -88,6 +97,8 @@ object ScalametaUtil {
 
   implicit class TermParamOps(val termParam: Term.Param) extends AnyVal {
     def addMod(mod: Mod): Term.Param = termParam.copy(mods = termParam.mods :+ mod)
+
+    def toName: Term.Name = Term.Name(termParam.name.value)
 
     def isImplicit: Boolean = termParam.mods.exists {
       case Mod.Implicit() => true
@@ -108,16 +119,25 @@ object ScalametaUtil {
     def classBoundsToParamTypes: Seq[Type.Apply] = typeParam.cbounds.map { cbound =>
       Type.Apply(cbound, Seq(Type.Name(typeParam.name.value)))
     }
+
+    def isKind1: Boolean =
+      typeParam.tparams.toList match {
+        case List(tp) if tp.tparams.isEmpty => true
+        case _ => false
+      }
+
+    def unboundC: Type.Param = typeParam.copy(cbounds = Nil)
   }
 
   implicit class DeclDefOps(val declDef: Decl.Def) extends AnyVal {
 
     def addMod(mod: Mod): Decl.Def = declDef.copy(mods = declDef.mods :+ mod)
 
-    def argss: Seq[Seq[Term.Name]] = declDef.paramss.map(_.map(toName))
+    def argss: Seq[Seq[Term.Name]] = declDef.paramss.map(_.map(_.toName))
 
     def withType(ty: Type) = declDef.copy(decltpe = ty)
 
+    /* Build a concrete method Defn.Def by giving the body Term */
     def addBody(body: Term): Defn.Def = {
       import declDef._
       Defn.Def(mods, name, tparams, paramss, Some(decltpe), body)
@@ -144,5 +164,40 @@ object ScalametaUtil {
       case Nil => Nil
       case headParam :: tailParams => headParam.addMod( Mod.Implicit() ) :: tailParams
     }
+
+    def toVals: Seq[Term.Param] = termParams.map(_.addMod(Mod.ValParam()))
   }
+
+  implicit class TermParamListListOps(val termParamss: Seq[Seq[Term.Param]]) extends AnyVal {
+
+    /** Adds the given implicitPars to the list of lists of parameters: if termParamss already
+      has an implicits params list, it appends implicitPars to it. Otherwise, it adds a new list*/
+    def addImplicits(implicitPars: Seq[Term.Param]): Seq[Seq[Term.Param]] =
+      if (implicitPars.isEmpty)
+        termParamss
+      else if (termParamss.isEmpty)
+        Seq(implicitPars.toImplicit)
+      else {
+        val lastPars = termParamss.last
+        if (lastPars.hasImplicit)
+          termParamss.init ++ Seq(lastPars ++ implicitPars)
+        else
+          termParamss ++ Seq( implicitPars.toImplicit)
+      }
+
+    def addEmptyExplicit: Seq[Seq[Term.Param]] = termParamss.toList match {
+      case Nil => Seq( Seq())
+      case List(imps) if imps.hasImplicit => Seq( Seq(), imps)
+      case _ => termParamss
+    }
+
+  }
+
+  implicit class TemplateOps(val templ: Template) extends AnyVal {
+
+    def addParent( ctorCall: Ctor.Call): Template =
+      templ.copy( parents = templ.parents ++ Seq(ctorCall) )
+
+  }
+
 }

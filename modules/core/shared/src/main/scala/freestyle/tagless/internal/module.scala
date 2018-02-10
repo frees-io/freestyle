@@ -16,55 +16,33 @@
 
 package freestyle.tagless.internal
 
-import freestyle.free.internal._
 import scala.collection.immutable.Seq
 import scala.meta._
 import scala.meta.Defn.{Class, Object, Trait}
+import freestyle.free.internal._
+import freestyle.free.internal.ScalametaUtil._
 
 // $COVERAGE-OFF$ScalaJS + coverage = fails with NoClassDef exceptions
 object moduleImpl {
 
-  import ModuleUtil._
-  import syntax._
+  val errors = new ErrorMessages("@module")
+  import errors._
 
-  def module(defn: Any): Term.Block = defn match {
-    case cls: Trait =>
-      val fsmod =
-        TaglessModule(cls.mods.filtered, cls.name, cls.tparams, cls.ctor, cls.templ, isTrait = true)
-      Term
-        .Block(Seq(fsmod.makeClass, fsmod.makeObject))
-        .`debug?`(cls.mods)
-    case cls: Class if ScalametaUtil.isAbstract(cls) =>
-      val fsmod =
-        TaglessModule(cls.mods.filtered, cls.name, cls.tparams, cls.ctor, cls.templ, isTrait = false)
-      Term
-        .Block(Seq(fsmod.makeClass, fsmod.makeObject))
-        .`debug?`(cls.mods)
-    case c: Class /* ! isAbstract */ =>
-      abort(abstractOnly)
-    case Term.Block(Seq(_, c: Object)) =>
-      abort(noCompanion)
-    case _ =>
-      abort("Unexpected trees $trees encountered for `@module` annotation")
+  def module(defn: Any): Term.Block = {
+    val (clait, isTrait) = Clait.parse("@module", defn)
+    val alg = TaglessModule(clait)
+    val enriched = if (isTrait) alg.enrichClait.toTrait else alg.enrichClait.toClass
+    val block = Term.Block(Seq(enriched, alg.makeObject))
+    if (clait.mods.isDebug) println(block)
+    block
   }
 
 }
 
-private[internal] case class TaglessModule(
-    mods: Seq[Mod],
-    name: Type.Name,
-    tparams: Seq[Type.Param],
-    ctor: Ctor.Primary,
-    templ: Template,
-    isTrait: Boolean
-) {
-  import ModuleUtil._
-  import ScalametaUtil._
-
-  val cleanedTParams: Seq[Type.Param] = tparams.toList match {
-    case List(f@tparam"..$mods $name[$tparam]") => Nil
-    case _ => tparams
-  }
+private[internal] case class TaglessModule( clait: Clait ) {
+  val errors = new ErrorMessages("@module")
+  import errors._
+  import clait._
 
   val effects: Seq[ModEffect] =
     templ.stats.getOrElse(Nil).collect {
@@ -72,41 +50,30 @@ private[internal] case class TaglessModule(
       case vdec @ Decl.Val(_, Seq(Pat.Var.Term(_)), _) => ModEffect(vdec)
     }
 
-  def enrichStat(tt: Type.Name, st: Stat): Stat = st match {
+  def enrichStat(st: Stat): Stat = st match {
     case vdec @ Decl.Val(_, Seq(Pat.Var.Term(tname)), Type.Apply(_, Seq(_))) =>
       vdec
     case vdec @ Decl.Val(_, Seq(Pat.Var.Term(tname)), ty) =>
-      vdec.copy(decltpe = Type.Apply(ty, Seq(tt)))
+      vdec.copy(decltpe = Type.Apply(ty, Seq(headTParam.toName)))
     case x => x
   }
 
   /* The effects are Val Declarations (no value definition) */
-  def makeClass: Defn = {
-
-    val (ff, pat)           = tparams.toList match {
-      case List(f @ tparam"..$mods $name[$tparam]") =>
-        (Type.Name(f.name.value), q"trait Foo[$f] extends _root_.freestyle.tagless.internal.TaglessEffectLike[${toType(f)}]")
-      case _ =>
-        val ff: Type.Name = Type.fresh("FF$")
-        (ff, q"trait Foo[${tyParamK(ff)}] extends _root_.freestyle.tagless.internal.TaglessEffectLike[$ff]")
-    }
-
-    val nstats = templ.stats.map(_.map(stat => enrichStat(ff, stat)))
-    val ntempl = templ.copy(parents = pat.templ.parents, stats = nstats)
-
-    if (isTrait)
-      Trait(mods, name, pat.tparams, ctor, ntempl)
-    else
-      Class(mods, name, pat.tparams, ctor, ntempl)
+  def enrichClait: Clait = {
+    val pat = q"trait Foo[$headTParam] extends _root_.freestyle.tagless.internal.TaglessEffectLike[${headTParam.toName}]"
+    Clait(mods, name, Seq(headTParam), ctor, templ.copy(
+      parents = pat.templ.parents,
+      stats = templ.stats.map(_.map(enrichStat))
+    ))
   }
 
   // The effects of a module are those variables declaration (not defined)
   // that are singular, i.e., not a tuple "val (x,y) = (1,2)"
 
-  def lifterStats: (Class, Defn.Def, Defn.Def) = {
+  def lifterStats: (Class, Defn.Def) = {
     val gg: Type.Name              = Type.fresh("GG$")
-    val toTParams: Seq[Type.Param] = tyParamK(gg) +: cleanedTParams
-    val toTArgs: Seq[Type]         = gg +: cleanedTParams.map(toType)
+    val toTParams: Seq[Type.Param] = gg.paramK +: tailTParams
+    val toTArgs: Seq[Type]         = gg +: tailTNames
 
     val sup: Term.ApplyType = Term.ApplyType(Ctor.Ref.Name(name.value), toTArgs)
     val toClass: Class = {
@@ -120,20 +87,18 @@ private[internal] case class TaglessModule(
       else
         q"implicit def to[..$toTParams](..$args): To[..$toTArgs] = new To[..$toTArgs]()"
     }
-    val applyDef: Defn.Def =
-      q"def apply[..$toTParams](implicit ev: $name[..$toTArgs]): $name[..$toTArgs] = ev"
 
-    (toClass, toDef, applyDef)
+    (toClass, toDef)
   }
 
   def makeObject: Object = {
-    val (toClass, toDef, applyDef) = lifterStats
+    val (toClass, toDef) = lifterStats
 
     val prot = q"object X {}"
     prot.copy(
       name = Term.Name(name.value),
       templ = prot.templ.copy(
-        stats = Some(Seq(toClass, toDef, applyDef))
+        stats = Some(Seq(toClass, toDef, clait.applyDef))
       ))
   }
 
@@ -172,11 +137,4 @@ private[internal] case class ModEffect(effVal: Decl.Val) {
 
 }
 
-private[internal] object ModuleUtil {
-  // Messages of error
-  val invalid = "Invalid use of `@module`"
-  val abstractOnly =
-    "The `@module` annotation can only be applied to a trait or an abstract class."
-  val noCompanion = "The trait or class annotated with `@module` must have no companion object."
-}
 // $COVERAGE-ON$

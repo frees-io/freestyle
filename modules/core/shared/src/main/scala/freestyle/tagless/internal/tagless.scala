@@ -20,7 +20,7 @@ import scala.collection.immutable.Seq
 import scala.meta._
 import scala.meta.Defn.{Class, Object, Trait}
 import freestyle.free.internal.ScalametaUtil._
-import freestyle.free.internal.{Algebra => FreeAlgebra}
+import freestyle.free.internal.{Algebra => FreeAlgebra, Clait, ErrorMessages}
 
 trait TaglessEffectLike[F[_]] {
   final type FS[A] = F[A]
@@ -28,71 +28,36 @@ trait TaglessEffectLike[F[_]] {
 
 // $COVERAGE-OFF$ScalaJS + coverage = fails with NoClassDef exceptions
 object taglessImpl {
-  import Util._
+  val errors = new ErrorMessages("@tagless")
+  import errors._
 
-  import freestyle.free.internal.syntax._
-
-  def tagless(defn: Any): Stat = defn match {
-    case cls: Trait =>
-      val isStackSafe = cls.mods.isStackSafe
-      freeAlg(Algebra(cls.mods.filtered, cls.name, cls.tparams, cls.ctor, cls.templ, isStackSafe), isTrait = true)
-        .`debug?`(cls.mods)
-    case cls: Class if isAbstract(cls) =>
-      val isStackSafe = cls.mods.isStackSafe
-      freeAlg(Algebra(cls.mods.filtered, cls.name, cls.tparams, cls.ctor, cls.templ, isStackSafe), isTrait = false)
-        .`debug?`(cls.mods)
-
-    case c: Class /* ! isAbstract */   => abort(s"$invalid in ${c.name}. $abstractOnly")
-    case Term.Block(Seq(_, c: Object)) => abort(s"$invalid in ${c.name}. $noCompanion")
-    case _                             => abort(s"$invalid. $abstractOnly")
-  }
-
-  def freeAlg(alg: Algebra, isTrait: Boolean): Term.Block =
+  def tagless(defn: Any): Stat = {
+    val (clait, isTrait) = Clait.parse("@tagless", defn)
+    val alg = Algebra(clait)
     if (alg.requestDecls.isEmpty)
-      abort(s"$invalid in ${alg.name}. $nonEmpty")
+      abort(s"$invalid in ${alg.clait.name}. $nonEmpty")
     else {
       val enriched = if (isTrait) alg.enrich.toTrait else alg.enrich.toClass
-      Term.Block(Seq(enriched, alg.mkObject))
+      val block = Term.Block(Seq(enriched, alg.mkObject))
+      if (clait.mods.isDebug) println(block)
+      block
     }
+  }
 
 }
 
-case class Algebra(
-    mods: Seq[Mod],
-    name: Type.Name,
-    tparams: Seq[Type.Param],
-    ctor: Ctor.Primary,
-    templ: Template,
-    isStackSafe: Boolean
-) {
-  import Util._
+case class Algebra( clait: Clait) {
+  import clait._
+  val errors = new ErrorMessages("@tagless")
+  import errors._
 
-  def toTrait: Trait = Trait(mods, name, tparams, ctor, templ)
-  def toClass: Class = Class(mods, name, tparams, ctor, templ)
-
-  def pickOrGenerateFF( tparams: Seq[Type.Param]): List[Type.Param] = {
-    def isKind1(tparam: Type.Param): Boolean =
-      tparam.tparams.toList match {
-        case List(tp) if tp.tparams.isEmpty => true
-        case _ => false
-      }
-    tparams.toList match {
-      case headParam :: tail if isKind1(headParam) => headParam :: tail
-      case _ => Type.fresh("FF$").paramK :: tparams.toList
-    }
-  }
-
-  val allTParams: Seq[Type.Param] = pickOrGenerateFF(tparams)
-  val allTNames: Seq[Type.Name] = allTParams.map(_.toName)
-  val fs: Type.Param = allTParams.head
-  val tailTParams: Seq[Type.Param] = allTParams.tail
-  val tailTNames: Seq[Type.Name] = tailTParams.map(_.toName)
+  val isStackSafe = clait.mods.isStackSafe
 
   val requestDecls: Seq[Decl.Def] = templ.stats.get.collect {
     case dd: Decl.Def =>
       dd.decltpe match {
         case Type.Apply(Type.Name("FS"), _) => dd
-        case Type.Apply(Type.Name(ff), _) if ff == fs.toName.value => dd
+        case Type.Apply(Type.Name(ff), _) if ff == headTParam.toName.value => dd
         case _                              => abort(s"$invalid in definition of method ${dd.name} in $name. $onlyReqs")
       }
   }
@@ -100,23 +65,23 @@ case class Algebra(
 
   // The enrich method adds a kind-1 type parameter `$ff[_]` to the algebra type,
   // making that trait extends from AnyRef.
-  def enrich: Algebra = {
-    val pat = q"trait Foo[$fs] extends _root_.freestyle.tagless.internal.TaglessEffectLike[${fs.toName}]"
+  def enrich: Clait = {
+    val ff: Type.Param = headTParam
+    val pat = q"trait Foo[$ff] extends _root_.freestyle.tagless.internal.TaglessEffectLike[${ff.toName}]"
     val self = Term.fresh("self$")
-    Algebra(mods, name, allTParams, ctor, templ.copy(
+    Clait(mods, name, allTParams, ctor, templ.copy(
       parents = pat.templ.parents,
       self = self.param,
       stats = templ.stats.map( _ :+ mapKDef(name, self))
-    ), isStackSafe )
+    ))
   }
 
   def mapKDef(tyName: Type.Name, sf: Term.Name): Defn.Def = {
     val mm = Type.fresh("MM$")
     val fk = Term.fresh("fk$")
-
     q"""
       def mapK[${mm.paramK}](
-        $fk: _root_.cats.arrow.FunctionK[${fs.toName}, $mm]
+        $fk: _root_.cats.arrow.FunctionK[${headTParam.toName}, $mm]
       ): $tyName[$mm, ..$tailTNames] =
         new ${tyName.ctor}[$mm, ..$tailTNames] {
           ..${requests.map(_.mapKDef(fk, sf, mm))}
@@ -132,20 +97,16 @@ case class Algebra(
       val sf = Term.fresh("self$")
       val handlerMapk: Defn.Def = mapKDef( Type.Name("Handler"), sf).addMod(Mod.Override())
 
-      if (isStackSafe)
-        q"""
-          trait Handler[..$allTParams] extends ${name.ctor}[..$allTNames] with StackSafe.Handler[..$allTNames] { ${sf.param} =>
-            ..${requestDecls.map(_.addMod(Mod.Override()))}
-            $handlerMapk
-          }
-        """
-      else
-        q"""
-          trait Handler[..$allTParams] extends ${name.ctor}[..$allTNames] { ${sf.param} =>
-            ..${requestDecls.map(_.addMod(Mod.Override()))}
-            $handlerMapk
-          }
-        """
+      val tr = q"""
+        trait Handler[..$allTParams] extends ${name.ctor}[..$allTNames] { ${sf.param} =>
+          ..${requestDecls.map(_.addMod(Mod.Override()))}
+          $handlerMapk
+        }
+      """
+      if (isStackSafe) {
+        val par = q"trait X extends StackSafe.Handler[..$allTNames]".templ.parents.last
+        tr.copy( templ = tr.templ.addParent(par))
+      } else tr
     }
 
     lazy val stackSafeAlg: FreeAlgebra = {
@@ -156,13 +117,13 @@ case class Algebra(
         })
 
       val t: Trait = q" trait StackSafe { ..${requestDecls.map(withFS)} } "
-      FreeAlgebra(Seq.empty[Mod], Type.Name("StackSafe"), allTParams, t.ctor, t.templ)
+      FreeAlgebra(Clait(Seq.empty[Mod], Type.Name("StackSafe"), allTParams, t.ctor, t.templ))
     }
     lazy val stackSafeT: Trait = stackSafeAlg.enrich.toTrait
     lazy val stackSafeD: Object = stackSafeAlg.mkCompanion
 
     val deriveDef: Defn.Def = {
-      val deriveTTs = tyParamK(mm) +: tyParamK(nn) +: tailTParams
+      val deriveTTs = mm.paramK +: nn.paramK +: tailTParams
       val nnTTs     = nn +: tailTNames
       q"""
         implicit def derive[..$deriveTTs](
@@ -170,11 +131,6 @@ case class Algebra(
           fk: _root_.cats.arrow.FunctionK[$mm, $nn]
       ): $name[$nn, ..$tailTNames] = h.mapK[$nn](fk)
       """
-    }
-
-    val applyDef: Defn.Def = {
-      val ev = Term.fresh("ev$")
-      q"def apply[${mm.paramK}, ..$tailTParams](implicit $ev: $name[$mm, ..$tailTNames]): $name[$mm, ..$tailTNames] = $ev"
     }
 
     val functorKDef: Stat = {
@@ -193,24 +149,23 @@ case class Algebra(
             new _root_.mainecoon.FunctorK[$name] {
               $mapkdef
             }"""
-      else
+      else {
+        val tproj: Type = q"X[({ type λ[α[_]] = $name[α, ..$tailTNames] })#λ]".targs.head
         q"""
-          implicit def $functorK[..$tailTParams]: _root_.mainecoon.FunctorK[({ type λ[α[_]] = $name[α, ..$tailTNames] })#λ] =
-            new _root_.mainecoon.FunctorK[({ type λ[α[_]] = $name[α, ..$tailTNames] })#λ] {
+          implicit def $functorK[..$tailTParams]: _root_.mainecoon.FunctorK[$tproj] =
+            new _root_.mainecoon.FunctorK[$tproj] {
               $mapkdef
             }"""
+      }
     }
+
+    val nstats = Seq(clait.applyDef, functorKDef, deriveDef, handlerT) ++
+      ( if (isStackSafe) Seq(stackSafeT, stackSafeD) else Seq() )
 
     val prot = q"object X {}"
     prot.copy(
       name = Term.Name(name.value),
-      templ = prot.templ.copy(
-        stats = Some(
-          if (isStackSafe)
-            Seq(applyDef, functorKDef, deriveDef, stackSafeT, stackSafeD, handlerT)
-          else Seq(applyDef, functorKDef, deriveDef, handlerT)
-        )
-      ))
+      templ = prot.templ.copy( stats = Some(nstats) ))
   }
 
 }
@@ -229,15 +184,4 @@ private[freestyle] class Request(reqDef: Decl.Def) {
 
 }
 
-object Util {
-  // Messages of error
-  val invalid = "Invalid use of the `@tagless` annotation"
-  val abstractOnly =
-    "The `@tagless` annotation can only be applied to a trait or to an abstract class."
-  val noCompanion = "The trait (or class) annotated with `@tagless` must have no companion object."
-  val onlyReqs =
-    "In a `@tagless`-annotated trait (or class), all abstract method declarations should be of type FS[_]"
-  val nonEmpty =
-    "A `@tagless`-annotated trait or class  must have at least one abstract method of type `FS[_]`"
-}
 // $COVERAGE-ON$
