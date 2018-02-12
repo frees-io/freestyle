@@ -14,7 +14,7 @@ To enable this integration, you can depend on _frees-config_:
 [comment]: # (Start Replace)
 
 ```scala
-libraryDependencies += "io.frees" %% "frees-config" % "0.6.3"
+libraryDependencies += "io.frees" %% "frees-config" % "0.7.0"
 ```
 
 [comment]: # (End Replace)
