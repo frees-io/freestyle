@@ -1,5 +1,20 @@
 # Changelog
 
+## 02/12/2018 - Version 0.7.0
+
+Release changes:
+
+* Replace dead docs link ([#521](https://github.com/frees-io/freestyle/pull/521))
+* Fix syntax highlighting ([#523](https://github.com/frees-io/freestyle/pull/523))
+* Remove broken link ([#527](https://github.com/frees-io/freestyle/pull/527))
+* FS-519 Support type parameters in tagless ([#525](https://github.com/frees-io/freestyle/pull/525))
+* FS-517 Isues with StackSafe Expansion ([#522](https://github.com/frees-io/freestyle/pull/522))
+* Use new sbt-microsites version ([#524](https://github.com/frees-io/freestyle/pull/524))
+* FS-528 Override MapK for tagless-stacksafe Handler. ([#529](https://github.com/frees-io/freestyle/pull/529))
+* Code Refactor ([#530](https://github.com/frees-io/freestyle/pull/530))
+* Releases Freestyle 0.7.0 ([#531](https://github.com/frees-io/freestyle/pull/531))
+
+
 ## 01/23/2018 - Version 0.6.3
 
 Release changes:
