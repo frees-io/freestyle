@@ -71,6 +71,7 @@ Importing the _freestyle-finch_ module, Finch, and shapeless' `::` used by Finch
 import freestyle.free.http.finch._
 
 import io.finch._
+import io.finch.syntax._
 
 import shapeless.::
 ```
@@ -80,11 +81,11 @@ We can use a freestyle program within `Endpoint#apply`:
 ```tut:book
 cats.Monad[Future]
 
-val gcdEndpointTwo = get(int :: int) { (a: Int, b: Int) =>
+val gcdEndpointTwo = get(path[Int] :: path[Int]) { (a: Int, b: Int) =>
   Calc[Calc.Op].gcd(a, b).map(Ok(_))
 }
 
-val gcdEndpointOne = get(int) { (a: Int) =>
+val gcdEndpointOne = get(path[Int]) { (a: Int) =>
   Calc[Calc.Op].gcd(a, 12).map(Ok(_))
 }
 
