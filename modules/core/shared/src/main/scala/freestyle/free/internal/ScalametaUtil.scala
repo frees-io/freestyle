@@ -198,6 +198,18 @@ object ScalametaUtil {
     def addParent( ctorCall: Ctor.Call): Template =
       templ.copy( parents = templ.parents ++ Seq(ctorCall) )
 
+    def addStats( newStats: Seq[Stat]): Template =
+      if (newStats.isEmpty) templ else templ.copy(
+        stats = Some( templ.stats.getOrElse(Seq()) ++ newStats)
+      )
+  }
+
+  implicit class ObjectOps(val obj: Object) extends AnyVal {
+
+    def appendStats(newStats: Seq[Stat]): Object =
+      if (newStats.isEmpty) obj
+      else obj.copy( templ = obj.templ.addStats(newStats))
+
   }
 
 }
