@@ -19,13 +19,20 @@ package tagless
 
 import freestyle.tagless.internal._
 
+import scala.meta._
 import scala.annotation.{StaticAnnotation, compileTimeOnly}
 
 @compileTimeOnly("enable macro paradise to expand @tagless macro annotations")
-class tagless extends StaticAnnotation {
+class tagless(val stacksafe: Boolean) extends StaticAnnotation {
   import scala.meta._
 
-  inline def apply(defn: Any): Any = meta { taglessImpl.tagless(defn) }
+  inline def apply(defn: Any): Any = meta {
+    val stacksafe: Boolean = this match {
+      case q"new $_(${Lit.Boolean(ss)})" => ss
+      case _ => false
+    }
+    taglessImpl.tagless(defn, stacksafe)
+  }
 }
 
 @compileTimeOnly("enable macro paradise to expand @module macro annotations")

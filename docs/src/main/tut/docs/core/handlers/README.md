@@ -154,12 +154,12 @@ Tagless final algebras are declared using the `@tagless` macro annotation.
 
 ```tut:book
 
-@tagless @stacksafe trait Validation {
+@tagless(true) trait Validation {
   def minSize(s: String, n: Int): FS[Boolean]
   def hasNumber(s: String): FS[Boolean]
 }
 
-@tagless @stacksafe trait Interaction {
+@tagless(true) trait Interaction {
   def tell(msg: String): FS[Unit]
   def ask(prompt: String): FS[String]
 }

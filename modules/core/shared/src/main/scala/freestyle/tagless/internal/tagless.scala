@@ -31,9 +31,9 @@ object taglessImpl {
   val errors = new ErrorMessages("@tagless")
   import errors._
 
-  def tagless(defn: Any): Stat = {
+  def tagless(defn: Any, stackSafe: Boolean): Stat = {
     val (clait, isTrait) = Clait.parse("@tagless", defn)
-    val alg = Algebra(clait)
+    val alg = Algebra(clait, stackSafe)
     if (alg.requestDecls.isEmpty)
       abort(s"$invalid in ${alg.clait.name}. $nonEmpty")
     else {
@@ -46,12 +46,10 @@ object taglessImpl {
 
 }
 
-case class Algebra( clait: Clait) {
+case class Algebra( clait: Clait, isStackSafe: Boolean) {
   import clait._
   val errors = new ErrorMessages("@tagless")
   import errors._
-
-  val isStackSafe = clait.mods.isStackSafe
 
   val requestDecls: Seq[Decl.Def] = templ.stats.get.collect {
     case dd: Decl.Def =>

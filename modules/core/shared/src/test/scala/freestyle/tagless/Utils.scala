@@ -31,21 +31,21 @@ import cats.syntax.functor._
 
 object algebras {
 
-  @tagless @stacksafe
+  @tagless(true)
   trait TG1 {
     def x(a: Int): FS[Int]
 
     def y(a: Int): FS[Int]
   }
 
-  @tagless @stacksafe
+  @tagless(true)
   trait TG2 {
     def x2(a: Int): FS[Int]
 
     def y2(a: Int): FS[Int]
   }
 
-  @tagless @stacksafe
+  @tagless(true)
   trait TG3[F[_]] {
     def x3(a: Int): FS[Int]
 

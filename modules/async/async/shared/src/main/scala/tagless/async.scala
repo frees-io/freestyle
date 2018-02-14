@@ -23,7 +23,7 @@ import freestyle.async._
 object async {
 
   /** Async computation algebra. **/
-  @tagless @stacksafe trait AsyncM {
+  @tagless(true) trait AsyncM {
     def async[A](fa: Proc[A]): FS[A]
   }
 

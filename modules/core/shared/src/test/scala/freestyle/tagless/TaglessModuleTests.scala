@@ -39,7 +39,7 @@ class TaglessModuleTests extends WordSpec with Matchers {
   "Tagless final algebras" should {
 
     "Allow a trait with an F[_] bound type param" in {
-      @tagless @stacksafe trait X[F[_]] {
+      @tagless(true) trait X[F[_]] {
         def bar(x:Int): FS[Int]
       }
       0 shouldEqual 0

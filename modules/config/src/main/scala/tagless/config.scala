@@ -23,7 +23,7 @@ import freestyle.config._
 
 object config {
 
-  @tagless @stacksafe sealed trait ConfigM {
+  @tagless(true) sealed trait ConfigM {
     def load: FS[Config]
     def empty: FS[Config]
     def parseString(s: String): FS[Config]
