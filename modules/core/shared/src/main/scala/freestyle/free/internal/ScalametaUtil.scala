@@ -65,11 +65,6 @@ object ScalametaUtil {
       case _           => true
     }
 
-    def isStackSafe: Boolean = mods.exists {
-      case mod"@stacksafe" => true
-      case _ => false
-    }
-
     def isDebug: Boolean = mods exists {
       case mod"@debug" => true
       case _           => false

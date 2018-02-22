@@ -31,9 +31,9 @@ object taglessImpl {
   val errors = new ErrorMessages("@tagless")
   import errors._
 
-  def tagless(defn: Any, stackSafe: Boolean): Stat = {
+  def tagless(defn: Any, stacksafe: Boolean): Stat = {
     val (clait, isTrait) = Clait.parse("@tagless", defn)
-    val alg = Algebra(clait, stackSafe)
+    val alg = Algebra(clait, stacksafe)
     if (alg.requestDecls.isEmpty)
       abort(s"$invalid in ${alg.clait.name}. $nonEmpty")
     else {
@@ -107,7 +107,7 @@ case class Algebra( clait: Clait, isStackSafe: Boolean) {
       } else tr
     }
 
-    lazy val stackSafeAlg: FreeAlgebra = {
+    lazy val stacksafeAlg: FreeAlgebra = {
       def withFS( req: Decl.Def): Decl.Def =
         req.copy(decltpe = req.decltpe match {
           case Type.Apply(_, targs) => Type.Apply( Type.Name("FS"), targs)
@@ -117,8 +117,8 @@ case class Algebra( clait: Clait, isStackSafe: Boolean) {
       val t: Trait = q" trait StackSafe { ..${requestDecls.map(withFS)} } "
       FreeAlgebra(Clait(Seq.empty[Mod], Type.Name("StackSafe"), allTParams, t.ctor, t.templ))
     }
-    lazy val stackSafeT: Trait = stackSafeAlg.enrich.toTrait
-    lazy val stackSafeD: Object = stackSafeAlg.mkCompanion
+    lazy val stacksafeT: Trait = stacksafeAlg.enrich.toTrait
+    lazy val stacksafeD: Object = stacksafeAlg.mkCompanion
 
     val deriveDef: Defn.Def = {
       val deriveTTs = mm.paramK +: nn.paramK +: tailTParams
@@ -158,7 +158,7 @@ case class Algebra( clait: Clait, isStackSafe: Boolean) {
     }
 
     val nstats = Seq(clait.applyDef, functorKDef, deriveDef, handlerT) ++
-      ( if (isStackSafe) Seq(stackSafeT, stackSafeD) else Seq() )
+      ( if (isStackSafe) Seq(stacksafeT, stacksafeD) else Seq() )
 
     val prot = q"object X {}"
     prot.copy(

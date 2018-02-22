@@ -29,6 +29,7 @@ class tagless(val stacksafe: Boolean) extends StaticAnnotation {
   inline def apply(defn: Any): Any = meta {
     val stacksafe: Boolean = this match {
       case q"new $_(${Lit.Boolean(ss)})" => ss
+      case q"new $_(stacksafe = ${Lit.Boolean(ss)})" => ss
       case _ => false
     }
     taglessImpl.tagless(defn, stacksafe)

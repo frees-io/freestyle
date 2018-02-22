@@ -36,13 +36,27 @@ import modules._
 
 class TaglessStacksafeTests extends WordSpec with Matchers {
 
+  def ok: Unit = (0 shouldEqual 0)
+
   "the @tagless macro annotation, with the extra @stacksafe annotation, should be accepted if it is applied to" when {
 
-    "a trait with at least one request" in {
-      @tagless(true) trait X {
-        def bar(x:Int): FS[Int]
+    "a trait that has at least one request (like the plain @tagless), and " when {
+
+      "we use the literal argument" in {
+        @tagless(true) trait X {
+          def bar(x:Int): FS[Int]
+        }
+        val ss: Any = X.StackSafe
+        ok
       }
-      0 shouldEqual 0
+
+      "we use the literal argument with the variable assigned" in {
+        @tagless(stacksafe = true) trait X {
+          def bar(x:Int): FS[Int]
+        }
+        val ss: Any = X.StackSafe
+        ok
+      }
     }
 
     "a trait with a kind-1 type param" when {
@@ -50,27 +64,27 @@ class TaglessStacksafeTests extends WordSpec with Matchers {
         @tagless(true) trait FBound[F[_]] {
           def ann(x:Int): FS[Int]
         }
-        0 shouldEqual 0
+        ok
       }
 
       "typing the request with the user-provided F-Bound type param" in {
         @tagless(true) trait FBound[F[_]] {
           def bob(y:Int): F[Int]
         }
-        0 shouldEqual 0
+        ok
       }
     }
 
     "an abstract class with at least one request" in {
       @tagless(true) abstract class X { def bar(x:Int): FS[Int] }
-      0 shouldEqual 0
+      ok
     }
 
     "a trait with an abstact method of type FS" in {
       @tagless(true) trait X {
         def f(a: Char) : FS[Int]
       }
-      0 shouldEqual 0
+      ok
     }
 
     "a trait with some concrete non-FS members" ignore {
@@ -79,35 +93,35 @@ class TaglessStacksafeTests extends WordSpec with Matchers {
         def y: Int = 5
         val z: Int = 6
       }
-      0 shouldEqual 0
+      ok
     }
 
     "a trait with a method with type parameters" in {
       @tagless(true) trait WiX {
         def ix[A](a: A) : FS[A]
       }
-      0 shouldEqual 0
+      ok
     }
 
     "a trait with high bounded type parameters in the method" in {
       @tagless(true) trait X {
         def ix[A <: Int](a: A) : FS[A]
       }
-      0 shouldEqual 0
+      ok
     }
 
     "a trait with lower bounded type parameters in the method" in {
       @tagless(true) trait X {
         def ix[A >: Int](a: A) : FS[A]
       }
-      0 shouldEqual 0
+      ok
     }
 
     "a trait with different type parameters in the method" in {
       @tagless(true) trait X {
         def ix[A <: Int, B, C >: Int](a: A, b: B, c: C) : FS[A]
       }
-      0 shouldEqual 0
+      ok
     }
 
     "a trait with high bounded type parameters and implicits in the method" in {
@@ -115,7 +129,7 @@ class TaglessStacksafeTests extends WordSpec with Matchers {
       @tagless(true) trait Y {
         def ix[A <: Int : X](a: A) : FS[A]
       }
-      0 shouldEqual 0
+      ok
     }
 
   }
