@@ -38,7 +38,7 @@ class TaglessStacksafeTests extends WordSpec with Matchers {
 
   def ok: Unit = (0 shouldEqual 0)
 
-  "the @tagless macro annotation, with the extra @stacksafe annotation, should be accepted if it is applied to" when {
+  "the @tagless macro annotation, with the 'stacksafe' annotation parameter, should be accepted if it is applied to" when {
 
     "a trait that has at least one request (like the plain @tagless), and " when {
 
