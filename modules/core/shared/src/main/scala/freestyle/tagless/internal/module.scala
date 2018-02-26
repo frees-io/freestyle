@@ -44,17 +44,11 @@ private[internal] case class TaglessModule( clait: Clait ) {
   import errors._
   import clait._
 
-  val effects: Seq[ModEffect] =
-    templ.stats.getOrElse(Nil).collect {
-      case vdec @ Decl.Val(_, Seq(Pat.Var.Term(_)), Type.Apply(tname @ _, Seq(Type.Name(_)))) => ModEffect(vdec)
-      case vdec @ Decl.Val(_, Seq(Pat.Var.Term(_)), _) => ModEffect(vdec)
-    }
+  val effects: Seq[ModEffect] = templ.stats.getOrElse(Nil).collect { case ModEffect(eff) => eff }
 
   def enrichStat(st: Stat): Stat = st match {
-    case vdec @ Decl.Val(_, Seq(Pat.Var.Term(tname)), Type.Apply(_, Seq(_))) =>
-      vdec
-    case vdec @ Decl.Val(_, Seq(Pat.Var.Term(tname)), ty) =>
-      vdec.copy(decltpe = Type.Apply(ty, Seq(headTParam.toName)))
+    case ModEffect(eff) =>
+      eff.effVal.copy(decltpe = Type.Apply(eff.tyFunc, Seq(headTName)))
     case x => x
   }
 
@@ -75,18 +69,18 @@ private[internal] case class TaglessModule( clait: Clait ) {
     val toTParams: Seq[Type.Param] = gg.paramK +: tailTParams
     val toTArgs: Seq[Type]         = gg +: tailTNames
 
-    val sup: Term.ApplyType = Term.ApplyType(Ctor.Ref.Name(name.value), toTArgs)
+    val toDefParams: Seq[Term.Param] = effects.map(_.buildDefParam(gg))
+
     val toClass: Class = {
-      val args: Seq[Term.Param] = effects.map(_.buildConstParam(gg))
-      q"class To[..$toTParams](implicit ..$args) extends $sup { }"
+      val toClassParams: Seq[Term.Param] = toDefParams.map(_.addMod(Mod.ValParam()))
+      val sup: Term.ApplyType = Term.ApplyType(Ctor.Ref.Name(name.value), toTArgs)
+      q"class To[..$toTParams](implicit ..$toClassParams) extends $sup { }"
     }
-    val toDef: Defn.Def = {
-      val args: Seq[Term.Param] = effects.map(_.buildDefParam(gg))
-      if (args.isEmpty)
+    val toDef: Defn.Def =
+      if (effects.isEmpty)
         q"implicit def to[..$toTParams]: To[..$toTArgs] = new To[..$toTArgs]"
       else
-        q"implicit def to[..$toTParams](..$args): To[..$toTArgs] = new To[..$toTArgs]()"
-    }
+        q"implicit def to[..$toTParams](..$toDefParams): To[..$toTArgs] = new To[..$toTArgs]()"
 
     (toClass, toDef)
   }
@@ -104,27 +98,20 @@ private[internal] case class TaglessModule( clait: Clait ) {
 
 }
 
-private[internal] case class ModEffect(effVal: Decl.Val) {
+private[internal] class ModEffect(val effVal: Decl.Val) {
+
+  val name = effVal.pats.head.name
+
+  val tyFunc: Type = effVal.decltpe match {
+    case Type.Apply(tfun, _) => tfun
+    case ty                  => ty
+  }
 
   // buildParam(x, t) = q"def foo(implicit $x: $t[$gg])"
   def buildDefParam(gg: Type.Name): Term.Param =
     q"def foo(implicit x: Int)".paramss.head.head.copy(
-      name = effVal.pats.head.name,
-      decltpe = Some(effVal.decltpe match {
-        case Type.Apply(t @ _, _) => Type.Apply(t, Seq(gg))
-        case _ => Type.Apply(effVal.decltpe, Seq(gg))
-      })
-    )
-
-  // buildParam(x, t) = q"class Foo(implicit val $x: $t[$gg])"
-  def buildConstParam(gg: Type.Name): Term.Param =
-    q"def foo(implicit x: Int)".paramss.head.head.copy(
-      mods = Seq(Mod.Implicit(), Mod.ValParam()),
-      name = effVal.pats.head.name,
-      decltpe = Some(effVal.decltpe match {
-        case Type.Apply(t @ _, _) => Type.Apply(t, Seq(gg))
-        case _ => Type.Apply(effVal.decltpe, Seq(gg))
-      })
+      name = name,
+      decltpe = Some( Type.Apply(tyFunc, Seq(gg)))
     )
 
   // from the reference to a type (a class), make the reference to its companion object
@@ -133,6 +120,15 @@ private[internal] case class ModEffect(effVal: Decl.Val) {
     case Type.Select(q, Type.Name(n)) => Term.Select(q, Term.Name(n))
     case Type.Apply(t, Seq(_))        => typeToObject(t)
     case _                            => abort(s"found: $ty unmatched. What is the case here")
+  }
+
+}
+
+object ModEffect {
+
+  def unapply(stat: Stat): Option[ModEffect] = stat match {
+    case vdec @ Decl.Val(_, Seq(Pat.Var.Term(_)), _ ) => Some(new ModEffect(vdec) )
+    case _ => None
   }
 
 }

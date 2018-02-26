@@ -25,7 +25,7 @@ object traverse {
 
     /** Acts as a generator providing traversable semantics to programs
      */
-    @tagless @stacksafe sealed abstract class TraverseM {
+    @tagless(true) sealed abstract class TraverseM {
       def empty[A]: FS[A]
       def fromTraversable[A](ta: G[A]): FS[A]
     }

@@ -21,10 +21,10 @@ import freestyle.tagless._
 ```tut:book
 
 object algebras {
-    @tagless @stacksafe trait Database {
+    @tagless(true) trait Database {
       def get(id: Int): FS[Int]
     }
-    @tagless @stacksafe trait Cache {
+    @tagless(true) trait Cache {
       def get(id: Int): FS[Option[Int]]
     }
     @free trait Presenter {

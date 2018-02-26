@@ -18,7 +18,7 @@ package freestyle.tagless
 
 object logging {
 
-  @tagless @stacksafe
+  @tagless(true)
   trait LoggingM {
 
     def debug(msg: String, sourceAndLineInfo: Boolean = false)(

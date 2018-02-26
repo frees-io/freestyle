@@ -22,7 +22,7 @@ import cats.mtl.FunctorEmpty
 
 object option {
 
-  @tagless @stacksafe sealed trait OptionM {
+  @tagless(true) sealed trait OptionM {
     def option[A](fa: Option[A]): FS[A]
     def none[A]: FS[A]
   }

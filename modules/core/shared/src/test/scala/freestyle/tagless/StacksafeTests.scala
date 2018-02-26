@@ -36,101 +36,115 @@ import modules._
 
 class TaglessStacksafeTests extends WordSpec with Matchers {
 
-  "the @tagless macro annotation, with the extra @stacksafe annotation, should be accepted if it is applied to" when {
+  def ok: Unit = (0 shouldEqual 0)
 
-    "a trait with at least one request" in {
-      @tagless @stacksafe trait X {
-        def bar(x:Int): FS[Int]
+  "the @tagless macro annotation, with the 'stacksafe' annotation parameter, should be accepted if it is applied to" when {
+
+    "a trait that has at least one request (like the plain @tagless), and " when {
+
+      "we use the literal argument" in {
+        @tagless(true) trait X {
+          def bar(x:Int): FS[Int]
+        }
+        val ss: Any = X.StackSafe
+        ok
       }
-      0 shouldEqual 0
+
+      "we use the literal argument with the variable assigned" in {
+        @tagless(stacksafe = true) trait X {
+          def bar(x:Int): FS[Int]
+        }
+        val ss: Any = X.StackSafe
+        ok
+      }
     }
 
     "a trait with a kind-1 type param" when {
       "typing the request with reserved FS" in {
-        @tagless @stacksafe trait FBound[F[_]] {
+        @tagless(true) trait FBound[F[_]] {
           def ann(x:Int): FS[Int]
         }
-        0 shouldEqual 0
+        ok
       }
 
       "typing the request with the user-provided F-Bound type param" in {
-        @tagless @stacksafe trait FBound[F[_]] {
+        @tagless(true) trait FBound[F[_]] {
           def bob(y:Int): F[Int]
         }
-        0 shouldEqual 0
+        ok
       }
     }
 
     "an abstract class with at least one request" in {
-      @tagless @stacksafe abstract class X { def bar(x:Int): FS[Int] }
-      0 shouldEqual 0
+      @tagless(true) abstract class X { def bar(x:Int): FS[Int] }
+      ok
     }
 
     "a trait with an abstact method of type FS" in {
-      @tagless @stacksafe trait X {
+      @tagless(true) trait X {
         def f(a: Char) : FS[Int]
       }
-      0 shouldEqual 0
+      ok
     }
 
     "a trait with some concrete non-FS members" ignore {
-      @tagless @stacksafe trait X {
+      @tagless(true) trait X {
         def x: FS[Int]
         def y: Int = 5
         val z: Int = 6
       }
-      0 shouldEqual 0
+      ok
     }
 
     "a trait with a method with type parameters" in {
-      @tagless @stacksafe trait WiX {
+      @tagless(true) trait WiX {
         def ix[A](a: A) : FS[A]
       }
-      0 shouldEqual 0
+      ok
     }
 
     "a trait with high bounded type parameters in the method" in {
-      @tagless @stacksafe trait X {
+      @tagless(true) trait X {
         def ix[A <: Int](a: A) : FS[A]
       }
-      0 shouldEqual 0
+      ok
     }
 
     "a trait with lower bounded type parameters in the method" in {
-      @tagless @stacksafe trait X {
+      @tagless(true) trait X {
         def ix[A >: Int](a: A) : FS[A]
       }
-      0 shouldEqual 0
+      ok
     }
 
     "a trait with different type parameters in the method" in {
-      @tagless @stacksafe trait X {
+      @tagless(true) trait X {
         def ix[A <: Int, B, C >: Int](a: A, b: B, c: C) : FS[A]
       }
-      0 shouldEqual 0
+      ok
     }
 
     "a trait with high bounded type parameters and implicits in the method" in {
       trait X[A]
-      @tagless @stacksafe trait Y {
+      @tagless(true) trait Y {
         def ix[A <: Int : X](a: A) : FS[A]
       }
-      0 shouldEqual 0
+      ok
     }
 
   }
 
-  "the @tagless @stacksafe macro should preserve the shape of the parameters of the request" when {
+  "the @tagless(true) macro should preserve the shape of the parameters of the request" when {
 
     "there are no parameters" in {
-      @tagless @stacksafe trait X { def f: FS[Int] }
+      @tagless(true) trait X { def f: FS[Int] }
       object Y extends X.Handler[Id] { def f: Int = 42 }
 
       Y.f shouldEqual 42
     }
 
     "there is one list with multiple params" in {
-      @tagless @stacksafe trait X {
+      @tagless(true) trait X {
         def f(a: Int, b: Int): FS[Int]
       }
       object Y extends X.Handler[Id] {
@@ -140,7 +154,7 @@ class TaglessStacksafeTests extends WordSpec with Matchers {
     }
 
     "there are multiple lists of parameters" in {
-      @tagless @stacksafe trait X {
+      @tagless(true) trait X {
         def f(a: Int)(b: Int): FS[Int]
       }
       object Y extends X.Handler[Id] {
@@ -150,7 +164,7 @@ class TaglessStacksafeTests extends WordSpec with Matchers {
     }
 
     "there are multiple lists of parameters, with the last being implicit" ignore {
-      @tagless @stacksafe trait X {
+      @tagless(true) trait X {
         def f(a: Int)(implicit b: Int): FS[Int]
       }
       object Y extends X.Handler[Id] {
@@ -161,7 +175,7 @@ class TaglessStacksafeTests extends WordSpec with Matchers {
     }
 
     "there is one type parameter with a type-class bound, and one parameter" ignore {
-      @tagless @stacksafe trait X {
+      @tagless(true) trait X {
         def f[T: Monoid](a: T): FS[T]
         def g[S: Eq](a: S, b: S): FS[Boolean]
       }
@@ -175,7 +189,7 @@ class TaglessStacksafeTests extends WordSpec with Matchers {
 
   }
 
-  "the @tagless @stacksafe macro annotation should be rejected, and the compilation fail, if it is applied to" when {
+  "the @tagless(true) macro annotation should be rejected, and the compilation fail, if it is applied to" when {
 
     "an empty trait" in (
       "@tagless trait X" shouldNot compile
@@ -206,7 +220,7 @@ class TaglessStacksafeTests extends WordSpec with Matchers {
 
   "A @tagles trait can define derive methods by combining other basic methods" when {
     "they use a Functor[FS] instance to provide a map operation" in {
-      @tagless @stacksafe trait X {
+      @tagless(true) trait X {
         def a: FS[Int]
         def b(implicit f: Functor[FS]): FS[Int] = a.map(x => x+1)
       }
@@ -217,7 +231,7 @@ class TaglessStacksafeTests extends WordSpec with Matchers {
     }
 
     "using the Applicative instance of FS to combine operations" in {
-      @tagless @stacksafe trait X {
+      @tagless(true) trait X {
         def a: FS[Int]
         def b(implicit A: Applicative[FS]): FS[Int] = (a, A.pure(1)).mapN(_+_)
       }
@@ -228,7 +242,7 @@ class TaglessStacksafeTests extends WordSpec with Matchers {
     }
 
     "using the Monad instance of FS to combine operations" in {
-      @tagless @stacksafe trait X {
+      @tagless(true) trait X {
         def a: FS[Int]
         def b(x: Int): FS[Int]
         def c(implicit M: Monad[FS]): FS[Int] = for {
@@ -245,7 +259,7 @@ class TaglessStacksafeTests extends WordSpec with Matchers {
     }
 
     "mixing all of the above" in {
-      @tagless @stacksafe trait X {
+      @tagless(true) trait X {
         def a: FS[Int]
         def b(i: Int)(implicit F: Functor[FS]): FS[Int] = a.map(x => x+i)
         def c(implicit A: Applicative[FS]): FS[Int] = (a,A.pure(3)).mapN(_+_)
@@ -266,7 +280,7 @@ class TaglessStacksafeTests extends WordSpec with Matchers {
   "A StackSafe Tagless algebra should be able to " when {
     "mapK its Handler to another Handler of the StackSafe" in {
       import cats.instances.list._
-      @tagless @stacksafe trait X {
+      @tagless(true) trait X {
         def a: FS[Int]
       }
       object Y extends X.Handler[Option] {

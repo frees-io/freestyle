@@ -541,22 +541,22 @@ object collision {
     val readerM: rd.ReaderM
   }
 
-  @tagless @stacksafe
+  @tagless(true)
   trait B {
     def x: FS[Int]
   }
 
-  @tagless @stacksafe
+  @tagless(true)
   trait C {
     def x: FS[Int]
   }
 
-  @tagless @stacksafe
+  @tagless(true)
   trait D {
     def x: FS[Int]
   }
 
-  @tagless @stacksafe
+  @tagless(true)
   trait E {
     def x: FS[Int]
   }

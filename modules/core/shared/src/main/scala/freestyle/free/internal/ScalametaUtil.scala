@@ -61,13 +61,7 @@ object ScalametaUtil {
 
     def filtered: Seq[Mod] = mods.filter {
       case mod"@debug" => false
-      case mod"@stacksafe" => false
       case _           => true
-    }
-
-    def isStackSafe: Boolean = mods.exists {
-      case mod"@stacksafe" => true
-      case _ => false
     }
 
     def isDebug: Boolean = mods exists {
@@ -197,6 +191,18 @@ object ScalametaUtil {
 
     def addParent( ctorCall: Ctor.Call): Template =
       templ.copy( parents = templ.parents ++ Seq(ctorCall) )
+
+    def addStats( newStats: Seq[Stat]): Template =
+      if (newStats.isEmpty) templ else templ.copy(
+        stats = Some( templ.stats.getOrElse(Seq()) ++ newStats)
+      )
+  }
+
+  implicit class ObjectOps(val obj: Object) extends AnyVal {
+
+    def appendStats(newStats: Seq[Stat]): Object =
+      if (newStats.isEmpty) obj
+      else obj.copy( templ = obj.templ.addStats(newStats))
 
   }
 

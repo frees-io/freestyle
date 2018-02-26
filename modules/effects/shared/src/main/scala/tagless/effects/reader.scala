@@ -23,7 +23,7 @@ object reader {
 
   final class EnvironmentProvider[R] {
 
-    @tagless @stacksafe abstract class ReaderM {
+    @tagless(true) abstract class ReaderM {
       def ask: FS[R]
       def reader[B](f: R => B): FS[B]
     }
