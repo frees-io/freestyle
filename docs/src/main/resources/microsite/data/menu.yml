@@ -120,6 +120,9 @@ options:
       - title: Core concepts
         url: docs/rpc/core-concepts
 
+      - title: Implementations
+        url: docs/rpc/implementations
+
       - title: IDL Generation
         url: docs/rpc/idl-generation
 
