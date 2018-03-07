@@ -109,13 +109,42 @@ options:
       - title: Hammock
         url: docs/integrations/hammock
 
-  - title: Libraries
+  - title: Microservices
     url: docs/rpc
 
     nested_options:
 
-      - title: Microservices
-        url: docs/rpc
+      - title: Quickstart
+        url: docs/rpc/quickstart
+
+      - title: Core concepts
+        url: docs/rpc/core-concepts
+
+      - title: IDL Generation
+        url: docs/rpc/idl-generation
+
+      - title: Annotations
+        url: docs/rpc/annotations
+
+      - title: Patterns
+        url: docs/rpc/patterns
+
+      - title: Streaming
+        url: docs/rpc/streaming
+
+      - title: SSL/TLS
+        url: docs/rpc/ssl-tls
+
+      - title: Metrics Reporting
+        url: docs/rpc/metrics-reporting
+
+      - title: References
+        url: docs/rpc/references
+
+  - title: Libraries
+    url: docs/libraries
+
+    nested_options:
 
       - title: Effects
         url: docs/effects
