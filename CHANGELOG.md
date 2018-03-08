@@ -1,5 +1,14 @@
 # Changelog
 
+## 03/08/2018 - Version 0.8.0
+
+Release changes:
+
+* FS-532 stacksafe as tagless argument ([#533](https://github.com/frees-io/freestyle/pull/533))
+* Updates Build ([#535](https://github.com/frees-io/freestyle/pull/535))
+* Releases Freestyle 0.8.0 ([#536](https://github.com/frees-io/freestyle/pull/536))
+
+
 ## 02/12/2018 - Version 0.7.0
 
 Release changes:
