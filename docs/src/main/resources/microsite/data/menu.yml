@@ -120,19 +120,19 @@ options:
       - title: Core concepts
         url: docs/rpc/core-concepts
 
+      - title: Streaming
+        url: docs/rpc/streaming
+ 
+      - title: Annotations
+        url: docs/rpc/annotations
+ 
       - title: IDL Generation
         url: docs/rpc/idl-generation
 
-      - title: Annotations
-        url: docs/rpc/annotations
-
-      - title: Patterns
+     - title: Patterns
         url: docs/rpc/patterns
 
-      - title: Streaming
-        url: docs/rpc/streaming
-
-      - title: SSL/TLS
+     - title: SSL/TLS
         url: docs/rpc/ssl-tls
 
       - title: Metrics Reporting
