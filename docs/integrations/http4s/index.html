@@ -58,7 +58,7 @@ ga('send', 'pageview');
   <span class="k">def</span> <span class="n">vat</span><span class="o">(</span><span class="n">price</span><span class="k">:</span> <span class="kt">BigDecimal</span><span class="o">)</span><span class="k">:</span> <span class="kt">IO</span><span class="o">[</span><span class="kt">BigDecimal</span><span class="o">]</span> <span class="k">=</span>
     <span class="nc">IO</span><span class="o">.</span><span class="n">pure</span><span class="o">(</span><span class="n">price</span> <span class="o">*</span> <span class="n">rate</span><span class="o">)</span>
 <span class="o">}</span>
-<span class="c1">// calcIoHandler: CalcVAT.Handler[cats.effect.IO] = $anon$1@13afeb20
+<span class="c1">// calcIoHandler: CalcVAT.Handler[cats.effect.IO] = $anon$1@7296e927
 </span></code></pre></div></div>
 
 <p>Some imports for http4s:</p>
@@ -81,7 +81,7 @@ ga('send', 'pageview');
   <span class="k">case</span> <span class="nc">GET</span> <span class="o">-&gt;</span> <span class="nc">Root</span> <span class="o">/</span> <span class="s">"calc-total"</span> <span class="o">/</span> <span class="nc">Price</span><span class="o">(</span><span class="n">p</span><span class="o">)</span> <span class="k">=&gt;</span>
     <span class="nc">Ok</span><span class="o">(</span><span class="nc">CalcVAT</span><span class="o">[</span><span class="kt">CalcVAT.Op</span><span class="o">].</span><span class="n">withVat</span><span class="o">(</span><span class="n">p</span><span class="o">).</span><span class="n">map</span><span class="o">(</span><span class="n">total</span> <span class="k">=&gt;</span> <span class="n">s</span><span class="s">"The total price including VAT is $total"</span><span class="o">))</span>
 <span class="o">}</span>
-<span class="c1">// userService: org.http4s.HttpService[cats.effect.IO] = Kleisli(org.http4s.HttpService$$$Lambda$34894/1286547257@3c0d70da)
+<span class="c1">// userService: org.http4s.HttpService[cats.effect.IO] = Kleisli(org.http4s.HttpService$$$Lambda$15031/1788497360@7406cae5)
 </span></code></pre></div></div>
 
 <p>Trying out our <code class="highlighter-rouge">HttpService</code>:</p>

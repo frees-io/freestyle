@@ -198,7 +198,7 @@ capabilities to fail, to read from our <code class="highlighter-rouge">Config</c
     <span class="k">def</span> <span class="n">getCustomer</span><span class="o">(</span><span class="n">id</span><span class="k">:</span> <span class="kt">CustomerId</span><span class="o">)</span><span class="k">:</span> <span class="kt">Stack</span><span class="o">[</span><span class="kt">Option</span><span class="o">[</span><span class="kt">Customer</span><span class="o">]]</span> <span class="k">=</span>
       <span class="nc">Kleisli</span><span class="o">(</span><span class="k">_</span> <span class="k">=&gt;</span> <span class="nc">IO</span><span class="o">.</span><span class="n">pure</span><span class="o">(</span><span class="n">customers</span><span class="o">.</span><span class="n">get</span><span class="o">(</span><span class="n">id</span><span class="o">)))</span>
   <span class="o">}</span>
-<span class="c1">// customerPersistencteHandler: algebras.CustomerPersistence.Handler[Stack] = $anon$1@d244e86
+<span class="c1">// customerPersistencteHandler: algebras.CustomerPersistence.Handler[Stack] = $anon$1@3e2fb2f0
 </span>
 <span class="k">implicit</span> <span class="k">val</span> <span class="n">stockPersistencteHandler</span><span class="k">:</span> <span class="kt">StockPersistence.Handler</span><span class="o">[</span><span class="kt">Stack</span><span class="o">]</span> <span class="k">=</span>
   <span class="k">new</span> <span class="nc">StockPersistence</span><span class="o">.</span><span class="nc">Handler</span><span class="o">[</span><span class="kt">Stack</span><span class="o">]</span> <span class="o">{</span>
@@ -214,7 +214,7 @@ capabilities to fail, to read from our <code class="highlighter-rouge">Config</c
     <span class="k">def</span> <span class="n">registerOrder</span><span class="o">(</span><span class="n">order</span><span class="k">:</span> <span class="kt">Order</span><span class="o">)</span><span class="k">:</span> <span class="kt">Stack</span><span class="o">[</span><span class="kt">Unit</span><span class="o">]</span> <span class="k">=</span>
       <span class="nc">Kleisli</span><span class="o">(</span><span class="k">_</span> <span class="k">=&gt;</span> <span class="nc">IO</span><span class="o">(</span><span class="n">println</span><span class="o">(</span><span class="n">s</span><span class="s">"Register $order"</span><span class="o">)))</span>
   <span class="o">}</span>
-<span class="c1">// stockPersistencteHandler: algebras.StockPersistence.Handler[Stack] = $anon$1@7a2a2bd2
+<span class="c1">// stockPersistencteHandler: algebras.StockPersistence.Handler[Stack] = $anon$1@3a6184ac
 </span></code></pre></div></div>
 
 <p>A handler that can cache <code class="highlighter-rouge">Customer</code>s can be created with a <code class="highlighter-rouge">ConcurrentHashMapWrapper</code> and a natural transformation to our <code class="highlighter-rouge">Stack</code> type:</p>
@@ -230,7 +230,7 @@ capabilities to fail, to read from our <code class="highlighter-rouge">Config</c
 </span>
 <span class="k">implicit</span> <span class="k">val</span> <span class="n">freestyleHasherCustomerId</span><span class="k">:</span> <span class="kt">Hasher</span><span class="o">[</span><span class="kt">CustomerId</span><span class="o">]</span> <span class="k">=</span>
   <span class="nc">Hasher</span><span class="o">[</span><span class="kt">CustomerId</span><span class="o">](</span><span class="k">_</span><span class="o">.</span><span class="n">hashCode</span><span class="o">)</span>
-<span class="c1">// freestyleHasherCustomerId: freestyle.free.cache.hashmap.Hasher[CustomerId] = freestyle.free.cache.hashmap.Hasher$$anon$1@46deb724
+<span class="c1">// freestyleHasherCustomerId: freestyle.free.cache.hashmap.Hasher[CustomerId] = freestyle.free.cache.hashmap.Hasher$$anon$1@5986a7c5
 </span>
 <span class="k">implicit</span> <span class="k">val</span> <span class="n">cacheHandler</span><span class="k">:</span> <span class="kt">cacheP.CacheM.Handler</span><span class="o">[</span><span class="kt">Stack</span><span class="o">]</span> <span class="k">=</span> <span class="o">{</span>
   <span class="k">val</span> <span class="n">rawMap</span><span class="k">:</span> <span class="kt">KeyValueMap</span><span class="o">[</span><span class="kt">Id</span>, <span class="kt">CustomerId</span>, <span class="kt">Customer</span><span class="o">]</span> <span class="k">=</span>
@@ -243,7 +243,7 @@ capabilities to fail, to read from our <code class="highlighter-rouge">Config</c
 
   <span class="n">cacheP</span><span class="o">.</span><span class="n">implicits</span><span class="o">.</span><span class="n">cacheHandler</span><span class="o">(</span><span class="n">rawMap</span><span class="o">,</span> <span class="n">cacheIdToStack</span><span class="o">)</span>
 <span class="o">}</span>
-<span class="c1">// cacheHandler: modules.cacheP.CacheM.Handler[Stack] = freestyle.free.cache.KeyValueProvider$Implicits$CacheHandler@487f12ae
+<span class="c1">// cacheHandler: modules.cacheP.CacheM.Handler[Stack] = freestyle.free.cache.KeyValueProvider$Implicits$CacheHandler@7bdf1375
 </span></code></pre></div></div>
 
 <p>We can now create a Freestyle program by specifying the type in <code class="highlighter-rouge">processOrder</code> as <code class="highlighter-rouge">App.Op</code>:</p>
@@ -271,7 +271,7 @@ capabilities to fail, to read from our <code class="highlighter-rouge">Config</c
 <span class="c1">// config: Config = Config(Set(granny smith, jonagold, boskoop))
 </span>
 <span class="k">val</span> <span class="n">result</span><span class="k">:</span> <span class="kt">Stack</span><span class="o">[</span><span class="kt">String</span><span class="o">]</span> <span class="k">=</span> <span class="n">program</span><span class="o">.</span><span class="n">interpret</span><span class="o">[</span><span class="kt">Stack</span><span class="o">]</span>
-<span class="c1">// result: Stack[String] = Kleisli(cats.data.KleisliFlatMap$$Lambda$30162/2090452578@7c04af24)
+<span class="c1">// result: Stack[String] = Kleisli(cats.data.KleisliFlatMap$$Lambda$10182/757212852@f4c6631)
 </span></code></pre></div></div>
 
 <p>We can run our <code class="highlighter-rouge">Stack</code> by supplying a <code class="highlighter-rouge">Config</code> value and running the <code class="highlighter-rouge">IO</code>.</p>
@@ -280,7 +280,7 @@ capabilities to fail, to read from our <code class="highlighter-rouge">Config</c
 When we want to actually execute the program, we can run the <code class="highlighter-rouge">IO</code> by using one of the methods on <code class="highlighter-rouge">IO</code>:</p>
 
 <div class="language-scala highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">val</span> <span class="n">ioString</span><span class="k">:</span> <span class="kt">IO</span><span class="o">[</span><span class="kt">String</span><span class="o">]</span> <span class="k">=</span> <span class="n">result</span><span class="o">.</span><span class="n">run</span><span class="o">(</span><span class="n">config</span><span class="o">)</span>
-<span class="c1">// ioString: cats.effect.IO[String] = IO$731723579
+<span class="c1">// ioString: cats.effect.IO[String] = IO$1588759119
 </span>
 <span class="n">println</span><span class="o">(</span><span class="n">ioString</span><span class="o">.</span><span class="n">unsafeRunSync</span><span class="o">)</span>
 <span class="c1">// Register Order(50,granny smith,00000000-0000-0000-0000-000000000000)

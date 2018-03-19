@@ -57,7 +57,7 @@ member in your algebras companion.</p>
   <span class="k">def</span> <span class="n">delete</span><span class="o">(</span><span class="n">key</span><span class="k">:</span> <span class="kt">String</span><span class="o">)</span><span class="k">:</span> <span class="kt">KVStoreState</span><span class="o">[</span><span class="kt">Unit</span><span class="o">]</span> <span class="k">=</span>
     <span class="nc">State</span><span class="o">.</span><span class="n">modify</span><span class="o">(</span><span class="k">_</span> <span class="o">-</span> <span class="n">key</span><span class="o">)</span>
 <span class="o">}</span>
-<span class="c1">// kvStoreHandler: KVStore.Handler[KVStoreState] = $anon$1@36049a9e
+<span class="c1">// kvStoreHandler: KVStore.Handler[KVStoreState] = $anon$1@1c524c0f
 </span></code></pre></div></div>
 
 <p>As you may have noticed, instead of implementing a Natural transformation <code class="highlighter-rouge">F ~&gt; M</code>, we implement methods that closely resemble each one of the smart constructors in our <code class="highlighter-rouge">@free</code> algebras in Freestyle. This is not an imposition but rather a convenience as the resulting instances are still Natural Transformations.</p>
@@ -148,7 +148,7 @@ below:</p>
 <span class="c1">// import freestyle.free.implicits._
 </span>
 <span class="n">program</span><span class="o">[</span><span class="kt">Backend.Op</span><span class="o">].</span><span class="n">interpret</span><span class="o">[</span><span class="kt">KVStoreState</span><span class="o">]</span>
-<span class="c1">// res0: KVStoreState[Option[Int]] = cats.data.IndexedStateT@5e25178
+<span class="c1">// res0: KVStoreState[Option[Int]] = cats.data.IndexedStateT@6183dad4
 </span></code></pre></div></div>
 
 <p>Alternatively, you can build your interpreters by hand if you choose not to use Freestyle’s implicit machinery. This can quickly grow unruly as the number of algebras increase in an application, but it’s also possible, in the spirit of providing two-way compatibility in all areas between manually built ADTs and Natural Transformations, and the ones automatically derived by Freestyle.</p>
@@ -208,13 +208,13 @@ The tagless final encoding with direct style syntax is as stack-safe as the targ
   <span class="k">override</span> <span class="k">def</span> <span class="n">minSize</span><span class="o">(</span><span class="n">s</span><span class="k">:</span> <span class="kt">String</span><span class="o">,</span> <span class="n">n</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span><span class="k">:</span> <span class="kt">Try</span><span class="o">[</span><span class="kt">Boolean</span><span class="o">]</span> <span class="k">=</span> <span class="nc">Try</span><span class="o">(</span><span class="n">s</span><span class="o">.</span><span class="n">size</span> <span class="o">&gt;=</span> <span class="n">n</span><span class="o">)</span>
   <span class="k">override</span> <span class="k">def</span> <span class="n">hasNumber</span><span class="o">(</span><span class="n">s</span><span class="k">:</span> <span class="kt">String</span><span class="o">)</span><span class="k">:</span> <span class="kt">Try</span><span class="o">[</span><span class="kt">Boolean</span><span class="o">]</span> <span class="k">=</span> <span class="nc">Try</span><span class="o">(</span><span class="n">s</span><span class="o">.</span><span class="n">exists</span><span class="o">(</span><span class="n">c</span> <span class="k">=&gt;</span> <span class="s">"0123456789"</span><span class="o">.</span><span class="n">contains</span><span class="o">(</span><span class="n">c</span><span class="o">)))</span>
 <span class="o">}</span>
-<span class="c1">// validationHandler: Validation.Handler[scala.util.Try] = $anon$1@2adccc15
+<span class="c1">// validationHandler: Validation.Handler[scala.util.Try] = $anon$1@443a06bd
 </span>
 <span class="k">implicit</span> <span class="k">val</span> <span class="n">interactionHandler</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">Interaction</span><span class="o">.</span><span class="nc">Handler</span><span class="o">[</span><span class="kt">Try</span><span class="o">]</span> <span class="o">{</span>
   <span class="k">override</span> <span class="k">def</span> <span class="n">tell</span><span class="o">(</span><span class="n">s</span><span class="k">:</span> <span class="kt">String</span><span class="o">)</span><span class="k">:</span> <span class="kt">Try</span><span class="o">[</span><span class="kt">Unit</span><span class="o">]</span> <span class="k">=</span> <span class="nc">Try</span><span class="o">(</span><span class="n">println</span><span class="o">(</span><span class="n">s</span><span class="o">))</span>
   <span class="k">override</span> <span class="k">def</span> <span class="n">ask</span><span class="o">(</span><span class="n">s</span><span class="k">:</span> <span class="kt">String</span><span class="o">)</span><span class="k">:</span> <span class="kt">Try</span><span class="o">[</span><span class="kt">String</span><span class="o">]</span> <span class="k">=</span> <span class="nc">Try</span><span class="o">(</span><span class="s">"This could have been user input 1"</span><span class="o">)</span>
 <span class="o">}</span>
-<span class="c1">// interactionHandler: Interaction.Handler[scala.util.Try] = $anon$1@79991695
+<span class="c1">// interactionHandler: Interaction.Handler[scala.util.Try] = $anon$1@2ad57dc8
 </span></code></pre></div></div>
 
 <p>At this point, we can run our pure programs at the edge of the world.</p>
