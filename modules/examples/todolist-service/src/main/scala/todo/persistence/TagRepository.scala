@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package todo.persistence
+package examples.todolist.persistence
 
 import freestyle.tagless.tagless
-import todo.model.Tag
+import examples.todolist.Tag
 
 @tagless(true)
 trait TagRepository[F[_]] {

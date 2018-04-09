@@ -14,18 +14,18 @@
  * limitations under the License.
  */
 
-package todo.persistence.runtime
+package examples.todolist.persistence.runtime
 
 import cats.Monad
 import doobie.implicits._
 import doobie.util.transactor.Transactor
-import todo.model.Tag
-import todo.persistence.TagRepository
+import examples.todolist.Tag
+import examples.todolist.persistence.TagRepository
 
 class TagRepositoryHandler[F[_]: Monad](implicit T: Transactor[F])
     extends TagRepository.Handler[F] {
 
-  import todo.persistence.runtime.queries.TagQueries._
+  import examples.todolist.persistence.runtime.queries.TagQueries._
 
   def insert(input: Tag): F[Option[Tag]] =
     insertQuery(input)

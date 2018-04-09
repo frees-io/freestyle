@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package todo.persistence.runtime.queries
+package examples.todolist.persistence.runtime.queries
 
 import doobie.implicits.toSqlInterpolator
 import doobie.util.query.Query0
 import doobie.util.update.Update0
-import todo.model.TodoItem
+import examples.todolist.TodoItem
 
 object TodoItemQueries {
 

@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package todo.persistence.runtime.queries
+package examples.todolist.persistence.runtime.queries
 
 import doobie.implicits.toSqlInterpolator
 import doobie.util.query.Query0
-import todo.model.{Tag, TodoItem, TodoList}
+import examples.todolist.{Tag, TodoItem, TodoList}
 
 object AppQueries {
   val listQuery: Query0[(TodoList, Tag, Option[TodoItem])] =

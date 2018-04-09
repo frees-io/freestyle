@@ -14,18 +14,18 @@
  * limitations under the License.
  */
 
-package todo.persistence.runtime
+package examples.todolist.persistence.runtime
 
 import cats.Monad
 import doobie.implicits._
 import doobie.util.transactor.Transactor
-import todo.model.TodoList
-import todo.persistence.TodoListRepository
+import examples.todolist.TodoList
+import examples.todolist.persistence.TodoListRepository
 
 class TodoListRepositoryHandler[F[_]: Monad](implicit T: Transactor[F])
     extends TodoListRepository.Handler[F] {
 
-  import todo.persistence.runtime.queries.TodoListQueries._
+  import examples.todolist.persistence.runtime.queries.TodoListQueries._
 
   def insert(item: TodoList): F[Option[TodoList]] =
     insertQuery(item)

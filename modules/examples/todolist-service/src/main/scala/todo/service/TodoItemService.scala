@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package todo.service
+package examples.todolist.service
 
 import cats.Monad
 import cats.implicits._
 import freestyle.tagless._
 import freestyle.tagless.logging.LoggingM
-import todo.model.TodoItem
-import todo.persistence.TodoItemRepository
+import examples.todolist.TodoItem
+import examples.todolist.persistence.TodoItemRepository
 
 @module
 trait TodoItemService[F[_]] {

@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package todo.service
+package examples.todolist.service
 
 import cats.Monad
 import cats.implicits._
 import freestyle.tagless._
 import freestyle.tagless.effects.error.ErrorM
-import todo.model.{Tag, TodoForm, TodoList}
-import todo.persistence.AppRepository
+import examples.todolist.{Tag, TodoForm, TodoList}
+import examples.todolist.persistence.AppRepository
 
 @module
 trait AppService[F[_]] {

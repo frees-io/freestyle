@@ -14,8 +14,7 @@
  * limitations under the License.
  */
 
-package todo
-package model
+package examples.todolist
 
 sealed abstract class Entity extends Product with Serializable {
   def id: Option[Int]
