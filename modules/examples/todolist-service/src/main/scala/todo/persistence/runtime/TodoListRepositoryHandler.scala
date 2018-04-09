@@ -14,38 +14,37 @@
  * limitations under the License.
  */
 
-package todo.runtime
-package handlers
+package todo.persistence.runtime
 
 import cats.Monad
 import doobie.implicits._
 import doobie.util.transactor.Transactor
-import todo.model.TodoItem
-import todo.persistence.TodoItemRepository
+import todo.model.TodoList
+import todo.persistence.TodoListRepository
 
-class TodoItemRepositoryHandler[F[_]: Monad](implicit T: Transactor[F])
-    extends TodoItemRepository.Handler[F] {
+class TodoListRepositoryHandler[F[_]: Monad](implicit T: Transactor[F])
+    extends TodoListRepository.Handler[F] {
 
-  import todo.runtime.queries.TodoItemQueries._
+  import todo.persistence.runtime.queries.TodoListQueries._
 
-  def insert(item: TodoItem): F[Option[TodoItem]] =
+  def insert(item: TodoList): F[Option[TodoList]] =
     insertQuery(item)
       .withUniqueGeneratedKeys[Int]("id")
       .flatMap(getQuery(_).option)
       .transact(T)
 
-  def get(id: Int): F[Option[TodoItem]] =
+  def get(id: Int): F[Option[TodoList]] =
     getQuery(id).option.transact(T)
 
-  def update(item: TodoItem): F[Option[TodoItem]] =
-    updateQuery(item).run
-      .flatMap(_ => getQuery(item.id.get).option)
+  def update(input: TodoList): F[Option[TodoList]] =
+    updateQuery(input).run
+      .flatMap(_ => getQuery(input.id.get).option)
       .transact(T)
 
   def delete(id: Int): F[Int] =
     deleteQuery(id).run.transact(T)
 
-  def list: F[List[TodoItem]] =
+  def list: F[List[TodoList]] =
     listQuery
       .to[List]
       .transact(T)

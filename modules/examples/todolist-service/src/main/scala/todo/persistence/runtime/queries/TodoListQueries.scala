@@ -14,46 +14,49 @@
  * limitations under the License.
  */
 
-package todo.runtime.queries
+package todo.persistence.runtime.queries
 
 import doobie.implicits.toSqlInterpolator
 import doobie.util.query.Query0
 import doobie.util.update.Update0
-import todo.model.Tag
+import todo.model.TodoList
 
-object TagQueries {
-  def insertQuery(input: Tag): Update0 =
+object TodoListQueries {
+
+  def insertQuery(input: TodoList): Update0 =
     sql"""
-          INSERT INTO tags (name)
-          VALUES (${input.name})
+          INSERT INTO todo_lists (title, tag_id)
+          VALUES (${input.title}, ${input.tagId})
        """.update
 
-  def getQuery(id: Int): Query0[Tag] =
-    sql"""SELECT name, id FROM tags WHERE id = ${id}"""
-      .query[Tag]
+  def getQuery(id: Int): Query0[TodoList] =
+    sql"""SELECT title, tag_id, id FROM todo_lists WHERE id = ${id}"""
+      .query[TodoList]
 
-  def updateQuery(input: Tag): Update0 =
+  def updateQuery(input: TodoList): Update0 =
     sql"""
-          UPDATE tags
-          SET name = ${input.name}
+          UPDATE todo_lists
+          SET title = ${input.title}, tag_id = ${input.tagId}
           WHERE id = ${input.id}
        """.update
 
   def deleteQuery(id: Int): Update0 =
-    sql"""DELETE FROM tags WHERE id = ${id}""".update
+    sql"""DELETE FROM todo_lists WHERE id = ${id}""".update
 
-  val listQuery: Query0[Tag] =
-    sql"""SELECT name, id FROM tags ORDER BY id ASC"""
-      .query[Tag]
+  val listQuery: Query0[TodoList] =
+    sql"""SELECT title, tag_id, id FROM todo_lists ORDER BY id ASC"""
+      .query[TodoList]
+
+  val dropQuery: Update0 =
+    sql"""DROP TABLE todo_lists IF EXISTS""".update
 
   val createQuery: Update0 =
     sql"""
-          CREATE TABLE tags (
+          CREATE TABLE todo_lists (
             id INT AUTO_INCREMENT PRIMARY KEY,
-            name VARCHAR
+            title VARCHAR,
+            tag_id INT,
+            FOREIGN KEY (tag_id) REFERENCES TAGS(id)
           )
        """.update
-
-  val dropQuery: Update0 =
-    sql"""DROP TABLE tags IF EXISTS""".update
 }

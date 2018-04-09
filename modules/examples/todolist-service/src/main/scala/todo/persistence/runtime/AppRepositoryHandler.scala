@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package todo.runtime.handlers
+package todo.persistence.runtime
 
 import cats.Monad
 import doobie.implicits._
@@ -25,7 +25,7 @@ import todo.persistence.AppRepository
 class AppRepositoryHandler[F[_]: Monad](implicit T: Transactor[F])
     extends AppRepository.Handler[F] {
 
-  import todo.runtime.queries.AppQueries._
+  import todo.persistence.runtime.queries.AppQueries._
 
   def list: F[List[AppModel]] =
     listQuery.to[List].transact(T)

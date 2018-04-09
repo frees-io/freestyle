@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package todo.runtime.queries
+package todo.persistence.runtime.queries
 
 import doobie.implicits.toSqlInterpolator
 import doobie.util.query.Query0
