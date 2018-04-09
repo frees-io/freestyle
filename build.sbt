@@ -279,6 +279,17 @@ lazy val todolist = jvmModule("todolist", subFolder = Some("examples"))
     ) ++ commonDeps
   )
 
+lazy val todolistService = jvmModule("todolist-service", subFolder = Some("examples"))
+  .dependsOn(coreJVM, doobie, loggingJVM, effectsJVM, config)
+  .settings(noPublishSettings: _*)
+  .settings(
+    libraryDependencies ++= Seq(
+      %%("cats-effect"),
+      %%("doobie-h2"),
+      %%("doobie-hikari")
+    ) ++ commonDeps
+  )
+
 lazy val slickExample = jvmModule("slick-example", subFolder = Some("examples"))
   .dependsOn(coreJVM, loggingJVM, slick)
   .settings(noPublishSettings: _*)
@@ -318,6 +329,7 @@ lazy val jvmModules: Seq[ProjectReference] = Seq(
   //tests,
   //Examples:
   todolist,
+  todolistService,
   slickExample
 )
 
