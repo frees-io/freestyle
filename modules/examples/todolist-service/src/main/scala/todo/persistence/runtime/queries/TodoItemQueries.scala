@@ -30,7 +30,7 @@ object TodoItemQueries {
        """.update
 
   def getQuery(id: Int): Query0[TodoItem] =
-    sql"""SELECT item, todo_list_id, completed, id FROM todo_items WHERE id = ${id}"""
+    sql"""SELECT item, todo_list_id, completed, id FROM todo_items WHERE id = $id"""
       .query[TodoItem]
 
   def updateQuery(input: TodoItem): Update0 =
@@ -41,7 +41,7 @@ object TodoItemQueries {
        """.update
 
   def deleteQuery(id: Int): Update0 =
-    sql"""DELETE FROM todo_items WHERE id = ${id}""".update
+    sql"""DELETE FROM todo_items WHERE id = $id""".update
 
   val listQuery: Query0[TodoItem] =
     sql"""SELECT item, todo_list_id, completed, id FROM todo_items ORDER BY id ASC"""

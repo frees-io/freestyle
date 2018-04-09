@@ -29,7 +29,7 @@ object TagQueries {
        """.update
 
   def getQuery(id: Int): Query0[Tag] =
-    sql"""SELECT name, id FROM tags WHERE id = ${id}"""
+    sql"""SELECT name, id FROM tags WHERE id = $id"""
       .query[Tag]
 
   def updateQuery(input: Tag): Update0 =
@@ -40,7 +40,7 @@ object TagQueries {
        """.update
 
   def deleteQuery(id: Int): Update0 =
-    sql"""DELETE FROM tags WHERE id = ${id}""".update
+    sql"""DELETE FROM tags WHERE id = $id""".update
 
   val listQuery: Query0[Tag] =
     sql"""SELECT name, id FROM tags ORDER BY id ASC"""

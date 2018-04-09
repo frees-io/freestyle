@@ -35,61 +35,61 @@ trait TagService[F[_]] {
 
   def insert(item: Tag): F[Option[Tag]] =
     for {
-      _            <- L.debug(s"Trying to insert a ${model}")
+      _            <- L.debug(s"Trying to insert a $model")
       insertedItem <- repo.insert(item)
-      _            <- L.info(s"Tried to add ${model}")
+      _            <- L.info(s"Tried to add $model")
     } yield insertedItem
 
   def retrieve(id: Int): F[Option[Tag]] =
     for {
-      _    <- L.debug(s"Trying to retrieve a ${model}")
+      _    <- L.debug(s"Trying to retrieve a $model")
       item <- repo.get(id)
-      _    <- L.info(s"Found ${model}: ${item}")
+      _    <- L.info(s"Found $model: $item")
     } yield item
 
   def update(item: Tag): F[Option[Tag]] =
     for {
-      _           <- L.debug(s"Trying to update a ${model}")
+      _           <- L.debug(s"Trying to update a $model")
       updatedItem <- repo.update(item)
-      _           <- L.info(s"Tried to update ${model}")
+      _           <- L.info(s"Tried to update $model")
     } yield updatedItem
 
   def destroy(id: Int): F[Int] =
     for {
-      _            <- L.debug(s"Trying to delete a ${model}")
+      _            <- L.debug(s"Trying to delete a $model")
       deletedItems <- repo.delete(id)
-      _            <- L.info(s"Tried to delete ${model}")
+      _            <- L.info(s"Tried to delete $model")
     } yield deletedItems
 
   def batchedInsert(items: List[Tag]): F[List[Option[Tag]]] =
     for {
-      _             <- L.debug(s"Trying to insert batch ${model}")
+      _             <- L.debug(s"Trying to insert batch $model")
       insertedItems <- items.traverse(repo.insert)
     } yield insertedItems
 
   def batchedUpdate(items: List[Tag]): F[List[Option[Tag]]] =
     for {
-      _            <- L.debug(s"Trying to update batch ${model}")
+      _            <- L.debug(s"Trying to update batch $model")
       updatedItems <- items.traverse(repo.update)
     } yield updatedItems
 
   def batchedDestroy(ids: List[Int]): F[Int] =
     for {
-      _              <- L.debug(s"Trying to destroy batch ${model}")
+      _              <- L.debug(s"Trying to destroy batch $model")
       destroyedItems <- ids.traverse(repo.delete)
     } yield destroyedItems.sum
 
   val reset: F[Int] =
     for {
-      _     <- L.debug(s"Trying to reset ${model} in repository")
+      _     <- L.debug(s"Trying to reset $model in repository")
       items <- repo.init
-      _     <- L.warn(s"Reset ${model} table in repository")
+      _     <- L.warn(s"Reset $model table in repository")
     } yield items
 
   val list: F[List[Tag]] =
     for {
-      _     <- L.debug(s"Trying to get all ${model} models")
+      _     <- L.debug(s"Trying to get all $model models")
       items <- repo.list
-      _     <- L.info(s"Found all ${model} models")
+      _     <- L.info(s"Found all $model models")
     } yield items
 }
