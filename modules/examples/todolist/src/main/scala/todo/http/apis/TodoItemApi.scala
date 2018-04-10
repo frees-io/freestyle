@@ -19,54 +19,59 @@ package http
 package apis
 
 import cats.~>
+import cats.Monad
+import cats.Monad.ops._
 import cats.instances.list._
 import cats.syntax.traverse._
 import com.twitter.util.Future
 import io.finch._
 import io.finch.circe._
 import io.circe.generic.auto._
-import freestyle.free._
 import freestyle.free.http.finch._
-import freestyle.free.logging._
 import examples.todolist.TodoItem
-import todo.services._
+import examples.todolist.service.TodoItemService
 
-class TodoItemApi[F[_]](implicit service: TodoItemService[F], handler: F ~> Future)
+class TodoItemApi[F[_]: Monad](implicit service: TodoItemService[F], handler: F ~> Future)
     extends CRUDApi[TodoItem] {
 
   import io.finch.syntax._
 
-  val reset = post(service.prefix :: "reset") {
-    service.reset.map(Ok)
+  //TODO
+  private val prefix = "/items"
+  private val model  = classOf[TodoItem].getSimpleName
+
+  val reset = post(prefix :: "reset") {
+    handler(service.reset.map(Ok))
   }
 
-  val retrieve = get(service.prefix :: path[Int]) { id: Int =>
-    service.retrieve(id) map (item =>
-      item.fold[Output[TodoItem]](
-        NotFound(new NoSuchElementException(s"Could not find ${service.model} with $id")))(Ok))
+  val retrieve = get(prefix :: path[Int]) { id: Int =>
+    handler(
+      service.retrieve(id) map (item =>
+        item.fold[Output[TodoItem]](
+          NotFound(new NoSuchElementException(s"Could not find ${model} with $id")))(Ok)))
   } handle {
     case nse: NoSuchElementException => NotFound(nse)
   }
 
-  val list = get(service.prefix) {
-    service.list.map(Ok)
+  val list = get(prefix) {
+    handler(service.list.map(Ok))
   }
 
-  val insert = post(service.prefix :: jsonBody[TodoItem]) { item: TodoItem =>
-    service.insert(item).map(Ok)
+  val insert = post(prefix :: jsonBody[TodoItem]) { item: TodoItem =>
+    handler(service.insert(item).map(Ok))
   }
 
-  val update = put(service.prefix :: path[Int] :: jsonBody[TodoItem]) { (id: Int, item: TodoItem) =>
-    service.update(item.copy(id = Some(id))).map(Ok)
+  val update = put(prefix :: path[Int] :: jsonBody[TodoItem]) { (id: Int, item: TodoItem) =>
+    handler(service.update(item.copy(id = Some(id))).map(Ok))
   }
 
-  val destroy = delete(service.prefix :: path[Int]) { id: Int =>
-    service.destroy(id).map(Ok)
+  val destroy = delete(prefix :: path[Int]) { id: Int =>
+    handler(service.destroy(id).map(Ok))
   }
 }
 
 object TodoItemApi {
-  implicit def instance[F[_]](
+  implicit def instance[F[_]: Monad](
       implicit service: TodoItemService[F],
       handler: F ~> Future): TodoItemApi[F] =
     new TodoItemApi[F]

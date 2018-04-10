@@ -19,51 +19,55 @@ package http
 package apis
 
 import cats.~>
+import cats.Monad
+import cats.Monad.ops._
 import com.twitter.util.Future
 import io.finch._
 import io.finch.circe._
 import io.circe.generic.auto._
-import freestyle.free._
 import freestyle.free.http.finch._
 import examples.todolist.TodoList
-import todo.services._
+import examples.todolist.service.TodoListService
 
-class TodoListApi[F[_]](implicit service: TodoListService[F], handler: F ~> Future)
+class TodoListApi[F[_]: Monad](implicit service: TodoListService[F], handler: F ~> Future)
     extends CRUDApi[TodoList] {
 
   import io.finch.syntax._
+  private val prefix = "/lists"
+  private val model  = classOf[TodoList].getSimpleName
 
-  val reset = post(service.prefix :: "reset") {
-    service.reset.map(Ok)
+  val reset = post(prefix :: "reset") {
+    handler(service.reset.map(Ok))
   }
 
-  val retrieve = get(service.prefix :: path[Int]) { id: Int =>
-    service.retrieve(id) map (item =>
-      item.fold[Output[TodoList]](
-        NotFound(new NoSuchElementException(s"Could not find ${service.model} with $id")))(Ok))
+  val retrieve = get(prefix :: path[Int]) { id: Int =>
+    handler(
+      service.retrieve(id) map (item =>
+        item.fold[Output[TodoList]](
+          NotFound(new NoSuchElementException(s"Could not find $model with $id")))(Ok)))
   } handle {
     case nse: NoSuchElementException => NotFound(nse)
   }
 
-  val list = get(service.prefix) {
-    service.list.map(Ok)
+  val list = get(prefix) {
+    handler(service.list.map(Ok))
   }
 
-  val insert = post(service.prefix :: jsonBody[TodoList]) { item: TodoList =>
-    service.insert(item).map(Ok)
+  val insert = post(prefix :: jsonBody[TodoList]) { item: TodoList =>
+    handler(service.insert(item).map(Ok))
   }
 
-  val update = put(service.prefix :: path[Int] :: jsonBody[TodoList]) { (id: Int, item: TodoList) =>
-    service.update(item.copy(id = Some(id))).map(Ok)
+  val update = put(prefix :: path[Int] :: jsonBody[TodoList]) { (id: Int, item: TodoList) =>
+    handler(service.update(item.copy(id = Some(id))).map(Ok))
   }
 
-  val destroy = delete(service.prefix :: path[Int]) { id: Int =>
-    service.destroy(id).map(Ok)
+  val destroy = delete(prefix :: path[Int]) { id: Int =>
+    handler(service.destroy(id).map(Ok))
   }
 }
 
 object TodoListApi {
-  implicit def instance[F[_]](
+  implicit def instance[F[_]: Monad](
       implicit service: TodoListService[F],
       handler: F ~> Future): TodoListApi[F] =
     new TodoListApi[F]

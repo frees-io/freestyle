@@ -27,8 +27,13 @@ import doobie._
 import doobie.implicits._
 import doobie.hikari._
 import doobie.hikari.implicits._
-import todo.runtime.handlers._
-import todo.persistence._
+import examples.todolist.persistence._
+import examples.todolist.persistence.runtime.{
+  AppRepositoryHandler,
+  TagRepositoryHandler,
+  TodoItemRepositoryHandler,
+  TodoListRepositoryHandler
+}
 
 object implicits extends ProductionImplicits
 
@@ -91,16 +96,16 @@ trait ProductionImplicits {
   implicit val connectionIO2IO: ConnectionIO ~> IO =
     λ[ConnectionIO ~> IO](_.transact(xa))
 
-  implicit val appRepositoryHandler: AppRepository.Op ~> Future =
-    new H2AppRepositoryHandler andThen connectionIO2IO andThen task2Future
+  implicit val appRepositoryHandler: AppRepository.StackSafe.Op ~> Future =
+    new AppRepositoryHandler[IO] andThen task2Future
 
-  implicit val todoItemRepositoryHandler: TodoItemRepository.Op ~> Future =
-    new H2TodoItemRepositoryHandler andThen connectionIO2IO andThen task2Future
+  implicit val todoItemRepositoryHandler: TodoItemRepository.StackSafe.Op ~> Future =
+    new TodoItemRepositoryHandler[IO] andThen task2Future
 
-  implicit val todoListRepositoryHandler: TodoListRepository.Op ~> Future =
-    new H2TodoListRepositoryHandler andThen connectionIO2IO andThen task2Future
+  implicit val todoListRepositoryHandler: TodoListRepository.StackSafe.Op ~> Future =
+    new TodoListRepositoryHandler[IO] andThen task2Future
 
-  implicit val tagRepositoryHandler: TagRepository.Op ~> Future =
-    new H2TagRepositoryHandler andThen connectionIO2IO andThen task2Future
+  implicit val tagRepositoryHandler: TagRepository.StackSafe.Op ~> Future =
+    new TagRepositoryHandler[IO] andThen task2Future
 
 }

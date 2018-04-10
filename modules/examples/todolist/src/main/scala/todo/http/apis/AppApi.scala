@@ -18,42 +18,42 @@ package todo
 package http
 package apis
 
-import cats.~>
+import cats.{~>, Monad}
+import cats.Monad.ops._
 import com.twitter.util.Future
-import freestyle.free._
 import freestyle.free.http.finch._
 import io.circe.generic.auto._
 import io.finch._
 import io.finch.circe._
 import examples.todolist.TodoForm
-import todo.services._
+import examples.todolist.service.AppService
 
-class AppApi[F[_]](implicit service: AppServices[F], handler: F ~> Future) {
+class AppApi[F[_]: Monad](implicit service: AppService[F], handler: F ~> Future) {
 
   import io.finch.syntax._
 
   val reset = post("reset") {
-    service.reset.map(Ok)
+    handler(service.reset.map(Ok))
   }
 
   val list = get("list") {
-    service.list.map(Ok)
+    handler(service.list.map(Ok))
   }
 
   val insert = post("insert" :: jsonBody[TodoForm]) { form: TodoForm =>
-    service.insert(form).map(Ok)
+    handler(service.insert(form).map(Ok))
   } handle {
     case nse: NoSuchElementException => InternalServerError(nse)
   }
 
   val update = put("update" :: jsonBody[TodoForm]) { form: TodoForm =>
-    service.update(form).map(Ok)
+    handler(service.update(form).map(Ok))
   } handle {
     case nse: NoSuchElementException => BadRequest(nse)
   }
 
   val destroy = delete("delete" :: jsonBody[TodoForm]) { form: TodoForm =>
-    service.destroy(form).map(Ok)
+    handler(service.destroy(form).map(Ok))
   } handle {
     case nse: NoSuchElementException => BadRequest(nse)
   }
@@ -62,6 +62,8 @@ class AppApi[F[_]](implicit service: AppServices[F], handler: F ~> Future) {
 }
 
 object AppApi {
-  implicit def instance[F[_]](implicit service: AppServices[F], handler: F ~> Future): AppApi[F] =
+  implicit def instance[F[_]: Monad](
+      implicit service: AppService[F],
+      handler: F ~> Future): AppApi[F] =
     new AppApi[F]
 }

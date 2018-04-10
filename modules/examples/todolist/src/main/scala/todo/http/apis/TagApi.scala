@@ -18,55 +18,64 @@ package todo
 package http
 package apis
 
-import cats.~>
+import cats.{~>, Monad}
 import cats.instances.list._
+import cats.Monad.ops._
 import cats.syntax.traverse._
 import com.twitter.util.Future
 import io.finch._
 import io.finch.circe._
 import io.circe.generic.auto._
-import freestyle.free._
 import freestyle.free.http.finch._
-import freestyle.free.logging._
 import examples.todolist.Tag
-import todo.services._
+import examples.todolist.service.TagService
 
-class TagApi[F[_]](implicit service: TagService[F], handler: F ~> Future) extends CRUDApi[Tag] {
+class TagApi[F[_]: Monad](implicit service: TagService[F], handler: F ~> Future)
+    extends CRUDApi[Tag] {
 
-  import io.finch.syntax._
+  import io.finch.syntax.post
+  import io.finch.syntax.get
+  import io.finch.syntax.put
+  import io.finch.syntax.delete
 
-  val reset = post(service.prefix :: "reset") {
-    service.reset.map(Ok)
+  private val prefix = "/tags"
+  private val model  = classOf[Tag].getSimpleName
+
+  val reset = post(prefix :: "reset") {
+    handler(service.reset.map(Ok))
   }
 
-  val retrieve = get(service.prefix :: path[Int]) { id: Int =>
-    service.retrieve(id) map (item =>
-      item.fold[Output[Tag]](
-        NotFound(new NoSuchElementException(s"Could not find ${service.model} with $id")))(Ok))
+  val retrieve = get(prefix :: path[Int]) { id: Int =>
+    handler(
+      service.retrieve(id) map (item =>
+        item.fold[Output[Tag]](
+          NotFound(new NoSuchElementException(s"Could not find $model with $id")))(Ok)))
   } handle {
     case nse: NoSuchElementException => NotFound(nse)
   }
 
-  val list = get(service.prefix) {
-    service.list.map(Ok)
+  val list = get(prefix) {
+    handler(service.list.map(Ok))
   }
 
-  val insert = post(service.prefix :: jsonBody[Tag]) { item: Tag =>
-    service.insert(item).map(Ok)
+  val insert = post(prefix :: jsonBody[Tag]) { item: Tag =>
+    handler(service.insert(item).map(Ok))
   }
 
-  val update = put(service.prefix :: path[Int] :: jsonBody[Tag]) { (id: Int, item: Tag) =>
-    service.update(item.copy(id = Some(id))).map(Ok)
+  val update = put(prefix :: path[Int] :: jsonBody[Tag]) { (id: Int, item: Tag) =>
+    handler(service.update(item.copy(id = Some(id))).map(Ok))
   }
 
-  val destroy = delete(service.prefix :: path[Int]) { id: Int =>
-    service.destroy(id).map(Ok)
+  val destroy = delete(prefix :: path[Int]) { id: Int =>
+    handler(service.destroy(id).map(Ok))
   } handle {
     case nse: NoSuchElementException => NotFound(nse)
   }
 }
 
 object TagApi {
-  implicit def instance[F[_]](implicit service: TagService[F], handler: F ~> Future): TagApi[F] =
+  implicit def instance[F[_]: Monad](
+      implicit service: TagService[F],
+      handler: F ~> Future): TagApi[F] =
     new TagApi[F]
 }
