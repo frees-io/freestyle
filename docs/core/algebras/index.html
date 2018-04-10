@@ -140,7 +140,7 @@ This Algebraic data type contains the shape needed to implement the abstract met
 This effectively enables implicits based Dependency Injection where you may choose to override implementations using the implicits scoping rules to place different implementations where appropriate.</p>
 
 <div class="language-scala highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">val</span> <span class="n">users</span> <span class="k">=</span> <span class="nc">Users</span><span class="o">[</span><span class="kt">Users.Op</span><span class="o">]</span>
-<span class="c1">// users: Users[Users.Op] = Users$To@7cc1dab5
+<span class="c1">// users: Users[Users.Op] = Users$To@8425d9c
 </span>
 <span class="k">def</span> <span class="n">myService</span><span class="o">[</span><span class="kt">F</span><span class="o">[</span><span class="k">_</span><span class="o">]](</span><span class="k">implicit</span> <span class="n">users</span><span class="k">:</span> <span class="kt">Users</span><span class="o">[</span><span class="kt">F</span><span class="o">])</span> <span class="k">=</span> <span class="o">???</span>
 <span class="c1">// myService: [F[_]](implicit users: Users[F])Nothing

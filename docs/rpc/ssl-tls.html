@@ -16,7 +16,7 @@ ga('send', 'pageview');
 
 <p>As we mentioned in the <a href="/docs/rpc/quickstart">Quickstart</a> section, we can choose and configure our client with <code class="highlighter-rouge">OkHttp</code> or <code class="highlighter-rouge">Netty</code> but if we want to encrypt our service, it’s mandatory to use <code class="highlighter-rouge">Netty</code> because currently, <a href="https://github.com/frees-io/freestyle-rpc">frees-rpc</a> only supports encryption over <em>Netty</em>.</p>
 
-<p>## Requirements</p>
+<h2 id="requirements">Requirements</h2>
 
 <p>On the server and client side, we will need two files to configure the <code class="highlighter-rouge">SslContext</code> in <code class="highlighter-rouge">gRPC</code>:</p>
 
@@ -29,7 +29,7 @@ ga('send', 'pageview');
   </li>
 </ul>
 
-<p>## Usage</p>
+<h2 id="usage">Usage</h2>
 
 <p>The first step to secure our <a href="https://github.com/frees-io/freestyle-rpc">frees-rpc</a> services is adding the library dependencies <code class="highlighter-rouge">frees-rpc-netty-ssl</code> and <code class="highlighter-rouge">frees-rpc-client-netty</code> in your build.</p>
 

@@ -142,29 +142,29 @@ ga('send', 'pageview');
 <p>You can install any of these dependencies in your build as follows:</p>
 
 <div class="language-scala highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// required for the RPC Server:
-</span><span class="n">libraryDependencies</span> <span class="o">+=</span> <span class="s">"io.frees"</span> <span class="o">%%</span> <span class="s">"frees-rpc-server"</span>            <span class="o">%</span> <span class="s">"0.12.0"</span>
+</span><span class="n">libraryDependencies</span> <span class="o">+=</span> <span class="s">"io.frees"</span> <span class="o">%%</span> <span class="s">"frees-rpc-server"</span>            <span class="o">%</span> <span class="s">"0.13.2"</span>
 
 <span class="c1">// required for a protocol definition:
-</span><span class="n">libraryDependencies</span> <span class="o">+=</span> <span class="s">"io.frees"</span> <span class="o">%%</span> <span class="s">"frees-rpc-client-core"</span>       <span class="o">%</span> <span class="s">"0.12.0"</span>
+</span><span class="n">libraryDependencies</span> <span class="o">+=</span> <span class="s">"io.frees"</span> <span class="o">%%</span> <span class="s">"frees-rpc-client-core"</span>       <span class="o">%</span> <span class="s">"0.13.2"</span>
 
 <span class="c1">// required for the use of the derived RPC Client/s, using either Netty or OkHttp as transport layer:
-</span><span class="n">libraryDependencies</span> <span class="o">+=</span> <span class="s">"io.frees"</span> <span class="o">%%</span> <span class="s">"frees-rpc-client-netty"</span>      <span class="o">%</span> <span class="s">"0.12.0"</span>
+</span><span class="n">libraryDependencies</span> <span class="o">+=</span> <span class="s">"io.frees"</span> <span class="o">%%</span> <span class="s">"frees-rpc-client-netty"</span>      <span class="o">%</span> <span class="s">"0.13.2"</span>
 <span class="c1">// or:
-</span><span class="n">libraryDependencies</span> <span class="o">+=</span> <span class="s">"io.frees"</span> <span class="o">%%</span> <span class="s">"frees-rpc-client-okhttp"</span>     <span class="o">%</span> <span class="s">"0.12.0"</span>
+</span><span class="n">libraryDependencies</span> <span class="o">+=</span> <span class="s">"io.frees"</span> <span class="o">%%</span> <span class="s">"frees-rpc-client-okhttp"</span>     <span class="o">%</span> <span class="s">"0.13.2"</span>
 
 <span class="c1">// optional - for both server and client configuration.
-</span><span class="n">libraryDependencies</span> <span class="o">+=</span> <span class="s">"io.frees"</span> <span class="o">%%</span> <span class="s">"frees-rpc-config"</span>            <span class="o">%</span> <span class="s">"0.12.0"</span>
+</span><span class="n">libraryDependencies</span> <span class="o">+=</span> <span class="s">"io.frees"</span> <span class="o">%%</span> <span class="s">"frees-rpc-config"</span>            <span class="o">%</span> <span class="s">"0.13.2"</span>
 
 <span class="c1">// optional - for both server and client metrics reporting, using Prometheus.
-</span><span class="n">libraryDependencies</span> <span class="o">+=</span> <span class="s">"io.frees"</span> <span class="o">%%</span> <span class="s">"frees-rpc-prometheus-server"</span> <span class="o">%</span> <span class="s">"0.12.0"</span>
-<span class="n">libraryDependencies</span> <span class="o">+=</span> <span class="s">"io.frees"</span> <span class="o">%%</span> <span class="s">"frees-rpc-prometheus-client"</span> <span class="o">%</span> <span class="s">"0.12.0"</span>
+</span><span class="n">libraryDependencies</span> <span class="o">+=</span> <span class="s">"io.frees"</span> <span class="o">%%</span> <span class="s">"frees-rpc-prometheus-server"</span> <span class="o">%</span> <span class="s">"0.13.2"</span>
+<span class="n">libraryDependencies</span> <span class="o">+=</span> <span class="s">"io.frees"</span> <span class="o">%%</span> <span class="s">"frees-rpc-prometheus-client"</span> <span class="o">%</span> <span class="s">"0.13.2"</span>
 
 <span class="c1">// optional - for both server and client metrics reporting, using Dropwizard.
-</span><span class="n">libraryDependencies</span> <span class="o">+=</span> <span class="s">"io.frees"</span> <span class="o">%%</span> <span class="s">"frees-rpc-dropwizard-server"</span> <span class="o">%</span> <span class="s">"0.12.0"</span>
-<span class="n">libraryDependencies</span> <span class="o">+=</span> <span class="s">"io.frees"</span> <span class="o">%%</span> <span class="s">"frees-rpc-dropwizard-client"</span> <span class="o">%</span> <span class="s">"0.12.0"</span>
+</span><span class="n">libraryDependencies</span> <span class="o">+=</span> <span class="s">"io.frees"</span> <span class="o">%%</span> <span class="s">"frees-rpc-dropwizard-server"</span> <span class="o">%</span> <span class="s">"0.13.2"</span>
+<span class="n">libraryDependencies</span> <span class="o">+=</span> <span class="s">"io.frees"</span> <span class="o">%%</span> <span class="s">"frees-rpc-dropwizard-client"</span> <span class="o">%</span> <span class="s">"0.13.2"</span>
 
 <span class="c1">// optional - for the communication between server and client by using SSL/TLS.
-</span><span class="n">libraryDependencies</span> <span class="o">+=</span> <span class="s">"io.frees"</span> <span class="o">%%</span> <span class="s">"frees-rpc-netty-ssl"</span> <span class="o">%</span> <span class="s">"0.12.0"</span>
+</span><span class="n">libraryDependencies</span> <span class="o">+=</span> <span class="s">"io.frees"</span> <span class="o">%%</span> <span class="s">"frees-rpc-netty-ssl"</span> <span class="o">%</span> <span class="s">"0.13.2"</span>
 </code></pre></div></div>
 
 </section></div></div></div></div><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script><script src="/highlight/highlight.pack.js"></script><script>hljs.configure({

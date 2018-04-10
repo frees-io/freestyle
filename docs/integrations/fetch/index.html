@@ -163,7 +163,7 @@ ga('send', 'pageview');
 </span>
 <span class="nc">Await</span><span class="o">.</span><span class="n">result</span><span class="o">(</span><span class="n">program</span><span class="o">[</span><span class="kt">App.Op</span><span class="o">].</span><span class="n">interpret</span><span class="o">[</span><span class="kt">Future</span><span class="o">],</span> <span class="nc">Duration</span><span class="o">.</span><span class="nc">Inf</span><span class="o">)</span>
 <span class="c1">// Hello
-// res3: fetch.FetchEnv = FetchEnv(InMemoryCache(Map((One,1) -&gt; 1)),Queue(Round(InMemoryCache(Map()),FetchOne(1,DataSource:One),1,500341961110966,500341961271775)))
+// res3: fetch.FetchEnv = FetchEnv(InMemoryCache(Map((One,1) -&gt; 1)),Queue(Round(InMemoryCache(Map()),FetchOne(1,DataSource:One),1,172927066266887,172927066410138)))
 </span></code></pre></div></div>
 
 <p>There is a variant of <code class="highlighter-rouge">runE</code> where a cache can be specified: <code class="highlighter-rouge">FetchM#runEWithCache</code>. In the following example, we simply pass an empty in-memory cache, but you can pass your own cache or a resulting cache from a previous fetch.</p>
@@ -179,7 +179,7 @@ ga('send', 'pageview');
 </span>
 <span class="nc">Await</span><span class="o">.</span><span class="n">result</span><span class="o">(</span><span class="n">program</span><span class="o">[</span><span class="kt">App.Op</span><span class="o">].</span><span class="n">interpret</span><span class="o">[</span><span class="kt">Future</span><span class="o">],</span> <span class="nc">Duration</span><span class="o">.</span><span class="nc">Inf</span><span class="o">)</span>
 <span class="c1">// Hello
-// res4: fetch.FetchEnv = FetchEnv(InMemoryCache(Map((One,1) -&gt; 1)),Queue(Round(InMemoryCache(Map()),FetchOne(1,DataSource:One),1,500343309446220,500343309583800)))
+// res4: fetch.FetchEnv = FetchEnv(InMemoryCache(Map((One,1) -&gt; 1)),Queue(Round(InMemoryCache(Map()),FetchOne(1,DataSource:One),1,172928268349824,172928268475220)))
 </span></code></pre></div></div>
 
 <h3 id="runf">runF</h3>
@@ -198,7 +198,7 @@ ga('send', 'pageview');
 </span>
 <span class="nc">Await</span><span class="o">.</span><span class="n">result</span><span class="o">(</span><span class="n">program</span><span class="o">[</span><span class="kt">App.Op</span><span class="o">].</span><span class="n">interpret</span><span class="o">[</span><span class="kt">Future</span><span class="o">],</span> <span class="nc">Duration</span><span class="o">.</span><span class="nc">Inf</span><span class="o">)</span>
 <span class="c1">// Hello
-// res5: fetch.FetchEnv = FetchEnv(InMemoryCache(Map((One,1) -&gt; 1)),Queue(Round(InMemoryCache(Map()),FetchOne(1,DataSource:One),1,500344401936083,500344402108687)))
+// res5: fetch.FetchEnv = FetchEnv(InMemoryCache(Map((One,1) -&gt; 1)),Queue(Round(InMemoryCache(Map()),FetchOne(1,DataSource:One),1,172929247690572,172929247826484)))
 </span></code></pre></div></div>
 
 <p>There is a variant of <code class="highlighter-rouge">runF</code> where a cache can be specified: <code class="highlighter-rouge">FetchM#runFWithCache</code>. In the following example, we simply pass an empty in-memory cache, but you can pass your own cache or a resulting cache from a previous fetch:</p>
@@ -215,7 +215,7 @@ ga('send', 'pageview');
 </span>
 <span class="nc">Await</span><span class="o">.</span><span class="n">result</span><span class="o">(</span><span class="n">program</span><span class="o">[</span><span class="kt">App.Op</span><span class="o">].</span><span class="n">interpret</span><span class="o">[</span><span class="kt">Future</span><span class="o">],</span> <span class="nc">Duration</span><span class="o">.</span><span class="nc">Inf</span><span class="o">)</span>
 <span class="c1">// Hello
-// res6: fetch.FetchEnv = FetchEnv(InMemoryCache(Map((One,1) -&gt; 1)),Queue(Round(InMemoryCache(Map()),FetchOne(1,DataSource:One),1,500345729941682,500345730092177)))
+// res6: fetch.FetchEnv = FetchEnv(InMemoryCache(Map((One,1) -&gt; 1)),Queue(Round(InMemoryCache(Map()),FetchOne(1,DataSource:One),1,172930473846040,172930473976173)))
 </span></code></pre></div></div>
 
 <h2 id="tips">Tips</h2>
