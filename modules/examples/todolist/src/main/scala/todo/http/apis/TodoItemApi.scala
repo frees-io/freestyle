@@ -28,7 +28,7 @@ import io.circe.generic.auto._
 import freestyle.free._
 import freestyle.free.http.finch._
 import freestyle.free.logging._
-import todo.model.TodoItem
+import examples.todolist.TodoItem
 import todo.services._
 
 class TodoItemApi[F[_]](implicit service: TodoItemService[F], handler: F ~> Future)

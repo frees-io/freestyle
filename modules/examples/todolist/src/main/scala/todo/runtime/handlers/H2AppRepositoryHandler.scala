@@ -19,7 +19,8 @@ package runtime.handlers
 
 import doobie._
 import doobie.implicits._
-import todo.model._
+import examples.todolist._
+import examples.todolist.model.AppModel
 import todo.persistence.AppRepository
 
 class H2AppRepositoryHandler extends AppRepository.Handler[ConnectionIO] {

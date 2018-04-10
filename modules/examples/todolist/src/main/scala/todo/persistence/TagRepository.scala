@@ -18,7 +18,7 @@ package todo
 package persistence
 
 import freestyle.free._
-import todo.model.Tag
+import examples.todolist.Tag
 
 /**
  * A free algebra declaring a set of operations that can be performed over

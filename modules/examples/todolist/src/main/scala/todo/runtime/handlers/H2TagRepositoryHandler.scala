@@ -19,7 +19,7 @@ package runtime.handlers
 
 import doobie._
 import doobie.implicits._
-import todo.model.Tag
+import examples.todolist.Tag
 import todo.persistence.TagRepository
 
 class H2TagRepositoryHandler extends TagRepository.Handler[ConnectionIO] {

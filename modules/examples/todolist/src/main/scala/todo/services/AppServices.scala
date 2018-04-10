@@ -19,7 +19,7 @@ package services
 
 import freestyle.free.effects.error.ErrorM
 import freestyle.free._
-import todo.model.{Tag, TodoForm, TodoList}
+import examples.todolist.{Tag, TodoForm, TodoList}
 import todo.persistence.AppRepository
 import cats.implicits._
 

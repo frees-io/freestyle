@@ -25,7 +25,7 @@ import freestyle.free.http.finch._
 import io.circe.generic.auto._
 import io.finch._
 import io.finch.circe._
-import todo.model._
+import examples.todolist.TodoForm
 import todo.services._
 
 class AppApi[F[_]](implicit service: AppServices[F], handler: F ~> Future) {

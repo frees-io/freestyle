@@ -19,7 +19,7 @@ package runtime.handlers
 
 import doobie._
 import doobie.implicits._
-import todo.model.TodoList
+import examples.todolist.TodoList
 import todo.persistence.TodoListRepository
 
 class H2TodoListRepositoryHandler extends TodoListRepository.Handler[ConnectionIO] {

@@ -19,7 +19,7 @@ package services
 
 import freestyle.free.logging.LoggingM
 import freestyle.free._
-import todo.model.TodoList
+import examples.todolist.TodoList
 import todo.persistence.TodoListRepository
 import cats.implicits._
 

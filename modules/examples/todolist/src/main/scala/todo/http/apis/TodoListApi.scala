@@ -25,7 +25,7 @@ import io.finch.circe._
 import io.circe.generic.auto._
 import freestyle.free._
 import freestyle.free.http.finch._
-import todo.model.TodoList
+import examples.todolist.TodoList
 import todo.services._
 
 class TodoListApi[F[_]](implicit service: TodoListService[F], handler: F ~> Future)

@@ -19,7 +19,7 @@ package services
 
 import freestyle.free.logging.LoggingM
 import freestyle.free._
-import todo.model.Tag
+import examples.todolist.Tag
 import todo.persistence.TagRepository
 import cats.implicits._
 

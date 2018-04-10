@@ -18,7 +18,7 @@ package todo
 package persistence
 
 import freestyle.free._
-import todo.model.TodoList
+import examples.todolist.TodoList
 
 @free
 trait TodoListRepository {

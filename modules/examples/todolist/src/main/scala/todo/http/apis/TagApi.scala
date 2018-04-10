@@ -28,9 +28,8 @@ import io.circe.generic.auto._
 import freestyle.free._
 import freestyle.free.http.finch._
 import freestyle.free.logging._
-import todo.model.Tag
+import examples.todolist.Tag
 import todo.services._
-import todo.model.Tag
 
 class TagApi[F[_]](implicit service: TagService[F], handler: F ~> Future) extends CRUDApi[Tag] {
 
