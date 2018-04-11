@@ -85,7 +85,7 @@ trait ProductionImplicits {
       setProperty("autoCommit", "true")
     })))
 
-  implicit val task2Future: IO ~> Future = new (IO ~> Future) {
+  private val task2Future: IO ~> Future = new (IO ~> Future) {
     override def apply[A](fa: IO[A]): Future[A] = {
       val promise = new Promise[A]()
       fa.unsafeRunAsync(_.fold(promise.setException, promise.setValue))
@@ -93,19 +93,16 @@ trait ProductionImplicits {
     }
   }
 
-  implicit val connectionIO2IO: ConnectionIO ~> IO =
-    λ[ConnectionIO ~> IO](_.transact(xa))
+  implicit val appRepositoryHandler: AppRepository[Future] =
+    new AppRepositoryHandler[IO].mapK(task2Future)
 
-  implicit val appRepositoryHandler: AppRepository.StackSafe.Op ~> Future =
-    new AppRepositoryHandler[IO] andThen task2Future
+  implicit val todoItemRepositoryHandler: TodoItemRepository[Future] =
+    new TodoItemRepositoryHandler[IO].mapK(task2Future)
 
-  implicit val todoItemRepositoryHandler: TodoItemRepository.StackSafe.Op ~> Future =
-    new TodoItemRepositoryHandler[IO] andThen task2Future
+  implicit val todoListRepositoryHandler: TodoListRepository[Future] =
+    new TodoListRepositoryHandler[IO].mapK(task2Future)
 
-  implicit val todoListRepositoryHandler: TodoListRepository.StackSafe.Op ~> Future =
-    new TodoListRepositoryHandler[IO] andThen task2Future
-
-  implicit val tagRepositoryHandler: TagRepository.StackSafe.Op ~> Future =
-    new TagRepositoryHandler[IO] andThen task2Future
+  implicit val tagRepositoryHandler: TagRepository[Future] =
+    new TagRepositoryHandler[IO].mapK(task2Future)
 
 }
