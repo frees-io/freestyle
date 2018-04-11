@@ -36,7 +36,6 @@ class TodoItemApi[F[_]: Monad](implicit service: TodoItemService[F], handler: F 
 
   import io.finch.syntax._
 
-  //TODO
   private val prefix = "/items"
   private val model  = classOf[TodoItem].getSimpleName
 

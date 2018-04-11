@@ -33,6 +33,7 @@ class TodoListApi[F[_]: Monad](implicit service: TodoListService[F], handler: F 
     extends CRUDApi[TodoList] {
 
   import io.finch.syntax._
+
   private val prefix = "/lists"
   private val model  = classOf[TodoList].getSimpleName
 
