@@ -85,7 +85,7 @@ trait ProductionImplicits {
       setProperty("autoCommit", "true")
     })))
 
-  private val task2Future: IO ~> Future = new (IO ~> Future) {
+  implicit val task2Future: IO ~> Future = new (IO ~> Future) {
     override def apply[A](fa: IO[A]): Future[A] = {
       val promise = new Promise[A]()
       fa.unsafeRunAsync(_.fold(promise.setException, promise.setValue))
@@ -93,16 +93,16 @@ trait ProductionImplicits {
     }
   }
 
-  implicit val appRepositoryHandler: AppRepository[Future] =
-    new AppRepositoryHandler[IO].mapK(task2Future)
+  implicit val appRepositoryHandler: AppRepository.Handler[IO] =
+    new AppRepositoryHandler[IO]
 
-  implicit val todoItemRepositoryHandler: TodoItemRepository[Future] =
-    new TodoItemRepositoryHandler[IO].mapK(task2Future)
+  implicit val todoItemRepositoryHandler: TodoItemRepository.Handler[IO] =
+    new TodoItemRepositoryHandler[IO]
 
-  implicit val todoListRepositoryHandler: TodoListRepository[Future] =
-    new TodoListRepositoryHandler[IO].mapK(task2Future)
+  implicit val todoListRepositoryHandler: TodoListRepository.Handler[IO] =
+    new TodoListRepositoryHandler[IO]
 
-  implicit val tagRepositoryHandler: TagRepository[Future] =
-    new TagRepositoryHandler[IO].mapK(task2Future)
+  implicit val tagRepositoryHandler: TagRepository.Handler[IO] =
+    new TagRepositoryHandler[IO]
 
 }

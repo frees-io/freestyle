@@ -27,6 +27,8 @@ import todo.http.apis.Api
 import freestyle.tagless._
 
 //Cats
+import cats.effect.IO
+import cats.effect.implicits._
 import cats.{~>, Monad}
 import cats.implicits._
 // Logging
@@ -76,7 +78,7 @@ object TodoListApp extends TwitterServer {
       )
   }
 
-  def main(): Unit =
-    bootstrap[Future]
+  def main() =
+    bootstrap[IO].unsafeRunSync()
 
 }
