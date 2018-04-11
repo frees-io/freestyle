@@ -277,7 +277,7 @@ lazy val todolistService = jvmModule("todolist-service", subFolder = Some("examp
   )
 
 lazy val todolist = jvmModule("todolist", subFolder = Some("examples"))
-  .dependsOn(todolistService, httpFinch, config)
+  .dependsOn(todolistService, httpFinch, config, asyncCatsEffectJVM)
   .settings(noPublishSettings: _*)
   .settings(
     libraryDependencies ++= Seq(
