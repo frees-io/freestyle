@@ -24,20 +24,15 @@ import com.twitter.util.{Await, Future}
 import io.circe.generic.auto._
 import io.finch.circe._
 import todo.http.apis.Api
-import freestyle.tagless._
-
-//Cats
 import cats.effect.IO
 import cats.effect.implicits._
 import cats.{~>, Monad}
 import cats.implicits._
-// Logging
+import freestyle.tagless._
 import freestyle.tagless.logging._
 import freestyle.tagless.loggingJVM.log4s.implicits._
-// Config
 import freestyle.tagless.config._
 import freestyle.tagless.config.implicits._
-// ErrorM
 import freestyle.tagless.effects.error._
 import freestyle.tagless.effects.error.implicits._
 
@@ -53,6 +48,7 @@ trait App[F[_]] {
 object TodoListApp extends TwitterServer {
 
   import todo.runtime.implicits._
+  import scala.concurrent.ExecutionContext.Implicits.global
 
   def bootstrap[F[_]: Monad](
       implicit app: App[F],
@@ -79,6 +75,6 @@ object TodoListApp extends TwitterServer {
   }
 
   def main() =
-    bootstrap[IO].unsafeRunSync()
+    bootstrap[IO].unsafeToFuture().onComplete(_.foreach(_.close()))
 
 }
