@@ -21,13 +21,10 @@ package apis
 import cats.~>
 import cats.Monad
 import cats.Monad.ops._
-import cats.instances.list._
-import cats.syntax.traverse._
 import com.twitter.util.Future
 import io.finch._
 import io.finch.circe._
 import io.circe.generic.auto._
-import freestyle.free.http.finch._
 import examples.todolist.TodoItem
 import examples.todolist.service.TodoItemService
 

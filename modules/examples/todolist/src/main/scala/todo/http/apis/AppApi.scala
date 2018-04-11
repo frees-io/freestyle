@@ -21,7 +21,6 @@ package apis
 import cats.{~>, Monad}
 import cats.Monad.ops._
 import com.twitter.util.Future
-import freestyle.free.http.finch._
 import io.circe.generic.auto._
 import io.finch._
 import io.finch.circe._

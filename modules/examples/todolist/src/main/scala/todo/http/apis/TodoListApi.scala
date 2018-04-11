@@ -25,7 +25,6 @@ import com.twitter.util.Future
 import io.finch._
 import io.finch.circe._
 import io.circe.generic.auto._
-import freestyle.free.http.finch._
 import examples.todolist.TodoList
 import examples.todolist.service.TodoListService
 

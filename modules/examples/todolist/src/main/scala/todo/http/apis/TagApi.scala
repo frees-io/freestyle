@@ -19,14 +19,11 @@ package http
 package apis
 
 import cats.{~>, Monad}
-import cats.instances.list._
 import cats.Monad.ops._
-import cats.syntax.traverse._
 import com.twitter.util.Future
 import io.finch._
 import io.finch.circe._
 import io.circe.generic.auto._
-import freestyle.free.http.finch._
 import examples.todolist.Tag
 import examples.todolist.service.TagService
 
