@@ -23,19 +23,17 @@ import com.twitter.server.TwitterServer
 import com.twitter.util.{Await, Future}
 import io.circe.generic.auto._
 import io.finch.circe._
-import todo.http.apis.Api
 import cats.effect.IO
-import cats.effect.implicits._
 import cats.{~>, Monad}
-import cats.implicits._
-import freestyle.tagless._
-import freestyle.tagless.logging._
+import cats.Monad.ops._
+import freestyle.tagless.module
+import freestyle.tagless.logging.LoggingM
 import freestyle.tagless.loggingJVM.log4s.implicits._
-import freestyle.tagless.config._
+import freestyle.tagless.config.ConfigM
 import freestyle.tagless.config.implicits._
-import freestyle.tagless.effects.error._
+import freestyle.tagless.effects.error.ErrorM
 import freestyle.tagless.effects.error.implicits._
-
+import todo.http.apis.Api
 import todo.persistence.Persistence
 import todo.services.Services
 
