@@ -276,7 +276,7 @@ lazy val todolistService = jvmModule("todolist-service", subFolder = Some("examp
     ) ++ commonDeps
   )
 
-lazy val todolist = jvmModule("todolist", subFolder = Some("examples"))
+lazy val `todolist-http-finch` = jvmModule("todolist-http-finch", subFolder = Some("examples"))
   .dependsOn(todolistService, httpFinch, config, asyncCatsEffectJVM)
   .settings(noPublishSettings: _*)
   .settings(
@@ -325,7 +325,7 @@ lazy val jvmModules: Seq[ProjectReference] = Seq(
   httpClientJVM,
   //tests,
   //Examples:
-  todolist,
+  `todolist-http-finch`,
   todolistService,
   slickExample
 )
