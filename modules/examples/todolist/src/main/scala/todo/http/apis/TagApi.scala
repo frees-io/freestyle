@@ -33,7 +33,6 @@ class TagApi[F[_]: Monad](implicit service: TagService[F], handler: F ~> Future)
   import io.finch.syntax._
 
   private val prefix = "/tags"
-  private val model  = classOf[Tag].getSimpleName
 
   val reset = post(prefix :: "reset") {
     handler(service.reset.map(Ok))
@@ -43,7 +42,7 @@ class TagApi[F[_]: Monad](implicit service: TagService[F], handler: F ~> Future)
     handler(
       service.retrieve(id) map (item =>
         item.fold[Output[Tag]](
-          NotFound(new NoSuchElementException(s"Could not find $model with $id")))(Ok)))
+          NotFound(new NoSuchElementException(s"Could not find ${service.model} with $id")))(Ok)))
   } handle {
     case nse: NoSuchElementException => NotFound(nse)
   }

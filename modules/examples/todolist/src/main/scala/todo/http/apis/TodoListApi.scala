@@ -34,7 +34,6 @@ class TodoListApi[F[_]: Monad](implicit service: TodoListService[F], handler: F 
   import io.finch.syntax._
 
   private val prefix = "/lists"
-  private val model  = classOf[TodoList].getSimpleName
 
   val reset = post(prefix :: "reset") {
     handler(service.reset.map(Ok))
@@ -44,7 +43,7 @@ class TodoListApi[F[_]: Monad](implicit service: TodoListService[F], handler: F 
     handler(
       service.retrieve(id) map (item =>
         item.fold[Output[TodoList]](
-          NotFound(new NoSuchElementException(s"Could not find $model with $id")))(Ok)))
+          NotFound(new NoSuchElementException(s"Could not find ${service.model} with $id")))(Ok)))
   } handle {
     case nse: NoSuchElementException => NotFound(nse)
   }
