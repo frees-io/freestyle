@@ -25,7 +25,7 @@ import io.circe.generic.auto._
 import io.finch.circe._
 import cats.effect.IO
 import cats.{~>, Monad}
-import cats.Monad.ops._
+import cats.implicits._
 import freestyle.tagless.module
 import freestyle.tagless.logging.LoggingM
 import freestyle.tagless.loggingJVM.log4s.implicits._
