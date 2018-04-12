@@ -31,7 +31,7 @@ trait TagService[F[_]] {
 
   val repo: TagRepository[F]
 
-  private val model: String = classOf[Tag].getSimpleName
+  val model: String = classOf[Tag].getSimpleName
 
   def insert(item: Tag): F[Option[Tag]] =
     for {

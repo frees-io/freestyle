@@ -17,19 +17,20 @@
 package todo
 package services
 
-import freestyle.free._
-import freestyle.free.config.ConfigM
-import freestyle.free.logging.LoggingM
+import examples.todolist.service.{AppService, TagService, TodoItemService, TodoListService}
+import freestyle.tagless.module
+import freestyle.tagless.config.ConfigM
+import freestyle.tagless.logging.LoggingM
 
 /**
  * Module containing all the algebras declared in this layer.
  */
 @module
-trait Services {
-  val appServices: AppServices
-  val tagService: TagService
-  val todoItemService: TodoItemService
-  val todoListService: TodoListService
-  val log: LoggingM
-  val config: ConfigM
+trait Services[F[_]] {
+  val appServices: AppService[F]
+  val tagService: TagService[F]
+  val todoItemService: TodoItemService[F]
+  val todoListService: TodoListService[F]
+  val log: LoggingM[F]
+  val config: ConfigM[F]
 }

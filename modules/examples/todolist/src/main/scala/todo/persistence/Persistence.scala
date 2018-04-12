@@ -17,15 +17,16 @@
 package todo
 package persistence
 
-import freestyle.free._
+import examples.todolist.persistence._
+import freestyle.tagless.module
 
 /**
  * Module containing all the algebras declared in this layer.
  */
 @module
-trait Persistence {
-  val appRepository: AppRepository
-  val todoItemRepository: TodoItemRepository
-  val todoListRepository: TodoListRepository
-  val tagRepository: TagRepository
+trait Persistence[F[_]] {
+  val appRepository: AppRepository[F]
+  val todoItemRepository: TodoItemRepository[F]
+  val todoListRepository: TodoListRepository[F]
+  val tagRepository: TagRepository[F]
 }

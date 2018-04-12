@@ -265,28 +265,25 @@ lazy val httpClientJVM = httpClient.jvm
 //// EXAMPLES ////
 //////////////////
 
-lazy val todolist = jvmModule("todolist", subFolder = Some("examples"))
-  .dependsOn(coreJVM, doobie, httpFinch, loggingJVM, effectsJVM, config)
-  .settings(noPublishSettings: _*)
-  .settings(
-    libraryDependencies ++= Seq(
-      %%("cats-effect"),
-      %%("circe-generic"),
-      %%("doobie-h2"),
-      %%("doobie-hikari"),
-      %%("finch-circe"),
-      %%("twitter-server")
-    ) ++ commonDeps
-  )
-
 lazy val todolistService = jvmModule("todolist-service", subFolder = Some("examples"))
-  .dependsOn(coreJVM, doobie, loggingJVM, effectsJVM, config)
+  .dependsOn(coreJVM, doobie, loggingJVM, effectsJVM)
   .settings(noPublishSettings: _*)
   .settings(
     libraryDependencies ++= Seq(
       %%("cats-effect"),
       %%("doobie-h2"),
       %%("doobie-hikari")
+    ) ++ commonDeps
+  )
+
+lazy val todolist = jvmModule("todolist", subFolder = Some("examples"))
+  .dependsOn(todolistService, httpFinch, config, asyncCatsEffectJVM)
+  .settings(noPublishSettings: _*)
+  .settings(
+    libraryDependencies ++= Seq(
+      %%("circe-generic"),
+      %%("finch-circe"),
+      %%("twitter-server")
     ) ++ commonDeps
   )
 

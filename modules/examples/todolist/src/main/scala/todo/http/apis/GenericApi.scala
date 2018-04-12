@@ -18,38 +18,43 @@ package todo
 package http
 package apis
 
-import cats.~>
+import cats.{~>, Monad}
+import cats.Monad.ops._
 import com.twitter.util.Future
 import io.finch._
-import freestyle.free._
-import freestyle.free.http.finch._
-import freestyle.free.logging._
+import freestyle.tagless.logging.LoggingM
 import todo.model.Pong
 
-class GenericApi[F[_]](implicit log: LoggingM[F], handler: F ~> Future) {
+class GenericApi[F[_]: Monad](implicit log: LoggingM[F], handler: F ~> Future) {
 
   import io.finch.syntax._
 
   val ping = get("ping") {
-    for {
-      _ <- log.error("Not really an error")
-      _ <- log.warn("Not really a warn")
-      _ <- log.debug("GET /ping")
-    } yield Ok(Pong.current)
+    handler(
+      for {
+        _ <- log.error("Not really an error")
+        _ <- log.warn("Not really a warn")
+        _ <- log.debug("GET /ping")
+      } yield Ok(Pong.current)
+    )
   }
 
   val hello = get("hello") {
-    for {
-      _ <- log.error("Not really an error")
-      _ <- log.warn("Not really a warn")
-      _ <- log.debug("GET /Hello")
-    } yield Ok("Hello World")
+    handler(
+      for {
+        _ <- log.error("Not really an error")
+        _ <- log.warn("Not really a warn")
+        _ <- log.debug("GET /Hello")
+      } yield Ok("Hello World")
+    )
   }
 
   val endpoints = hello :+: ping
 }
 
 object GenericApi {
-  implicit def instance[F[_]](implicit log: LoggingM[F], handler: F ~> Future): GenericApi[F] =
+  implicit def instance[F[_]: Monad](
+      implicit log: LoggingM[F],
+      handler: F ~> Future): GenericApi[F] =
     new GenericApi[F]
 }

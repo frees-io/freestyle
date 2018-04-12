@@ -31,7 +31,7 @@ trait TodoListService[F[_]] {
 
   val repo: TodoListRepository[F]
 
-  private val model: String = classOf[TodoList].getSimpleName
+  val model: String = classOf[TodoList].getSimpleName
 
   def insert(item: TodoList): F[Option[TodoList]] =
     for {
