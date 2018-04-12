@@ -30,10 +30,7 @@ import examples.todolist.service.TagService
 class TagApi[F[_]: Monad](implicit service: TagService[F], handler: F ~> Future)
     extends CRUDApi[Tag] {
 
-  import io.finch.syntax.post
-  import io.finch.syntax.get
-  import io.finch.syntax.put
-  import io.finch.syntax.delete
+  import io.finch.syntax._
 
   private val prefix = "/tags"
   private val model  = classOf[Tag].getSimpleName
