@@ -35,6 +35,8 @@ import examples.todolist.persistence.runtime.{
   TodoListRepositoryHandler
 }
 
+import scala.concurrent.ExecutionContext
+
 object implicits extends ProductionImplicits
 
 /**
@@ -104,5 +106,8 @@ trait ProductionImplicits {
 
   implicit val tagRepositoryHandler: TagRepository.Handler[IO] =
     new TagRepositoryHandler[IO]
+
+  implicit val executionContext: ExecutionContext =
+    scala.concurrent.ExecutionContext.Implicits.global
 
 }

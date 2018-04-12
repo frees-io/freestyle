@@ -46,7 +46,6 @@ trait App[F[_]] {
 object TodoListApp extends TwitterServer {
 
   import todo.runtime.implicits._
-  import scala.concurrent.ExecutionContext.Implicits.global
 
   def bootstrap[F[_]: Monad](
       implicit app: App[F],
