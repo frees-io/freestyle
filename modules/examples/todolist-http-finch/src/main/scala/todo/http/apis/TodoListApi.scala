@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package todo
+package examples.todolist
 package http
 package apis
 
@@ -25,15 +25,15 @@ import com.twitter.util.Future
 import io.finch._
 import io.finch.circe._
 import io.circe.generic.auto._
-import examples.todolist.TodoItem
-import examples.todolist.service.TodoItemService
+import examples.todolist.TodoList
+import examples.todolist.service.TodoListService
 
-class TodoItemApi[F[_]: Monad](implicit service: TodoItemService[F], handler: F ~> Future)
-    extends CRUDApi[TodoItem] {
+class TodoListApi[F[_]: Monad](implicit service: TodoListService[F], handler: F ~> Future)
+    extends CRUDApi[TodoList] {
 
   import io.finch.syntax._
 
-  private val prefix = "items"
+  private val prefix = "lists"
 
   val reset = post(prefix :: "reset") {
     handler(service.reset.map(Ok))
@@ -42,7 +42,7 @@ class TodoItemApi[F[_]: Monad](implicit service: TodoItemService[F], handler: F 
   val retrieve = get(prefix :: path[Int]) { id: Int =>
     handler(
       service.retrieve(id) map (item =>
-        item.fold[Output[TodoItem]](
+        item.fold[Output[TodoList]](
           NotFound(new NoSuchElementException(s"Could not find ${service.model} with $id")))(Ok)))
   } handle {
     case nse: NoSuchElementException => NotFound(nse)
@@ -52,11 +52,11 @@ class TodoItemApi[F[_]: Monad](implicit service: TodoItemService[F], handler: F 
     handler(service.list.map(Ok))
   }
 
-  val insert = post(prefix :: jsonBody[TodoItem]) { item: TodoItem =>
+  val insert = post(prefix :: jsonBody[TodoList]) { item: TodoList =>
     handler(service.insert(item).map(Ok))
   }
 
-  val update = put(prefix :: path[Int] :: jsonBody[TodoItem]) { (id: Int, item: TodoItem) =>
+  val update = put(prefix :: path[Int] :: jsonBody[TodoList]) { (id: Int, item: TodoList) =>
     handler(service.update(item.copy(id = Some(id))).map(Ok))
   }
 
@@ -65,9 +65,9 @@ class TodoItemApi[F[_]: Monad](implicit service: TodoItemService[F], handler: F 
   }
 }
 
-object TodoItemApi {
+object TodoListApi {
   implicit def instance[F[_]: Monad](
-      implicit service: TodoItemService[F],
-      handler: F ~> Future): TodoItemApi[F] =
-    new TodoItemApi[F]
+      implicit service: TodoListService[F],
+      handler: F ~> Future): TodoListApi[F] =
+    new TodoListApi[F]
 }

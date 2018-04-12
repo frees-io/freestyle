@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package todo
+package examples.todolist
 package runtime
 
 import java.util.Properties
-
+import scala.concurrent.ExecutionContext
 import cats._
 import cats.effect._
 import com.twitter.util._
@@ -34,8 +34,6 @@ import examples.todolist.persistence.runtime.{
   TodoItemRepositoryHandler,
   TodoListRepositoryHandler
 }
-
-import scala.concurrent.ExecutionContext
 
 object implicits extends ProductionImplicits
 

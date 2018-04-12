@@ -14,11 +14,23 @@
  * limitations under the License.
  */
 
-package todo
-package model
+package examples.todolist
+package services
 
-final case class Pong(time: Long)
+import examples.todolist.service.{AppService, TagService, TodoItemService, TodoListService}
+import freestyle.tagless.module
+import freestyle.tagless.config.ConfigM
+import freestyle.tagless.logging.LoggingM
 
-object Pong {
-  def current: Pong = Pong(System.currentTimeMillis() / 1000L)
+/**
+ * Module containing all the algebras declared in this layer.
+ */
+@module
+trait Services[F[_]] {
+  val appServices: AppService[F]
+  val tagService: TagService[F]
+  val todoItemService: TodoItemService[F]
+  val todoListService: TodoListService[F]
+  val log: LoggingM[F]
+  val config: ConfigM[F]
 }

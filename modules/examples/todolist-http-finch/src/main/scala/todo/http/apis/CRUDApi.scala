@@ -14,23 +14,20 @@
  * limitations under the License.
  */
 
-package todo
-package services
+package examples.todolist
+package http
+package apis
 
-import examples.todolist.service.{AppService, TagService, TodoItemService, TodoListService}
-import freestyle.tagless.module
-import freestyle.tagless.config.ConfigM
-import freestyle.tagless.logging.LoggingM
+import io.finch.Endpoint
 
-/**
- * Module containing all the algebras declared in this layer.
- */
-@module
-trait Services[F[_]] {
-  val appServices: AppService[F]
-  val tagService: TagService[F]
-  val todoItemService: TodoItemService[F]
-  val todoListService: TodoListService[F]
-  val log: LoggingM[F]
-  val config: ConfigM[F]
+trait CRUDApi[A] {
+
+  val reset: Endpoint[Int]
+  val retrieve: Endpoint[A]
+  val list: Endpoint[List[A]]
+  val insert: Endpoint[Option[A]]
+  val update: Endpoint[Option[A]]
+  val destroy: Endpoint[Int]
+
+  lazy val endpoints = reset :+: retrieve :+: list :+: insert :+: update :+: destroy
 }

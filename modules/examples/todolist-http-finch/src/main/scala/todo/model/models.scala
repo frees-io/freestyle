@@ -14,19 +14,11 @@
  * limitations under the License.
  */
 
-package todo
-package persistence
+package examples.todolist
+package model
 
-import examples.todolist.persistence._
-import freestyle.tagless.module
+final case class Pong(time: Long)
 
-/**
- * Module containing all the algebras declared in this layer.
- */
-@module
-trait Persistence[F[_]] {
-  val appRepository: AppRepository[F]
-  val todoItemRepository: TodoItemRepository[F]
-  val todoListRepository: TodoListRepository[F]
-  val tagRepository: TagRepository[F]
+object Pong {
+  def current: Pong = Pong(System.currentTimeMillis() / 1000L)
 }

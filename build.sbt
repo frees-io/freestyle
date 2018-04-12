@@ -265,7 +265,7 @@ lazy val httpClientJVM = httpClient.jvm
 //// EXAMPLES ////
 //////////////////
 
-lazy val todolistService = jvmModule("todolist-service", subFolder = Some("examples"))
+lazy val `todolist-lib` = jvmModule("todolist-lib", subFolder = Some("examples"))
   .dependsOn(coreJVM, doobie, loggingJVM, effectsJVM)
   .settings(noPublishSettings: _*)
   .settings(
@@ -276,8 +276,8 @@ lazy val todolistService = jvmModule("todolist-service", subFolder = Some("examp
     ) ++ commonDeps
   )
 
-lazy val todolist = jvmModule("todolist", subFolder = Some("examples"))
-  .dependsOn(todolistService, httpFinch, config, asyncCatsEffectJVM)
+lazy val `todolist-http-finch` = jvmModule("todolist-http-finch", subFolder = Some("examples"))
+  .dependsOn(`todolist-lib`, httpFinch, config, asyncCatsEffectJVM)
   .settings(noPublishSettings: _*)
   .settings(
     libraryDependencies ++= Seq(
@@ -325,8 +325,8 @@ lazy val jvmModules: Seq[ProjectReference] = Seq(
   httpClientJVM,
   //tests,
   //Examples:
-  todolist,
-  todolistService,
+  `todolist-lib`,
+  `todolist-http-finch`,
   slickExample
 )
 

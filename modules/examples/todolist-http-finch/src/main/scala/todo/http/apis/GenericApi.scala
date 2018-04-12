@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package todo
+package examples.todolist
 package http
 package apis
 
@@ -23,7 +23,7 @@ import cats.Monad.ops._
 import com.twitter.util.Future
 import io.finch._
 import freestyle.tagless.logging.LoggingM
-import todo.model.Pong
+import examples.todolist.model.Pong
 
 class GenericApi[F[_]: Monad](implicit log: LoggingM[F], handler: F ~> Future) {
 

@@ -14,20 +14,19 @@
  * limitations under the License.
  */
 
-package todo
-package http
-package apis
+package examples.todolist
+package persistence
 
-import io.finch.Endpoint
+import examples.todolist.persistence._
+import freestyle.tagless.module
 
-trait CRUDApi[A] {
-
-  val reset: Endpoint[Int]
-  val retrieve: Endpoint[A]
-  val list: Endpoint[List[A]]
-  val insert: Endpoint[Option[A]]
-  val update: Endpoint[Option[A]]
-  val destroy: Endpoint[Int]
-
-  lazy val endpoints = reset :+: retrieve :+: list :+: insert :+: update :+: destroy
+/**
+ * Module containing all the algebras declared in this layer.
+ */
+@module
+trait Persistence[F[_]] {
+  val appRepository: AppRepository[F]
+  val todoItemRepository: TodoItemRepository[F]
+  val todoListRepository: TodoListRepository[F]
+  val tagRepository: TagRepository[F]
 }
