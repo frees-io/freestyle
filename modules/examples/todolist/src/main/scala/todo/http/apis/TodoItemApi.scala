@@ -33,7 +33,7 @@ class TodoItemApi[F[_]: Monad](implicit service: TodoItemService[F], handler: F 
 
   import io.finch.syntax._
 
-  private val prefix = "/items"
+  private val prefix = "items"
 
   val reset = post(prefix :: "reset") {
     handler(service.reset.map(Ok))

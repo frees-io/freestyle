@@ -32,7 +32,7 @@ class TagApi[F[_]: Monad](implicit service: TagService[F], handler: F ~> Future)
 
   import io.finch.syntax._
 
-  private val prefix = "/tags"
+  private val prefix = "tags"
 
   val reset = post(prefix :: "reset") {
     handler(service.reset.map(Ok))
