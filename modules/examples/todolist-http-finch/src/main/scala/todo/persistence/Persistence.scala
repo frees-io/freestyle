@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package todo
+package examples.todolist
 package persistence
 
 import examples.todolist.persistence._

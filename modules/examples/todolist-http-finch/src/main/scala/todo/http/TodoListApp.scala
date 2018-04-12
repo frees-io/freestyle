@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package todo
+package examples.todolist
 package http
 
 import com.twitter.finagle.http.{Request, Response}
@@ -34,9 +34,9 @@ import freestyle.tagless.config.ConfigM
 import freestyle.tagless.config.implicits._
 import freestyle.tagless.effects.error.ErrorM
 import freestyle.tagless.effects.error.implicits._
-import todo.http.apis.Api
-import todo.persistence.Persistence
-import todo.services.Services
+import examples.todolist.http.apis.Api
+import examples.todolist.persistence.Persistence
+import examples.todolist.services.Services
 
 @module
 trait App[F[_]] {
@@ -46,7 +46,7 @@ trait App[F[_]] {
 
 object TodoListApp extends TwitterServer {
 
-  import todo.runtime.implicits._
+  import examples.todolist.runtime.implicits._
 
   def bootstrap[F[_]: Monad](
       implicit app: App[F],

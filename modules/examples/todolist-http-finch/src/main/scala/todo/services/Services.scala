@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package todo
+package examples.todolist
 package services
 
 import examples.todolist.service.{AppService, TagService, TodoItemService, TodoListService}
