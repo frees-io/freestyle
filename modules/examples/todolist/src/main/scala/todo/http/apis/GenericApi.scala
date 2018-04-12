@@ -22,7 +22,6 @@ import cats.{~>, Monad}
 import cats.Monad.ops._
 import com.twitter.util.Future
 import io.finch._
-//import freestyle.free.http.finch._
 import freestyle.tagless.logging.LoggingM
 import todo.model.Pong
 
