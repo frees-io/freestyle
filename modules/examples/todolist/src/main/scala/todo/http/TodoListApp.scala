@@ -66,7 +66,7 @@ object TodoListApp extends TwitterServer {
     } yield
       Await.ready(
         Http.server.withAdmissionControl
-          .concurrencyLimit(10, 10)
+          .concurrencyLimit(maxConcurrentRequests = 10, maxWaiters = 10)
           .serve(s"$host:$port", service)
       )
   }
