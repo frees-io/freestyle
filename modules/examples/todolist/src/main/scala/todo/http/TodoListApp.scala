@@ -72,6 +72,9 @@ object TodoListApp extends TwitterServer {
   }
 
   def main() =
-    bootstrap[IO].unsafeToFuture().onComplete(_.foreach(_.close()))
+    bootstrap[IO].unsafeRunAsync {
+      case Left(error)   => println(s"Error executing server. ${error.getMessage}")
+      case Right(server) => server.close()
+    }
 
 }
