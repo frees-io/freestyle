@@ -95,17 +95,21 @@ trait ProductionImplicits {
     }
   }
 
-  implicit val appRepositoryHandler: AppRepository.Handler[IO] =
-    new AppRepositoryHandler[IO]
+  implicit def appRepositoryHandler[F[_]: Monad](
+      implicit T: Transactor[F]): AppRepository.Handler[F] =
+    new AppRepositoryHandler[F]
 
-  implicit val todoItemRepositoryHandler: TodoItemRepository.Handler[IO] =
-    new TodoItemRepositoryHandler[IO]
+  implicit def todoItemRepositoryHandler[F[_]: Monad](
+      implicit T: Transactor[F]): TodoItemRepository.Handler[F] =
+    new TodoItemRepositoryHandler[F]
 
-  implicit val todoListRepositoryHandler: TodoListRepository.Handler[IO] =
-    new TodoListRepositoryHandler[IO]
+  implicit def todoListRepositoryHandler[F[_]: Monad](
+      implicit T: Transactor[F]): TodoListRepository.Handler[F] =
+    new TodoListRepositoryHandler[F]
 
-  implicit val tagRepositoryHandler: TagRepository.Handler[IO] =
-    new TagRepositoryHandler[IO]
+  implicit def tagRepositoryHandler[F[_]: Monad](
+      implicit T: Transactor[F]): TagRepository.Handler[F] =
+    new TagRepositoryHandler[F]
 
   implicit val executionContext: ExecutionContext =
     scala.concurrent.ExecutionContext.Implicits.global

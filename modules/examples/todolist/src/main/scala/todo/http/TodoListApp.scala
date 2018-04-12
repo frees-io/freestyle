@@ -26,6 +26,7 @@ import io.finch.circe._
 import cats.effect.IO
 import cats.{~>, Monad}
 import cats.implicits._
+import doobie.util.transactor.Transactor
 import freestyle.tagless.module
 import freestyle.tagless.logging.LoggingM
 import freestyle.tagless.loggingJVM.log4s.implicits._
@@ -50,6 +51,7 @@ object TodoListApp extends TwitterServer {
   def bootstrap[F[_]: Monad](
       implicit app: App[F],
       handler: F ~> Future,
+      T: Transactor[F],
       api: Api[F]): F[ListeningServer] = {
 
     val service: Service[Request, Response] = api.endpoints.toService
