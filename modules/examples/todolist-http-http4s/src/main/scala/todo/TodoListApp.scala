@@ -16,35 +16,30 @@
 
 package todo
 
-import cats.Monad
+import cats.effect.Effect
 import cats.effect.IO
-import cats.Monad.ops._
-
-import examples.todolist.http.GenericApi
-
+import cats.syntax.flatMap._
+import cats.syntax.either._
 import org.http4s.server.Server
 import org.http4s.server.blaze.BlazeBuilder
-
 import org.http4s.HttpService
 import org.http4s.implicits._
-
 import freestyle.tagless.config.ConfigM
 import freestyle.tagless.config.implicits._
+import examples.todolist.http.GenericApi
 
 object TodoListApp {
 
   import examples.todolist.runtime.implicits._
 
-  def bootstrap[F[_]: Monad](
-      implicit config: ConfigM[F]
-  ): F[Server[F]] = {
+  def bootstrap[F[_]: Effect](implicit config: ConfigM[F]): F[Server[F]] = {
+
     val services: HttpService[F] = GenericApi().service
 
-    for {
-      cfg <- config.load
-      host: String = cfg.string("http.host").getOrElse("localhost")
-      port: Int    = cfg.int("http.port").getOrElse(8080)
-    } yield {
+    config.load.flatMap { cfg =>
+      val host: String = cfg.string("http.host").getOrElse("localhost")
+      val port: Int    = cfg.int("http.port").getOrElse(8080)
+
       BlazeBuilder[F]
         .bindHttp(port, host)
         .mountService(services)
@@ -52,9 +47,11 @@ object TodoListApp {
     }
   }
 
-  def main() =
+  def main(args: Array[String]): Unit = {
     bootstrap[IO].unsafeRunAsync {
       case Left(error)   => println(s"Error executing server. ${error.getMessage}")
-      case Right(server) => server.shutdown
+      case Right(server) => server
     }
+  }
+
 }
