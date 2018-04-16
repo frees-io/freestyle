@@ -287,6 +287,18 @@ lazy val `todolist-http-finch` = jvmModule("todolist-http-finch", subFolder = So
     ) ++ commonDeps
   )
 
+lazy val `todolist-http-http4s` = jvmModule("todolist-http-http4s", subFolder = Some("examples"))
+  .dependsOn(`todolist-lib`, httpHttp4s, config)
+  .settings(noPublishSettings: _*)
+  .settings(
+    libraryDependencies ++= Seq(
+      %%("http4s-dsl"),
+      %%("circe-generic"),
+      %%("http4s-circe"),
+      %%("http4s-blaze-server")
+    ) ++ commonDeps
+  )
+
 lazy val slickExample = jvmModule("slick-example", subFolder = Some("examples"))
   .dependsOn(coreJVM, loggingJVM, slick)
   .settings(noPublishSettings: _*)
@@ -327,6 +339,7 @@ lazy val jvmModules: Seq[ProjectReference] = Seq(
   //Examples:
   `todolist-lib`,
   `todolist-http-finch`,
+  `todolist-http-http4s`,
   slickExample
 )
 
