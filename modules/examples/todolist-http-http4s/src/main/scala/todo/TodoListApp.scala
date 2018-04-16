@@ -16,42 +16,37 @@
 
 package todo
 
-import cats.effect.Effect
-import cats.effect.IO
-import cats.syntax.flatMap._
+import cats.effect.{Effect, IO}
 import cats.syntax.either._
-import org.http4s.server.Server
+import cats.syntax.functor._
+import examples.todolist.http.GenericApi
 import org.http4s.server.blaze.BlazeBuilder
 import org.http4s.HttpService
 import org.http4s.implicits._
 import freestyle.tagless.config.ConfigM
 import freestyle.tagless.config.implicits._
-import examples.todolist.http.GenericApi
+import fs2.StreamApp
 
-object TodoListApp {
+object TodoListApp extends StreamApp[IO] {
 
   import examples.todolist.runtime.implicits._
 
-  def bootstrap[F[_]: Effect](implicit config: ConfigM[F]): F[Server[F]] = {
+  override def stream(
+      args: List[String],
+      requestShutdown: IO[Unit]): fs2.Stream[IO, StreamApp.ExitCode] =
+    bootstrap[IO].unsafeRunSync()
+
+  def bootstrap[F[_]: Effect](implicit config: ConfigM[F]): F[fs2.Stream[F, StreamApp.ExitCode]] = {
 
     val services: HttpService[F] = GenericApi().service
 
-    config.load.flatMap { cfg =>
+    config.load.map { cfg =>
       val host: String = cfg.string("http.host").getOrElse("localhost")
       val port: Int    = cfg.int("http.port").getOrElse(8080)
-
       BlazeBuilder[F]
         .bindHttp(port, host)
         .mountService(services)
-        .start
+        .serve
     }
   }
-
-  def main(args: Array[String]): Unit = {
-    bootstrap[IO].unsafeRunAsync {
-      case Left(error)   => println(s"Error executing server. ${error.getMessage}")
-      case Right(server) => server
-    }
-  }
-
 }
