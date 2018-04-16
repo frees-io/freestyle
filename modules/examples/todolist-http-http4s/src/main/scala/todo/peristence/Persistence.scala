@@ -14,30 +14,24 @@
  * limitations under the License.
  */
 
-package examples.todolist
-package http
+package exapmles.todolist
+package peristence
 
-import cats.Monad
-import examples.todolist.model.Pong
-import io.circe.Json
-import org.http4s.HttpService
-import org.http4s.circe._
-import org.http4s.dsl.Http4sDsl
-
-class GenericApi[F[_]: Monad] extends Http4sDsl[F] {
-  val service: HttpService[F] =
-    HttpService[F] {
-
-      case GET -> Root / "ping" =>
-        Ok(Json.fromLong(Pong.current.time))
-
-      case GET -> Root / "hello" =>
-        Ok("Hello World")
-
-    }
+import freestyle.tagless.module
+import examples.todolist.persistence.{
+  AppRepository,
+  TagRepository,
+  TodoItemRepository,
+  TodoListRepository
 }
 
-object GenericApi {
-  implicit def instance[F[_]: Monad](): GenericApi[F] =
-    new GenericApi[F]
+/**
+ * Module containing all the algebras declared in this layer.
+ */
+@module
+trait Persistence[F[_]] {
+  val appRepository: AppRepository[F]
+  val todoItemRepository: TodoItemRepository[F]
+  val todoListRepository: TodoListRepository[F]
+  val tagRepository: TagRepository[F]
 }

@@ -15,29 +15,19 @@
  */
 
 package examples.todolist
-package http
+package services
 
-import cats.Monad
-import examples.todolist.model.Pong
-import io.circe.Json
-import org.http4s.HttpService
-import org.http4s.circe._
-import org.http4s.dsl.Http4sDsl
+import examples.todolist.service.{AppService, TagService, TodoItemService, TodoListService}
+import freestyle.tagless.config.ConfigM
+import freestyle.tagless.logging.LoggingM
+import freestyle.tagless.module
 
-class GenericApi[F[_]: Monad] extends Http4sDsl[F] {
-  val service: HttpService[F] =
-    HttpService[F] {
-
-      case GET -> Root / "ping" =>
-        Ok(Json.fromLong(Pong.current.time))
-
-      case GET -> Root / "hello" =>
-        Ok("Hello World")
-
-    }
-}
-
-object GenericApi {
-  implicit def instance[F[_]: Monad](): GenericApi[F] =
-    new GenericApi[F]
+@module
+trait Services[F[_]] {
+  val appServices: AppService[F]
+  val tagService: TagService[F]
+  val todoItemService: TodoItemService[F]
+  val todoListService: TodoListService[F]
+  val log: LoggingM[F]
+  val config: ConfigM[F]
 }

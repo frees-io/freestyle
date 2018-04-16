@@ -36,9 +36,7 @@ import examples.todolist.persistence.runtime.{
 
 import scala.concurrent.ExecutionContext
 
-object implicits extends ExecutionImplicits
-//with RepositoryHandlersImplicits
-//with DoobieImplicits
+object implicits extends ExecutionImplicits with RepositoryHandlersImplicits with DoobieImplicits
 
 trait RepositoryHandlersImplicits {
 

@@ -20,7 +20,10 @@ import cats.effect.{Effect, IO}
 import cats.syntax.either._
 import cats.syntax.functor._
 import cats.syntax.flatMap._
-import examples.todolist.http.GenericApi
+import doobie.util.transactor.Transactor
+import examples.todolist.http.Api
+import examples.todolist.services.Services
+import exapmles.todolist.peristence.Persistence
 import org.http4s.server.blaze.BlazeBuilder
 import org.http4s.HttpService
 import org.http4s.implicits._
@@ -28,7 +31,16 @@ import freestyle.tagless.config.ConfigM
 import freestyle.tagless.config.implicits._
 import freestyle.tagless.logging.LoggingM
 import freestyle.tagless.loggingJVM.log4s.implicits._
+import freestyle.tagless.effects.error.ErrorM
+import freestyle.tagless.effects.error.implicits._
+import freestyle.tagless.module
 import fs2.StreamApp
+
+@module
+trait App[F[_]] {
+  val persistence: Persistence[F]
+  val services: Services[F]
+}
 
 object TodoListApp extends StreamApp[IO] {
 
@@ -40,10 +52,13 @@ object TodoListApp extends StreamApp[IO] {
     bootstrap[IO].unsafeRunSync()
 
   def bootstrap[F[_]: Effect](
-      implicit config: ConfigM[F],
-      log: LoggingM[F]): F[fs2.Stream[F, StreamApp.ExitCode]] = {
+      implicit app: App[F],
+      T: Transactor[F],
+      api: Api[F]): F[fs2.Stream[F, StreamApp.ExitCode]] = {
 
-    val services: HttpService[F] = GenericApi().service
+    val services: HttpService[F] = api.services
+    val log: LoggingM[F]         = app.services.log
+    val config: ConfigM[F]       = app.services.config
 
     for {
       _   <- log.warn("Trying to load application.conf")
