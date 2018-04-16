@@ -19,12 +19,15 @@ package todo
 import cats.effect.{Effect, IO}
 import cats.syntax.either._
 import cats.syntax.functor._
+import cats.syntax.flatMap._
 import examples.todolist.http.GenericApi
 import org.http4s.server.blaze.BlazeBuilder
 import org.http4s.HttpService
 import org.http4s.implicits._
 import freestyle.tagless.config.ConfigM
 import freestyle.tagless.config.implicits._
+import freestyle.tagless.logging.LoggingM
+import freestyle.tagless.loggingJVM.log4s.implicits._
 import fs2.StreamApp
 
 object TodoListApp extends StreamApp[IO] {
@@ -36,17 +39,23 @@ object TodoListApp extends StreamApp[IO] {
       requestShutdown: IO[Unit]): fs2.Stream[IO, StreamApp.ExitCode] =
     bootstrap[IO].unsafeRunSync()
 
-  def bootstrap[F[_]: Effect](implicit config: ConfigM[F]): F[fs2.Stream[F, StreamApp.ExitCode]] = {
+  def bootstrap[F[_]: Effect](
+      implicit config: ConfigM[F],
+      log: LoggingM[F]): F[fs2.Stream[F, StreamApp.ExitCode]] = {
 
     val services: HttpService[F] = GenericApi().service
 
-    config.load.map { cfg =>
-      val host: String = cfg.string("http.host").getOrElse("localhost")
-      val port: Int    = cfg.int("http.port").getOrElse(8080)
+    for {
+      _   <- log.warn("Trying to load application.conf")
+      cfg <- config.load
+      host: String = cfg.string("http.host").getOrElse("localhost")
+      port: Int    = cfg.int("http.port").getOrElse(8080)
+      _ <- log.debug(s"Host: $host")
+      _ <- log.debug(s"Port: $port")
+    } yield
       BlazeBuilder[F]
         .bindHttp(port, host)
         .mountService(services)
         .serve
-    }
   }
 }
