@@ -17,10 +17,12 @@
 package examples.todolist
 package http
 
+import cats.Monad
+
 class Api[F[_]](implicit genericApi: GenericApi[F]) {
   val services = genericApi.service
 }
 
 object Api {
-  implicit def instance[F[_]](implicit genericApi: GenericApi[F]): Api[F] = new Api[F]
+  implicit def instance[F[_]: Monad](implicit genericApi: GenericApi[F]): Api[F] = new Api[F]
 }

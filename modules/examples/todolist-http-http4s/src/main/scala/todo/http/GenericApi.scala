@@ -38,6 +38,6 @@ class GenericApi[F[_]: Monad] extends Http4sDsl[F] {
 }
 
 object GenericApi {
-  implicit def instance[F[_]: Monad](): GenericApi[F] =
+  implicit def instance[F[_]: Monad]: GenericApi[F] =
     new GenericApi[F]
 }
