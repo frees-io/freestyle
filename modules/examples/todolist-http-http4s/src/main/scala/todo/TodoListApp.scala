@@ -21,7 +21,7 @@ import cats.syntax.either._
 import cats.syntax.functor._
 import cats.syntax.flatMap._
 import doobie.util.transactor.Transactor
-import examples.todolist.http.Api
+import examples.todolist.http._
 import examples.todolist.services.Services
 import exapmles.todolist.peristence.Persistence
 import org.http4s.server.blaze.BlazeBuilder
@@ -45,6 +45,9 @@ trait App[F[_]] {
 object TodoListApp extends StreamApp[IO] {
 
   import examples.todolist.runtime.implicits._
+
+  implicit val genericApiIO : GenericApi[IO] = GenericApi.instance[IO]
+  implicit val apiIO        : Api[IO]        = Api.instance[IO]
 
   override def stream(
       args: List[String],
