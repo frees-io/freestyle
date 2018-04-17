@@ -35,7 +35,7 @@ class TagApi[F[_]: Effect](implicit service: TagService[F]) extends Http4sDsl[F]
   implicit private val tagDecoder: EntityDecoder[F, Tag] = jsonOf[F, Tag]
 
   val endpoints = HttpService[F] {
-    case POST -> Root / prefix =>
+    case POST -> Root / prefix / "reset" =>
       service.reset.flatMap(e => Ok(e.asJson))
 
     case GET -> Root / prefix / IntVar(id) =>
