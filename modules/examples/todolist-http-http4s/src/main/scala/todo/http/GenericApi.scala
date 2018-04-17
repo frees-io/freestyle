@@ -18,26 +18,40 @@ package examples.todolist
 package http
 
 import cats.Monad
+import cats.effect.Effect
+import cats.syntax.flatMap._
+import cats.syntax.functor._
 import examples.todolist.model.Pong
+import freestyle.tagless.logging.LoggingM
 import io.circe.Json
-import org.http4s.HttpService
+import org.http4s.{HttpService, Response}
 import org.http4s.circe._
 import org.http4s.dsl.Http4sDsl
 
-class GenericApi[F[_]: Monad] extends Http4sDsl[F] {
+class GenericApi[F[_]: Monad](implicit log: LoggingM[F]) extends Http4sDsl[F] {
   val service: HttpService[F] =
     HttpService[F] {
 
       case GET -> Root / "ping" =>
-        Ok(Json.fromLong(Pong.current.time))
+        for {
+          _        <- log.error("Not really an error")
+          _        <- log.warn("Not really a warn")
+          _        <- log.debug("GET /ping")
+          response <- Ok(Json.fromLong(Pong.current.time))
+        } yield response
 
       case GET -> Root / "hello" =>
-        Ok("Hello World")
+        for {
+          _        <- log.error("Not really an error")
+          _        <- log.warn("Not really a warn")
+          _        <- log.debug("GET /Hello")
+          response <- Ok("Hello World")
+        } yield response
 
     }
 }
 
 object GenericApi {
-  implicit def instance[F[_]: Monad](): GenericApi[F] =
+  implicit def instance[F[_]: Monad](implicit log: LoggingM[F]): GenericApi[F] =
     new GenericApi[F]
 }
