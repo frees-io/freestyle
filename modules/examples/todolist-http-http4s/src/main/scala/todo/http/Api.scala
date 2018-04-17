@@ -23,13 +23,15 @@ import examples.todolist.http._
 import org.http4s.implicits._
 
 class Api[F[_]: Effect](
-    implicit genericApi: GenericApi[F],
+    implicit appApi: AppApi[F],
+    genericApi: GenericApi[F],
     todoItemApi: TodoItemApi[F],
     todoListApi: TodoListApi[F],
     tagApi: TagApi[F]) {
 
   val endpoints =
-    genericApi.endpoints <+>
+    appApi.endpoints <+>
+      genericApi.endpoints <+>
       todoItemApi.endpoints <+>
       todoListApi.endpoints <+>
       tagApi.endpoints
@@ -37,7 +39,8 @@ class Api[F[_]: Effect](
 
 object Api {
   implicit def instance[F[_]: Effect](
-      implicit genericApi: GenericApi[F],
+      implicit appApi: AppApi[F],
+      genericApi: GenericApi[F],
       todoItemApi: TodoItemApi[F],
       todoListApi: TodoListApi[F],
       tagApi: TagApi[F]): Api[F] =
