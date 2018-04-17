@@ -29,10 +29,9 @@ import org.http4s.dsl.Http4sDsl
 
 class TagApi[F[_]: Effect](implicit service: TagService[F]) extends Http4sDsl[F] {
 
-  private val prefix = "tags"
+  import codecs._
 
-  implicit private val tagEncoder: EntityEncoder[F, Tag] = jsonEncoderOf[F, Tag]
-  implicit private val tagDecoder: EntityDecoder[F, Tag] = jsonOf[F, Tag]
+  private val prefix = "tags"
 
   val endpoints = HttpService[F] {
     case POST -> Root / prefix / "reset" =>

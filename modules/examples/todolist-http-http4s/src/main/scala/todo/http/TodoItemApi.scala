@@ -28,10 +28,9 @@ import org.http4s.dsl.Http4sDsl
 
 class TodoItemApi[F[_]: Effect](implicit service: TodoItemService[F]) extends Http4sDsl[F] {
 
-  private val prefix = "items"
+  import codecs._
 
-  implicit val todoItemEncoder: EntityEncoder[F, TodoItem] = jsonEncoderOf[F, TodoItem]
-  implicit val todoItemDecoder: EntityDecoder[F, TodoItem] = jsonOf[F, TodoItem]
+  private val prefix = "items"
 
   val endpoints = HttpService[F] {
     case POST -> Root / prefix =>

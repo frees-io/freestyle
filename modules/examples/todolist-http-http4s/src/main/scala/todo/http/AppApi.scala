@@ -28,8 +28,7 @@ import org.http4s.dsl.Http4sDsl
 
 class AppApi[F[_]: Effect](implicit service: AppService[F]) extends Http4sDsl[F] {
 
-  implicit private val todoFormEncoder: EntityEncoder[F, TodoForm] = jsonEncoderOf[F, TodoForm]
-  implicit private val todoFormDecoder: EntityDecoder[F, TodoForm] = jsonOf[F, TodoForm]
+  import codecs._
 
   val endpoints = HttpService[F] {
     case POST -> Root / "reset" =>
