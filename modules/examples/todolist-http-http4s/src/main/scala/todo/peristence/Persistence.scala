@@ -17,8 +17,8 @@
 package exapmles.todolist
 package peristence
 
-import freestyle.tagless.module
 import examples.todolist.persistence._
+import freestyle.tagless.module
 
 /**
  * Module containing all the algebras declared in this layer.

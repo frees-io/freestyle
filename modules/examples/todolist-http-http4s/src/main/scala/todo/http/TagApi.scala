@@ -17,10 +17,10 @@
 package examples.todolist
 package http
 
-import cats.implicits._
 import cats.effect.Effect
-import examples.todolist.Tag
+import cats.implicits._
 import examples.todolist.service.TagService
+import examples.todolist.Tag
 import io.circe.generic.auto._
 import io.circe.syntax._
 import org.http4s._

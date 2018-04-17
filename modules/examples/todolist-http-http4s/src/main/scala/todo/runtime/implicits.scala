@@ -19,13 +19,13 @@ package runtime
 
 import java.util.Properties
 
-import cats.Monad
 import cats.effect.IO
+import cats.Monad
 import com.zaxxer.hikari.{HikariConfig, HikariDataSource}
 import doobie._
-import doobie.implicits._
 import doobie.hikari._
 import doobie.hikari.implicits._
+import doobie.implicits._
 import examples.todolist.persistence._
 import examples.todolist.persistence.runtime._
 

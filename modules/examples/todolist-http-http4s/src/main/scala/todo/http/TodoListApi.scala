@@ -17,8 +17,8 @@
 package examples.todolist
 package http
 
-import cats.implicits._
 import cats.effect.Effect
+import cats.implicits._
 import examples.todolist.service.TodoListService
 import io.circe.generic.auto._
 import io.circe.syntax._

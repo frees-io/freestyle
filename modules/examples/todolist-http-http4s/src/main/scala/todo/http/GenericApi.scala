@@ -17,16 +17,14 @@
 package examples.todolist
 package http
 
-import cats.Monad
 import cats.effect.Effect
 import cats.implicits._
-import org.http4s.implicits._
 import examples.todolist.model.Pong
 import freestyle.tagless.logging.LoggingM
 import io.circe.Json
-import org.http4s.{HttpService, Response}
 import org.http4s.circe._
 import org.http4s.dsl.Http4sDsl
+import org.http4s.HttpService
 
 class GenericApi[F[_]: Effect](implicit log: LoggingM[F]) extends Http4sDsl[F] {
   val endpoints =
