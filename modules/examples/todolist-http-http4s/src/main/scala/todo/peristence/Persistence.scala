@@ -18,12 +18,7 @@ package exapmles.todolist
 package peristence
 
 import freestyle.tagless.module
-import examples.todolist.persistence.{
-  AppRepository,
-  TagRepository,
-  TodoItemRepository,
-  TodoListRepository
-}
+import examples.todolist.persistence._
 
 /**
  * Module containing all the algebras declared in this layer.

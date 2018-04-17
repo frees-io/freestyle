@@ -27,12 +27,7 @@ import doobie.implicits._
 import doobie.hikari._
 import doobie.hikari.implicits._
 import examples.todolist.persistence._
-import examples.todolist.persistence.runtime.{
-  AppRepositoryHandler,
-  TagRepositoryHandler,
-  TodoItemRepositoryHandler,
-  TodoListRepositoryHandler
-}
+import examples.todolist.persistence.runtime._
 
 import scala.concurrent.ExecutionContext
 
