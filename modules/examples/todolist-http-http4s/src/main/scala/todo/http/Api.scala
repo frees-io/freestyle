@@ -17,10 +17,29 @@
 package examples.todolist
 package http
 
-class Api[F[_]](implicit genericApi: GenericApi[F]) {
-  val services = genericApi.service
+import cats.effect.Effect
+import cats.implicits._
+import examples.todolist.http._
+import org.http4s.implicits._
+
+class Api[F[_]: Effect](
+    implicit genericApi: GenericApi[F],
+    todoItemApi: TodoItemApi[F],
+    todoListApi: TodoListApi[F],
+    tagApi: TagApi[F]) {
+
+  val endpoints =
+    genericApi.endpoints <+>
+      todoItemApi.endpoints <+>
+      todoListApi.endpoints <+>
+      tagApi.endpoints
 }
 
 object Api {
-  implicit def instance[F[_]](implicit genericApi: GenericApi[F]): Api[F] = new Api[F]
+  implicit def instance[F[_]: Effect](
+      implicit genericApi: GenericApi[F],
+      todoItemApi: TodoItemApi[F],
+      todoListApi: TodoListApi[F],
+      tagApi: TagApi[F]): Api[F] =
+    new Api[F]
 }

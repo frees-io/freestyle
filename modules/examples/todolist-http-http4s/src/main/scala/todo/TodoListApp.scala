@@ -56,7 +56,7 @@ object TodoListApp extends StreamApp[IO] {
       T: Transactor[F],
       api: Api[F]): F[fs2.Stream[F, StreamApp.ExitCode]] = {
 
-    val services: HttpService[F] = api.services
+    val services: HttpService[F] = api.endpoints
     val log: LoggingM[F]         = app.services.log
     val config: ConfigM[F]       = app.services.config
 
