@@ -60,7 +60,7 @@ class TagApi[F[_]: Effect](implicit service: TagService[F]) extends Http4sDsl[F]
       } yield reponse
 
     case DELETE -> Root / prefix / IntVar(id) =>
-      service.destroy(id).flatMap(_ => Ok())
+      service.destroy(id) *> Ok()
   }
 }
 

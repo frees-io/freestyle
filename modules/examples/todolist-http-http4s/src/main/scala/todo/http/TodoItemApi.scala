@@ -34,7 +34,7 @@ class TodoItemApi[F[_]: Effect](implicit service: TodoItemService[F]) extends Ht
 
   val endpoints = HttpService[F] {
     case POST -> Root / prefix =>
-      service.reset.flatMap(_ => Ok())
+      service.reset *> Ok()
 
     case GET -> Root / prefix / IntVar(id) =>
       service.retrieve(id) flatMap { item =>
@@ -60,7 +60,7 @@ class TodoItemApi[F[_]: Effect](implicit service: TodoItemService[F]) extends Ht
       } yield reponse
 
     case DELETE -> Root / prefix / IntVar(id) =>
-      service.destroy(id).flatMap(_ => Ok())
+      service.destroy(id) *> Ok()
   }
 }
 

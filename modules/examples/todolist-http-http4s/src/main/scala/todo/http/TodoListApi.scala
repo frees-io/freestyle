@@ -60,7 +60,7 @@ class TodoListApi[F[_]: Effect](implicit service: TodoListService[F]) extends Ht
       } yield reponse
 
     case DELETE -> Root / prefix / IntVar(id) =>
-      service.destroy(id).flatMap(_ => Ok())
+      service.destroy(id) *> Ok()
   }
 }
 
