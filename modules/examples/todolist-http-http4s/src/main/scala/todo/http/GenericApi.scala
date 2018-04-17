@@ -19,8 +19,8 @@ package http
 
 import cats.Monad
 import cats.effect.Effect
-import cats.syntax.flatMap._
-import cats.syntax.functor._
+import cats.implicits._
+import org.http4s.implicits._
 import examples.todolist.model.Pong
 import freestyle.tagless.logging.LoggingM
 import io.circe.Json
@@ -28,10 +28,9 @@ import org.http4s.{HttpService, Response}
 import org.http4s.circe._
 import org.http4s.dsl.Http4sDsl
 
-class GenericApi[F[_]: Monad](implicit log: LoggingM[F]) extends Http4sDsl[F] {
-  val service: HttpService[F] =
+class GenericApi[F[_]: Effect](implicit log: LoggingM[F]) extends Http4sDsl[F] {
+  val endpoints =
     HttpService[F] {
-
       case GET -> Root / "ping" =>
         for {
           _        <- log.error("Not really an error")
@@ -47,11 +46,10 @@ class GenericApi[F[_]: Monad](implicit log: LoggingM[F]) extends Http4sDsl[F] {
           _        <- log.debug("GET /Hello")
           response <- Ok("Hello World")
         } yield response
-
     }
 }
 
 object GenericApi {
-  implicit def instance[F[_]: Monad](implicit log: LoggingM[F]): GenericApi[F] =
+  implicit def instance[F[_]: Effect](implicit log: LoggingM[F]): GenericApi[F] =
     new GenericApi[F]
 }
