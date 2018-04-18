@@ -265,17 +265,37 @@ lazy val httpClientJVM = httpClient.jvm
 //// EXAMPLES ////
 //////////////////
 
-lazy val todolist = jvmModule("todolist", subFolder = Some("examples"))
-  .dependsOn(coreJVM, doobie, httpFinch, loggingJVM, effectsJVM, config)
+lazy val `todolist-lib` = jvmModule("todolist-lib", subFolder = Some("examples"))
+  .dependsOn(coreJVM, doobie, loggingJVM, effectsJVM)
   .settings(noPublishSettings: _*)
   .settings(
     libraryDependencies ++= Seq(
       %%("cats-effect"),
-      %%("circe-generic"),
       %%("doobie-h2"),
-      %%("doobie-hikari"),
+      %%("doobie-hikari")
+    ) ++ commonDeps
+  )
+
+lazy val `todolist-http-finch` = jvmModule("todolist-http-finch", subFolder = Some("examples"))
+  .dependsOn(`todolist-lib`, httpFinch, config, asyncCatsEffectJVM)
+  .settings(noPublishSettings: _*)
+  .settings(
+    libraryDependencies ++= Seq(
+      %%("circe-generic"),
       %%("finch-circe"),
       %%("twitter-server")
+    ) ++ commonDeps
+  )
+
+lazy val `todolist-http-http4s` = jvmModule("todolist-http-http4s", subFolder = Some("examples"))
+  .dependsOn(`todolist-lib`, httpHttp4s, config)
+  .settings(noPublishSettings: _*)
+  .settings(
+    libraryDependencies ++= Seq(
+      %%("http4s-dsl"),
+      %%("circe-generic"),
+      %%("http4s-circe"),
+      %%("http4s-blaze-server")
     ) ++ commonDeps
   )
 
@@ -317,7 +337,9 @@ lazy val jvmModules: Seq[ProjectReference] = Seq(
   httpClientJVM,
   //tests,
   //Examples:
-  todolist,
+  `todolist-lib`,
+  `todolist-http-finch`,
+  `todolist-http-http4s`,
   slickExample
 )
 

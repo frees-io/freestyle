@@ -163,7 +163,10 @@ libraryDependencies += "io.frees" %%% "frees-monix"             % "0.8.0"
 
 ## Freestyle Examples
 
-* [TodoList](./modules/examples/todolist/README.md).
+* [todolist-lib](./modules/examples/todolist-lib).
+* [todolist-http-http4s](./modules/examples/todolist-http-http4s).
+* [todolist-http-finch](./modules/examples/todolist-http-finch).
+* [slick-example](.modules/examples/slick-example).
 
 ## Commercial Support
 
