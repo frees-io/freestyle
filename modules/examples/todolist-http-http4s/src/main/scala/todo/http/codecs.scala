@@ -17,26 +17,27 @@
 package examples.todolist
 package http
 
-import cats.effect.Effect
+import cats.Applicative
+import cats.effect.Sync
 import io.circe.generic.auto._
 import org.http4s._
 import org.http4s.circe._
 
 object codecs {
 
-  implicit def tagEncoder[F[_]: Effect]: EntityEncoder[F, Tag] = jsonEncoderOf[F, Tag]
-  implicit def tagDecoder[F[_]: Effect]: EntityDecoder[F, Tag] = jsonOf[F, Tag]
+  implicit def tagEncoder[F[_]: Applicative]: EntityEncoder[F, Tag] = jsonEncoderOf[F, Tag]
+  implicit def tagDecoder[F[_]: Sync]: EntityDecoder[F, Tag]        = jsonOf[F, Tag]
 
-  implicit def todoItemEncoder[F[_]: Effect]: EntityEncoder[F, TodoItem] =
+  implicit def todoItemEncoder[F[_]: Applicative]: EntityEncoder[F, TodoItem] =
     jsonEncoderOf[F, TodoItem]
-  implicit def todoItemDecoder[F[_]: Effect]: EntityDecoder[F, TodoItem] = jsonOf[F, TodoItem]
+  implicit def todoItemDecoder[F[_]: Sync]: EntityDecoder[F, TodoItem] = jsonOf[F, TodoItem]
 
-  implicit def todoListEncoder[F[_]: Effect]: EntityEncoder[F, TodoList] =
+  implicit def todoListEncoder[F[_]: Applicative]: EntityEncoder[F, TodoList] =
     jsonEncoderOf[F, TodoList]
-  implicit def todoListDecoder[F[_]: Effect]: EntityDecoder[F, TodoList] = jsonOf[F, TodoList]
+  implicit def todoListDecoder[F[_]: Sync]: EntityDecoder[F, TodoList] = jsonOf[F, TodoList]
 
-  implicit def todoFormEncoder[F[_]: Effect]: EntityEncoder[F, TodoForm] =
+  implicit def todoFormEncoder[F[_]: Applicative]: EntityEncoder[F, TodoForm] =
     jsonEncoderOf[F, TodoForm]
-  implicit def todoFormDecoder[F[_]: Effect]: EntityDecoder[F, TodoForm] =
+  implicit def todoFormDecoder[F[_]: Sync]: EntityDecoder[F, TodoForm] =
     jsonOf[F, TodoForm]
 }
