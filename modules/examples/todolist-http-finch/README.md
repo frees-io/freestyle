@@ -1,5 +1,7 @@
 # TodoList HTTP service using finch
 
+TodoList http service implementation using [`finch`](https://finagle.github.io/finch/) and [`todolist-lib`](../todolist-lib).
+
 ## Running the Application
 
 ```scala
