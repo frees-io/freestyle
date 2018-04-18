@@ -1,5 +1,7 @@
 # TodoList HTTP service using http4s
 
+TodoList http service implementation using [`http4s`](https://http4s.org/) and [`todolist-lib`](../todolist-lib).
+
 ## Running the Application
 
 ```scala

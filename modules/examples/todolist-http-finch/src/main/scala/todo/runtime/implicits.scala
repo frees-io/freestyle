@@ -17,23 +17,18 @@
 package examples.todolist
 package runtime
 
-import java.util.Properties
-import scala.concurrent.ExecutionContext
 import cats._
-import cats.effect._
+import cats.effect.IO
 import com.twitter.util._
 import com.zaxxer.hikari.{HikariConfig, HikariDataSource}
 import doobie._
-import doobie.implicits._
 import doobie.hikari._
 import doobie.hikari.implicits._
+import doobie.implicits._
 import examples.todolist.persistence._
-import examples.todolist.persistence.runtime.{
-  AppRepositoryHandler,
-  TagRepositoryHandler,
-  TodoItemRepositoryHandler,
-  TodoListRepositoryHandler
-}
+import examples.todolist.persistence.runtime._
+import java.util.Properties
+import scala.concurrent.ExecutionContext
 
 object implicits extends ProductionImplicits
 
@@ -43,32 +38,6 @@ object implicits extends ProductionImplicits
  * over `twitter.util.Future` used in this case to interop with Finch.
  */
 trait ProductionImplicits {
-
-  implicit val futureEffectSyncMonadError: cats.MonadError[Future, Throwable] with cats.effect.Sync[
-    Future] =
-    new MonadError[Future, Throwable] with cats.effect.Sync[Future] {
-
-      override def pure[A](x: A): Future[A] = Future.value(x)
-
-      override def flatMap[A, B](fa: Future[A])(f: (A) => Future[B]): Future[B] = fa flatMap f
-
-      override def suspend[A](thunk: => Future[A]): Future[A] = Future.Unit.flatMap { _ =>
-        thunk
-      }
-
-      override def raiseError[A](e: Throwable): Future[Nothing] = Future.exception(e)
-
-      override def tailRecM[A, B](a: A)(f: (A) => Future[Either[A, B]]): Future[B] = {
-        f(a).map {
-          case Left(a1) => tailRecM(a1)(f)
-          case Right(c) => Future.value(c)
-        }.flatten
-      }
-
-      override def handleErrorWith[A](fa: Future[A])(f: (Throwable) => Future[A]): Future[A] =
-        fa.rescue { case t => f(t) }
-
-    }
 
   implicit val xa: HikariTransactor[IO] =
     HikariTransactor[IO](new HikariDataSource(new HikariConfig(new Properties {

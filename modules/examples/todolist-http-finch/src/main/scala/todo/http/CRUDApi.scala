@@ -16,7 +16,6 @@
 
 package examples.todolist
 package http
-package apis
 
 import io.finch.Endpoint
 

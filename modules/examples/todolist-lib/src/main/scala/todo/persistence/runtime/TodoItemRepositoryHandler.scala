@@ -56,10 +56,10 @@ class TodoItemRepositoryHandler[F[_]: Monad](implicit T: Transactor[F])
     createQuery.run.transact(T)
 
   def init: F[Int] =
-    createQuery.run
+    dropQuery.run
       .flatMap(
-        creates =>
-          dropQuery.run
-            .map(_ + creates))
+        drops =>
+          createQuery.run
+            .map(_ + drops))
       .transact(T)
 }

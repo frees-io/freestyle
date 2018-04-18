@@ -56,7 +56,7 @@ object TodoListQueries {
             id INT AUTO_INCREMENT PRIMARY KEY,
             title VARCHAR,
             tag_id INT,
-            FOREIGN KEY (tag_id) REFERENCES TAGS(id)
+            FOREIGN KEY (tag_id) REFERENCES tags(id)
           )
        """.update
 }

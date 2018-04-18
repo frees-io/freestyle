@@ -16,16 +16,15 @@
 
 package examples.todolist
 package http
-package apis
 
-import cats.{~>, Monad}
-import cats.Monad.ops._
+import cats._
+import cats.implicits._
 import com.twitter.util.Future
+import examples.todolist.TodoForm
+import examples.todolist.service.AppService
 import io.circe.generic.auto._
 import io.finch._
 import io.finch.circe._
-import examples.todolist.TodoForm
-import examples.todolist.service.AppService
 
 class AppApi[F[_]: Monad](implicit service: AppService[F], handler: F ~> Future) {
 

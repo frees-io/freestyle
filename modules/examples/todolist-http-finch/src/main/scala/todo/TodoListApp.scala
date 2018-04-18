@@ -15,28 +15,27 @@
  */
 
 package examples.todolist
-package http
 
+import cats._
+import cats.effect.IO
+import cats.implicits._
 import com.twitter.finagle.http.{Request, Response}
 import com.twitter.finagle.{Http, ListeningServer, Service}
 import com.twitter.server.TwitterServer
 import com.twitter.util.{Await, Future}
-import io.circe.generic.auto._
-import io.finch.circe._
-import cats.effect.IO
-import cats.{~>, Monad}
-import cats.implicits._
 import doobie.util.transactor.Transactor
-import freestyle.tagless.module
-import freestyle.tagless.logging.LoggingM
-import freestyle.tagless.loggingJVM.log4s.implicits._
+import examples.todolist.http.Api
+import examples.todolist.persistence.Persistence
+import examples.todolist.services.Services
 import freestyle.tagless.config.ConfigM
 import freestyle.tagless.config.implicits._
 import freestyle.tagless.effects.error.ErrorM
 import freestyle.tagless.effects.error.implicits._
-import examples.todolist.http.apis.Api
-import examples.todolist.persistence.Persistence
-import examples.todolist.services.Services
+import freestyle.tagless.logging.LoggingM
+import freestyle.tagless.loggingJVM.log4s.implicits._
+import freestyle.tagless.module
+import io.circe.generic.auto._
+import io.finch.circe._
 
 @module
 trait App[F[_]] {

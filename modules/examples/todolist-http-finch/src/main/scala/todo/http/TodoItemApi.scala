@@ -16,17 +16,15 @@
 
 package examples.todolist
 package http
-package apis
 
-import cats.~>
-import cats.Monad
-import cats.Monad.ops._
+import cats._
+import cats.implicits._
 import com.twitter.util.Future
-import io.finch._
-import io.finch.circe._
-import io.circe.generic.auto._
 import examples.todolist.TodoItem
 import examples.todolist.service.TodoItemService
+import io.circe.generic.auto._
+import io.finch._
+import io.finch.circe._
 
 class TodoItemApi[F[_]: Monad](implicit service: TodoItemService[F], handler: F ~> Future)
     extends CRUDApi[TodoItem] {
