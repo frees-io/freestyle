@@ -1,9 +1,9 @@
-# TodoList Example
+# TodoList HTTP service using finch
 
 ## Running the Application
 
 ```scala
-sbt todolist/run
+sbt todolist-http-finch/run
 ```
 
 By default, it'll bootstrap in port `8081`.
