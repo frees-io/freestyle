@@ -39,32 +39,6 @@ object implicits extends ProductionImplicits
  */
 trait ProductionImplicits {
 
-  implicit val futureEffectSyncMonadError: cats.MonadError[Future, Throwable] with cats.effect.Sync[
-    Future] =
-    new MonadError[Future, Throwable] with cats.effect.Sync[Future] {
-
-      override def pure[A](x: A): Future[A] = Future.value(x)
-
-      override def flatMap[A, B](fa: Future[A])(f: (A) => Future[B]): Future[B] = fa flatMap f
-
-      override def suspend[A](thunk: => Future[A]): Future[A] = Future.Unit.flatMap { _ =>
-        thunk
-      }
-
-      override def raiseError[A](e: Throwable): Future[Nothing] = Future.exception(e)
-
-      override def tailRecM[A, B](a: A)(f: (A) => Future[Either[A, B]]): Future[B] = {
-        f(a).map {
-          case Left(a1) => tailRecM(a1)(f)
-          case Right(c) => Future.value(c)
-        }.flatten
-      }
-
-      override def handleErrorWith[A](fa: Future[A])(f: (Throwable) => Future[A]): Future[A] =
-        fa.rescue { case t => f(t) }
-
-    }
-
   implicit val xa: HikariTransactor[IO] =
     HikariTransactor[IO](new HikariDataSource(new HikariConfig(new Properties {
       setProperty("driverClassName", "org.h2.Driver")
