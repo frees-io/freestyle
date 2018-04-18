@@ -61,7 +61,7 @@ object TodoListApp extends StreamApp[IO] {
     val config: ConfigM[F]       = app.services.config
 
     for {
-      _   <- log.warn("Trying to load application.conf")
+      _   <- log.info("Trying to load application.conf")
       cfg <- config.load
       host: String = cfg.string("http.host").getOrElse("localhost")
       port: Int    = cfg.int("http.port").getOrElse(8080)

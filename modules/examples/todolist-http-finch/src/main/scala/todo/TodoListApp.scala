@@ -58,7 +58,7 @@ object TodoListApp extends TwitterServer {
     val cfg: ConfigM[F]                     = app.services.config
 
     for {
-      _      <- log.warn("Trying to load application.conf")
+      _      <- log.info("Trying to load application.conf")
       config <- cfg.load
       host = config.string("http.host").getOrElse("localhost")
       port = config.int("http.port").getOrElse("8080")
