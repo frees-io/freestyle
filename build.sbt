@@ -267,7 +267,6 @@ lazy val httpClientJVM = httpClient.jvm
 
 lazy val `todolist-lib` = jvmModule("todolist-lib", subFolder = Some("examples"))
   .dependsOn(coreJVM, doobie, loggingJVM, effectsJVM)
-  .settings(noPublishSettings: _*)
   .settings(
     libraryDependencies ++= Seq(
       %%("cats-effect"),
