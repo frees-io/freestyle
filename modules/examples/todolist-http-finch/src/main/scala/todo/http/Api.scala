@@ -17,8 +17,6 @@
 package examples.todolist
 package http
 
-import examples.todolist.http._
-
 /**
  * Finch http endpoints
  */
