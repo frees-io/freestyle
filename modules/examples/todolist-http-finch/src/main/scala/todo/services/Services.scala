@@ -17,10 +17,10 @@
 package examples.todolist
 package services
 
-import examples.todolist.service.{AppService, TagService, TodoItemService, TodoListService}
-import freestyle.tagless.module
+import examples.todolist.service._
 import freestyle.tagless.config.ConfigM
 import freestyle.tagless.logging.LoggingM
+import freestyle.tagless.module
 
 /**
  * Module containing all the algebras declared in this layer.

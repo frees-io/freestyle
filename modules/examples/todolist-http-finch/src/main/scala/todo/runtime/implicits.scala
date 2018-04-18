@@ -17,23 +17,18 @@
 package examples.todolist
 package runtime
 
-import java.util.Properties
-import scala.concurrent.ExecutionContext
 import cats._
-import cats.effect._
+import cats.effect.IO
 import com.twitter.util._
 import com.zaxxer.hikari.{HikariConfig, HikariDataSource}
 import doobie._
-import doobie.implicits._
 import doobie.hikari._
 import doobie.hikari.implicits._
+import doobie.implicits._
 import examples.todolist.persistence._
-import examples.todolist.persistence.runtime.{
-  AppRepositoryHandler,
-  TagRepositoryHandler,
-  TodoItemRepositoryHandler,
-  TodoListRepositoryHandler
-}
+import examples.todolist.persistence.runtime._
+import java.util.Properties
+import scala.concurrent.ExecutionContext
 
 object implicits extends ProductionImplicits
 
