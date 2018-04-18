@@ -16,18 +16,33 @@
 
 package examples.todolist
 package http
-package apis
 
-import io.finch.Endpoint
+import examples.todolist.http._
 
-trait CRUDApi[A] {
+/**
+ * Finch http endpoints
+ */
+class Api[F[_]](
+    implicit appApi: AppApi[F],
+    genericApi: GenericApi[F],
+    todoItemApi: TodoItemApi[F],
+    todoListApi: TodoListApi[F],
+    tagApi: TagApi[F]) {
 
-  val reset: Endpoint[Int]
-  val retrieve: Endpoint[A]
-  val list: Endpoint[List[A]]
-  val insert: Endpoint[Option[A]]
-  val update: Endpoint[Option[A]]
-  val destroy: Endpoint[Int]
+  val endpoints =
+    appApi.endpoints :+:
+      genericApi.endpoints :+:
+      todoItemApi.endpoints :+:
+      todoListApi.endpoints :+:
+      tagApi.endpoints
 
-  lazy val endpoints = reset :+: retrieve :+: list :+: insert :+: update :+: destroy
+}
+
+object Api {
+  implicit def instance[F[_]](
+      implicit appApi: AppApi[F],
+      genericApi: GenericApi[F],
+      todoItemApi: TodoItemApi[F],
+      todoListApi: TodoListApi[F],
+      tagApi: TagApi[F]): Api[F] = new Api[F]
 }

@@ -16,14 +16,13 @@
 
 package examples.todolist
 package http
-package apis
 
-import cats.{~>, Monad}
-import cats.Monad.ops._
+import cats._
+import cats.implicits._
 import com.twitter.util.Future
-import io.finch._
-import freestyle.tagless.logging.LoggingM
 import examples.todolist.model.Pong
+import freestyle.tagless.logging.LoggingM
+import io.finch._
 
 class GenericApi[F[_]: Monad](implicit log: LoggingM[F], handler: F ~> Future) {
 

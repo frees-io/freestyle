@@ -16,23 +16,22 @@
 
 package examples.todolist
 package http
-package apis
 
-import cats.{~>, Monad}
-import cats.Monad.ops._
+import cats._
+import cats.implicits._
 import com.twitter.util.Future
+import examples.todolist.TodoList
+import examples.todolist.service.TodoListService
+import io.circe.generic.auto._
 import io.finch._
 import io.finch.circe._
-import io.circe.generic.auto._
-import examples.todolist.Tag
-import examples.todolist.service.TagService
 
-class TagApi[F[_]: Monad](implicit service: TagService[F], handler: F ~> Future)
-    extends CRUDApi[Tag] {
+class TodoListApi[F[_]: Monad](implicit service: TodoListService[F], handler: F ~> Future)
+    extends CRUDApi[TodoList] {
 
   import io.finch.syntax._
 
-  private val prefix = "tags"
+  private val prefix = "lists"
 
   val reset = post(prefix :: "reset") {
     handler(service.reset.map(Ok))
@@ -41,7 +40,7 @@ class TagApi[F[_]: Monad](implicit service: TagService[F], handler: F ~> Future)
   val retrieve = get(prefix :: path[Int]) { id: Int =>
     handler(
       service.retrieve(id) map (item =>
-        item.fold[Output[Tag]](
+        item.fold[Output[TodoList]](
           NotFound(new NoSuchElementException(s"Could not find ${service.model} with $id")))(Ok)))
   } handle {
     case nse: NoSuchElementException => NotFound(nse)
@@ -51,24 +50,22 @@ class TagApi[F[_]: Monad](implicit service: TagService[F], handler: F ~> Future)
     handler(service.list.map(Ok))
   }
 
-  val insert = post(prefix :: jsonBody[Tag]) { item: Tag =>
+  val insert = post(prefix :: jsonBody[TodoList]) { item: TodoList =>
     handler(service.insert(item).map(Ok))
   }
 
-  val update = put(prefix :: path[Int] :: jsonBody[Tag]) { (id: Int, item: Tag) =>
+  val update = put(prefix :: path[Int] :: jsonBody[TodoList]) { (id: Int, item: TodoList) =>
     handler(service.update(item.copy(id = Some(id))).map(Ok))
   }
 
   val destroy = delete(prefix :: path[Int]) { id: Int =>
     handler(service.destroy(id).map(Ok))
-  } handle {
-    case nse: NoSuchElementException => NotFound(nse)
   }
 }
 
-object TagApi {
+object TodoListApi {
   implicit def instance[F[_]: Monad](
-      implicit service: TagService[F],
-      handler: F ~> Future): TagApi[F] =
-    new TagApi[F]
+      implicit service: TodoListService[F],
+      handler: F ~> Future): TodoListApi[F] =
+    new TodoListApi[F]
 }
