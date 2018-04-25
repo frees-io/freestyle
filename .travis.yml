@@ -79,7 +79,7 @@ jobs:
       script:
         - if [ "$TRAVIS_BRANCH" = "master" -a "$TRAVIS_PULL_REQUEST" = "false" ]; then
             if grep -q "SNAPSHOT" version.sbt; then
-              sbt ++$TRAVIS_SCALA_VERSION publish;
+              sbt +publish;
             else
               if [ "$SCALAENV" = "all" ]; then
                 sbt orgUpdateDocFiles;
