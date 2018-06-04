@@ -13,13 +13,13 @@ Freestyle comes with a built-in list of ready-to-use effects modeled as `@free` 
 For Scala.jvm:
 
 ```scala
-libraryDependencies += "io.frees" %% "frees-effects" % "0.8.0"
+libraryDependencies += "io.frees" %% "frees-effects" % "0.8.1"
 ```
 
 For Scala.js:
 
 ```scala
-libraryDependencies += "io.frees" %%% "frees-effects" % "0.8.0"
+libraryDependencies += "io.frees" %%% "frees-effects" % "0.8.1"
 ```
 
 [comment]: # (End Replace)
