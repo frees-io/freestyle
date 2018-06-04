@@ -1,5 +1,17 @@
 # Changelog
 
+## 06/04/2018 - Version 0.8.1
+
+Release changes:
+
+* [Docs] Add new Microservices item with nested_options ([#534](https://github.com/frees-io/freestyle/pull/534))
+* Fixed bad indentation in menu ([#538](https://github.com/frees-io/freestyle/pull/538))
+* Major refactor in TodoList examples ([#547](https://github.com/frees-io/freestyle/pull/547))
+* Publish todolist-lib example ([#548](https://github.com/frees-io/freestyle/pull/548))
+* Fixes snapshots cross publish ([#550](https://github.com/frees-io/freestyle/pull/550))
+* Release 0.8.1 ([#552](https://github.com/frees-io/freestyle/pull/552))
+
+
 ## 03/08/2018 - Version 0.8.0
 
 Release changes:
