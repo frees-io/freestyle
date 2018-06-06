@@ -64,13 +64,13 @@ Freestyle Coproduct implementation based on [iota](https://github.com/47deg/iota
                             data: _.map(catsData, function(d){ return Math.ceil(d.primaryMetric.score); }),
                             borderWidth: 1,
                             borderColor: 'rgba(241, 250, 140, 1)',
-                            backgroundColor: 'rgba(241, 250, 140, 0.2)'
+                            backgroundColor: 'rgba(241, 250, 140, 0.3)'
                         },{
                             label: 'freestyle ops/sec',
                             data: _.map(freestyleData, function(d){ return Math.ceil(d.primaryMetric.score); }),
                             borderWidth: 1,
                             borderColor: 'rgba(139, 233, 253, 1)',
-                            backgroundColor: 'rgba(139, 233, 253, 0.2)'
+                            backgroundColor: 'rgba(139, 233, 253, 0.3)'
                         }]
                     },
                     options: {
@@ -104,13 +104,13 @@ Freestyle Coproduct implementation based on [iota](https://github.com/47deg/iota
                             data: _.map(catsData, function(d){ return Math.ceil(d.score.value); }),
                             borderWidth: 1,
                             borderColor: 'rgba(241, 250, 140, 1)',
-                            backgroundColor: 'rgba(241, 250, 140, 0.2)'
+                            backgroundColor: 'rgba(241, 250, 140, 0.3)'
                         },{
                             label: 'iota ops/sec',
                             data: _.map(iotaData, function(d){ return Math.ceil(d.score.value); }),
                             borderWidth: 1,
                             borderColor: 'rgba(139, 233, 253, 1)',
-                            backgroundColor: 'rgba(139, 233, 253, 0.2)'
+                            backgroundColor: 'rgba(139, 233, 253, 0.3)'
                         }]
                     },
                     options: {
