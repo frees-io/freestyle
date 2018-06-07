@@ -1,0 +1,159 @@
+<html><head><title>Freestyle: Akka HTTP</title><meta charset="utf-8" /><meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" /><meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="author" content="47 Degrees" /><meta name="description" content="A Cohesive &amp; Pragmatic Framework of FP centric Scala libraries" /><meta name="og:image" content="/img/poster.png" /><meta name="og:title" content="Freestyle: Akka HTTP" /><meta name="og:site_name" content="Freestyle" /><meta name="og:url" content="https://frees-io.github.io/freestyle/" /><meta name="og:type" content="website" /><meta name="og:description" content="A Cohesive &amp; Pragmatic Framework of FP centric Scala libraries" /><link rel="icon" type="image/png" href="/img/favicon.png" /><meta name="twitter:title" content="Freestyle: Akka HTTP" /><meta name="twitter:image" content="https://frees-io.github.io/freestyle/img/poster.png" /><meta name="twitter:description" content="A Cohesive &amp; Pragmatic Framework of FP centric Scala libraries" /><meta name="twitter:card" content="summary_large_image" /><link rel="icon" type="image/png" sizes="16x16" href="/img/favicon16x16.png" /><link rel="icon" type="image/png" sizes="24x24" href="/img/favicon24x24.png" /><link rel="icon" type="image/png" sizes="32x32" href="/img/favicon32x32.png" /><link rel="icon" type="image/png" sizes="48x48" href="/img/favicon48x48.png" /><link rel="icon" type="image/png" sizes="57x57" href="/img/favicon57x57.png" /><link rel="icon" type="image/png" sizes="60x60" href="/img/favicon60x60.png" /><link rel="icon" type="image/png" sizes="64x64" href="/img/favicon64x64.png" /><link rel="icon" type="image/png" sizes="70x70" href="/img/favicon70x70.png" /><link rel="icon" type="image/png" sizes="72x72" href="/img/favicon72x72.png" /><link rel="icon" type="image/png" sizes="76x76" href="/img/favicon76x76.png" /><link rel="icon" type="image/png" sizes="96x96" href="/img/favicon96x96.png" /><link rel="icon" type="image/png" sizes="114x114" href="/img/favicon114x114.png" /><link rel="icon" type="image/png" sizes="120x120" href="/img/favicon120x120.png" /><link rel="icon" type="image/png" sizes="128x128" href="/img/favicon128x128.png" /><link rel="icon" type="image/png" sizes="144x144" href="/img/favicon144x144.png" /><link rel="icon" type="image/png" sizes="150x150" href="/img/favicon150x150.png" /><link rel="icon" type="image/png" sizes="152x152" href="/img/favicon152x152.png" /><link rel="icon" type="image/png" sizes="196x196" href="/img/favicon196x196.png" /><link rel="icon" type="image/png" sizes="310x310" href="/img/favicon310x310.png" /><link rel="icon" type="image/png" sizes="310x150" href="/img/favicon310x150.png" /><link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" /><link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" /><link rel="stylesheet" href="/highlight/styles/dracula.css" /><link rel="stylesheet" href="/css/style.css" /><link rel="stylesheet" href="/css/palette.css" /><link rel="stylesheet" href="/css/codemirror.css" /><link rel="stylesheet" href="/css/custom.css" /><link rel="stylesheet" href="/css/theme-code.css" /><script async="async">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+ga('create', 'UA-18433785-14' , 'auto');
+ga('send', 'pageview');
+      </script></head><body class="docs"><div id="wrapper"><div id="sidebar-wrapper"><ul id="sidebar" class="sidebar-nav"><li class="sidebar-brand"><a href="/" class="brand"><div class="brand-wrapper"><span>Freestyle</span></div></a></li> <li><a href="/docs/" class="">Quick Start</a></li> <li><a href="/docs/core/" class="">Core Concepts</a> <ul class="sub_section"> <li><a href="/docs/core/algebras/" class="">Algebras</a></li> <li><a href="/docs/core/modules/" class="">Modules</a></li> <li><a href="/docs/core/handlers/" class="">Handlers</a></li> <li><a href="/docs/core/parallelism/" class="">Parallelism</a></li></ul></li> <li><a href="/docs/effects/" class="">Effects</a> <ul class="sub_section"> <li><a href="/docs/effects/error" class="">Error</a></li> <li><a href="/docs/effects/either" class="">Either</a></li> <li><a href="/docs/effects/option" class="">Option</a></li> <li><a href="/docs/effects/reader" class="">Reader</a></li> <li><a href="/docs/effects/writer" class="">Writer</a></li> <li><a href="/docs/effects/state" class="">State</a></li> <li><a href="/docs/effects/traverse" class="">Traverse</a></li> <li><a href="/docs/effects/validation" class="">Validation</a></li> <li><a href="/docs/effects/async" class="">Async Callbacks</a></li></ul></li> <li><a href="/docs/optimizations/" class="">Optimizations</a></li> <li><a href="/docs/stack/" class="">Example Target Stack</a></li> <li><a href="/TODO.html" class="">Patterns</a> <ul class="sub_section"> <li><a href="/docs/effects/Cache/" class="">Cache</a></li> <li><a href="/TODO.html" class="">Dependency Injection</a></li> <li><a href="/docs/patterns/config" class="">Configuration</a></li> <li><a href="/docs/patterns/logging" class="">Logging</a></li></ul></li> <li><a href="/docs/integrations" class="">Integrations</a> <ul class="sub_section"> <li><a href="/docs/integrations/cats" class="">Cats</a></li> <li><a href="/docs/integrations/play" class="">Play Framework</a></li> <li><a href="/docs/integrations/monix" class="">Monix</a></li> <li><a href="/docs/integrations/fetch" class="">Fetch</a></li> <li><a href="/docs/integrations/doobie" class="">Doobie</a></li> <li><a href="/docs/integrations/slick" class="">Slick</a></li> <li><a href="/docs/integrations/akkahttp" class=" active ">Akka HTTP</a></li> <li><a href="/docs/integrations/finch" class="">Finch</a></li> <li><a href="/docs/integrations/http4s" class="">http4s</a></li> <li><a href="/docs/integrations/hammock" class="">Hammock</a></li></ul></li> <li><a href="/docs/rpc" class="">Microservices</a> <ul class="sub_section"> <li><a href="/docs/rpc/quickstart" class="">Quickstart</a></li> <li><a href="/docs/rpc/core-concepts" class="">Core concepts</a></li> <li><a href="/docs/rpc/streaming" class="">Streaming</a></li> <li><a href="/docs/rpc/annotations" class="">Annotations</a></li> <li><a href="/docs/rpc/idl-generation" class="">IDL Generation</a></li> <li><a href="/docs/rpc/patterns" class="">Patterns</a></li> <li><a href="/docs/rpc/ssl-tls" class="">SSL/TLS</a></li> <li><a href="/docs/rpc/metrics-reporting" class="">Metrics Reporting</a></li> <li><a href="/docs/rpc/references" class="">References</a></li></ul></li> <li><a href="/docs/libraries" class="">Libraries</a> <ul class="sub_section"> <li><a href="/docs/effects" class="">Effects</a></li> <li><a href="/docs/cassandra" class="">Cassandra</a></li> <li><a href="/docs/kafka" class="">Kafka</a></li></ul></li> <li><a href="/docs/related/" class="">Related Work</a> <ul class="sub_section"> <li><a href="/docs/related/#bibliography" class="">Bibliography</a></li> <li><a href="/docs/related/#Scala" class="">Scala Libraries</a></li></ul></li></ul></div><div id="page-content-wrapper"><div class="nav"><div class="container-fluid"><div class="row"><div class="col-lg-12"><div class="action-menu pull-left clearfix"><a href="#menu-toggle" id="menu-toggle"><i class="fa fa-bars" aria-hidden="true"></i></a></div><ul class="pull-right"><li id="gh-eyes-item" class="hidden-xs"><a href="https://github.com/frees-io/freestyle"><i class="fa fa-eye"></i><span>WATCH<span id="eyes" class="label label-default">--</span></span></a></li><li id="gh-stars-item" class="hidden-xs"><a href="https://github.com/frees-io/freestyle"><i class="fa fa-star-o"></i><span>STARS<span id="stars" class="label label-default">--</span></span></a></li><li><a href="#" onclick="shareSiteTwitter('Freestyle A Cohesive &amp; Pragmatic Framework of FP centric Scala libraries');"><i class="fa fa-twitter"></i></a></li><li><a href="#" onclick="shareSiteFacebook('Freestyle A Cohesive &amp; Pragmatic Framework of FP centric Scala libraries');"><i class="fa fa-facebook"></i></a></li><li><a href="#" onclick="shareSiteGoogle();"><i class="fa fa-google-plus"></i></a></li></ul></div></div></div></div><div id="content" data-github-owner="frees-io" data-github-repo="freestyle"><div class="content-wrapper"><section><h3 id="akka-http">Akka HTTP</h3>
+
+<p><a href="http://doc.akka.io/docs/akka-http/10.0.5/java/http/introduction.html">Akka HTTP</a> (formerly known as <code class="highlighter-rouge">spray</code>) is an Akka-based library for implementing HTTP services.</p>
+
+<p>Akka HTTP is frequently used to write server-side (a.k.a back-end) REST APIs; for instance, at 47 Degrees, we have use it to write the back-end
+of the <a href="https://github.com/47deg/nine-cards-backend">9 Cards</a> and <a href="http://scaladays.org/">Scala Days</a> mobile applications.
+Akka HTTP makes it easy to write these types of APIs due to its <a href="http://doc.akka.io/docs/akka-http/10.0.5/java/http/introduction.html">routing DSL</a>.
+In this DSL, routes are written using directives that filter incoming requests and end in a <code class="highlighter-rouge">complete</code> directive.
+The <code class="highlighter-rouge">complete</code> directive can take just a message, or just the status code to give back; but more frequently, it takes an expression, or program call, whose result is the <em>response body</em> that is given back to the client as an argument.</p>
+
+<p>The goal of <code class="highlighter-rouge">freestyle</code> integration with Akka HTTP is to allow programmers to pass into a <code class="highlighter-rouge">complete</code> directive an expression of type <code class="highlighter-rouge">fs : FreeS[F, A]</code>, 
+where <code class="highlighter-rouge">F[_]</code> is the type constructor, and  <code class="highlighter-rouge">A</code> is the type of the result. In respect to this goal,
+the <a href="http://doc.akka.io/docs/akka-http/10.0.5/java/http/introduction.html#routing-dsl-for-http-servers">Akka HTTP docs</a> say that:</p>
+
+<blockquote>
+  <p>Transforming request […] bodies between over-the-wire formats and objects to be used in your application
+is done separately from the route declarations, in marshallers, which are pulled in implicitly using the “magnet” pattern.
+This means that you can complete a request with any kind of object as long as there is an implicit marshaller available in scope.</p>
+</blockquote>
+
+<p>Thus, the <code class="highlighter-rouge">freestyle</code> integration for Akka HTTP provides an extension of that <em>magnet</em> pattern, which allows us to generate
+response <a href="http://doc.akka.io/docs/akka-http/current/scala/http/common/marshalling.html">marshallers</a>.
+To be precise, what the integration gives us is a couple of  <code class="highlighter-rouge">implicit</code> methods to generate an instance of
+ <code class="highlighter-rouge">ToEntityMarshaller[  FreeS[ F, A ] ] </code>, or <code class="highlighter-rouge">ToEntityMarshaller[ FreeS.Par[F, A]]</code>, where the parameter <code class="highlighter-rouge">F[_]</code> is the target of the algebra, <code class="highlighter-rouge">A</code> is the type of the base result. 
+Note that the method has to be parameterized both on the <code class="highlighter-rouge">F</code> and on <code class="highlighter-rouge">A</code>, to make it as generic as possible.</p>
+
+<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">freestyle.free._</span>
+<span class="c1">// import freestyle.free._
+</span>
+<span class="k">import</span> <span class="nn">freestyle.free.implicits._</span>
+<span class="c1">// import freestyle.free.implicits._
+</span>
+<span class="k">import</span> <span class="nn">cats.</span><span class="o">{</span> <span class="o">~&gt;,</span> <span class="nc">Monad</span> <span class="o">}</span>
+<span class="c1">// import cats.{$tilde$greater, Monad}
+</span>
+<span class="k">import</span> <span class="nn">_root_.akka.http.scaladsl.marshalling.ToEntityMarshaller</span>
+<span class="c1">// import _root_.akka.http.scaladsl.marshalling.ToEntityMarshaller
+</span>
+<span class="k">implicit</span> <span class="k">def</span> <span class="n">seqToEntityMarshaller</span><span class="o">[</span><span class="kt">F</span><span class="o">[</span><span class="k">_</span><span class="o">]</span>, <span class="kt">G</span><span class="o">[</span><span class="k">_</span><span class="o">]</span>, <span class="kt">A</span><span class="o">](</span>
+    <span class="k">implicit</span> <span class="nc">NT</span><span class="k">:</span> <span class="kt">F</span> <span class="kt">~&gt;</span> <span class="kt">G</span><span class="o">,</span>
+    <span class="nc">MonG</span><span class="k">:</span> <span class="kt">Monad</span><span class="o">[</span><span class="kt">G</span><span class="o">],</span>
+    <span class="n">gem</span><span class="k">:</span> <span class="kt">ToEntityMarshaller</span><span class="o">[</span><span class="kt">G</span><span class="o">[</span><span class="kt">A</span><span class="o">]])</span><span class="k">:</span> <span class="kt">ToEntityMarshaller</span><span class="o">[</span><span class="kt">FreeS</span><span class="o">[</span><span class="kt">F</span>, <span class="kt">A</span><span class="o">]]</span> <span class="k">=</span>
+  <span class="n">gem</span><span class="o">.</span><span class="n">compose</span><span class="o">((</span><span class="n">fs</span><span class="k">:</span> <span class="kt">FreeS</span><span class="o">[</span><span class="kt">F</span>, <span class="kt">A</span><span class="o">])</span> <span class="k">=&gt;</span> <span class="n">fs</span><span class="o">.</span><span class="n">interpret</span><span class="o">[</span><span class="kt">G</span><span class="o">])</span>
+<span class="c1">// seqToEntityMarshaller: [F[_], G[_], A](implicit NT: F ~&gt; G, implicit MonG: cats.Monad[G], implicit gem: akka.http.scaladsl.marshalling.ToEntityMarshaller[G[A]])akka.http.scaladsl.marshalling.ToEntityMarshaller[freestyle.free.FreeS[F,A]]
+</span>
+<span class="k">implicit</span> <span class="k">def</span> <span class="n">parToEntityMarshaller</span><span class="o">[</span><span class="kt">F</span><span class="o">[</span><span class="k">_</span><span class="o">]</span>, <span class="kt">G</span><span class="o">[</span><span class="k">_</span><span class="o">]</span>, <span class="kt">A</span><span class="o">](</span>
+    <span class="k">implicit</span> <span class="nc">NT</span><span class="k">:</span> <span class="kt">F</span> <span class="kt">~&gt;</span> <span class="kt">G</span><span class="o">,</span>
+    <span class="nc">MonG</span><span class="k">:</span> <span class="kt">Monad</span><span class="o">[</span><span class="kt">G</span><span class="o">],</span>
+    <span class="n">gem</span><span class="k">:</span> <span class="kt">ToEntityMarshaller</span><span class="o">[</span><span class="kt">G</span><span class="o">[</span><span class="kt">A</span><span class="o">]])</span><span class="k">:</span> <span class="kt">ToEntityMarshaller</span><span class="o">[</span><span class="kt">FreeS.Par</span><span class="o">[</span><span class="kt">F</span>, <span class="kt">A</span><span class="o">]]</span> <span class="k">=</span>
+  <span class="n">gem</span><span class="o">.</span><span class="n">compose</span><span class="o">((</span><span class="n">fp</span><span class="k">:</span> <span class="kt">FreeS.Par</span><span class="o">[</span><span class="kt">F</span>, <span class="kt">A</span><span class="o">])</span> <span class="k">=&gt;</span> <span class="nc">FreeS</span><span class="o">.</span><span class="n">liftPar</span><span class="o">(</span><span class="n">fp</span><span class="o">).</span><span class="n">interpret</span><span class="o">[</span><span class="kt">G</span><span class="o">])</span>
+<span class="c1">// parToEntityMarshaller: [F[_], G[_], A](implicit NT: F ~&gt; G, implicit MonG: cats.Monad[G], implicit gem: akka.http.scaladsl.marshalling.ToEntityMarshaller[G[A]])akka.http.scaladsl.marshalling.ToEntityMarshaller[freestyle.free.FreeS.Par[F,A]]
+</span></code></pre>
+</div>
+
+<p>To build an object <code class="highlighter-rouge">marsh</code>, our method needs to find in scope:</p>
+
+<ul>
+  <li>A <em>base</em> entity marshaller, <code class="highlighter-rouge">base: ToEntityMarshaller[ G[A]]</code>, where <code class="highlighter-rouge">G[_]</code> is a constructor type, which may be different for each application; 
+and <code class="highlighter-rouge">A</code> refers to the same type of the result in the response.</li>
+  <li>A way to interpret an expression of type <code class="highlighter-rouge">FreeS[F, A]</code> into a <code class="highlighter-rouge">G[A]</code>. This is built by the implicit methods in
+<code class="highlighter-rouge">freestyle.free.implicits</code>, from a natural transformation <code class="highlighter-rouge">F ~&gt; G</code> and an instance of <code class="highlighter-rouge">cats.Monad[G]</code>.</li>
+</ul>
+
+<p>In essence, the generated marshaller first <em>interprets</em> the value of type <code class="highlighter-rouge">FreeS[F,A]</code> into a <code class="highlighter-rouge">G[A]</code>, and then it passes the generated
+value to the base marshaller. To build an Akka HTTP route using a <code class="highlighter-rouge">FreeS</code> program, one only needs to bring this method into the implicit context, which can be done using an
+<code class="highlighter-rouge">import freestyle.free.http.akka._</code> statement.</p>
+
+<h4 id="small-example">Small Example</h4>
+
+<p>As an example, here is a small API program mixing <code class="highlighter-rouge">freestyle</code> and Akka HTTP. The integration is not part of the <code class="highlighter-rouge">freestyle</code> main module.
+You need to import it separately, by adding the following dependency:</p>
+
+<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="n">libraryDependencies</span> <span class="o">+=</span> <span class="s">"io.frees"</span> <span class="o">%%</span> <span class="s">"frees-akka"</span> <span class="o">%</span> <span class="s">"0.8.2"</span>
+</code></pre>
+</div>
+
+<p>First, we (1) define a domain class <code class="highlighter-rouge">User</code>, (2) write
+a <code class="highlighter-rouge">@free</code> algebra that returns values of a type <code class="highlighter-rouge">FreeS[F, User]</code>, and then (3) define an interpreter for that algebra to a type for 
+which a <code class="highlighter-rouge">Marshaller</code> <em>magnet</em> exists. To keep things simple, we just interpret to <code class="highlighter-rouge">Id</code>:</p>
+
+<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">freestyle.free._</span>
+<span class="c1">// import freestyle.free._
+</span>
+<span class="k">import</span> <span class="nn">freestyle.free.implicits._</span>
+<span class="c1">// import freestyle.free.implicits._
+</span>
+<span class="k">case</span> <span class="k">class</span> <span class="nc">User</span><span class="o">(</span><span class="n">name</span><span class="k">:</span> <span class="kt">String</span><span class="o">)</span>
+<span class="c1">// defined class User
+</span>
+<span class="nd">@free</span>
+<span class="k">trait</span> <span class="nc">UserApp</span> <span class="o">{</span>
+  <span class="k">def</span> <span class="n">get</span><span class="o">(</span><span class="n">id</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span><span class="k">:</span> <span class="kt">FS</span><span class="o">[</span><span class="kt">User</span><span class="o">]</span>
+<span class="o">}</span>
+<span class="c1">// defined trait UserApp
+// defined object UserApp
+</span>
+<span class="k">val</span> <span class="n">app</span> <span class="k">=</span> <span class="nc">UserApp</span><span class="o">.</span><span class="n">to</span><span class="o">[</span><span class="kt">UserApp.Op</span><span class="o">]</span>
+<span class="c1">// app: UserApp.To[UserApp.Op] = UserApp$To@26d208c7
+</span></code></pre>
+</div>
+
+<p>To use this <code class="highlighter-rouge">@free</code> algebra in a route, we need (1) an <code class="highlighter-rouge">EntityMarshaller</code> for our domain object,
+and (2) an interpreter of the algebra to a suitable domain, which for this example will be <code class="highlighter-rouge">Id</code>:</p>
+
+<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">_root_.akka.http.scaladsl.marshalling.</span><span class="o">{</span> <span class="nc">Marshaller</span><span class="o">,</span> <span class="nc">ToEntityMarshaller</span> <span class="o">}</span>
+<span class="c1">// import _root_.akka.http.scaladsl.marshalling.{Marshaller, ToEntityMarshaller}
+</span>
+<span class="k">import</span> <span class="nn">cats.Id</span>
+<span class="c1">// import cats.Id
+</span>
+<span class="k">implicit</span> <span class="k">val</span> <span class="n">userMarshaller</span><span class="k">:</span> <span class="kt">ToEntityMarshaller</span><span class="o">[</span><span class="kt">User</span><span class="o">]</span> <span class="k">=</span>
+  <span class="nc">Marshaller</span><span class="o">.</span><span class="nc">StringMarshaller</span><span class="o">.</span><span class="n">compose</span><span class="o">((</span><span class="n">user</span><span class="k">:</span> <span class="kt">User</span><span class="o">)</span> <span class="k">=&gt;</span> <span class="n">s</span><span class="s">"User(${user.name})"</span><span class="o">)</span>
+<span class="c1">// userMarshaller: akka.http.scaladsl.marshalling.ToEntityMarshaller[User] = akka.http.scaladsl.marshalling.Marshaller$$anon$3@121cc1cd
+</span>
+<span class="k">implicit</span> <span class="k">val</span> <span class="n">handler</span><span class="k">:</span> <span class="kt">UserApp.Handler</span><span class="o">[</span><span class="kt">Id</span><span class="o">]</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">UserApp</span><span class="o">.</span><span class="nc">Handler</span><span class="o">[</span><span class="kt">Id</span><span class="o">]</span> <span class="o">{</span>
+  <span class="k">private</span><span class="o">[</span><span class="kt">this</span><span class="o">]</span> <span class="k">val</span> <span class="n">users</span><span class="k">:</span> <span class="kt">Map</span><span class="o">[</span><span class="kt">Int</span>, <span class="kt">User</span><span class="o">]</span> <span class="k">=</span> <span class="nc">Map</span><span class="o">(</span> <span class="mi">1</span> <span class="o">-&gt;</span> <span class="nc">User</span><span class="o">(</span><span class="s">"foo"</span><span class="o">)</span> <span class="o">)</span>
+    <span class="k">override</span> <span class="k">def</span> <span class="n">get</span><span class="o">(</span><span class="n">id</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span><span class="k">:</span> <span class="kt">User</span> <span class="o">=</span> <span class="n">users</span><span class="o">.</span><span class="n">get</span><span class="o">(</span><span class="n">id</span><span class="o">).</span><span class="n">getOrElse</span><span class="o">(</span><span class="nc">User</span><span class="o">(</span><span class="s">"default"</span><span class="o">))</span>
+<span class="o">}</span>
+<span class="c1">// handler: UserApp.Handler[cats.Id] = $anon$1@1ea9fd3f
+</span></code></pre>
+</div>
+
+<p>With these in scope, one can now write the route by using the marshaller generators from Akka HTTP:</p>
+
+<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">_root_.akka.http.scaladsl.server.Directives._</span>
+<span class="c1">// import _root_.akka.http.scaladsl.server.Directives._
+</span>
+<span class="k">import</span> <span class="nn">_root_.akka.http.scaladsl.server.Route</span>
+<span class="c1">// import _root_.akka.http.scaladsl.server.Route
+</span>
+<span class="k">import</span> <span class="nn">_root_.akka.http.scaladsl.marshalling.</span><span class="o">{</span><span class="nc">Marshaller</span><span class="o">,</span> <span class="nc">ToEntityMarshaller</span><span class="o">}</span>
+<span class="c1">// import _root_.akka.http.scaladsl.marshalling.{Marshaller, ToEntityMarshaller}
+</span>
+<span class="k">import</span> <span class="nn">_root_.akka.http.scaladsl.server.PathMatchers.IntNumber</span>
+<span class="c1">// import _root_.akka.http.scaladsl.server.PathMatchers.IntNumber
+</span>
+<span class="k">val</span> <span class="n">route</span><span class="k">:</span> <span class="kt">Route</span> <span class="o">=</span>  <span class="o">(</span><span class="n">get</span> <span class="o">&amp;</span> <span class="n">path</span><span class="o">(</span><span class="s">"user"</span> <span class="o">/</span> <span class="nc">IntNumber</span><span class="o">))</span> <span class="o">{</span> <span class="n">id</span> <span class="k">=&gt;</span>
+  <span class="n">complete</span><span class="o">(</span><span class="n">app</span><span class="o">.</span><span class="n">get</span><span class="o">(</span><span class="n">id</span><span class="o">))</span>
+<span class="o">}</span>
+<span class="c1">// route: akka.http.scaladsl.server.Route = akka.http.scaladsl.server.directives.BasicDirectives$$Lambda$13090/1115042347@be39900
+</span></code></pre>
+</div>
+
+<p>More complex routes can be created as usual by chaining and grouping simple routes.
+Each route can use a different algebra, or can be interpreted to a different target type <code class="highlighter-rouge">G[_]</code>.</p>
+</section></div></div></div></div><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script><script src="/highlight/highlight.pack.js"></script><script>hljs.configure({
+languages:['scala','java','bash']
+});
+hljs.initHighlighting();
+             </script><script>((window.gitter = {}).chat = {}).options = {
+room: '47deg/freestyle'};</script><script src="https://sidecar.gitter.im/dist/sidecar.v1.js"></script><script src="/js/main.js"></script></body></html>
