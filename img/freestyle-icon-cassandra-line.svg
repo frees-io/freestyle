@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="52px" height="52px" viewBox="0 0 52 52" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 44.1 (41455) - http://www.bohemiancoding.com/sketch -->
+    <title>freestyle-icon-cassandra-line</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="freestyle-ui" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="freestyle-icon-cassandra-line">
+            <path d="M26,3.15470054 L6.21539031,14.5773503 L6.21539031,37.4226497 L26,48.8452995 L45.7846097,37.4226497 L45.7846097,14.5773503 L26,3.15470054 Z" id="hexagon" stroke="#01C2C2" stroke-width="2"></path>
+            <path d="M11.0578992,26.5 C13.2853338,32.73464 19.2317764,37 26,37 C32.7682232,37 38.7146661,32.7346404 40.9421015,26.5000017 C38.7146673,20.2653609 32.7682243,16 26,16 C19.2317763,16 13.2853338,20.2653601 11.0578992,26.5 Z" id="path" stroke="#01C2C2" stroke-width="2"></path>
+            <polygon id="star" fill="#01C2C2" points="26 29.8264576 23.5689255 33 23.7155372 28.9821543 19.8443033 29.8264576 22.5 26.8443033 19 24.9643087 22.9221517 24.4132288 21.4310745 20.6886066 24.7844628 22.8264576 26 19 27.2155372 22.8264576 30.5689255 20.6886066 29.0778483 24.4132288 33 24.9643087 29.5 26.8443033 32.1556967 29.8264576 28.2844628 28.9821543 28.4310745 33"></polygon>
+        </g>
+    </g>
+</svg>
