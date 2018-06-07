@@ -1,5 +1,12 @@
 # Changelog
 
+## 06/07/2018 - Version 0.8.2
+
+Release changes:
+
+* Upgrade to Scala 2.12.6 ([#554](https://github.com/frees-io/freestyle/pull/554))
+
+
 ## 06/04/2018 - Version 0.8.1
 
 Release changes:
