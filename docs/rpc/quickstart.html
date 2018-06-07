@@ -1,0 +1,176 @@
+<html><head><title>Freestyle: Quickstart</title><meta charset="utf-8" /><meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" /><meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="author" content="47 Degrees" /><meta name="description" content="A Cohesive &amp; Pragmatic Framework of FP centric Scala libraries" /><meta name="og:image" content="/img/poster.png" /><meta name="og:title" content="Freestyle: Quickstart" /><meta name="og:site_name" content="Freestyle" /><meta name="og:url" content="https://frees-io.github.io/freestyle/" /><meta name="og:type" content="website" /><meta name="og:description" content="A Cohesive &amp; Pragmatic Framework of FP centric Scala libraries" /><link rel="icon" type="image/png" href="/img/favicon.png" /><meta name="twitter:title" content="Freestyle: Quickstart" /><meta name="twitter:image" content="https://frees-io.github.io/freestyle/img/poster.png" /><meta name="twitter:description" content="A Cohesive &amp; Pragmatic Framework of FP centric Scala libraries" /><meta name="twitter:card" content="summary_large_image" /><link rel="icon" type="image/png" sizes="16x16" href="/img/favicon16x16.png" /><link rel="icon" type="image/png" sizes="24x24" href="/img/favicon24x24.png" /><link rel="icon" type="image/png" sizes="32x32" href="/img/favicon32x32.png" /><link rel="icon" type="image/png" sizes="48x48" href="/img/favicon48x48.png" /><link rel="icon" type="image/png" sizes="57x57" href="/img/favicon57x57.png" /><link rel="icon" type="image/png" sizes="60x60" href="/img/favicon60x60.png" /><link rel="icon" type="image/png" sizes="64x64" href="/img/favicon64x64.png" /><link rel="icon" type="image/png" sizes="70x70" href="/img/favicon70x70.png" /><link rel="icon" type="image/png" sizes="72x72" href="/img/favicon72x72.png" /><link rel="icon" type="image/png" sizes="76x76" href="/img/favicon76x76.png" /><link rel="icon" type="image/png" sizes="96x96" href="/img/favicon96x96.png" /><link rel="icon" type="image/png" sizes="114x114" href="/img/favicon114x114.png" /><link rel="icon" type="image/png" sizes="120x120" href="/img/favicon120x120.png" /><link rel="icon" type="image/png" sizes="128x128" href="/img/favicon128x128.png" /><link rel="icon" type="image/png" sizes="144x144" href="/img/favicon144x144.png" /><link rel="icon" type="image/png" sizes="150x150" href="/img/favicon150x150.png" /><link rel="icon" type="image/png" sizes="152x152" href="/img/favicon152x152.png" /><link rel="icon" type="image/png" sizes="196x196" href="/img/favicon196x196.png" /><link rel="icon" type="image/png" sizes="310x310" href="/img/favicon310x310.png" /><link rel="icon" type="image/png" sizes="310x150" href="/img/favicon310x150.png" /><link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" /><link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" /><link rel="stylesheet" href="/highlight/styles/dracula.css" /><link rel="stylesheet" href="/css/style.css" /><link rel="stylesheet" href="/css/palette.css" /><link rel="stylesheet" href="/css/codemirror.css" /><link rel="stylesheet" href="/css/custom.css" /><link rel="stylesheet" href="/css/theme-code.css" /><script async="async">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+ga('create', 'UA-18433785-14' , 'auto');
+ga('send', 'pageview');
+      </script></head><body class="docs"><div id="wrapper"><div id="sidebar-wrapper"><ul id="sidebar" class="sidebar-nav"><li class="sidebar-brand"><a href="/" class="brand"><div class="brand-wrapper"><span>Freestyle</span></div></a></li> <li><a href="/docs/" class="">Quick Start</a></li> <li><a href="/docs/core/" class="">Core Concepts</a> <ul class="sub_section"> <li><a href="/docs/core/algebras/" class="">Algebras</a></li> <li><a href="/docs/core/modules/" class="">Modules</a></li> <li><a href="/docs/core/handlers/" class="">Handlers</a></li> <li><a href="/docs/core/parallelism/" class="">Parallelism</a></li></ul></li> <li><a href="/docs/effects/" class="">Effects</a> <ul class="sub_section"> <li><a href="/docs/effects/error" class="">Error</a></li> <li><a href="/docs/effects/either" class="">Either</a></li> <li><a href="/docs/effects/option" class="">Option</a></li> <li><a href="/docs/effects/reader" class="">Reader</a></li> <li><a href="/docs/effects/writer" class="">Writer</a></li> <li><a href="/docs/effects/state" class="">State</a></li> <li><a href="/docs/effects/traverse" class="">Traverse</a></li> <li><a href="/docs/effects/validation" class="">Validation</a></li> <li><a href="/docs/effects/async" class="">Async Callbacks</a></li></ul></li> <li><a href="/docs/optimizations/" class="">Optimizations</a></li> <li><a href="/docs/stack/" class="">Example Target Stack</a></li> <li><a href="/TODO.html" class="">Patterns</a> <ul class="sub_section"> <li><a href="/docs/effects/Cache/" class="">Cache</a></li> <li><a href="/TODO.html" class="">Dependency Injection</a></li> <li><a href="/docs/patterns/config" class="">Configuration</a></li> <li><a href="/docs/patterns/logging" class="">Logging</a></li></ul></li> <li><a href="/docs/integrations" class="">Integrations</a> <ul class="sub_section"> <li><a href="/docs/integrations/cats" class="">Cats</a></li> <li><a href="/docs/integrations/play" class="">Play Framework</a></li> <li><a href="/docs/integrations/monix" class="">Monix</a></li> <li><a href="/docs/integrations/fetch" class="">Fetch</a></li> <li><a href="/docs/integrations/doobie" class="">Doobie</a></li> <li><a href="/docs/integrations/slick" class="">Slick</a></li> <li><a href="/docs/integrations/akkahttp" class="">Akka HTTP</a></li> <li><a href="/docs/integrations/finch" class="">Finch</a></li> <li><a href="/docs/integrations/http4s" class="">http4s</a></li> <li><a href="/docs/integrations/hammock" class="">Hammock</a></li></ul></li> <li><a href="/docs/rpc" class="">Microservices</a> <ul class="sub_section"> <li><a href="/docs/rpc/quickstart" class=" active ">Quickstart</a></li> <li><a href="/docs/rpc/core-concepts" class="">Core concepts</a></li> <li><a href="/docs/rpc/streaming" class="">Streaming</a></li> <li><a href="/docs/rpc/annotations" class="">Annotations</a></li> <li><a href="/docs/rpc/idl-generation" class="">IDL Generation</a></li> <li><a href="/docs/rpc/patterns" class="">Patterns</a></li> <li><a href="/docs/rpc/ssl-tls" class="">SSL/TLS</a></li> <li><a href="/docs/rpc/metrics-reporting" class="">Metrics Reporting</a></li> <li><a href="/docs/rpc/references" class="">References</a></li></ul></li> <li><a href="/docs/libraries" class="">Libraries</a> <ul class="sub_section"> <li><a href="/docs/effects" class="">Effects</a></li> <li><a href="/docs/cassandra" class="">Cassandra</a></li> <li><a href="/docs/kafka" class="">Kafka</a></li></ul></li> <li><a href="/docs/related/" class="">Related Work</a> <ul class="sub_section"> <li><a href="/docs/related/#bibliography" class="">Bibliography</a></li> <li><a href="/docs/related/#Scala" class="">Scala Libraries</a></li></ul></li></ul></div><div id="page-content-wrapper"><div class="nav"><div class="container-fluid"><div class="row"><div class="col-lg-12"><div class="action-menu pull-left clearfix"><a href="#menu-toggle" id="menu-toggle"><i class="fa fa-bars" aria-hidden="true"></i></a></div><ul class="pull-right"><li id="gh-eyes-item" class="hidden-xs"><a href="https://github.com/frees-io/freestyle"><i class="fa fa-eye"></i><span>WATCH<span id="eyes" class="label label-default">--</span></span></a></li><li id="gh-stars-item" class="hidden-xs"><a href="https://github.com/frees-io/freestyle"><i class="fa fa-star-o"></i><span>STARS<span id="stars" class="label label-default">--</span></span></a></li><li><a href="#" onclick="shareSiteTwitter('Freestyle A Cohesive &amp; Pragmatic Framework of FP centric Scala libraries');"><i class="fa fa-twitter"></i></a></li><li><a href="#" onclick="shareSiteFacebook('Freestyle A Cohesive &amp; Pragmatic Framework of FP centric Scala libraries');"><i class="fa fa-facebook"></i></a></li><li><a href="#" onclick="shareSiteGoogle();"><i class="fa fa-google-plus"></i></a></li></ul></div></div></div></div><div id="content" data-github-owner="frees-io" data-github-repo="freestyle"><div class="content-wrapper"><section><h1 id="quickstart">Quickstart</h1>
+
+<h2 id="whats-frees-rpc">What’s frees-rpc</h2>
+
+<p><a href="https://github.com/frees-io/freestyle-rpc">frees-rpc</a> provides the ability to combine <a href="https://en.wikipedia.org/wiki/Remote_procedure_call">RPC</a> protocols, services, and clients in your <code class="highlighter-rouge">Freestyle</code> program, thanks to <a href="https://grpc.io/">gRPC</a>. Although it’s fully integrated with <a href="https://grpc.io/">gRPC</a>, there are some important differences when defining the protocols, as we’ll see later on, since <a href="https://github.com/frees-io/freestyle-rpc">frees-rpc</a> follows the same philosophy as <code class="highlighter-rouge">Freestyle</code> core, being macro-powered.</p>
+
+<h2 id="installation">Installation</h2>
+
+<p><code class="highlighter-rouge">frees-rpc</code> is cross-built for Scala <code class="highlighter-rouge">2.11.x</code> and <code class="highlighter-rouge">2.12.x</code>.</p>
+
+<p>It’s divided into multiple and different artifacts, grouped by scope:</p>
+
+<ul>
+  <li><code class="highlighter-rouge">Server</code>: specifically for the RPC server.</li>
+  <li><code class="highlighter-rouge">Client</code>: focused on the RPC auto-derived clients by <code class="highlighter-rouge">frees-rpc</code>.</li>
+  <li><code class="highlighter-rouge">Server/Client</code>: used from other artifacts for both Server and Client.</li>
+  <li><code class="highlighter-rouge">Test</code>: useful to test <code class="highlighter-rouge">frees-rpc</code> applications.</li>
+</ul>
+
+<table>
+  <thead>
+    <tr>
+      <th><em>Artifact Name</em></th>
+      <th><em>Scope</em></th>
+      <th><em>Mandatory</em></th>
+      <th><em>Description</em></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code class="highlighter-rouge">frees-rpc-server</code></td>
+      <td>Server</td>
+      <td>Yes</td>
+      <td>Needed to attach RPC Services and spin-up an RPC Server.</td>
+    </tr>
+    <tr>
+      <td><code class="highlighter-rouge">frees-rpc-client-core</code></td>
+      <td>Client</td>
+      <td>Yes</td>
+      <td>Mandatory to define protocols and auto-derived clients.</td>
+    </tr>
+    <tr>
+      <td><code class="highlighter-rouge">frees-rpc-client-netty</code></td>
+      <td>Client</td>
+      <td>Yes*</td>
+      <td>Mandatory on the client side if we are using <code class="highlighter-rouge">Netty</code> in the server side.</td>
+    </tr>
+    <tr>
+      <td><code class="highlighter-rouge">frees-rpc-client-okhttp</code></td>
+      <td>Client</td>
+      <td>Yes*</td>
+      <td>Mandatory on the client side if we are using <code class="highlighter-rouge">OkHttp</code> in the server side.</td>
+    </tr>
+    <tr>
+      <td><code class="highlighter-rouge">frees-rpc-config</code></td>
+      <td>Server/Client</td>
+      <td>No</td>
+      <td>Provides configuration helpers using <a href="http://frees.io/docs/patterns/config/">frees-config</a> to load the application configuration values.</td>
+    </tr>
+    <tr>
+      <td><code class="highlighter-rouge">frees-rpc-prometheus-server</code></td>
+      <td>Server</td>
+      <td>No</td>
+      <td>Scala interceptors which can be used to monitor gRPC services using Prometheus, on the <em>Server</em> side.</td>
+    </tr>
+    <tr>
+      <td><code class="highlighter-rouge">frees-rpc-prometheus-client</code></td>
+      <td>Client</td>
+      <td>No</td>
+      <td>Scala interceptors which can be used to monitor gRPC services using Prometheus, on the <em>Client</em> side.</td>
+    </tr>
+    <tr>
+      <td><code class="highlighter-rouge">frees-rpc-prometheus-shared</code></td>
+      <td>Server/Client</td>
+      <td>No</td>
+      <td>Common code for both the client and the server in the prometheus scope.</td>
+    </tr>
+    <tr>
+      <td><code class="highlighter-rouge">frees-rpc-dropwizard-server</code></td>
+      <td>Server</td>
+      <td>No</td>
+      <td>Scala interceptors which can be used to monitor gRPC services using Dropwizard metrics, on the <em>Server</em> side.</td>
+    </tr>
+    <tr>
+      <td><code class="highlighter-rouge">frees-rpc-dropwizard-client</code></td>
+      <td>Client</td>
+      <td>No</td>
+      <td>Scala interceptors which can be used to monitor gRPC services using Dropwizard metrics, on the <em>Client</em> side.</td>
+    </tr>
+    <tr>
+      <td><code class="highlighter-rouge">frees-rpc-interceptors</code></td>
+      <td>Server/Client</td>
+      <td>No</td>
+      <td>Commons related to gRPC interceptors.</td>
+    </tr>
+    <tr>
+      <td><code class="highlighter-rouge">frees-rpc-testing</code></td>
+      <td>Test</td>
+      <td>No</td>
+      <td>Utilities to test out <code class="highlighter-rouge">frees-rpc</code> applications. It provides the <code class="highlighter-rouge">grpc-testing</code> library as the transitive dependency.</td>
+    </tr>
+    <tr>
+      <td><code class="highlighter-rouge">frees-rpc-common</code></td>
+      <td>Server/Client</td>
+      <td>Provided*</td>
+      <td>Common things that are used throughout the project.</td>
+    </tr>
+    <tr>
+      <td><code class="highlighter-rouge">frees-rpc-internal</code></td>
+      <td>Server/Client</td>
+      <td>Provided*</td>
+      <td>Macros.</td>
+    </tr>
+    <tr>
+      <td><code class="highlighter-rouge">frees-rpc-async</code></td>
+      <td>Server/Client</td>
+      <td>Provided*</td>
+      <td>Async instances useful for interacting with the RPC services on both sides, server and the client.</td>
+    </tr>
+    <tr>
+      <td><code class="highlighter-rouge">frees-rpc-netty-ssl</code></td>
+      <td>Server/Client</td>
+      <td>No</td>
+      <td>Adds the <code class="highlighter-rouge">io.netty:netty-tcnative-boringssl-static:jar</code> dependency, aligned with the Netty version (if that’s the case) used in the <code class="highlighter-rouge">frees-rpc</code> build. See <a href="https://github.com/grpc/grpc-java/blob/master/SECURITY.md#netty">this section</a> for more information. Adding this you wouldn’t need to figure out which would be the right version, <code class="highlighter-rouge">frees-rpc</code> gives you the right one.</td>
+    </tr>
+  </tbody>
+</table>
+
+<ul>
+  <li><code class="highlighter-rouge">Yes*</code>: on the client-side, you must choose either <code class="highlighter-rouge">Netty</code> or <code class="highlighter-rouge">OkHttp</code> as the transport layer.</li>
+  <li><code class="highlighter-rouge">Provided*</code>: you don’t need to add it to your build, it’ll be transitively provided when using other dependencies.</li>
+</ul>
+
+<p>You can install any of these dependencies in your build as follows:</p>
+
+<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="c1">// required for the RPC Server:
+</span><span class="n">libraryDependencies</span> <span class="o">+=</span> <span class="s">"io.frees"</span> <span class="o">%%</span> <span class="s">"frees-rpc-server"</span>            <span class="o">%</span> <span class="s">"0.13.6"</span>
+
+<span class="c1">// required for a protocol definition:
+</span><span class="n">libraryDependencies</span> <span class="o">+=</span> <span class="s">"io.frees"</span> <span class="o">%%</span> <span class="s">"frees-rpc-client-core"</span>       <span class="o">%</span> <span class="s">"0.13.6"</span>
+
+<span class="c1">// required for the use of the derived RPC Client/s, using either Netty or OkHttp as transport layer:
+</span><span class="n">libraryDependencies</span> <span class="o">+=</span> <span class="s">"io.frees"</span> <span class="o">%%</span> <span class="s">"frees-rpc-client-netty"</span>      <span class="o">%</span> <span class="s">"0.13.6"</span>
+<span class="c1">// or:
+</span><span class="n">libraryDependencies</span> <span class="o">+=</span> <span class="s">"io.frees"</span> <span class="o">%%</span> <span class="s">"frees-rpc-client-okhttp"</span>     <span class="o">%</span> <span class="s">"0.13.6"</span>
+
+<span class="c1">// optional - for both server and client configuration.
+</span><span class="n">libraryDependencies</span> <span class="o">+=</span> <span class="s">"io.frees"</span> <span class="o">%%</span> <span class="s">"frees-rpc-config"</span>            <span class="o">%</span> <span class="s">"0.13.6"</span>
+
+<span class="c1">// optional - for both server and client metrics reporting, using Prometheus.
+</span><span class="n">libraryDependencies</span> <span class="o">+=</span> <span class="s">"io.frees"</span> <span class="o">%%</span> <span class="s">"frees-rpc-prometheus-server"</span> <span class="o">%</span> <span class="s">"0.13.6"</span>
+<span class="n">libraryDependencies</span> <span class="o">+=</span> <span class="s">"io.frees"</span> <span class="o">%%</span> <span class="s">"frees-rpc-prometheus-client"</span> <span class="o">%</span> <span class="s">"0.13.6"</span>
+
+<span class="c1">// optional - for both server and client metrics reporting, using Dropwizard.
+</span><span class="n">libraryDependencies</span> <span class="o">+=</span> <span class="s">"io.frees"</span> <span class="o">%%</span> <span class="s">"frees-rpc-dropwizard-server"</span> <span class="o">%</span> <span class="s">"0.13.6"</span>
+<span class="n">libraryDependencies</span> <span class="o">+=</span> <span class="s">"io.frees"</span> <span class="o">%%</span> <span class="s">"frees-rpc-dropwizard-client"</span> <span class="o">%</span> <span class="s">"0.13.6"</span>
+
+<span class="c1">// optional - for the communication between server and client by using SSL/TLS.
+</span><span class="n">libraryDependencies</span> <span class="o">+=</span> <span class="s">"io.frees"</span> <span class="o">%%</span> <span class="s">"frees-rpc-netty-ssl"</span> <span class="o">%</span> <span class="s">"0.13.6"</span>
+</code></pre>
+</div>
+
+</section></div></div></div></div><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script><script src="/highlight/highlight.pack.js"></script><script>hljs.configure({
+languages:['scala','java','bash']
+});
+hljs.initHighlighting();
+             </script><script>((window.gitter = {}).chat = {}).options = {
+room: '47deg/freestyle'};</script><script src="https://sidecar.gitter.im/dist/sidecar.v1.js"></script><script src="/js/main.js"></script></body></html>
