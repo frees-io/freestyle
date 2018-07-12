@@ -1,4 +1,4 @@
-<html><head><title>Freestyle: Parallelism</title><meta charset="utf-8" /><meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" /><meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="author" content="47 Degrees" /><meta name="description" content="A Cohesive &amp; Pragmatic Framework of FP centric Scala libraries" /><meta name="og:image" content="/img/poster.png" /><meta name="og:title" content="Freestyle: Parallelism" /><meta name="og:site_name" content="Freestyle" /><meta name="og:url" content="https://frees-io.github.io/freestyle/" /><meta name="og:type" content="website" /><meta name="og:description" content="A Cohesive &amp; Pragmatic Framework of FP centric Scala libraries" /><link rel="icon" type="image/png" href="/img/favicon.png" /><meta name="twitter:title" content="Freestyle: Parallelism" /><meta name="twitter:image" content="https://frees-io.github.io/freestyle/img/poster.png" /><meta name="twitter:description" content="A Cohesive &amp; Pragmatic Framework of FP centric Scala libraries" /><meta name="twitter:card" content="summary_large_image" /><link rel="icon" type="image/png" sizes="16x16" href="/img/favicon16x16.png" /><link rel="icon" type="image/png" sizes="24x24" href="/img/favicon24x24.png" /><link rel="icon" type="image/png" sizes="32x32" href="/img/favicon32x32.png" /><link rel="icon" type="image/png" sizes="48x48" href="/img/favicon48x48.png" /><link rel="icon" type="image/png" sizes="57x57" href="/img/favicon57x57.png" /><link rel="icon" type="image/png" sizes="60x60" href="/img/favicon60x60.png" /><link rel="icon" type="image/png" sizes="64x64" href="/img/favicon64x64.png" /><link rel="icon" type="image/png" sizes="70x70" href="/img/favicon70x70.png" /><link rel="icon" type="image/png" sizes="72x72" href="/img/favicon72x72.png" /><link rel="icon" type="image/png" sizes="76x76" href="/img/favicon76x76.png" /><link rel="icon" type="image/png" sizes="96x96" href="/img/favicon96x96.png" /><link rel="icon" type="image/png" sizes="114x114" href="/img/favicon114x114.png" /><link rel="icon" type="image/png" sizes="120x120" href="/img/favicon120x120.png" /><link rel="icon" type="image/png" sizes="128x128" href="/img/favicon128x128.png" /><link rel="icon" type="image/png" sizes="144x144" href="/img/favicon144x144.png" /><link rel="icon" type="image/png" sizes="150x150" href="/img/favicon150x150.png" /><link rel="icon" type="image/png" sizes="152x152" href="/img/favicon152x152.png" /><link rel="icon" type="image/png" sizes="196x196" href="/img/favicon196x196.png" /><link rel="icon" type="image/png" sizes="310x310" href="/img/favicon310x310.png" /><link rel="icon" type="image/png" sizes="310x150" href="/img/favicon310x150.png" /><link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" /><link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" /><link rel="stylesheet" href="/highlight/styles/dracula.css" /><link rel="stylesheet" href="/css/style.css" /><link rel="stylesheet" href="/css/palette.css" /><link rel="stylesheet" href="/css/codemirror.css" /><link rel="stylesheet" href="/css/custom.css" /><link rel="stylesheet" href="/css/theme-code.css" /><script async="async">
+<html><head><title>Freestyle: Parallelism</title><meta charset="utf-8" /><meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" /><meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="author" content="47 Degrees" /><meta name="description" content="A Cohesive &amp; Pragmatic Framework of FP centric Scala libraries" /><meta name="og:image" content="/img/poster.png" /><meta name="og:title" content="Freestyle: Parallelism" /><meta name="og:site_name" content="Freestyle" /><meta name="og:url" content="https://frees-io.github.io/freestyle/" /><meta name="og:type" content="website" /><meta name="og:description" content="A Cohesive &amp; Pragmatic Framework of FP centric Scala libraries" /><link rel="icon" type="image/png" href="/img/favicon.png" /><meta name="twitter:title" content="Freestyle: Parallelism" /><meta name="twitter:image" content="https://frees-io.github.io/freestyle/img/poster.png" /><meta name="twitter:description" content="A Cohesive &amp; Pragmatic Framework of FP centric Scala libraries" /><meta name="twitter:card" content="summary_large_image" /><link rel="icon" type="image/png" sizes="16x16" href="/img/favicon16x16.png" /><link rel="icon" type="image/png" sizes="24x24" href="/img/favicon24x24.png" /><link rel="icon" type="image/png" sizes="32x32" href="/img/favicon32x32.png" /><link rel="icon" type="image/png" sizes="48x48" href="/img/favicon48x48.png" /><link rel="icon" type="image/png" sizes="57x57" href="/img/favicon57x57.png" /><link rel="icon" type="image/png" sizes="60x60" href="/img/favicon60x60.png" /><link rel="icon" type="image/png" sizes="64x64" href="/img/favicon64x64.png" /><link rel="icon" type="image/png" sizes="70x70" href="/img/favicon70x70.png" /><link rel="icon" type="image/png" sizes="72x72" href="/img/favicon72x72.png" /><link rel="icon" type="image/png" sizes="76x76" href="/img/favicon76x76.png" /><link rel="icon" type="image/png" sizes="96x96" href="/img/favicon96x96.png" /><link rel="icon" type="image/png" sizes="114x114" href="/img/favicon114x114.png" /><link rel="icon" type="image/png" sizes="120x120" href="/img/favicon120x120.png" /><link rel="icon" type="image/png" sizes="128x128" href="/img/favicon128x128.png" /><link rel="icon" type="image/png" sizes="144x144" href="/img/favicon144x144.png" /><link rel="icon" type="image/png" sizes="150x150" href="/img/favicon150x150.png" /><link rel="icon" type="image/png" sizes="152x152" href="/img/favicon152x152.png" /><link rel="icon" type="image/png" sizes="196x196" href="/img/favicon196x196.png" /><link rel="icon" type="image/png" sizes="310x310" href="/img/favicon310x310.png" /><link rel="icon" type="image/png" sizes="310x150" href="/img/favicon310x150.png" /><link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" /><link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" /><link rel="stylesheet" href="/highlight/styles/dracula.css" /><link rel="stylesheet" href="/css/style.css" /><link rel="stylesheet" href="/css/palette.css" /><link rel="stylesheet" href="/css/codemirror.css" /><link rel="stylesheet" href="/css/theme-code.css" /><link rel="stylesheet" href="/css/custom.css" /><script async="async">
 (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
 (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
 m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
@@ -20,15 +20,14 @@ This is not an issue when your operations produce an output value and that value
 <p>As you may have noticed by now, Freestyle uses a type alias as a return type for operations called <code class="highlighter-rouge">FreeS</code>.
 FreeS is an alias for a Free monad that represents a sequential fragment of potentially multiple parallel steps.</p>
 
-<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">type</span> <span class="kt">FreeS</span><span class="o">[</span><span class="kt">F</span><span class="o">[</span><span class="k">_</span><span class="o">]</span>, <span class="kt">A</span><span class="o">]</span> <span class="k">=</span> <span class="nc">Free</span><span class="o">[</span><span class="kt">FreeApplicative</span><span class="o">[</span><span class="kt">F</span>, <span class="kt">?</span><span class="o">]</span>, <span class="kt">A</span><span class="o">]</span>
-</code></pre>
-</div>
+<div class="language-scala highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">type</span> <span class="kt">FreeS</span><span class="o">[</span><span class="kt">F</span><span class="o">[</span><span class="k">_</span><span class="o">]</span>, <span class="kt">A</span><span class="o">]</span> <span class="k">=</span> <span class="nc">Free</span><span class="o">[</span><span class="kt">FreeApplicative</span><span class="o">[</span><span class="kt">F</span>, <span class="kt">?</span><span class="o">]</span>, <span class="kt">A</span><span class="o">]</span>
+</code></pre></div></div>
 
 <p>We use <code class="highlighter-rouge">FreeS.Par</code> as an alias for <code class="highlighter-rouge">FreeApplicative</code> to denote functions that represent a potential parallel step.</p>
 
 <p>Independent operations that can potentially be executed in parallel can be placed inside <code class="highlighter-rouge">@free</code> algebras as abstract definitions like in the example below:</p>
 
-<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">freestyle.free._</span>
+<div class="language-scala highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">import</span> <span class="nn">freestyle.free._</span>
 <span class="c1">// import freestyle.free._
 </span>
 <span class="nd">@free</span> <span class="k">trait</span> <span class="nc">Validation</span> <span class="o">{</span>
@@ -37,8 +36,7 @@ FreeS is an alias for a Free monad that represents a sequential fragment of pote
 <span class="o">}</span>
 <span class="c1">// defined trait Validation
 // defined object Validation
-</span></code></pre>
-</div>
+</span></code></pre></div></div>
 
 <h1 id="parallel-interpretation">Parallel interpretation</h1>
 
@@ -47,14 +45,13 @@ Freestyle ships with ready to use instances for <code class="highlighter-rouge">
 
 <p>To enable these instances and support parallelism you need to explicitly import:</p>
 
-<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">freestyle.free.nondeterminism._</span>
+<div class="language-scala highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">import</span> <span class="nn">freestyle.free.nondeterminism._</span>
 <span class="c1">// import freestyle.free.nondeterminism._
-</span></code></pre>
-</div>
+</span></code></pre></div></div>
 
 <p>The code below illustrates a handler that will allow parallel executions thanks to the unsafe nature of <code class="highlighter-rouge">scala.concurrent.Future#apply</code> which runs immediately:</p>
 
-<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">cats.data.Kleisli</span>
+<div class="language-scala highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">import</span> <span class="nn">cats.data.Kleisli</span>
 <span class="c1">// import cats.data.Kleisli
 </span>
 <span class="k">import</span> <span class="nn">cats.syntax.apply._</span>
@@ -79,10 +76,10 @@ Freestyle ships with ready to use instances for <code class="highlighter-rouge">
   <span class="k">override</span> <span class="k">def</span> <span class="n">hasNumber</span><span class="k">:</span> <span class="kt">ParValidator</span><span class="o">[</span><span class="kt">Boolean</span><span class="o">]</span> <span class="k">=</span>
     <span class="nc">Kleisli</span><span class="o">(</span><span class="n">s</span> <span class="k">=&gt;</span> <span class="nc">Future</span><span class="o">(</span><span class="n">s</span><span class="o">.</span><span class="n">exists</span><span class="o">(</span><span class="n">c</span> <span class="k">=&gt;</span> <span class="s">"0123456789"</span><span class="o">.</span><span class="n">contains</span><span class="o">(</span><span class="n">c</span><span class="o">))))</span>
 <span class="o">}</span>
-<span class="c1">// interpreter: Validation.Handler[ParValidator] = $anon$1@1ba2add2
+<span class="c1">// interpreter: Validation.Handler[ParValidator] = $anon$1@63007993
 </span>
 <span class="k">val</span> <span class="n">validation</span> <span class="k">=</span> <span class="nc">Validation</span><span class="o">[</span><span class="kt">Validation.Op</span><span class="o">]</span>
-<span class="c1">// validation: Validation[Validation.Op] = Validation$To@7a3894c7
+<span class="c1">// validation: Validation[Validation.Op] = Validation$To@7c2b697a
 </span>
 <span class="k">import</span> <span class="nn">validation._</span>
 <span class="c1">// import validation._
@@ -91,29 +88,27 @@ Freestyle ships with ready to use instances for <code class="highlighter-rouge">
 <span class="c1">// parValidation: validation.FS[List[Boolean]] = FreeApplicative(...)
 </span>
 <span class="k">val</span> <span class="n">validator</span> <span class="k">=</span> <span class="n">parValidation</span><span class="o">.</span><span class="n">interpret</span><span class="o">[</span><span class="kt">ParValidator</span><span class="o">]</span>
-<span class="c1">// validator: ParValidator[List[Boolean]] = Kleisli(cats.data.Kleisli$$Lambda$10622/1510177670@1e17b24)
+<span class="c1">// validator: ParValidator[List[Boolean]] = Kleisli(cats.data.Kleisli$$Lambda$6930/2031568776@50ac2c7d)
 </span>
 <span class="c1">//validator.run("abc1") runs each op in parallel and returns the result in a Future
-</span></code></pre>
-</div>
+</span></code></pre></div></div>
 
 <h1 id="mixing-sequential-and-parallel-computations">Mixing sequential and parallel computations</h1>
 
 <p>Sequential and parallel actions can be easily intermixed in <code class="highlighter-rouge">@free</code> algebras:</p>
 
-<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="nd">@free</span> <span class="k">trait</span> <span class="nc">MixedFreeS</span> <span class="o">{</span>
+<div class="language-scala highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nd">@free</span> <span class="k">trait</span> <span class="nc">MixedFreeS</span> <span class="o">{</span>
   <span class="k">def</span> <span class="n">x</span><span class="k">:</span> <span class="kt">FS</span><span class="o">[</span><span class="kt">Int</span><span class="o">]</span>
   <span class="k">def</span> <span class="n">y</span><span class="k">:</span> <span class="kt">FS</span><span class="o">[</span><span class="kt">Int</span><span class="o">]</span>
   <span class="k">def</span> <span class="n">z</span><span class="k">:</span> <span class="kt">FS</span><span class="o">[</span><span class="kt">Int</span><span class="o">]</span>
 <span class="o">}</span>
 <span class="c1">// defined trait MixedFreeS
 // defined object MixedFreeS
-</span></code></pre>
-</div>
+</span></code></pre></div></div>
 
 <p>Using the <a href="http://eed3si9n.com/herding-cats/Cartesian.html#The+Applicative+Style">cats cartesian builder operator |@|</a> we can easily describe steps that run in parallel:</p>
 
-<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">def</span> <span class="n">program</span><span class="o">[</span><span class="kt">F</span><span class="o">[</span><span class="k">_</span><span class="o">]](</span><span class="k">implicit</span> <span class="n">M</span><span class="k">:</span> <span class="kt">MixedFreeS</span><span class="o">[</span><span class="kt">F</span><span class="o">])</span> <span class="k">=</span> <span class="o">{</span>
+<div class="language-scala highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="n">program</span><span class="o">[</span><span class="kt">F</span><span class="o">[</span><span class="k">_</span><span class="o">]](</span><span class="k">implicit</span> <span class="n">M</span><span class="k">:</span> <span class="kt">MixedFreeS</span><span class="o">[</span><span class="kt">F</span><span class="o">])</span> <span class="k">=</span> <span class="o">{</span>
   <span class="k">import</span> <span class="nn">M._</span>
   <span class="k">for</span> <span class="o">{</span>
     <span class="n">a</span> <span class="k">&lt;-</span> <span class="n">z</span> <span class="c1">//3
@@ -123,8 +118,7 @@ Freestyle ships with ready to use instances for <code class="highlighter-rouge">
 </span>  <span class="o">}</span> <span class="k">yield</span> <span class="nc">List</span><span class="o">(</span><span class="n">a</span><span class="o">,</span><span class="n">b</span><span class="o">,</span><span class="n">c</span><span class="o">,</span><span class="n">d</span><span class="o">)</span>
 <span class="o">}</span>
 <span class="c1">// program: [F[_]](implicit M: MixedFreeS[F])cats.free.Free[[β$0$]cats.free.FreeApplicative[F,β$0$],List[Int]]
-</span></code></pre>
-</div>
+</span></code></pre></div></div>
 
 <p>Once our operations run in parallel, we can join the results back into the monadic flow lifting it with <code class="highlighter-rouge">.freeS</code>.
 In practice, you may not need to use <code class="highlighter-rouge">.freeS</code> since Freestyle supports an implicit conversion to lift those automatically so, if the return type is properly inferred you may omit <code class="highlighter-rouge">.freeS</code> altogether.</p>

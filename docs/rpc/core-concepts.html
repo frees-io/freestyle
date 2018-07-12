@@ -1,4 +1,4 @@
-<html><head><title>Freestyle: Core concepts</title><meta charset="utf-8" /><meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" /><meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="author" content="47 Degrees" /><meta name="description" content="A Cohesive &amp; Pragmatic Framework of FP centric Scala libraries" /><meta name="og:image" content="/img/poster.png" /><meta name="og:title" content="Freestyle: Core concepts" /><meta name="og:site_name" content="Freestyle" /><meta name="og:url" content="https://frees-io.github.io/freestyle/" /><meta name="og:type" content="website" /><meta name="og:description" content="A Cohesive &amp; Pragmatic Framework of FP centric Scala libraries" /><link rel="icon" type="image/png" href="/img/favicon.png" /><meta name="twitter:title" content="Freestyle: Core concepts" /><meta name="twitter:image" content="https://frees-io.github.io/freestyle/img/poster.png" /><meta name="twitter:description" content="A Cohesive &amp; Pragmatic Framework of FP centric Scala libraries" /><meta name="twitter:card" content="summary_large_image" /><link rel="icon" type="image/png" sizes="16x16" href="/img/favicon16x16.png" /><link rel="icon" type="image/png" sizes="24x24" href="/img/favicon24x24.png" /><link rel="icon" type="image/png" sizes="32x32" href="/img/favicon32x32.png" /><link rel="icon" type="image/png" sizes="48x48" href="/img/favicon48x48.png" /><link rel="icon" type="image/png" sizes="57x57" href="/img/favicon57x57.png" /><link rel="icon" type="image/png" sizes="60x60" href="/img/favicon60x60.png" /><link rel="icon" type="image/png" sizes="64x64" href="/img/favicon64x64.png" /><link rel="icon" type="image/png" sizes="70x70" href="/img/favicon70x70.png" /><link rel="icon" type="image/png" sizes="72x72" href="/img/favicon72x72.png" /><link rel="icon" type="image/png" sizes="76x76" href="/img/favicon76x76.png" /><link rel="icon" type="image/png" sizes="96x96" href="/img/favicon96x96.png" /><link rel="icon" type="image/png" sizes="114x114" href="/img/favicon114x114.png" /><link rel="icon" type="image/png" sizes="120x120" href="/img/favicon120x120.png" /><link rel="icon" type="image/png" sizes="128x128" href="/img/favicon128x128.png" /><link rel="icon" type="image/png" sizes="144x144" href="/img/favicon144x144.png" /><link rel="icon" type="image/png" sizes="150x150" href="/img/favicon150x150.png" /><link rel="icon" type="image/png" sizes="152x152" href="/img/favicon152x152.png" /><link rel="icon" type="image/png" sizes="196x196" href="/img/favicon196x196.png" /><link rel="icon" type="image/png" sizes="310x310" href="/img/favicon310x310.png" /><link rel="icon" type="image/png" sizes="310x150" href="/img/favicon310x150.png" /><link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" /><link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" /><link rel="stylesheet" href="/highlight/styles/dracula.css" /><link rel="stylesheet" href="/css/style.css" /><link rel="stylesheet" href="/css/palette.css" /><link rel="stylesheet" href="/css/codemirror.css" /><link rel="stylesheet" href="/css/custom.css" /><link rel="stylesheet" href="/css/theme-code.css" /><script async="async">
+<html><head><title>Freestyle: Core concepts</title><meta charset="utf-8" /><meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" /><meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="author" content="47 Degrees" /><meta name="description" content="A Cohesive &amp; Pragmatic Framework of FP centric Scala libraries" /><meta name="og:image" content="/img/poster.png" /><meta name="og:title" content="Freestyle: Core concepts" /><meta name="og:site_name" content="Freestyle" /><meta name="og:url" content="https://frees-io.github.io/freestyle/" /><meta name="og:type" content="website" /><meta name="og:description" content="A Cohesive &amp; Pragmatic Framework of FP centric Scala libraries" /><link rel="icon" type="image/png" href="/img/favicon.png" /><meta name="twitter:title" content="Freestyle: Core concepts" /><meta name="twitter:image" content="https://frees-io.github.io/freestyle/img/poster.png" /><meta name="twitter:description" content="A Cohesive &amp; Pragmatic Framework of FP centric Scala libraries" /><meta name="twitter:card" content="summary_large_image" /><link rel="icon" type="image/png" sizes="16x16" href="/img/favicon16x16.png" /><link rel="icon" type="image/png" sizes="24x24" href="/img/favicon24x24.png" /><link rel="icon" type="image/png" sizes="32x32" href="/img/favicon32x32.png" /><link rel="icon" type="image/png" sizes="48x48" href="/img/favicon48x48.png" /><link rel="icon" type="image/png" sizes="57x57" href="/img/favicon57x57.png" /><link rel="icon" type="image/png" sizes="60x60" href="/img/favicon60x60.png" /><link rel="icon" type="image/png" sizes="64x64" href="/img/favicon64x64.png" /><link rel="icon" type="image/png" sizes="70x70" href="/img/favicon70x70.png" /><link rel="icon" type="image/png" sizes="72x72" href="/img/favicon72x72.png" /><link rel="icon" type="image/png" sizes="76x76" href="/img/favicon76x76.png" /><link rel="icon" type="image/png" sizes="96x96" href="/img/favicon96x96.png" /><link rel="icon" type="image/png" sizes="114x114" href="/img/favicon114x114.png" /><link rel="icon" type="image/png" sizes="120x120" href="/img/favicon120x120.png" /><link rel="icon" type="image/png" sizes="128x128" href="/img/favicon128x128.png" /><link rel="icon" type="image/png" sizes="144x144" href="/img/favicon144x144.png" /><link rel="icon" type="image/png" sizes="150x150" href="/img/favicon150x150.png" /><link rel="icon" type="image/png" sizes="152x152" href="/img/favicon152x152.png" /><link rel="icon" type="image/png" sizes="196x196" href="/img/favicon196x196.png" /><link rel="icon" type="image/png" sizes="310x310" href="/img/favicon310x310.png" /><link rel="icon" type="image/png" sizes="310x150" href="/img/favicon310x150.png" /><link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" /><link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" /><link rel="stylesheet" href="/highlight/styles/dracula.css" /><link rel="stylesheet" href="/css/style.css" /><link rel="stylesheet" href="/css/palette.css" /><link rel="stylesheet" href="/css/codemirror.css" /><link rel="stylesheet" href="/css/theme-code.css" /><link rel="stylesheet" href="/css/custom.css" /><script async="async">
 (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
 (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
 m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
@@ -31,19 +31,18 @@ ga('send', 'pageview');
 
 <p>In the example given in the <a href="https://grpc.io/docs/guides/">gRPC guide</a>, you might have a proto file like this:</p>
 
-<div class="highlighter-rouge"><pre class="highlight"><code>message Person {
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>message Person {
   string name = 1;
   int32 id = 2;
   bool has_ponycopter = 3;
 }
-</code></pre>
-</div>
+</code></pre></div></div>
 
 <p>Then, once you’ve specified your data structures, you can use the protobuf compiler <code class="highlighter-rouge">protoc</code> to generate data access classes in your preferred language(s) from your proto definition.</p>
 
 <p>Likewise, you can define <a href="https://grpc.io/">gRPC</a> services in your proto files, with RPC method parameters and return types specified as protocol buffer messages:</p>
 
-<div class="highlighter-rouge"><pre class="highlight"><code>// The greeter service definition.
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>// The greeter service definition.
 service Greeter {
   // Sends a greeting
   rpc SayHello (HelloRequest) returns (HelloReply);
@@ -58,8 +57,7 @@ message HelloRequest {
 message HelloReply {
   string message = 1;
 }
-</code></pre>
-</div>
+</code></pre></div></div>
 
 <p>Correspondingly, <a href="https://grpc.io/">gRPC</a> also uses protoc with a special <a href="https://grpc.io/">gRPC</a> plugin to generate code from your proto file for this <code class="highlighter-rouge">Greeter</code> RPC service.</p>
 
@@ -72,20 +70,19 @@ message HelloReply {
 <p>First things first, the main difference in respect to <a href="https://grpc.io/">gRPC</a> is that <a href="https://github.com/frees-io/freestyle-rpc">frees-rpc</a> doesn’t need <code class="highlighter-rouge">.proto</code> files, but it still uses protobuf, thanks to the <a href="https://github.com/btlines/pbdirect">PBDirect</a> library, which allows to read and write Scala objects directly to protobuf with no <code class="highlighter-rouge">.proto</code> file definitions. Therefore, in summary, we have:</p>
 
 <ul>
-  <li>Your protocols, both messages, and services, will reside with your business-logic in your Scala files using <a href="https://github.com/scalameta/scalameta">scalameta</a> annotations to set them up. We’ll see more details on this shortly.</li>
+  <li>Your protocols, both messages, and services, will reside with your business-logic in your Scala files using <a href="https://github.com/scalamacros/paradise">scalamacros</a> annotations to set them up. We’ll see more details on this shortly.</li>
   <li>Instead of reading <code class="highlighter-rouge">.proto</code> files to set up the <a href="https://en.wikipedia.org/wiki/Remote_procedure_call">RPC</a> messages and services, <a href="https://github.com/frees-io/freestyle-rpc">frees-rpc</a> offers (as an optional feature) to generate them, based on your protocols defined in your Scala code. This feature is offered to maintain compatibility with other languages and systems outside of Scala. We’ll check out this feature further in <a href="/docs/rpc/idl-generation">this section</a>.</li>
 </ul>
 
 <p>Let’s start looking at how to define the <code class="highlighter-rouge">Person</code> message that we saw previously.
 Before starting, this is the Scala import we need:</p>
 
-<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">freestyle.rpc.protocol._</span>
-</code></pre>
-</div>
+<div class="language-scala highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">import</span> <span class="nn">freestyle.rpc.protocol._</span>
+</code></pre></div></div>
 
 <p><code class="highlighter-rouge">Person</code> definition would be defined as follows:</p>
 
-<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="cm">/**
+<div class="language-scala highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cm">/**
   * Message Example.
   *
   * @param name Person name.
@@ -94,14 +91,13 @@ Before starting, this is the Scala import we need:</p>
   */</span>
 <span class="nd">@message</span>
 <span class="k">case</span> <span class="k">class</span> <span class="nc">Person</span><span class="o">(</span><span class="n">name</span><span class="k">:</span> <span class="kt">String</span><span class="o">,</span> <span class="n">id</span><span class="k">:</span> <span class="kt">Int</span><span class="o">,</span> <span class="n">has_ponycopter</span><span class="k">:</span> <span class="kt">Boolean</span><span class="o">)</span>
-</code></pre>
-</div>
+</code></pre></div></div>
 
 <p>As we can see, it’s quite simple since it’s just a Scala case class preceded by the <code class="highlighter-rouge">@message</code> annotation (<code class="highlighter-rouge">@message</code> is optional though and used exclusively by <code class="highlighter-rouge">idlGen</code>):</p>
 
 <p>By the same token, let’s see now how the <code class="highlighter-rouge">Greeter</code> service would be translated to the <a href="https://github.com/frees-io/freestyle-rpc">frees-rpc</a> style (in your <code class="highlighter-rouge">.scala</code> file):</p>
 
-<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">object</span> <span class="nc">protocol</span> <span class="o">{</span>
+<div class="language-scala highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">object</span> <span class="nc">protocol</span> <span class="o">{</span>
 
   <span class="cm">/**
    * The request message containing the user's name.
@@ -117,7 +113,7 @@ Before starting, this is the Scala import we need:</p>
   <span class="nd">@message</span>
   <span class="k">case</span> <span class="k">class</span> <span class="nc">HelloReply</span><span class="o">(</span><span class="n">message</span><span class="k">:</span> <span class="kt">String</span><span class="o">)</span>
 
-  <span class="nd">@service</span>
+  <span class="nd">@service</span><span class="o">(</span><span class="nc">Protobuf</span><span class="o">)</span>
   <span class="k">trait</span> <span class="nc">Greeter</span><span class="o">[</span><span class="kt">F</span><span class="o">[</span><span class="k">_</span><span class="o">]]</span> <span class="o">{</span>
 
     <span class="cm">/**
@@ -126,12 +122,11 @@ Before starting, this is the Scala import we need:</p>
      * @param request Say Hello Request.
      * @return HelloReply.
      */</span>
-    <span class="nd">@rpc</span><span class="o">(</span><span class="nc">Protobuf</span><span class="o">)</span> <span class="k">def</span> <span class="n">sayHello</span><span class="o">(</span><span class="n">request</span><span class="k">:</span> <span class="kt">HelloRequest</span><span class="o">)</span><span class="k">:</span> <span class="kt">F</span><span class="o">[</span><span class="kt">HelloReply</span><span class="o">]</span>
+    <span class="k">def</span> <span class="n">sayHello</span><span class="o">(</span><span class="n">request</span><span class="k">:</span> <span class="kt">HelloRequest</span><span class="o">)</span><span class="k">:</span> <span class="kt">F</span><span class="o">[</span><span class="kt">HelloReply</span><span class="o">]</span>
 
   <span class="o">}</span>
 <span class="o">}</span>
-</code></pre>
-</div>
+</code></pre></div></div>
 
 <p>Naturally, the <a href="https://en.wikipedia.org/wiki/Remote_procedure_call">RPC</a> services are grouped in a <a href="/docs/core/algebras/">@tagless algebra</a>. Therefore, we are following one of the primary principles of Freestyle; you only need to concentrate on the API that you want to expose as abstract smart constructors, without worrying how they will be implemented.</p>
 
@@ -147,7 +142,7 @@ Before starting, this is the Scala import we need:</p>
 
 <p>For instance:</p>
 
-<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">object</span> <span class="nc">protocol</span> <span class="o">{</span>
+<div class="language-scala highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">object</span> <span class="nc">protocol</span> <span class="o">{</span>
 
   <span class="cm">/**
    * The request message containing the user's name.
@@ -163,7 +158,7 @@ Before starting, this is the Scala import we need:</p>
   <span class="nd">@message</span>
   <span class="k">case</span> <span class="k">class</span> <span class="nc">HelloReply</span><span class="o">(</span><span class="n">message</span><span class="k">:</span> <span class="kt">String</span><span class="o">)</span>
 
-  <span class="nd">@service</span>
+  <span class="nd">@service</span><span class="o">(</span><span class="nc">Protobuf</span><span class="o">)</span>
   <span class="k">trait</span> <span class="nc">Greeter</span><span class="o">[</span><span class="kt">F</span><span class="o">[</span><span class="k">_</span><span class="o">]]</span> <span class="o">{</span>
 
     <span class="cm">/**
@@ -172,23 +167,21 @@ Before starting, this is the Scala import we need:</p>
      * @param request Say Hello Request.
      * @return HelloReply.
      */</span>
-    <span class="nd">@rpc</span><span class="o">(</span><span class="nc">Protobuf</span><span class="o">)</span> <span class="k">def</span> <span class="n">sayHello</span><span class="o">(</span><span class="n">request</span><span class="k">:</span> <span class="kt">HelloRequest</span><span class="o">)</span><span class="k">:</span> <span class="kt">F</span><span class="o">[</span><span class="kt">HelloReply</span><span class="o">]</span>
+    <span class="k">def</span> <span class="n">sayHello</span><span class="o">(</span><span class="n">request</span><span class="k">:</span> <span class="kt">HelloRequest</span><span class="o">)</span><span class="k">:</span> <span class="kt">F</span><span class="o">[</span><span class="kt">HelloReply</span><span class="o">]</span>
 
-    <span class="nd">@rpc</span><span class="o">(</span><span class="nc">Protobuf</span><span class="o">)</span> <span class="k">def</span> <span class="n">emptyResponse</span><span class="o">(</span><span class="n">request</span><span class="k">:</span> <span class="kt">HelloRequest</span><span class="o">)</span><span class="k">:</span> <span class="kt">F</span><span class="o">[</span><span class="kt">Empty.</span><span class="k">type</span><span class="o">]</span>
+    <span class="k">def</span> <span class="n">emptyResponse</span><span class="o">(</span><span class="n">request</span><span class="k">:</span> <span class="kt">HelloRequest</span><span class="o">)</span><span class="k">:</span> <span class="kt">F</span><span class="o">[</span><span class="kt">Empty.</span><span class="k">type</span><span class="o">]</span>
 
-    <span class="nd">@rpc</span><span class="o">(</span><span class="nc">Protobuf</span><span class="o">)</span> <span class="k">def</span> <span class="n">emptyRequest</span><span class="o">(</span><span class="n">request</span><span class="k">:</span> <span class="kt">Empty.</span><span class="k">type</span><span class="o">)</span><span class="k">:</span> <span class="kt">F</span><span class="o">[</span><span class="kt">HelloReply</span><span class="o">]</span>
+    <span class="k">def</span> <span class="n">emptyRequest</span><span class="o">(</span><span class="n">request</span><span class="k">:</span> <span class="kt">Empty.</span><span class="k">type</span><span class="o">)</span><span class="k">:</span> <span class="kt">F</span><span class="o">[</span><span class="kt">HelloReply</span><span class="o">]</span>
 
-    <span class="nd">@rpc</span><span class="o">(</span><span class="nc">Protobuf</span><span class="o">)</span> <span class="k">def</span> <span class="n">emptyRequestRespose</span><span class="o">(</span><span class="n">request</span><span class="k">:</span> <span class="kt">Empty.</span><span class="k">type</span><span class="o">)</span><span class="k">:</span> <span class="kt">F</span><span class="o">[</span><span class="kt">Empty.</span><span class="k">type</span><span class="o">]</span>
+    <span class="k">def</span> <span class="n">emptyRequestRespose</span><span class="o">(</span><span class="n">request</span><span class="k">:</span> <span class="kt">Empty.</span><span class="k">type</span><span class="o">)</span><span class="k">:</span> <span class="kt">F</span><span class="o">[</span><span class="kt">Empty.</span><span class="k">type</span><span class="o">]</span>
   <span class="o">}</span>
 <span class="o">}</span>
-</code></pre>
-</div>
+</code></pre></div></div>
 
 <p>We are also using some additional annotations:</p>
 
 <ul>
-  <li><code class="highlighter-rouge">@service</code>: tags the trait as an <a href="https://en.wikipedia.org/wiki/Remote_procedure_call">RPC</a> service, in order to derive server and client code (macro expansion).</li>
-  <li><code class="highlighter-rouge">@rpc(Protobuf)</code>: indicates that the method is an RPC service. It receives as argument the type of serialization that will be used to encode/decode data, <code class="highlighter-rouge">Protocol Buffers</code> in the example. <code class="highlighter-rouge">Avro</code> is also supported as another type of serialization.</li>
+  <li><code class="highlighter-rouge">@service(Protobuf)</code>: tags the trait as an <a href="https://en.wikipedia.org/wiki/Remote_procedure_call">RPC</a> service, in order to derive server and client code (macro expansion). It receives as argument the type of serialization that will be used to encode/decode data, <code class="highlighter-rouge">Protocol Buffers</code> in the example. <code class="highlighter-rouge">Avro</code> is also supported as another type of serialization.</li>
 </ul>
 
 <p>We’ll see more details about these and other annotations in the following sections.</p>
@@ -203,9 +196,9 @@ Before starting, this is the Scala import we need:</p>
 
 <p>Let’s see an example of a unary service on the server side.</p>
 
-<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">object</span> <span class="nc">service</span> <span class="o">{</span>
+<div class="language-scala highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">object</span> <span class="nc">service</span> <span class="o">{</span>
 
-  <span class="nd">@service</span>
+  <span class="nd">@service</span><span class="o">(</span><span class="nc">Protobuf</span><span class="o">)</span>
   <span class="k">trait</span> <span class="nc">Greeter</span><span class="o">[</span><span class="kt">F</span><span class="o">[</span><span class="k">_</span><span class="o">]]</span> <span class="o">{</span>
 
     <span class="cm">/**
@@ -214,19 +207,18 @@ Before starting, this is the Scala import we need:</p>
      * @param empty Client request.
      * @return empty server response.
      */</span>
-    <span class="nd">@rpc</span><span class="o">(</span><span class="nc">Protobuf</span><span class="o">,</span> <span class="nc">Gzip</span><span class="o">)</span> <span class="k">def</span> <span class="n">emptyCompressed</span><span class="o">(</span><span class="n">empty</span><span class="k">:</span> <span class="kt">Empty.</span><span class="k">type</span><span class="o">)</span><span class="k">:</span> <span class="kt">F</span><span class="o">[</span><span class="kt">Empty.</span><span class="k">type</span><span class="o">]</span> 
+    <span class="k">def</span> <span class="n">emptyCompressed</span><span class="o">(</span><span class="n">empty</span><span class="k">:</span> <span class="kt">Empty.</span><span class="k">type</span><span class="o">)</span><span class="k">:</span> <span class="kt">F</span><span class="o">[</span><span class="kt">Empty.</span><span class="k">type</span><span class="o">]</span>
 
   <span class="o">}</span>
 
 <span class="o">}</span>
-</code></pre>
-</div>
+</code></pre></div></div>
 
 <p>On the client, to enable it, we only have to add an option to the client in the channel builder.</p>
 
 <p>Let’s see an example of a client with the compression enabled.</p>
 
-<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">cats.effect.IO</span>
+<div class="language-scala highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">import</span> <span class="nn">cats.effect.IO</span>
 <span class="k">import</span> <span class="nn">cats.implicits._</span>
 <span class="k">import</span> <span class="nn">freestyle.rpc._</span>
 <span class="k">import</span> <span class="nn">freestyle.rpc.config._</span>
@@ -250,8 +242,7 @@ Before starting, this is the Scala import we need:</p>
 
 <span class="k">object</span> <span class="nc">implicits</span> <span class="k">extends</span> <span class="nc">Implicits</span>
 
-</code></pre>
-</div>
+</code></pre></div></div>
 
 <h2 id="service-methods">Service Methods</h2>
 
@@ -264,7 +255,7 @@ Before starting, this is the Scala import we need:</p>
 
 <p>Let’s complete our protocol’s example with an unary service method:</p>
 
-<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">object</span> <span class="nc">service</span> <span class="o">{</span>
+<div class="language-scala highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">object</span> <span class="nc">service</span> <span class="o">{</span>
 
   <span class="k">import</span> <span class="nn">monix.reactive.Observable</span>
 
@@ -274,7 +265,7 @@ Before starting, this is the Scala import we need:</p>
   <span class="nd">@message</span>
   <span class="k">case</span> <span class="k">class</span> <span class="nc">HelloResponse</span><span class="o">(</span><span class="n">reply</span><span class="k">:</span> <span class="kt">String</span><span class="o">)</span>
 
-  <span class="nd">@service</span>
+  <span class="nd">@service</span><span class="o">(</span><span class="nc">Protobuf</span><span class="o">)</span>
   <span class="k">trait</span> <span class="nc">Greeter</span><span class="o">[</span><span class="kt">F</span><span class="o">[</span><span class="k">_</span><span class="o">]]</span> <span class="o">{</span>
 
     <span class="cm">/**
@@ -286,16 +277,14 @@ Before starting, this is the Scala import we need:</p>
      * @param request Client request.
      * @return Server response.
      */</span>
-    <span class="nd">@rpc</span><span class="o">(</span><span class="nc">Protobuf</span><span class="o">)</span>
     <span class="k">def</span> <span class="n">sayHello</span><span class="o">(</span><span class="n">request</span><span class="k">:</span> <span class="kt">HelloRequest</span><span class="o">)</span><span class="k">:</span> <span class="kt">F</span><span class="o">[</span><span class="kt">HelloResponse</span><span class="o">]</span>
 
   <span class="o">}</span>
 
 <span class="o">}</span>
-</code></pre>
-</div>
+</code></pre></div></div>
 
-<p>Here <code class="highlighter-rouge">sayHello</code> is our unary RPC, where only the <code class="highlighter-rouge">@rpc</code> annotation is needed.</p>
+<p>Here <code class="highlighter-rouge">sayHello</code> is our unary RPC.</p>
 
 <p>In the <code class="highlighter-rouge">Streaming</code> section, we are going to see all the streaming options.</p>
 
