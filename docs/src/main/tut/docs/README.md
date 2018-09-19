@@ -1,6 +1,6 @@
 ---
 layout: docs
-title: Quick Start Guide
+title: Quick Start
 permalink: /docs/
 ---
 

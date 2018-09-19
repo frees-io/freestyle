@@ -1,6 +1,6 @@
 ---
 layout: docs
-title: A common stack with cache
+title: Example Target Stack
 permalink: /docs/stack/
 ---
 

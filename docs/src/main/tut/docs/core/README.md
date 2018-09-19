@@ -1,6 +1,6 @@
 ---
 layout: docs
-title: Core
+title: Core Concepts
 permalink: /docs/core/
 ---
 
