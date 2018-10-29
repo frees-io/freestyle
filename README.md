@@ -16,7 +16,7 @@ Freestyle encourages programs built atop [Free algebras](http://frees.io/docs/co
 Applications built with Freestyle can be interpreted to any runtime semantics supported by the interpreter target type.
 
 ```scala
-import freestyle.free_
+import freestyle.free._
 
 @free trait Database {
   def get(id: UserId): FS[User]
