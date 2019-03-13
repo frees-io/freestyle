@@ -18,6 +18,7 @@ To use the project, add the following to your build.sbt:
 
 ```scala
 addCompilerPlugin("org.scalameta" % "paradise" % "3.0.0-M10" cross CrossVersion.full)
+scalacOptions += "-Ypartial-unification"
 ```
 
 [comment]: # (Start Replace)
