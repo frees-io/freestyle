@@ -17,7 +17,7 @@ matrix:
   - env: SCALAENV=all
 
 jdk:
-- oraclejdk8
+- openjdk8
 
 before_cache:
 - du -h -d 1 $HOME/.ivy2/
