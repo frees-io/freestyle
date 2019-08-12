@@ -168,7 +168,7 @@ import cats.syntax.monad._
 }
 ```
 
-We use the type aliae `FS.Seq` and `FS.Par` to indicate complex operations, which combine the algebra's basic requests with the operations from the `Monad` (or `Applicative`) type class. The names follow the intuition that `Applicative` operations combine data-independent computations that can be run in parallel, and `Monad` operations combine data-dependent computations that need to be run in sequence.
+We use the type alias `FS.Seq` and `FS.Par` to indicate complex operations, which combine the algebra's basic requests with the operations from the `Monad` (or `Applicative`) type class. The names follow the intuition that `Applicative` operations combine data-independent computations that can be run in parallel, and `Monad` operations combine data-dependent computations that need to be run in sequence.
 
 Note that, although  `FS[_]` and `FS.Par[_]` are equivalent, `@free` only allows using the former for abstract methods. 
 
