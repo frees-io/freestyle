@@ -152,7 +152,7 @@ trait EffectLike[F[_]] {
 }
 ```
 
-These type aliases can be used to define some `FS` operations that are derived from other operations. , by combining other operations:
+These type aliases can be used to define some `FS` operations that are derived from other operations by combining other operations:
 
 * `FS.Par[A]` is an alias for `FreeApplicative[F, A]`. You can declare a derived operation of type `FS.Par` by applying the methods of the `Functor` and `Applicative` type classes.
 * `FS.Seq[A]` is an alias for `Free[FreeApplicative[F, ?], A]`, that can be combined using the methods of the `Monad` type class.
