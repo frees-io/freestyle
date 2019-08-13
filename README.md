@@ -104,7 +104,7 @@ This project supports Scala 2.11 and 2.12. The project is based on [scalameta](h
 To use the project, add the following to your build.sbt:
 
 ```scala
-addCompilerPlugin("org.scalameta" % "paradise" % "3.0.0-M10" cross CrossVersion.full)
+addCompilerPlugin("org.scalameta" % "paradise" % "3.0.0-M11" cross CrossVersion.full)
 ```
 
 [comment]: # (Start Replace)
