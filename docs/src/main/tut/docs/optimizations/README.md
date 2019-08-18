@@ -4,11 +4,11 @@ title: Optimizations
 permalink: /docs/optimizations/
 ---
 
-## Optimizations
+# Optimizations
 
 Freestyle provides several optimizations that result in more performant runtimes for applications using `Free`.
 
-# Faster ops dispatching
+## Faster ops dispatching
 
 Freestyle optimizes operations dispatched in the generated `FunctionK` handlers to increase ops throughput.
 Traditional Scala hand written `FunctionK` handlers are often times implemented simply with pattern matching where each case is considered with constructor based patterns as in the example below:
@@ -47,11 +47,9 @@ Freestyle Coproduct implementation based on [iota](https://github.com/47deg/iota
 <script src="http://underscorejs.org/underscore-min.js">
 </script>
 <script>
-
-    Chart.defaults.global.defaultFontColor = '#fff';
+    Chart.defaults.global.defaultFontColor = 'rgba(16,42,68,0.7)';
     Chart.defaults.global.defaultFontFamily = 'pragmatapro';
-                      
-    function renderFunctionKGraph() {
+                      function renderFunctionKGraph() {
         $.getJSON( 'bench-functionk.json', function( data ) {       
                   var ctx = document.getElementById('bench-functionk');
                   var catsData = _.filter(data, function(d){ return d.benchmark.endsWith('cats'); })
@@ -66,13 +64,13 @@ Freestyle Coproduct implementation based on [iota](https://github.com/47deg/iota
                             data: _.map(catsData, function(d){ return Math.ceil(d.primaryMetric.score); }),
                             borderWidth: 1,
                             borderColor: 'rgba(241, 250, 140, 1)',
-                            backgroundColor: 'rgba(241, 250, 140, 0.2)'
+                            backgroundColor: 'rgba(241, 250, 140, 0.3)'
                         },{
                             label: 'freestyle ops/sec',
                             data: _.map(freestyleData, function(d){ return Math.ceil(d.primaryMetric.score); }),
                             borderWidth: 1,
                             borderColor: 'rgba(139, 233, 253, 1)',
-                            backgroundColor: 'rgba(139, 233, 253, 0.2)'
+                            backgroundColor: 'rgba(139, 233, 253, 0.3)'
                         }]
                     },
                     options: {
@@ -90,7 +88,6 @@ Freestyle Coproduct implementation based on [iota](https://github.com/47deg/iota
                   });
         });
     }
-    
     function renderCoproductGraph() {
         $.getJSON( 'bench-coproduct.json', function( rawData ) {       
                   var ctx = document.getElementById('bench-coproduct');
@@ -107,13 +104,13 @@ Freestyle Coproduct implementation based on [iota](https://github.com/47deg/iota
                             data: _.map(catsData, function(d){ return Math.ceil(d.score.value); }),
                             borderWidth: 1,
                             borderColor: 'rgba(241, 250, 140, 1)',
-                            backgroundColor: 'rgba(241, 250, 140, 0.2)'
+                            backgroundColor: 'rgba(241, 250, 140, 0.3)'
                         },{
                             label: 'iota ops/sec',
                             data: _.map(iotaData, function(d){ return Math.ceil(d.score.value); }),
                             borderWidth: 1,
                             borderColor: 'rgba(139, 233, 253, 1)',
-                            backgroundColor: 'rgba(139, 233, 253, 0.2)'
+                            backgroundColor: 'rgba(139, 233, 253, 0.3)'
                         }]
                     },
                     options: {
@@ -131,7 +128,6 @@ Freestyle Coproduct implementation based on [iota](https://github.com/47deg/iota
                   });
         });
     }
-    
     $( document ).ready(function() {
         renderFunctionKGraph();
         renderCoproductGraph();

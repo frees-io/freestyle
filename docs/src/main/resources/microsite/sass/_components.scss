@@ -24,6 +24,7 @@ h6 {
   text-transform: uppercase;
 }
 
+
 a {
   transition: all $base-duration $base-timing;
 }
@@ -38,6 +39,13 @@ a {
     background: #fff;
   }
 }
+// Canvas
+
+canvas {
+    margin: 40px 0;
+}
+
+
 // Navigation
 
 #navigation {
